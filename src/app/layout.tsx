@@ -1,8 +1,12 @@
+"use client";
 import "./globals.css";
 import type { Metadata } from "next";
 import StyledComponentsRegistry from "@/lib/AntdRegistry";
 import { Inter } from "next/font/google";
 import { NavBarTop } from "@/components/navbar";
+import ToastMsg from "@/components/ToastMsg";
+import { SWRConfig } from "swr";
+import axios from "../axios";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,8 +24,16 @@ export default function RootLayout({
     <html lang="en">
       <StyledComponentsRegistry>
         <body className={inter.className}>
-          <NavBarTop />
-          {children}
+          <SWRConfig
+            value={{
+              fetcher: (url) => axios.get(url),
+              shouldRetryOnError: false,
+            }}
+          >
+            <ToastMsg containerClassName="text-sm" />
+            <NavBarTop />
+            {children}
+          </SWRConfig>
         </body>
       </StyledComponentsRegistry>
     </html>

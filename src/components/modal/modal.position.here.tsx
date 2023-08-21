@@ -9,6 +9,7 @@ export interface ModalPositionHereProps {
   handleSubmit: (e: React.MouseEvent) => void;
   show: boolean;
   toggle: (e: React.MouseEvent) => void;
+  footer?: boolean;
 }
 
 export function ModalPositionHere({
@@ -19,10 +20,21 @@ export function ModalPositionHere({
   handleSubmit,
   show,
   toggle,
+  footer,
 }: ModalPositionHereProps) {
   return (
     <div>
-      <Modal title={title} open={show} onOk={handleSubmit} onCancel={toggle}>
+      <Modal
+        title={title}
+        open={show}
+        width={440}
+        onOk={handleSubmit}
+        onCancel={toggle}
+        okText={contentBtnSubmit}
+        style={{ top: 20 }}
+        cancelText={contentBtnCancel}
+        footer={footer}
+      >
         {body}
       </Modal>
     </div>
