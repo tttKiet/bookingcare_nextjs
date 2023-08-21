@@ -17,7 +17,11 @@ export function LoginForm({
   cancelModal,
   loading,
 }: LoginFormProps) {
-  const { control, handleSubmit } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitted },
+  } = useForm({
     defaultValues: {
       email: "",
       password: "",

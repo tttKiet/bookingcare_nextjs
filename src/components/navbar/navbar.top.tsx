@@ -6,21 +6,25 @@ import { LoginForm } from "../auth";
 import { authApi } from "@/api-services";
 import { toast } from "react-hot-toast";
 import { useAuth } from "@/hooks";
+import { Avatar, Space } from "antd";
+
+import { AiOutlineUser } from "react-icons/ai";
+import MenuDropdown from "@/components/menu-dropdown";
+import MenuNavbarLogout from "../menu-dropdown/menu-navbar.-logout";
 
 type Props = {};
 
 const NavBarTop = () => {
   const [showModalLogin, setShowModalLogin] = useState<boolean>(false);
   const [loadingLogin, setLoadingLogin] = useState<boolean>(false);
-  const { login, profile, logout } = useAuth({ revalidateOnMount: false });
+  const { login, profile, logout } = useAuth({ revalidateOnMount: true });
 
   async function handleLogin({ email, password }: any): Promise<boolean> {
     let isOk = false;
     try {
       setLoadingLogin(true);
       const res = await login({ email, password });
-      console.log(res);
-      console.log("pro", profile);
+
       if (res.statusCode > 0) {
         toast.error(res.msg, {
           duration: 2400,
@@ -44,11 +48,6 @@ const NavBarTop = () => {
 
   function toggleShowModal(): void {
     setShowModalLogin((s) => !s);
-  }
-
-  async function handleLogout(): Promise<void> {
-    await logout();
-    toast.success("Logged out.");
   }
 
   return (
@@ -83,11 +82,45 @@ const NavBarTop = () => {
           <div>Middle nav</div>
 
           {/* Infor user */}
-          <div className="rounded-lg border flex justify-center gap-3 py-3 px-4">
+
+          <div className="flex items-center gap-2 rounded-lg border justify-center px-10 py-1">
+            <div className="py-1 px-2 font-medium text-xs text-blue-800">
+              BOOKING CARE
+            </div>
+
+            <div className="relative before:absolute before:content-'' before:w-[2px] before:h-[60%] before:left-[calc(-0.25rem-1px)] before:top-[50%] before:translate-y-[-50%] before:bg-black">
+              {!profile?.data?.email && (
+                <span
+                  onClick={toggleShowModal}
+                  className="text-blue-600 py-1 px-2 font-medium text-base cursor-pointer hover:text-blue-800 transition-all"
+                >
+                  LOGIN
+                </span>
+              )}
+
+              {profile?.data?.email && (
+                <div className="flex items-center py-1 px-2">
+                  <Space>
+                    <Avatar
+                      size={30}
+                      crossOrigin={"use-credentials"}
+                      icon={<AiOutlineUser />}
+                      className="flex items-center justify-center text-base bg-transparent rounded-full border-[2px] border-pink-500 text-black"
+                    ></Avatar>
+                  </Space>
+                  <div className=" font-medium text-sm px-3 flex hover:text-blue-800 transition-all">
+                    Hi
+                    <MenuNavbarLogout />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          {/* <div className="rounded-lg border flex justify-center gap-3 py-1 px-3">
             {!profile?.data?.email && (
               <div
                 onClick={toggleShowModal}
-                className="text-blue-600  font-medium text-sm px-3 cursor-pointer hover:text-blue-800 transition-all"
+                className="text-blue-600 border border-spacing-2 py-1 px-3 font-medium text-sm cursor-pointer hover:text-blue-800 transition-all"
               >
                 LOGIN
               </div>
@@ -108,7 +141,7 @@ const NavBarTop = () => {
                 </div>
               </>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
