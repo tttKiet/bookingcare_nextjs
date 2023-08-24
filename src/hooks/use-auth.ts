@@ -1,8 +1,14 @@
 import { ResData, authApi } from "@/api-services";
+import { UserProfile } from "@/models";
+import { loginStore, logoutStore } from "../redux/reducers";
+import { useDispatch, useSelector } from "react-redux";
 import useSWR from "swr";
 import { PublicConfiguration } from "swr/_internal";
+import { getProfileLoginStore } from "@/redux/selector";
 
 export function useAuth(options?: Partial<PublicConfiguration>) {
+  const distpatch = useDispatch();
+  const profileSlector = useSelector(getProfileLoginStore);
   const {
     data: profile,
     error,
@@ -11,6 +17,14 @@ export function useAuth(options?: Partial<PublicConfiguration>) {
     dedupingInterval: 5000,
     revalidateOnFocus: false,
     ...options,
+    fallbackData: profileSlector,
+    onSuccess(data, key, config) {
+      distpatch(loginStore({ email: data.email }));
+    },
+    onError(error, key, config) {
+      console.log("error", error);
+      distpatch(logoutStore());
+    },
   });
 
   const loading = profile === undefined && error === undefined;
@@ -29,7 +43,9 @@ export function useAuth(options?: Partial<PublicConfiguration>) {
 
   async function logout(): Promise<ResData> {
     const res = await authApi.logout();
-    await mutate({}, false);
+    await mutate(null, false);
+    distpatch(logoutStore());
+
     return res;
   }
 
@@ -37,6 +53,7 @@ export function useAuth(options?: Partial<PublicConfiguration>) {
     profile,
     error,
     logout,
+    loading,
     login,
   };
 }

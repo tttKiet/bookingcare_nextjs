@@ -59,7 +59,7 @@ export default function MenuNavbarLogout(props: MenuNavbarLogoutProps) {
       <MenuDropdown
         items={items}
         options={{ placement: "bottom", arrow: true }}
-        title={profile?.data?.email}
+        title={profile?.email || ""}
         titleType="text-blue-600 ml-1"
       />
     </div>

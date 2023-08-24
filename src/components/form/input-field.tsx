@@ -34,7 +34,11 @@ export function InputField({
   });
 
   return (
-    <div className="border rounded-lg border-while py-2 px-3 pt-8 relative">
+    <div
+      className={`border rounded-lg border-while py-2 px-3 pt-8 relative ${
+        error?.message && "border-red-400"
+      }`}
+    >
       <label
         className="absolute top-1 text-sm font-medium flex items-center gap-2"
         htmlFor=""
@@ -53,7 +57,7 @@ export function InputField({
       <div className="flex items-center gap-1 relative">
         <input
           type={type == "password" && !showPass ? "password" : "text"}
-          placeholder={placeholder || `Nhập ${label?.toLocaleLowerCase()}`}
+          placeholder={placeholder || `Nhập ${label?.toLocaleLowerCase()} ...`}
           className="px  w-80  outline-none border-transparent text-base"
           onChange={onChange}
           onBlur={onBlur}
@@ -65,7 +69,11 @@ export function InputField({
           {icon}
         </span>
       </div>
-      <span className="text-xs text-red-500 font-medium">{error?.message}</span>
+      {error?.message && (
+        <span className="text-xs text-red-500 font-medium">
+          {error?.message}
+        </span>
+      )}
     </div>
   );
 }
