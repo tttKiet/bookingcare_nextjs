@@ -12,12 +12,14 @@ export interface LoginFormProps {
   handleLogin: (data: any) => Promise<boolean>;
   cancelModal: (data: any) => void;
   loading?: boolean;
+  handleClickRegister: () => void;
 }
 
 export function LoginForm({
   handleLogin,
   cancelModal,
   loading,
+  handleClickRegister,
 }: LoginFormProps) {
   const {
     control,
@@ -27,21 +29,16 @@ export function LoginForm({
     defaultValues: {
       email: "",
       password: "",
+      rememberMe: true,
     },
     resolver: yupResolver(schemaValidateLoginForm),
   });
-
-  const [checkSaveMe, setCheckSaveMe] = useState<boolean>(false);
 
   async function handleLoginSubmit(data: any) {
     const isOk = await handleLogin(data);
     if (isOk) {
       control._reset();
     }
-  }
-
-  function handleChangeSaveMe(e: CheckboxChangeEvent) {
-    setCheckSaveMe(e.target.checked);
   }
 
   return (
@@ -65,9 +62,9 @@ export function LoginForm({
 
       <div className="flex items-center justify-between">
         <CheckBoxField
-          onChange={handleChangeSaveMe}
-          checked={checkSaveMe}
-          title="Nhớ đăng nhập"
+          control={control}
+          name="rememberMe"
+          label="Nhớ đăng nhập"
           className="text-sm mt-2"
         />
         <Link href={"/user/missing-password"} className="text-blue-600">
@@ -77,13 +74,17 @@ export function LoginForm({
 
       <h3 className="flex justify-center font-medium py-2">Hoặc</h3>
 
-      <Button type="default" className="border border-spacing-2">
+      <Button
+        danger
+        onClick={handleClickRegister}
+        className="border border-spacing-2  font-medium"
+      >
         Đăng ký
       </Button>
 
       <div className="flex items-center gap-2 justify-end mt-2  border-t pt-[20px]">
         <Button type="text" size="middle" onClick={cancelModal}>
-          Cancel
+          Hủy
         </Button>
         <Space wrap>
           <Button
@@ -93,7 +94,7 @@ export function LoginForm({
             // onClick={() => true}
             htmlType="submit"
           >
-            Log in!
+            Đăng nhập!
           </Button>
         </Space>
       </div>

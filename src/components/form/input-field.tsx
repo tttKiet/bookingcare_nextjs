@@ -4,7 +4,7 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 export interface InputFieldProps {
   name: string;
-  label?: string;
+  label: string;
   control: Control<any>;
   type?: string;
   icon?: React.ReactNode;
@@ -58,7 +58,7 @@ export function InputField({
         <input
           type={type == "password" && !showPass ? "password" : "text"}
           placeholder={placeholder || `Nhập ${label?.toLocaleLowerCase()} ...`}
-          className="px  w-80  outline-none border-transparent text-base"
+          className="px  w-[86%]  outline-none border-transparent text-base"
           onChange={onChange}
           onBlur={onBlur}
           ref={ref}

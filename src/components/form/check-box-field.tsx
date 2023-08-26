@@ -1,24 +1,40 @@
 import { Checkbox } from "antd";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import * as React from "react";
+import { Control, useController } from "react-hook-form";
 import { ClassificationTypeNames } from "typescript";
 
 export interface CheckBoxFieldProps {
-  title: string;
-  checked?: boolean;
   className?: string;
-  onChange: (value: CheckboxChangeEvent) => void;
+  name: string;
+  label: string | React.ReactNode;
+  control: Control<any>;
 }
 
 export function CheckBoxField({
-  title,
-  onChange,
-  checked = true,
+  name,
+  label,
+  control,
   className,
 }: CheckBoxFieldProps) {
+  const {
+    field: { onChange, onBlur, value, ref },
+    fieldState: { error },
+  } = useController({
+    name,
+    control,
+  });
+  console.log(error);
   return (
-    <Checkbox checked={checked} className={className} onChange={onChange}>
-      {title}
-    </Checkbox>
+    <div>
+      <Checkbox checked={value} className={className} onChange={onChange}>
+        {label}
+      </Checkbox>
+      {error && (
+        <p className="text-red-500 font-medium text-xs pt-1">
+          {error?.message}
+        </p>
+      )}
+    </div>
   );
 }

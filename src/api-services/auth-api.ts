@@ -1,11 +1,6 @@
 import { LoginPayLoad } from "@/models";
 import axios from "../axios";
-
-export interface ResData {
-  statusCode: number;
-  msg: string;
-  data?: any;
-}
+import { ResData } from "@/types";
 
 export const authApi = {
   async login({ email, password }: LoginPayLoad): Promise<ResData> {

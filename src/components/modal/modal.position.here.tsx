@@ -1,15 +1,16 @@
 import * as React from "react";
-import { Button, Modal } from "antd";
+import { Button, Divider, Modal } from "antd";
 
 export interface ModalPositionHereProps {
   title: string;
   body: React.ReactNode;
-  contentBtnSubmit: string;
-  contentBtnCancel: string;
-  handleSubmit: (e: React.MouseEvent) => void;
+  contentBtnSubmit?: string;
+  contentBtnCancel?: string;
+  handleSubmit: (data: any) => void;
   show: boolean;
   toggle: (e: React.MouseEvent) => void;
   footer?: boolean;
+  width?: number;
 }
 
 export function ModalPositionHere({
@@ -21,13 +22,14 @@ export function ModalPositionHere({
   show,
   toggle,
   footer,
+  width,
 }: ModalPositionHereProps) {
   return (
     <div>
       <Modal
         title={title}
         open={show}
-        width={440}
+        width={width || 440}
         onOk={handleSubmit}
         onCancel={toggle}
         okText={contentBtnSubmit}
@@ -35,6 +37,8 @@ export function ModalPositionHere({
         cancelText={contentBtnCancel}
         footer={footer}
       >
+        <hr />
+
         {body}
       </Modal>
     </div>

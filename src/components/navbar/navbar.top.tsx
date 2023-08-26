@@ -4,16 +4,21 @@ import { Avatar, Space } from "antd";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { LoginForm } from "../auth";
+import { LoginForm, RegisterForm } from "../auth";
 import { ModalPositionHere } from "../modal";
 import { AiOutlineUser } from "react-icons/ai";
 import MenuNavbarLogout from "../menu-dropdown/menu-navbar.-logout";
 import { Btn } from "../button";
+import { RegisterFormInterface } from "@/types/auth";
+import { userApi } from "@/api-services";
+import axios, { AxiosError } from "axios";
+import { getErrorMessage } from "@/untils";
 
 type Props = {};
 
 const NavBarTop = () => {
   const [showModalLogin, setShowModalLogin] = useState<boolean>(false);
+  const [showModalRegister, setShowModalRegister] = useState<boolean>(false);
   const [loadingLogin, setLoadingLogin] = useState<boolean>(false);
   const { login, profile, logout } = useAuth({ revalidateOnMount: true });
 
@@ -49,27 +54,77 @@ const NavBarTop = () => {
     return isOk;
   }
 
+  async function handleRegister(data: RegisterFormInterface): Promise<boolean> {
+    try {
+      const res = await userApi.register(data);
+      console.log(res);
+      toast.success("Đăng ký thành công");
+      toggleShowModalFromForm();
+      return true;
+    } catch (err) {
+      console.log(err);
+      if (axios.isAxiosError(err)) {
+        if (err.response) {
+          const errorMsg = err.response.data.msg;
+          toast.error(errorMsg);
+        } else {
+          toast.error("Lỗi không có phản hồi từ server");
+        }
+      } else {
+        const errorWithMsg = err as { msg?: string };
+        const errorMsg = errorWithMsg.msg || "Lỗi không xác định";
+        toast.error(errorMsg);
+      }
+      return false;
+    }
+  }
+
   function toggleShowModal(): void {
     setShowModalLogin((s) => !s);
+  }
+
+  function toggleShowModalRegister(): void {
+    setShowModalRegister((s) => !s);
+  }
+
+  function toggleShowModalFromForm() {
+    toggleShowModal();
+    toggleShowModalRegister();
   }
 
   return (
     <div className="backdrop-sepia-0 bg-white/10 py-4 h-28 flex justify-center items-center sticky top-0 border bottom-0">
       <ModalPositionHere
-        title="Log in"
+        title="Đăng nhập"
         body={
           <LoginForm
+            handleClickRegister={toggleShowModalFromForm}
             loading={loadingLogin}
             handleLogin={handleLogin}
             cancelModal={toggleShowModal}
           />
         }
-        contentBtnCancel="Cancel"
-        contentBtnSubmit="Login"
         handleSubmit={handleLogin}
         toggle={toggleShowModal}
         show={showModalLogin}
         footer={false}
+      />
+
+      <ModalPositionHere
+        title="Đăng ký"
+        body={
+          <RegisterForm
+            handleClickLogin={toggleShowModalFromForm}
+            loading={loadingLogin}
+            handleRegister={handleRegister}
+            cancelModal={toggleShowModalRegister}
+          />
+        }
+        handleSubmit={handleRegister}
+        toggle={toggleShowModalRegister}
+        show={showModalRegister}
+        footer={false}
+        width={760}
       />
       <div className="container text-slate-800 text-base">
         <div className="flex items-center justify-between">
@@ -90,7 +145,12 @@ const NavBarTop = () => {
             <div className="flex items-center gap-2  justify-center px-10 py-1">
               <Btn
                 title="Register"
-                options={{ size: "middle", type: "default", shape: "round" }}
+                options={{
+                  size: "middle",
+                  type: "default",
+                  shape: "round",
+                  onClick: toggleShowModalRegister,
+                }}
               />
               <Btn
                 title="Login"
@@ -120,32 +180,6 @@ const NavBarTop = () => {
               </div>
             </div>
           )}
-          {/* <div className="rounded-lg border flex justify-center gap-3 py-1 px-3">
-            {!profile?.data?.email && (
-              <div
-                onClick={toggleShowModal}
-                className="text-blue-600 border border-spacing-2 py-1 px-3 font-medium text-sm cursor-pointer hover:text-blue-800 transition-all"
-              >
-                LOGIN
-              </div>
-            )}
-            {profile?.data?.email && (
-              <>
-                <div
-                  onClick={toggleShowModal}
-                  className="text-blue-600  font-medium text-sm px-3 cursor-pointer hover:text-blue-800 transition-all"
-                >
-                  Hello {profile?.data?.email}
-                </div>
-                <div
-                  onClick={handleLogout}
-                  className="text-blue-600  font-medium text-sm px-3 cursor-pointer hover:text-blue-800 transition-all"
-                >
-                  Log out
-                </div>
-              </>
-            )}
-          </div> */}
         </div>
       </div>
     </div>
