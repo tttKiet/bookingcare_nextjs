@@ -1,4 +1,5 @@
-import { ResData, authApi } from "@/api-services";
+import { authApi } from "@/api-services";
+import { ResData } from "@/types";
 import { UserProfile } from "@/models";
 import { loginStore, logoutStore } from "../redux/reducers";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,7 +20,18 @@ export function useAuth(options?: Partial<PublicConfiguration>) {
     ...options,
     fallbackData: profileSlector,
     onSuccess(data, key, config) {
-      distpatch(loginStore({ email: data.email }));
+      distpatch(
+        loginStore({
+          email: data.email,
+          fullname: data.fullname,
+          role: data.Role.keyType,
+          address: data.address,
+          gender: data.gender,
+          // position dont match
+          position: "",
+          createdAt: data.createdAt,
+        })
+      );
     },
     onError(error, key, config) {
       console.log("error", error);

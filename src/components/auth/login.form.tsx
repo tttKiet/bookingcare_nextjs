@@ -8,6 +8,10 @@ import { CheckBoxField, InputField } from "../form";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { useState } from "react";
 import Link from "next/link";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebookSquare } from "react-icons/fa";
+import toast from "react-hot-toast";
+
 export interface LoginFormProps {
   handleLogin: (data: any) => Promise<boolean>;
   cancelModal: (data: any) => void;
@@ -72,15 +76,45 @@ export function LoginForm({
         </Link>
       </div>
 
-      <h3 className="flex justify-center font-medium py-2">Hoặc</h3>
-
-      <Button
-        danger
-        onClick={handleClickRegister}
-        className="border border-spacing-2  font-medium"
-      >
-        Đăng ký
-      </Button>
+      <h3 className="relative  py-3">
+        <div className="border border-b-0"></div>
+        <span className="text-sm absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] px-2 bg-white">
+          Hoặc
+        </span>
+      </h3>
+      <div className="flex flex-col gap-1 ">
+        <Button
+          // type="primary"
+          danger
+          icon={<FcGoogle />}
+          onClick={() => toast("Đang cập nhật!!!")}
+          className="flex items-center justify-center gap-1"
+          // className="bg-red-500 text-white border border-spacing-2 hover:bg-red-400 hover:text-white font-medium flex items-center justify-center gap-1"
+        >
+          Đăng nhập bằng Google
+        </Button>
+        <Button
+          // type="primary"
+          htmlType="button"
+          ghost
+          icon={<FaFacebookSquare />}
+          onClick={() => toast("Đang cập nhật!!!")}
+          className="ant-btn-primary-outline flex items-center justify-center gap-1"
+        >
+          Đăng nhập bằng Facebook
+        </Button>
+      </div>
+      <div className="flex flex-col gap-1">
+        <h3>Bạn chưa có tài khoản?</h3>
+        <Button
+          htmlType="button"
+          type="dashed"
+          onClick={handleClickRegister}
+          className="border border-spacing-2  font-medium"
+        >
+          Đăng ký
+        </Button>
+      </div>
 
       <div className="flex items-center gap-2 justify-end mt-2  border-t pt-[20px]">
         <Button type="text" size="middle" onClick={cancelModal}>
@@ -94,7 +128,7 @@ export function LoginForm({
             // onClick={() => true}
             htmlType="submit"
           >
-            Đăng nhập!
+            Đăng nhập
           </Button>
         </Space>
       </div>

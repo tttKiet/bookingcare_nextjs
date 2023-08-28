@@ -15,11 +15,8 @@ instances.interceptors.response.use(
     // Do something with response data
 
     if (response.data.statusCode === 0) {
-      console.log("axios resresponse.dataponse: " + response);
       return response.data;
     } else {
-      console.log("reject: " + response);
-
       return Promise.reject({ msg: response.data.msg });
     }
   },

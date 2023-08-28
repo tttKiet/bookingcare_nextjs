@@ -29,3 +29,22 @@ body {
 :where(.css-dev-only-do-not-override-17a39f8).ant-btn-primary {
   background-color: #1677ff !important;
 }
+
+/* item dropdown */
+:where(.css-dev-only-do-not-override-17a39f8).ant-dropdown
+  .ant-dropdown-menu
+  .ant-dropdown-menu-item {
+  @apply mb-1;
+}
+
+.bg-gradient-blue-to-transparent {
+  background: linear-gradient(
+    90deg,
+    hsla(217, 100%, 50%, 1) 0%,
+    hsla(186, 100%, 69%, 1) 100%
+  );
+}
+
+.ant-btn-primary-outline {
+  @apply border border-blue-500 text-blue-500 hover:border-blue-400 hover:text-blue-400 !important;
+}

@@ -23,18 +23,13 @@ export default function MenuDropdown({
   }
 
   return (
-    <Dropdown
-      autoAdjustOverflow
-      menu={{ items }}
-      {...options}
-      onOpenChange={changeOpenMenu}
-    >
+    <Dropdown menu={{ items }} {...options} onOpenChange={changeOpenMenu}>
       <a onClick={(e) => e.preventDefault()}>
         <div className="flex items-center gap-2 relative">
           <span className={titleType}>{title}</span>
           {!showIcon && (
             <span
-              className="absolute "
+              className="absolute"
               style={{
                 top: "50%",
                 transform: "translateY(-50%)",

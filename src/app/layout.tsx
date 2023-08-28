@@ -10,6 +10,7 @@ import axios from "../axios";
 import "./globals.css";
 import { Provider } from "react-redux";
 import { persistor, store } from "@/redux/store";
+import { usePathname } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +24,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const isAdminLink = pathname.includes("/admin");
   return (
     <html lang="en">
       <StyledComponentsRegistry>
@@ -34,10 +37,16 @@ export default function RootLayout({
             }}
           >
             <Provider store={store}>
-              <PersistGate persistor={persistor}>
+              <PersistGate persistor={persistor} loading={null}>
                 <ToastMsg containerClassName="text-sm" />
-                <NavBarTop />
-                {children}
+                {!isAdminLink ? (
+                  <>
+                    <NavBarTop />
+                    {children}
+                  </>
+                ) : (
+                  <>{children}</>
+                )}
               </PersistGate>
             </Provider>
           </SWRConfig>
