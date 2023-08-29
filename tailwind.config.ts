@@ -31,6 +31,9 @@ const config: Config = {
           "2xl": "6rem",
         },
       },
+      margin: {
+        "left-nav-admin": "0 0 0 var(--nav-width-admin)",
+      },
     },
   },
 
