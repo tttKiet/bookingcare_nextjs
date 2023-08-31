@@ -62,6 +62,7 @@ export function InputField({
           onChange={onChange}
           onBlur={onBlur}
           ref={ref}
+          spellCheck={false}
           name={name}
           value={value}
         />

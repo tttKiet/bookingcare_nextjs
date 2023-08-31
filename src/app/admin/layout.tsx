@@ -21,7 +21,11 @@ export default function RootLayout({
   return (
     <div>
       <NavAdminPc />
-      <div className="m-left-nav-admin">{children}</div>
+      <div className="m-left-nav-admin p-3 min-h-full">
+        <div className="bg-blue-400/10 h-full p-8 border shadow-md rounded-lg">
+          {children}
+        </div>
+      </div>
     </div>
   );
 }

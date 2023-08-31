@@ -14,6 +14,9 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
         home: "url('/images/bg-home-4.avif')",
       },
+      backgroundColor: {
+        "edit-hover": "#ff9f00b0",
+      },
 
       container: {
         screens: {
@@ -33,6 +36,9 @@ const config: Config = {
       },
       margin: {
         "left-nav-admin": "0 0 0 var(--nav-width-admin)",
+      },
+      textColor: {
+        edit: "#8b6f12",
       },
     },
   },

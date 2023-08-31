@@ -65,3 +65,11 @@ body {
 .nav-admin-width {
   @apply w-[var(--nav-width-admin)];
 }
+
+.gr-admin {
+  @apply p-4 px-6 bg-white rounded-md shadow-sm;
+}
+
+.gr-title-admin {
+  @apply text-base font-medium text-gray-500;
+}

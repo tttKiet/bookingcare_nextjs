@@ -6,7 +6,7 @@ export interface ModalPositionHereProps {
   body: React.ReactNode;
   contentBtnSubmit?: string;
   contentBtnCancel?: string;
-  handleSubmit: (data: any) => void;
+  handleSubmit?: (data: any) => void;
   show: boolean;
   toggle: (e: React.MouseEvent) => void;
   footer?: boolean;

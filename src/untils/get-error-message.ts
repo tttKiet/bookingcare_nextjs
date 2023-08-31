@@ -1,30 +1,19 @@
-type ErrorWithMessage = {
-  message: string;
-};
+import axios from "axios";
 
-function isErrorWithMessage(error: unknown): error is ErrorWithMessage {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "message" in error &&
-    typeof (error as Record<string, unknown>).message === "string"
-  );
-}
-
-function toErrorWithMessage(maybeError: unknown): ErrorWithMessage {
-  if (isErrorWithMessage(maybeError)) return maybeError;
-
-  try {
-    return new Error(JSON.stringify(maybeError));
-  } catch {
-    // fallback in case there's an error stringifying the maybeError
-    // like with circular references for example.
-    return new Error(String(maybeError));
+function getErrorMessage(err: unknown): string {
+  let msg = "";
+  if (axios.isAxiosError(err)) {
+    if (err.response) {
+      msg = err.response.data.msg;
+    } else {
+      msg = "Lỗi không có phản hồi từ server";
+    }
+  } else {
+    const errorWithMsg = err as { msg?: string };
+    msg = errorWithMsg.msg || "Lỗi không xác định";
   }
-}
 
-function getErrorMessage(error: unknown) {
-  return toErrorWithMessage(error).message;
+  return msg;
 }
 
 export { getErrorMessage };
