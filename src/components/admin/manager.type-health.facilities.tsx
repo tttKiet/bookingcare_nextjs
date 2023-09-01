@@ -13,6 +13,8 @@ import { IoClose } from "react-icons/io5";
 import { TypeHealthFacility } from "@/models";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import { Button, Modal, Space } from "antd";
+import { ActionBox } from "../box/action.box";
+import { ActionGroup } from "../box";
 const { confirm } = Modal;
 export interface ManagerTypeHealthFacilitesProps {}
 
@@ -191,22 +193,16 @@ export function ManagerTypeHealthFacilites(
                       <span className="font-medium flex-1 text-pink-500">
                         {type.name}
                       </span>
-                      <div className="flex items-center justify-end gap-2 text-base">
-                        <span
+                      <ActionGroup>
+                        <ActionBox
+                          type="edit"
                           onClick={() => handleClickEditTypeHealth(type)}
-                          className="p-2 rounded-lg cursor-pointer text-edit
-                          hover:bg-edit-hover transition-all duration-150 hover:text-white"
-                        >
-                          <LuEdit />
-                        </span>
-                        <span
+                        />
+                        <ActionBox
+                          type="delete"
                           onClick={() => handleClickDeleteTypeHealth(type)}
-                          className="p-2 rounded-lg cursor-pointer text-red-800
-                          hover:bg-red-400 transition-all duration-150 hover:text-white"
-                        >
-                          <IoClose />
-                        </span>
-                      </div>
+                        />
+                      </ActionGroup>
                     </div>
                   </span>
                 </React.Fragment>

@@ -1,11 +1,35 @@
+"use client";
 import Image from "next/image";
 import hospitalImg from "../../assets/images/hospital.png";
 import hospitaTypelImg from "../../assets/images/hospital-sign.png";
+import useSWR from "swr";
 export interface TotalDashBoardHealthFacilitiesAdminProps {}
+
+export interface TotalDashBoardHealthFacilities {
+  type: {
+    count: number;
+    row: any;
+  };
+  healthFacilities: {
+    count: number;
+    row: any;
+  };
+}
 
 export function TotalDashBoardHealthFacilitiesAdmin(
   props: TotalDashBoardHealthFacilitiesAdminProps
 ) {
+  const {
+    data: infomation,
+    isLoading,
+    error,
+  } = useSWR<TotalDashBoardHealthFacilities>(
+    "/api/v1/admin/health-facilities/infomation/health-facilities-type",
+    {
+      revalidateOnMount: true,
+      dedupingInterval: 60 * 15 * 60, // 15p
+    }
+  );
   return (
     <>
       <div className="gr-admin col-span-4 flex items-center gap-3">
@@ -13,7 +37,9 @@ export function TotalDashBoardHealthFacilitiesAdmin(
           <Image alt="Hospital" src={hospitalImg} width={100} height={100} />
         </div>
         <div className="flex-1 ">
-          <h3 className="text-xl font-normal text-pink-600 mb-1">+3000</h3>
+          <h3 className="text-xl font-normal text-pink-600 mb-1">
+            +{infomation?.healthFacilities.count}
+          </h3>
           <p className="text-sm font-medium text-gray-600">
             Bệnh viện được đăng kí trên website
           </p>
@@ -29,7 +55,9 @@ export function TotalDashBoardHealthFacilitiesAdmin(
           />
         </div>
         <div className="flex-1 ">
-          <h3 className="text-xl font-normal text-pink-600 mb-1">+4</h3>
+          <h3 className="text-xl font-normal text-pink-600 mb-1">
+            +{infomation?.type.count}
+          </h3>
           <p className="text-sm font-medium text-gray-600">Loại bệnh viện</p>
         </div>
       </div>

@@ -34,7 +34,6 @@ export function useAuth(options?: Partial<PublicConfiguration>) {
       );
     },
     onError(error, key, config) {
-      console.log("error", error);
       distpatch(logoutStore());
     },
   });

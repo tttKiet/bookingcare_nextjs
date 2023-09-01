@@ -1,4 +1,5 @@
 import { ManagerTypeHealthFacilites } from "@/components/admin";
+import { HealthFacilitiesBox } from "@/components/admin-box";
 import { TotalDashBoardHealthFacilitiesAdmin } from "@/components/common";
 import * as React from "react";
 
@@ -12,9 +13,7 @@ export default function HealthFacilitiesAdmin(
       <div className="grid md:grid-cols-12 grid-cols-1 gap-6">
         <TotalDashBoardHealthFacilitiesAdmin />
         <ManagerTypeHealthFacilites />
-        <ManagerTypeHealthFacilites />
-        <ManagerTypeHealthFacilites />
-        <ManagerTypeHealthFacilites />
+        <HealthFacilitiesBox />
       </div>
     </div>
   );

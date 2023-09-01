@@ -11,6 +11,10 @@ import "./globals.css";
 import { Provider } from "react-redux";
 import { persistor, store } from "@/redux/store";
 import { usePathname } from "next/navigation";
+import moment from "moment";
+import "moment/locale/vi";
+// import russianLocale from "moment/locale/";
+moment.locale("vi");
 
 const inter = Inter({ subsets: ["latin"] });
 
