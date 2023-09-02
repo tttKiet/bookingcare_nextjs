@@ -38,6 +38,7 @@ export default function RootLayout({
             value={{
               fetcher: (url) => axios.get(url).then((res) => res.data),
               shouldRetryOnError: false,
+              revalidateOnFocus: false,
             }}
           >
             <Provider store={store}>

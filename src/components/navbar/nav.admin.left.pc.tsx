@@ -1,5 +1,4 @@
 "use client";
-import { NAV_ADMIN_WIDTH } from "@/contrains";
 import Link from "next/link";
 import * as React from "react";
 import { FiPlusCircle } from "react-icons/fi";
@@ -21,23 +20,23 @@ export function NavAdminPc(props: NavAdminPcProps) {
       },
       {
         title: "Tài khoản",
-        href: "/admin/tai-khoan",
+        href: "/admin/account",
         icon: <MdSupervisorAccount size={20} />,
       },
       {
         title: "Cơ sở y tế",
-        href: "/admin/co-so-y-te",
+        href: "/admin/health-facility",
         icon: <FiPlusCircle size={20} />,
       },
 
       {
         title: "Bác sỉ",
-        href: "/admin/bac-si",
+        href: "/admin/doctor",
         icon: <LiaUserNurseSolid size={20} />,
       },
       {
         title: "Lịch làm việc",
-        href: "/admin/lich-lam-viec",
+        href: "/admin/schedule",
         icon: <FiPlusCircle size={20} />,
       },
     ],
