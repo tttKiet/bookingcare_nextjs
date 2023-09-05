@@ -1,20 +1,18 @@
 "use client";
-import { API_TYPE_HEALTH_FACILITIES } from "@/api-services/contrains-api";
-import * as React from "react";
-import useSWR from "swr";
-import { BsPlusSquareDotted } from "react-icons/bs";
-import { ModalPositionHere } from "../modal";
-import { BodyTypeHealth } from "../body-modal";
 import { healthFacilitiesApi } from "@/api-services";
-import toast from "react-hot-toast";
-import { getErrorMessage } from "@/untils";
-import { LuEdit } from "react-icons/lu";
-import { IoClose } from "react-icons/io5";
+import { API_TYPE_HEALTH_FACILITIES } from "@/api-services/contrains-api";
 import { TypeHealthFacility } from "@/models";
+import { getErrorMessage } from "@/untils";
 import { ExclamationCircleFilled } from "@ant-design/icons";
-import { Button, Modal, Space } from "antd";
-import { ActionBox } from "../box/action.box";
+import { Modal } from "antd";
+import * as React from "react";
+import toast from "react-hot-toast";
+import { BsPlusSquareDotted } from "react-icons/bs";
+import useSWR from "swr";
+import { BodyTypeHealth } from "../body-modal";
 import { ActionGroup } from "../box";
+import { ActionBox } from "../box/action.box";
+import { ModalPositionHere } from "../modal";
 const { confirm } = Modal;
 export interface ManagerTypeHealthFacilitesProps {}
 

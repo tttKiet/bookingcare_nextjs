@@ -5,7 +5,6 @@ import { Inter } from "next/font/google";
 import { usePathname } from "next/navigation";
 import "../globals.css";
 import { NavAdminPc } from "@/components/navbar";
-import { NAV_ADMIN_WIDTH } from "@/contrains";
 
 export const metadata: Metadata = {
   title: "Admin Booking Care",

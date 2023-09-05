@@ -1,25 +1,33 @@
 "use client";
-import * as React from "react";
-import { TableSortFilter } from "../table";
-import { Button, Input, InputRef, Space, Tag } from "antd";
-import type {
-  ColumnsType,
-  ColumnType,
-  TablePaginationConfig,
-  TableProps,
-} from "antd/es/table";
-import useSWR, { BareFetcher, Fetcher } from "swr";
+import { healthFacilitiesApi } from "@/api-services";
 import {
   API_HEALTH_FACILITIES,
   API_TYPE_HEALTH_FACILITIES,
 } from "@/api-services/contrains-api";
-import Highlighter from "react-highlight-words";
 import { HealthFacility, TypeHealthFacility } from "@/models";
-import moment from "moment";
-import { ActionBox, ActionGroup } from "../box";
+import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
+import { ExclamationCircleFilled } from "@ant-design/icons";
+import { Button, Input, InputRef, Modal, Space } from "antd";
+import type {
+  ColumnType,
+  ColumnsType,
+  TablePaginationConfig,
+  TableProps,
+} from "antd/es/table";
 import { FilterConfirmProps } from "antd/es/table/interface";
-import { BsSearch } from "react-icons/bs";
+import moment from "moment";
+import * as React from "react";
+import Highlighter from "react-highlight-words";
+import { BsPlusSquareDotted, BsSearch } from "react-icons/bs";
+import useSWR, { BareFetcher } from "swr";
 import axios from "../../axios";
+import BodyModalHealth, {
+  HealthFacilityClient,
+} from "../body-modal/body.add-edit-health";
+import { ActionBox, ActionGroup } from "../box";
+import { ModalPositionHere } from "../modal";
+import { TableSortFilter } from "../table";
+const { confirm } = Modal;
 
 export interface HealthFacilitiesBoxProps {}
 
@@ -65,7 +73,6 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
     pagination,
     filters
   ) => {
-    console.log("filters", filters);
     setQueryParams((prev) => ({
       ...prev,
       ...filters,
@@ -83,10 +90,12 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
       })
     ).data;
 
+  // Get health facilities information
   const {
     data: healthFacilities,
     isLoading,
     error,
+    mutate: mutateHealthFacilities,
   } = useSWR<ResHealthFacilitiesBox>(
     [
       API_HEALTH_FACILITIES,
@@ -103,6 +112,8 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
       dedupingInterval: 1000,
     }
   );
+
+  // Get type of health facility
   const {
     data: types,
     mutate: mutateTypeHealth,
@@ -120,10 +131,6 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
     confirm: (param?: FilterConfirmProps) => void,
     dataIndex: DataIndex
   ) => {
-    // setQueryParams((prev) => ({
-    //   ...prev,
-    //   [dataIndex]: selectedKeys[0],
-    // }));
     confirm();
     setSearchText(selectedKeys[0]);
     setSearchedColumn(dataIndex);
@@ -221,6 +228,42 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
     },
   });
 
+  const [obEditHealthFacility, setObEditHealthFacility] =
+    React.useState<HealthFacilityColumns | null>(null);
+
+  // Edit Health Facility
+
+  function resetObEdit() {
+    setObEditHealthFacility(null);
+  }
+  function handleClickEditHealthFacility(record: HealthFacilityColumns) {
+    setObEditHealthFacility({ ...record });
+    toggleShowModalAddHealthFacility();
+  }
+  function handleClickDeleteHealthFacility(type: HealthFacilityColumns): void {
+    confirm({
+      title: `Bạn có muốn xóa cơ sở "${type.name}"?`,
+      icon: <ExclamationCircleFilled />,
+      content: `Thao tác này sẽ xóa tất cả dữ liệu về "${type.name}" và không thể khôi phục`,
+      onOk() {
+        // return healthFacilitiesApi
+        //   .deleteTypeHealthFacility({ id: type.id })
+        //   .then((res) => {
+        //     if (res.statusCode === 0) {
+        //       toast.success(res.msg);
+        //       return mutateTypeHealth();
+        //     } else {
+        //       return toast.error(res.msg);
+        //     }
+        //   })
+        //   .catch((err) => {
+        //     const msg = getErrorMessage(err);
+        //     return toast.error(msg);
+        //   });
+      },
+      onCancel() {},
+    });
+  }
   //HealthFacilityColumns
   const columns: ColumnsType<HealthFacilityColumns> = React.useMemo(
     () => [
@@ -271,12 +314,20 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
       {
         title: "Hành động",
         key: "action",
-        render: (_, record) => (
-          <ActionGroup className="justify-start">
-            <ActionBox type="edit" onClick={() => console.log("edit")} />
-            <ActionBox type="delete" onClick={() => console.log("delete")} />
-          </ActionGroup>
-        ),
+        render: (_, record) => {
+          return (
+            <ActionGroup className="justify-start">
+              <ActionBox
+                type="edit"
+                onClick={() => handleClickEditHealthFacility(record)}
+              />
+              <ActionBox
+                type="delete"
+                onClick={() => handleClickDeleteHealthFacility(record)}
+              />
+            </ActionGroup>
+          );
+        },
       },
     ],
     [types, getColumnSearchProps]
@@ -291,11 +342,79 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
       address: row.address,
       typeHealthFacility: row.TypeHealthFacility.name,
       createdAt: row.createdAt,
+      phone: row.phone,
+      email: row.email,
+      images: row.images,
+      typeHealthFacilityId: row.typeHealthFacilityId,
     }));
   }, [healthFacilities?.rows, healthFacilities]);
 
+  const [showModalAddHealth, setShowModalAddHealth] =
+    React.useState<boolean>(false);
+
+  function toggleShowModalAddHealthFacility(): void {
+    setShowModalAddHealth((s) => {
+      if (s) {
+        resetObEdit();
+      }
+      return !s;
+    });
+  }
+
+  async function handleSubmitAddModal(
+    data: Partial<HealthFacilityClient>
+  ): Promise<boolean> {
+    let isOk = false;
+    const idEdit = data.id;
+    let cb = null;
+    if (idEdit) {
+      cb = healthFacilitiesApi.updateHealthFacility(data);
+    } else {
+      cb = healthFacilitiesApi.createHealthFacility(data);
+    }
+    isOk = await toastMsgFromPromise(cb);
+    isOk && mutateHealthFacilities();
+    return isOk;
+  }
+
   return (
     <div className="gr-admin col-span-12">
+      <ModalPositionHere
+        body={
+          <BodyModalHealth
+            obEditHealthFacility={obEditHealthFacility}
+            clickCancel={toggleShowModalAddHealthFacility}
+            handleSubmitForm={handleSubmitAddModal}
+          />
+        }
+        width={760}
+        show={showModalAddHealth}
+        title={
+          obEditHealthFacility?.id
+            ? "Chỉnh sửa cơ sở y tế"
+            : "Thêm mới cơ sở y tế"
+        }
+        toggle={toggleShowModalAddHealthFacility}
+        contentBtnSubmit="Thêm"
+        footer={false}
+      />
+      <div className="mb-3 flex items-center justify-end">
+        <span
+          onClick={toggleShowModalAddHealthFacility}
+          className="cursor-pointer flex items-center justify-end gap-2 border border-pink-300
+              rounded-lg px-3 py-1 hover:text-pink-500
+              text-gray-900
+             transition-all duration-200"
+        >
+          <span className="mr-2 text-[11px] transition-all duration-200">
+            Thêm cơ sở y tế
+          </span>
+          <BsPlusSquareDotted
+            className="transition-all duration-200"
+            size={20}
+          />
+        </span>
+      </div>
       <TableSortFilter
         options={{
           sticky: true,

@@ -47,7 +47,6 @@ export function RegisterForm({
   });
 
   async function handleRegisterSubmit(data: any) {
-    console.log("submit", data);
     const isOk = await handleRegister(data);
     if (isOk) {
       control._reset();

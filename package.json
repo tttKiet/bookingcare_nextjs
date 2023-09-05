@@ -18,6 +18,7 @@
     "@types/react-dom": "18.2.7",
     "antd": "^5.8.4",
     "autoprefixer": "10.4.15",
+    "aws-sdk": "^2.1450.0",
     "axios": "^1.4.0",
     "firebase": "^10.3.0",
     "http-proxy": "^1.18.1",
