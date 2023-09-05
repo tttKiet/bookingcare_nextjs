@@ -240,26 +240,18 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
     setObEditHealthFacility({ ...record });
     toggleShowModalAddHealthFacility();
   }
-  function handleClickDeleteHealthFacility(type: HealthFacilityColumns): void {
+  function handleClickDeleteHealthFacility(
+    record: HealthFacilityColumns
+  ): void {
     confirm({
-      title: `Bạn có muốn xóa cơ sở "${type.name}"?`,
+      title: `Bạn có muốn xóa cơ sở "${record.name}"?`,
       icon: <ExclamationCircleFilled />,
-      content: `Thao tác này sẽ xóa tất cả dữ liệu về "${type.name}" và không thể khôi phục`,
-      onOk() {
-        // return healthFacilitiesApi
-        //   .deleteTypeHealthFacility({ id: type.id })
-        //   .then((res) => {
-        //     if (res.statusCode === 0) {
-        //       toast.success(res.msg);
-        //       return mutateTypeHealth();
-        //     } else {
-        //       return toast.error(res.msg);
-        //     }
-        //   })
-        //   .catch((err) => {
-        //     const msg = getErrorMessage(err);
-        //     return toast.error(msg);
-        //   });
+      content: `Thao tác này sẽ xóa tất cả dữ liệu về "${record.name}" và không thể khôi phục`,
+      async onOk() {
+        const api = healthFacilitiesApi.deleteHealthFacility(record.id);
+        const isOk = await toastMsgFromPromise(api);
+        isOk && mutateHealthFacilities();
+        return isOk;
       },
       onCancel() {},
     });

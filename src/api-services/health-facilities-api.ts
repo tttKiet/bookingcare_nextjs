@@ -67,7 +67,6 @@ export const healthFacilitiesApi = {
     data: Partial<HealthFacilityClient>
   ): Promise<ResData> {
     const bodyFormData = new FormData();
-    console.log("data.files ", data.files);
     if (
       !(
         data.name &&
@@ -97,5 +96,9 @@ export const healthFacilitiesApi = {
     return await axios.patch(API_HEALTH_FACILITIES, bodyFormData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
+  },
+
+  async deleteHealthFacility(id: string): Promise<ResData> {
+    return await axios.delete(API_HEALTH_FACILITIES, { data: { id: id } });
   },
 };
