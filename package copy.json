@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@ant-design/cssinjs": "^1.17.0",
+    "@ant-design/cssinjs": "^1.16.2",
     "@hookform/resolvers": "^3.2.0",
     "@reduxjs/toolkit": "^1.9.5",
     "@types/axios": "^0.14.0",
@@ -44,8 +44,6 @@
   "devDependencies": {
     "@types/http-proxy": "^1.17.11",
     "@types/react-highlight-words": "^0.16.4",
-    "@types/redux-persist": "^4.3.1",
-    "eslint": "8.48.0",
-    "eslint-config-next": "13.4.19"
+    "@types/redux-persist": "^4.3.1"
   }
 }

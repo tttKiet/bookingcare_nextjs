@@ -1,12 +1,13 @@
-import * as React from "react";
+"use client";
+
 import { useAuth } from "@/hooks";
-import { PiUserCircleLight } from "react-icons/pi";
-import { AiOutlinePoweroff } from "react-icons/ai";
 import Link from "next/link";
-import { ModalPositionHere } from "../modal";
-import MenuDropdown from ".";
+import * as React from "react";
 import toast from "react-hot-toast";
-import { Button } from "antd";
+import { AiOutlinePoweroff } from "react-icons/ai";
+import { PiUserCircleLight } from "react-icons/pi";
+import MenuDropdown from ".";
+import { ModalPositionHere } from "../modal";
 
 export interface MenuNavbarLogoutProps {}
 
@@ -18,7 +19,7 @@ export default function MenuNavbarLogout(props: MenuNavbarLogoutProps) {
       {
         key: "profile",
         label: (
-          <Link rel="/profile" href="/profile" className="px-1">
+          <Link href="/" className="px-1">
             Hồ sơ
           </Link>
         ),
@@ -41,7 +42,7 @@ export default function MenuNavbarLogout(props: MenuNavbarLogoutProps) {
   }
 
   async function handleLogout(): Promise<void> {
-    await logout();
+    // await logout();
     toast.success("Đã đăng xuất");
   }
 

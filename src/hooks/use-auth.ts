@@ -1,3 +1,5 @@
+"use client";
+
 import { authApi } from "@/api-services";
 import { ResData } from "@/types";
 import { UserProfile } from "@/models";

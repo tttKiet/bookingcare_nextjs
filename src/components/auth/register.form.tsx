@@ -1,16 +1,13 @@
 // import { schemaValidateRegister } from "@/schema-validate";
+import { schemaValidateRegister } from "@/schema-validate";
+import { RegisterFormInterface } from "@/types/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Space } from "antd";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { TbLockSquareRounded } from "react-icons/tb";
-import { CheckBoxField, InputField } from "../form";
-import { CheckboxChangeEvent } from "antd/es/checkbox";
-import { useState } from "react";
-import Link from "next/link";
-import { schemaValidateRegister } from "@/schema-validate";
-import { RadioGroupField } from "../form";
-import { RegisterFormInterface } from "@/types/auth";
+import { CheckBoxField, InputField, RadioGroupField } from "../form";
 export interface RegisterFormProps {
   handleRegister: (data: RegisterFormInterface) => Promise<boolean>;
   cancelModal: () => void;

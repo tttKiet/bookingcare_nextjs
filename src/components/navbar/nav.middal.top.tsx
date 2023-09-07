@@ -1,6 +1,4 @@
 import * as React from "react";
-import { FiFacebook, FiYoutube } from "react-icons/fi";
-import { FaTiktok } from "react-icons/fa";
 import Link from "next/link";
 import { MenuItem } from "@/types";
 
@@ -13,13 +11,14 @@ export function ControlMiddalNavTop({ menu }: ControlMiddalNavTopProps) {
     <div className="py-2 flex-1 ">
       <div className="flex items-center justify-start gap-6 ">
         {menu &&
-          menu.map((menu) => (
+          menu.map((menu, i) => (
             <Link
               href={menu.href}
-              key={menu.href}
+              key={i}
+              passHref={true}
               className="text-sm font-medium text-blue-900  hover:text-blue-700 transition-colors cursor-pointer duration-200"
             >
-              <span>{menu.title}</span>
+              {menu.title}
             </Link>
           ))}
       </div>

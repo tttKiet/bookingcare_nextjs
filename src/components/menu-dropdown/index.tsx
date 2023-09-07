@@ -1,3 +1,5 @@
+"use client";
+
 import { DropDownProps, Dropdown, MenuProps, Space } from "antd";
 import * as React from "react";
 import { RiArrowDownSFill } from "react-icons/ri";

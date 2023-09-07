@@ -370,7 +370,7 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
   }
 
   return (
-    <div className="gr-admin col-span-12">
+    <div className="p-4 px-6 col-span-12">
       <ModalPositionHere
         body={
           <BodyModalHealth
@@ -390,15 +390,16 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
         contentBtnSubmit="Thêm"
         footer={false}
       />
-      <div className="mb-3 flex items-center justify-end">
+      <h3 className="gr-title-admin mb-3 flex items-center justify-end">
+        CƠ sở y tế
         <span
           onClick={toggleShowModalAddHealthFacility}
           className="cursor-pointer flex items-center justify-end gap-2 border border-pink-300
               rounded-lg px-3 py-1 hover:text-pink-500
-              text-gray-900
+              text-gray-900/80
              transition-all duration-200"
         >
-          <span className="mr-2 text-[11px] transition-all duration-200">
+          <span className="mr-2 transition-all duration-200">
             Thêm cơ sở y tế
           </span>
           <BsPlusSquareDotted
@@ -406,7 +407,7 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
             size={20}
           />
         </span>
-      </div>
+      </h3>
       <TableSortFilter
         options={{
           sticky: true,

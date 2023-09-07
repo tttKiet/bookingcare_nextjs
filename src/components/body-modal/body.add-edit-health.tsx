@@ -1,18 +1,18 @@
+import { API_TYPE_HEALTH_FACILITIES } from "@/api-services/contrains-api";
+import { HealthFacility, TypeHealthFacility } from "@/models";
+import { schemaHealthFacilityBody } from "@/schema-validate";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Space, UploadFile } from "antd";
 import * as React from "react";
-import { InputField, InputUploadField, SelectField } from "../form";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { schemaHealthFacilityBody } from "@/schema-validate";
-import { HealthFacility, TypeHealthFacility } from "@/models";
 import useSWR from "swr";
-import { API_TYPE_HEALTH_FACILITIES } from "@/api-services/contrains-api";
+import { InputField, InputUploadField, SelectField } from "../form";
 
-import { GiHospitalCross } from "react-icons/gi";
-import { CiLocationOn } from "react-icons/ci";
 import { AiOutlinePhone } from "react-icons/ai";
-import { MdOutlineMail } from "react-icons/md";
+import { CiLocationOn } from "react-icons/ci";
+import { GiHospitalCross } from "react-icons/gi";
 import { GoRepoForked } from "react-icons/go";
+import { MdOutlineMail } from "react-icons/md";
 import { HealthFacilityColumns } from "../admin-box";
 
 export interface BodyModalHealthProps {

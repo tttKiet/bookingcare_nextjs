@@ -1,8 +1,5 @@
-import * as React from "react";
-import { FiFacebook, FiYoutube } from "react-icons/fi";
-import { FaTiktok } from "react-icons/fa";
-import Link from "next/link";
 import { MenuItem } from "@/types";
+import Link from "next/link";
 
 export interface ControlMiddalNavMobileProps {
   menu: MenuItem[];

@@ -67,9 +67,9 @@ body {
 }
 
 .gr-admin {
-  @apply p-4 px-6 bg-white rounded-md shadow-sm;
+  @apply p-4 px-6 bg-white rounded-md shadow border;
 }
 
 .gr-title-admin {
-  @apply text-base font-medium text-gray-500;
+  @apply text-sm font-normal text-gray-500;
 }

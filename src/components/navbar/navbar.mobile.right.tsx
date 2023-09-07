@@ -1,3 +1,5 @@
+"use client";
+
 import { Avatar, Button, Drawer, Space } from "antd";
 import * as React from "react";
 import { Btn } from "../button";

@@ -1,20 +1,10 @@
-"use client";
-import ToastMsg from "@/components/ToastMsg";
-import { NavBarTop } from "@/components/navbar";
-import StyledComponentsRegistry from "@/lib/AntdRegistry";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { PersistGate } from "redux-persist/integration/react";
-import { SWRConfig } from "swr";
-import axios from "../axios";
 import "./globals.css";
-import { Provider } from "react-redux";
-import { persistor, store } from "@/redux/store";
-import { usePathname } from "next/navigation";
-import moment from "moment";
-import "moment/locale/vi";
-// import russianLocale from "moment/locale/";
-moment.locale("vi");
+import dynamic from "next/dynamic";
+import { RootLayout } from "@/layout";
+
+import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,40 +13,12 @@ export const metadata: Metadata = {
   description: "Hello veryone. I'm Kiet developer!",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const pathname = usePathname();
-  const isAdminLink = pathname.includes("/admin");
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <StyledComponentsRegistry>
-        <body className={inter.className}>
-          <SWRConfig
-            value={{
-              fetcher: (url) => axios.get(url).then((res) => res.data),
-              shouldRetryOnError: false,
-              revalidateOnFocus: false,
-            }}
-          >
-            <Provider store={store}>
-              <PersistGate persistor={persistor} loading={null}>
-                <ToastMsg containerClassName="text-sm" />
-                {!isAdminLink ? (
-                  <>
-                    <NavBarTop />
-                    {children}
-                  </>
-                ) : (
-                  <>{children}</>
-                )}
-              </PersistGate>
-            </Provider>
-          </SWRConfig>
-        </body>
-      </StyledComponentsRegistry>
+      <body className={inter.className}>
+        <RootLayout>{children}</RootLayout>
+      </body>
     </html>
   );
 }

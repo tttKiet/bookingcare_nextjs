@@ -60,7 +60,6 @@ export const schemaHealthFacilityBody = yup.object().shape({
     .min(1, "Vui lòng tải lên ảnh")
     .max(3, "Tối đa 3 ảnh")
     .test("fileType", "Định dạng không được hổ trợ", function (value) {
-      console.log("validate", value);
       if (!value || value.length === 0) return true; // Bỏ qua nếu không có tệp ảnh
       const isValid = value.every((file) => {
         return SUPPORTED_FORMATS.includes(file.type);

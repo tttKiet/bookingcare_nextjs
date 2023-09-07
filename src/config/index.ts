@@ -1,2 +1,2 @@
-export * from "./fireBase";
+// export * from "./fireBase";
 export * from "./s3";

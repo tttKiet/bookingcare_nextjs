@@ -39,7 +39,8 @@ const store = configureStore({
       serializableCheck: false,
     }),
   ],
-  devTools: process.env.NEXT_PUBLIC_NODE_ENV !== "production" || true,
+  // process.env.NEXT_PUBLIC_NODE_ENV !== "production"
+  devTools: false,
 });
 export type RootState = ReturnType<typeof store.getState>;
 const persistor = persistStore(store);

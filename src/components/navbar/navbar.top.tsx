@@ -1,26 +1,24 @@
 "use client";
+
 import { userApi } from "@/api-services";
 import { useAuth } from "@/hooks";
+import { menuNavLink } from "@/list";
 import { RegisterFormInterface } from "@/types/auth";
-import { Avatar, Space } from "antd";
 import axios from "axios";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { AiOutlineUser } from "react-icons/ai";
 import { BsBuildingCheck, BsTelephone } from "react-icons/bs";
+import { CgDetailsMore } from "react-icons/cg";
+import { FaTiktok } from "react-icons/fa";
+import { FiFacebook, FiYoutube } from "react-icons/fi";
 import { ControlMiddalNavTop } from ".";
 import { LoginForm, RegisterForm } from "../auth";
 import { Btn } from "../button";
+import { Profile } from "../common";
 import { ContactItem } from "../contact";
-import MenuNavbarLogout from "../menu-dropdown/menu-navbar-logout";
 import { ModalPositionHere } from "../modal";
-import { FiFacebook, FiYoutube } from "react-icons/fi";
-import { CgDetailsMore } from "react-icons/cg";
-import { FaTiktok } from "react-icons/fa";
 import { NavBarMobile } from "./navbar.mobile.right";
-import { MenuItem } from "@/types";
-import { menuNavLink } from "@/list";
 type Props = {};
 
 const NavBarTop = () => {
@@ -120,7 +118,7 @@ const NavBarTop = () => {
   }
 
   return (
-    <div className="backdrop-sepia-0 sticky top-0  bg-white z-50  flex justify-center items-center shadow-md   border-b bottom-0">
+    <div className="backdrop-sepia-0 sticky top-0 bg-white z-50  flex justify-center items-center shadow-md   border-b bottom-0">
       <ModalPositionHere
         title="Đăng nhập"
         body={
@@ -224,22 +222,7 @@ const NavBarTop = () => {
                 )}
 
                 {/* If user is logined */}
-                {profile?.email && (
-                  <div className="flex items-center py-1 px-2">
-                    <Space>
-                      <Avatar
-                        size={30}
-                        crossOrigin={"use-credentials"}
-                        icon={<AiOutlineUser />}
-                        className="flex items-center justify-center text-base bg-transparent rounded-full border-[2px] border-pink-500 text-black"
-                      />
-                    </Space>
-                    <div className=" font-medium text-sm px-3 flex hover:text-blue-800 transition-all">
-                      Hi
-                      <MenuNavbarLogout />
-                    </div>
-                  </div>
-                )}
+                <Profile />
               </div>
             </div>
           </div>

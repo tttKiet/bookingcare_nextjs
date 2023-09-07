@@ -31,8 +31,8 @@ export function TotalDashBoardHealthFacilitiesAdmin(
     }
   );
   return (
-    <>
-      <div className="gr-admin col-span-4 flex items-center gap-3">
+    <div className="grid grid-cols-2 gap-4">
+      <div className="gr-admin col-span-1 flex items-center gap-3 ">
         <div>
           <Image alt="Hospital" src={hospitalImg} width={100} height={100} />
         </div>
@@ -45,7 +45,7 @@ export function TotalDashBoardHealthFacilitiesAdmin(
           </p>
         </div>
       </div>
-      <div className="gr-admin col-span-4 flex items-center gap-3">
+      <div className="gr-admin col-span-1 flex items-center gap-3">
         <div>
           <Image
             alt="Hospital Type"
@@ -61,6 +61,6 @@ export function TotalDashBoardHealthFacilitiesAdmin(
           <p className="text-sm font-medium text-gray-600">Loại bệnh viện</p>
         </div>
       </div>
-    </>
+    </div>
   );
 }

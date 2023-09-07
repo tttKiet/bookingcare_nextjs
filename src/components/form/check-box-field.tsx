@@ -24,7 +24,6 @@ export function CheckBoxField({
     name,
     control,
   });
-  console.log(error);
   return (
     <div>
       <Checkbox checked={value} className={className} onChange={onChange}>

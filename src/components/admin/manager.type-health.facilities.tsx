@@ -123,7 +123,7 @@ export function ManagerTypeHealthFacilites(
     });
   }
   return (
-    <div className="gr-admin col-span-1 md:col-span-6">
+    <div className="p-4 px-6 col-span-1 md:col-span-6">
       <ModalPositionHere
         show={showTypeModal}
         toggle={() => {
@@ -154,12 +154,10 @@ export function ManagerTypeHealthFacilites(
           onClick={toggleShowModalType}
           className="cursor-pointer flex items-center justify-end gap-2 border border-pink-300
             rounded-lg px-3 py-1 hover:text-pink-500
-            text-gray-900
+            text-gray-900/80
            transition-all duration-200"
         >
-          <span className="mr-2 text-[11px] transition-all duration-200">
-            Thêm
-          </span>
+          <span className="mr-2 text-sm transition-all duration-200">Thêm</span>
           <BsPlusSquareDotted
             className="transition-all duration-200"
             size={20}
