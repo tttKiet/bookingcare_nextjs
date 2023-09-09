@@ -15,6 +15,7 @@ const config: Config = {
         home: "url('/images/bg-home-4.avif')",
       },
       backgroundColor: {
+        dard: "#001529",
         "edit-hover": "#ff9f00b0",
       },
 

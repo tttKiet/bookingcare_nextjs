@@ -20,13 +20,14 @@ export function useAuth(options?: Partial<PublicConfiguration>) {
     dedupingInterval: 5000,
     revalidateOnFocus: false,
     ...options,
+    // revalidateOnMount: false,
     fallbackData: profileSlector,
     onSuccess(data, key, config) {
       distpatch(
         loginStore({
           email: data.email,
           fullname: data.fullname,
-          role: data.Role.keyType,
+          Role: data.Role,
           address: data.address,
           gender: data.gender,
           // position dont match

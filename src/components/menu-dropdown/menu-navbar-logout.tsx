@@ -8,10 +8,13 @@ import { AiOutlinePoweroff } from "react-icons/ai";
 import { PiUserCircleLight } from "react-icons/pi";
 import MenuDropdown from ".";
 import { ModalPositionHere } from "../modal";
+import { DropDownProps } from "antd";
 
-export interface MenuNavbarLogoutProps {}
+export interface MenuNavbarLogoutProps {
+  options?: DropDownProps;
+}
 
-export default function MenuNavbarLogout(props: MenuNavbarLogoutProps) {
+export default function MenuNavbarLogout({ options }: MenuNavbarLogoutProps) {
   const { profile, logout } = useAuth();
   const [showConfirm, setShowConfirm] = React.useState<boolean>(false);
   const items = React.useMemo(() => {
@@ -42,7 +45,7 @@ export default function MenuNavbarLogout(props: MenuNavbarLogoutProps) {
   }
 
   async function handleLogout(): Promise<void> {
-    // await logout();
+    await logout();
     toast.success("Đã đăng xuất");
   }
 
@@ -59,7 +62,7 @@ export default function MenuNavbarLogout(props: MenuNavbarLogoutProps) {
       />
       <MenuDropdown
         items={items}
-        options={{ placement: "bottom", arrow: true }}
+        options={{ placement: "bottom", arrow: true, ...options }}
         title={profile?.fullName || ""}
         titleType="text-blue-600 ml-1"
       />

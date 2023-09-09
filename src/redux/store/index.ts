@@ -40,7 +40,7 @@ const store = configureStore({
     }),
   ],
   // process.env.NEXT_PUBLIC_NODE_ENV !== "production"
-  devTools: false,
+  devTools: process.env.NEXT_PUBLIC_NODE_ENV !== "pro",
 });
 export type RootState = ReturnType<typeof store.getState>;
 const persistor = persistStore(store);

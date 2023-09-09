@@ -1,5 +1,7 @@
 "use client";
 
+import { NotPermission, Profile } from "@/components/common";
+import { useAuth } from "@/hooks";
 import { Breadcrumb, Layout, Menu, MenuProps } from "antd";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -10,7 +12,6 @@ import { LiaUserNurseSolid } from "react-icons/lia";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { MdSupervisorAccount } from "react-icons/md";
 import "../globals.css";
-import { Profile } from "@/components/common";
 const { Header, Content, Footer, Sider } = Layout;
 export const metadata: Metadata = {
   title: "Admin Booking Care",
@@ -24,6 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const url = usePathname();
+  const { profile } = useAuth();
+  console.log("profile lauout", profile);
   const breadcrumbArray = url.toString().split("/");
   // breadcrumbArray.shift();
   const items: MenuItem[] = React.useMemo(
@@ -70,6 +73,10 @@ export default function RootLayout({
     []
   );
   const [collapsed, setCollapsed] = React.useState(false);
+
+  if (profile.Role.keyType !== "admin") {
+    return <NotPermission />;
+  }
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
@@ -94,8 +101,8 @@ export default function RootLayout({
         />
       </Sider>
       <Layout>
-        <Header style={{ padding: 0, background: "#001529" }}>
-          {/* <Profile /> */}
+        <Header className="flex justify-end items-center text-white px-[16px] bg-dard">
+          <Profile />
         </Header>
         <Content style={{ margin: "0 16px" }}>
           <Breadcrumb style={{ margin: "16px 0" }}>

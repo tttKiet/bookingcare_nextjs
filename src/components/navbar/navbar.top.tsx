@@ -27,7 +27,7 @@ const NavBarTop = () => {
   const [showModalRegister, setShowModalRegister] = useState<boolean>(false);
   const [loadingLogin, setLoadingLogin] = useState<boolean>(false);
   const { login, profile, logout } = useAuth({ revalidateOnMount: true });
-
+  console.log("profile", profile);
   function toggleShowNavMobile() {
     setShowNavMobile((e) => !e);
   }

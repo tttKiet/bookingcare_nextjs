@@ -390,8 +390,8 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
         contentBtnSubmit="Thêm"
         footer={false}
       />
-      <h3 className="gr-title-admin mb-3 flex items-center justify-end">
-        CƠ sở y tế
+      <h3 className="gr-title-admin mb-3 flex items-center justify-between">
+        Cơ sở y tế
         <span
           onClick={toggleShowModalAddHealthFacility}
           className="cursor-pointer flex items-center justify-end gap-2 border border-pink-300

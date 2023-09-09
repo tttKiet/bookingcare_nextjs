@@ -18,9 +18,9 @@ export function RootLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdminLink = pathname.includes("/admin");
   return (
-    <Provider store={store}>
-      <PersistGate persistor={persistor} loading={null}>
-        <StyledComponentsRegistry>
+    <StyledComponentsRegistry>
+      <Provider store={store}>
+        <PersistGate persistor={persistor} loading={null}>
           <SWRConfig
             value={{
               fetcher: (url) =>
@@ -28,7 +28,7 @@ export function RootLayout({ children }: { children: React.ReactNode }) {
                   .get(url)
                   .then((res) => res.data)
                   .catch((err) => {
-                    console.log(err);
+                    console.log("fetcher error: " + err);
                   }),
               shouldRetryOnError: false,
               revalidateOnFocus: false,
@@ -44,8 +44,8 @@ export function RootLayout({ children }: { children: React.ReactNode }) {
               <>{children}</>
             )}
           </SWRConfig>
-        </StyledComponentsRegistry>
-      </PersistGate>
-    </Provider>
+        </PersistGate>
+      </Provider>
+    </StyledComponentsRegistry>
   );
 }

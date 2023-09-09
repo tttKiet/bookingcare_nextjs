@@ -3,7 +3,10 @@ import { createSlice } from "@reduxjs/toolkit";
 export interface LoginProfile {
   fullname: string;
   email: string;
-  role: string;
+  Role: {
+    id: string;
+    keyType: string;
+  };
   address: string;
   gender: string;
   position: string;
@@ -13,7 +16,10 @@ export interface LoginProfile {
 const initialState = {
   fullname: "",
   email: "",
-  role: "",
+  Role: {
+    id: "",
+    keyType: "",
+  },
   address: "",
   gender: "",
   position: "",
@@ -27,7 +33,7 @@ const userSlice = createSlice({
     loginStore(state: LoginProfile, payload) {
       state.fullname = payload.payload.fullname;
       state.email = payload.payload.email;
-      state.role = payload.payload.role;
+      state.Role = payload.payload.Role;
       state.address = payload.payload.address;
       state.gender = payload.payload.gender;
       state.position = payload.payload.position;
@@ -36,7 +42,10 @@ const userSlice = createSlice({
     logoutStore(state) {
       state.fullname = "";
       state.email = "";
-      state.role = "";
+      state.Role = {
+        id: "",
+        keyType: "",
+      };
       state.address = "";
       state.gender = "";
       state.position = "";
