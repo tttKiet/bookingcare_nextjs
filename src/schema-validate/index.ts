@@ -83,3 +83,15 @@ export const schemaHealthFacilityBody = yup.object().shape({
 });
 
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"];
+
+export const schemaSpecialistBody = yup.object().shape({
+  name: yup.string().required("Vui lòng tên chuyên khoa."),
+  descriptionDisease: yup
+    .string()
+    .required("Vui lòng điền mô tả của bác sỉ.")
+    .max(1000, "Chỉ được điền từ đến 1000 kí tự tối đa."),
+  descriptionDoctor: yup
+    .string()
+    .required("Vui lòng điền mô tả của bác sỉ.")
+    .max(1000, "Chỉ được điền từ đến 1000 kí tự tối đa."),
+});

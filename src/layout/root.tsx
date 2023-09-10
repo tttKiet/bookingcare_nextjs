@@ -26,7 +26,9 @@ export function RootLayout({ children }: { children: React.ReactNode }) {
               fetcher: (url) =>
                 axios
                   .get(url)
-                  .then((res) => res.data)
+                  .then((res) => {
+                    return res.data;
+                  })
                   .catch((err) => {
                     console.log("fetcher error: " + err);
                   }),

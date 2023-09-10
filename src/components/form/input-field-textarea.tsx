@@ -2,21 +2,15 @@ import { useState } from "react";
 import { Control, useController } from "react-hook-form";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { InputFieldProps } from ".";
+import TextArea from "antd/es/input/TextArea";
 
-export function InputField({
+export function InputTextareaField({
   name,
   label,
   control,
   placeholder,
   type = "text",
-  icon,
 }: InputFieldProps) {
-  const [showPass, setShowPass] = useState<boolean>(false);
-
-  function toggleShowPass(): void {
-    setShowPass((s) => !s);
-  }
-
   const {
     field: { onChange, onBlur, value, ref },
     fieldState: { error },
@@ -36,31 +30,21 @@ export function InputField({
         htmlFor=""
       >
         {label}
-
-        {type === "password" && (
-          <span
-            className="text-base cursor-pointer hover:opacity-75 transition-opacity"
-            onClick={toggleShowPass}
-          >
-            {showPass ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
-          </span>
-        )}
       </label>
-      <div className="flex items-center gap-1 relative">
-        <input
-          type={type == "password" && !showPass ? "password" : "text"}
+      <div className="flex items-center gap-1 relative pb-4">
+        <TextArea
           placeholder={placeholder || `Nhập ${label?.toLocaleLowerCase()} ...`}
-          className="px  w-[86%]  outline-none border-transparent text-base"
-          onChange={onChange}
-          onBlur={onBlur}
+          className="px  outline-none border-transparent text-base"
+          showCount
           ref={ref}
-          spellCheck={false}
+          onBlur={onBlur}
           name={name}
+          spellCheck={false}
           value={value}
+          maxLength={1000}
+          onChange={onChange}
+          rows={6}
         />
-        <span className="flex items-center absolute right-1 text-xl">
-          {icon}
-        </span>
       </div>
       {error?.message && (
         <span className="text-xs text-red-500 font-medium">

@@ -232,7 +232,6 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
     React.useState<HealthFacilityColumns | null>(null);
 
   // Edit Health Facility
-
   function resetObEdit() {
     setObEditHealthFacility(null);
   }

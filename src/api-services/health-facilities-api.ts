@@ -3,8 +3,12 @@ import { ResData } from "@/types";
 import { HealthFacility } from "../models/index";
 import {
   API_HEALTH_FACILITIES,
+  API_SPECIALIST,
   API_TYPE_HEALTH_FACILITIES,
 } from "./contrains-api";
+
+import { Specialist } from "../models";
+
 import { HealthFacilityClient } from "@/components/body-modal";
 
 export const healthFacilitiesApi = {
@@ -100,5 +104,27 @@ export const healthFacilitiesApi = {
 
   async deleteHealthFacility(id: string): Promise<ResData> {
     return await axios.delete(API_HEALTH_FACILITIES, { data: { id: id } });
+  },
+
+  async createOrUpdateSpecialist({
+    name,
+    descriptionDisease,
+    descriptionDoctor,
+    id,
+  }: Partial<Specialist>): Promise<ResData> {
+    return await axios.post(API_SPECIALIST, {
+      name,
+      descriptionDisease,
+      descriptionDoctor,
+      id,
+    });
+  },
+
+  async deleteSpecialist({ id }: { id: string }): Promise<ResData> {
+    return await axios.delete(API_SPECIALIST, {
+      data: {
+        id,
+      },
+    });
   },
 };

@@ -8,9 +8,11 @@ import { useDispatch, useSelector } from "react-redux";
 import useSWR from "swr";
 import { PublicConfiguration } from "swr/_internal";
 import { getProfileLoginStore } from "@/redux/selector";
+import { useRouter } from "next/navigation";
 
 export function useAuth(options?: Partial<PublicConfiguration>) {
   const distpatch = useDispatch();
+  const router = useRouter();
   const profileSlector = useSelector(getProfileLoginStore);
   const {
     data: profile,
@@ -51,6 +53,10 @@ export function useAuth(options?: Partial<PublicConfiguration>) {
     password: string;
   }): Promise<ResData> {
     const res = await authApi.login({ email, password });
+    if (res?.user?.role?.keyType === "admin") {
+      router.push("/admin");
+    }
+
     await mutate();
     return res;
   }

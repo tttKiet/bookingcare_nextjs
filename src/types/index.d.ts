@@ -12,6 +12,14 @@ export interface ResData {
   msg: string;
   data?: any;
 }
+
+export interface ResDataPaginations<T> {
+  count: number;
+  rows: array<T>;
+  limit: number;
+  offset: number;
+}
+
 export interface MenuItem {
   title: string;
   href: string;

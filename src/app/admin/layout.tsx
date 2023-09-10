@@ -26,7 +26,6 @@ export default function RootLayout({
 }) {
   const url = usePathname();
   const { profile } = useAuth();
-  console.log("profile lauout", profile);
   const breadcrumbArray = url.toString().split("/");
   // breadcrumbArray.shift();
   const items: MenuItem[] = React.useMemo(
@@ -57,8 +56,13 @@ export default function RootLayout({
           {
             key: "/admin/health-facility",
             label: (
-              <Link href="/admin/health-facility">Quản lý Cơ sở y tế</Link>
+              <Link href="/admin/health-facility">Quản lý cơ sở y tế</Link>
             ),
+            icon: <MdSupervisorAccount size={20} />,
+          },
+          {
+            key: "/admin/specialist",
+            label: <Link href="/admin/specialist">Chuyên khoa</Link>,
             icon: <MdSupervisorAccount size={20} />,
           },
         ],

@@ -16,3 +16,12 @@ export interface HealthFacility {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Specialist {
+  id: string;
+  name: string;
+  descriptionDisease: string;
+  descriptionDoctor: string;
+  createdAt: string;
+  updatedAt: string;
+}

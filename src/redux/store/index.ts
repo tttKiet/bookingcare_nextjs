@@ -1,6 +1,6 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
-import { userSlice } from "../reducers";
+import { userSlice, settingSlice } from "../reducers";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 
 // Disbale storage
@@ -28,6 +28,7 @@ const persistConfig = {
 };
 const rootReducer = combineReducers({
   user: userSlice,
+  setting: settingSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
