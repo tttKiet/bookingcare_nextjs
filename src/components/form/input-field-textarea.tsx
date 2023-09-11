@@ -43,7 +43,7 @@ export function InputTextareaField({
           value={value}
           maxLength={1000}
           onChange={onChange}
-          rows={6}
+          rows={4}
         />
       </div>
       {error?.message && (

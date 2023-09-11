@@ -1,4 +1,4 @@
-import { API_TYPE_HEALTH_FACILITIES } from "@/api-services/contrains-api";
+import { API_TYPE_HEALTH_FACILITIES } from "@/api-services/constant-api";
 import { HealthFacility, TypeHealthFacility } from "@/models";
 import { schemaHealthFacilityBody } from "@/schema-validate";
 import { yupResolver } from "@hookform/resolvers/yup";

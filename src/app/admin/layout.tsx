@@ -26,8 +26,18 @@ export default function RootLayout({
 }) {
   const url = usePathname();
   const { profile } = useAuth();
-  const breadcrumbArray = url.toString().split("/");
-  // breadcrumbArray.shift();
+  console.log("profile", profile);
+  const breadcrumbArraySplit = url.toString().split("/");
+  const breadcrumbArray = breadcrumbArraySplit.map((path, index, arrayThis) => {
+    return {
+      title:
+        index + 1 === arrayThis.length ? (
+          path
+        ) : (
+          <Link href={url.slice(0, url.indexOf(path)) + path}>{path}</Link>
+        ),
+    };
+  });
   const items: MenuItem[] = React.useMemo(
     () => [
       {
@@ -69,16 +79,25 @@ export default function RootLayout({
         icon: <FiPlusCircle size={20} />,
       },
       {
-        key: "/admin/doctor",
-        label: <Link href="/admin/doctor">Bác sỉ</Link>,
+        key: "manager-doctor",
+        label: "Bác sỉ",
         icon: <LiaUserNurseSolid size={20} />,
+        children: [
+          {
+            key: "/admin/position",
+            label: (
+              <Link href="/admin/position">Quản lý vị trí, danh hiệu</Link>
+            ),
+            icon: <MdSupervisorAccount size={20} />,
+          },
+        ],
       },
     ],
     []
   );
   const [collapsed, setCollapsed] = React.useState(false);
 
-  if (profile.Role.keyType !== "admin") {
+  if (!profile || profile?.Role?.keyType !== "admin") {
     return <NotPermission />;
   }
   return (
@@ -109,11 +128,7 @@ export default function RootLayout({
           <Profile />
         </Header>
         <Content style={{ margin: "0 16px" }}>
-          <Breadcrumb style={{ margin: "16px 0" }}>
-            {breadcrumbArray.map((b, i) => (
-              <Breadcrumb.Item key={i}>{b}</Breadcrumb.Item>
-            ))}
-          </Breadcrumb>
+          <Breadcrumb style={{ margin: "16px 0" }} items={breadcrumbArray} />
           <div className="bg-white rounded-lg min-h-[360px] p[24] shadow-md">
             {children}
           </div>

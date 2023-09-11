@@ -4,7 +4,7 @@ import { healthFacilitiesApi } from "@/api-services";
 import {
   API_SPECIALIST,
   API_TYPE_HEALTH_FACILITIES,
-} from "@/api-services/contrains-api";
+} from "@/api-services/constant-api";
 import { TypeHealthFacility } from "@/models";
 import { getErrorMessage } from "@/untils";
 import { ExclamationCircleFilled } from "@ant-design/icons";
@@ -40,6 +40,7 @@ import Highlighter from "react-highlight-words";
 import { FilterConfirmProps } from "antd/es/table/interface";
 import { ResDataPaginations } from "@/types";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
+import { BtnPlus } from "../button";
 
 type DataIndex = keyof Specialist;
 
@@ -105,7 +106,7 @@ export function ManagerSpecialist() {
   }>({
     pagination: {
       current: 1,
-      pageSize: 3,
+      pageSize: 6,
     },
   });
 
@@ -286,22 +287,6 @@ export function ManagerSpecialist() {
         sorter: (a, b) => a.name.localeCompare(b.name),
         ...getColumnSearchProps("name"),
       },
-      // {
-      //   title: "Mô tả căn bệnh",
-      //   dataIndex: "descriptionDisease",
-      //   key: "descriptionDisease",
-      //   render: (text) => <a>{text}</a>,
-      //   sorter: (a, b) => a.name.localeCompare(b.name),
-      //   ...getColumnSearchProps("name"),
-      // },
-      // {
-      //   title: "Mô tả bác sỉ chửa bệnh",
-      //   dataIndex: "descriptionDoctor",
-      //   key: "descriptionDoctor",
-      //   render: (text) => <a>{text}</a>,
-      //   sorter: (a, b) => a.name.localeCompare(b.name),
-      //   ...getColumnSearchProps("name"),
-      // },
       {
         title: "Hành động",
         key: "action",
@@ -344,22 +329,12 @@ export function ManagerSpecialist() {
       />
       <h3 className="gr-title-admin flex items-center justify-between  mb-3">
         Chuyên khoa
-        <span
+        <BtnPlus
           onClick={() => {
             toggleShowModalCreateOrUpdate();
             setSecialistEdit(null);
           }}
-          className="cursor-pointer flex items-center justify-end gap-2 border border-pink-300
-            rounded-lg px-3 py-1 hover:text-pink-500
-            text-gray-900/80
-           transition-all duration-200"
-        >
-          <span className="mr-2 text-sm transition-all duration-200">Thêm</span>
-          <BsPlusSquareDotted
-            className="transition-all duration-200"
-            size={20}
-          />
-        </span>
+        />
       </h3>
       <TableSortFilter
         options={{

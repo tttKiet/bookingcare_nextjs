@@ -5,7 +5,7 @@ import {
   API_HEALTH_FACILITIES,
   API_SPECIALIST,
   API_TYPE_HEALTH_FACILITIES,
-} from "./contrains-api";
+} from "./constant-api";
 
 import { Specialist } from "../models";
 

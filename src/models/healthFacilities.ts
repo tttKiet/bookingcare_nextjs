@@ -25,3 +25,10 @@ export interface Specialist {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Position {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}

@@ -1,4 +1,4 @@
-import { ManagerTypeHealthFacilites } from "@/components/admin";
+import { ManagerTypeHealthFacilites } from "@/components/admin-box";
 import { HealthFacilitiesBox } from "@/components/admin-box";
 import { TotalDashBoardHealthFacilitiesAdmin } from "@/components/common";
 import * as React from "react";

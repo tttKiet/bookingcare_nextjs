@@ -1,29 +1,14 @@
-import { API_TYPE_HEALTH_FACILITIES } from "@/api-services/contrains-api";
-import { HealthFacility, Specialist, TypeHealthFacility } from "@/models";
-import {
-  schemaHealthFacilityBody,
-  schemaSpecialistBody,
-} from "@/schema-validate";
+import { Specialist } from "@/models";
+import { schemaSpecialistBody } from "@/schema-validate";
 
-import { VscSymbolNamespace } from "react-icons/vsc";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Space, UploadFile } from "antd";
+import { Button, Space } from "antd";
 import * as React from "react";
 import { useForm } from "react-hook-form";
-import useSWR from "swr";
-import {
-  InputField,
-  InputTextareaField,
-  InputUploadField,
-  SelectField,
-} from "../form";
+import { VscSymbolNamespace } from "react-icons/vsc";
+import { InputField, InputTextareaField } from "../form";
 
 import { AiOutlinePhone } from "react-icons/ai";
-import { CiLocationOn } from "react-icons/ci";
-import { GiHospitalCross } from "react-icons/gi";
-import { GoRepoForked } from "react-icons/go";
-import { MdOutlineMail } from "react-icons/md";
-import { HealthFacilityColumns } from "../admin-box";
 
 export interface BodyModalSpecialistProps {
   handleSubmitForm: (data: Partial<Specialist>) => Promise<boolean>;

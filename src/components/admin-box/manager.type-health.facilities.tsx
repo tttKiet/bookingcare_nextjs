@@ -1,6 +1,6 @@
 "use client";
 import { healthFacilitiesApi } from "@/api-services";
-import { API_TYPE_HEALTH_FACILITIES } from "@/api-services/contrains-api";
+import { API_TYPE_HEALTH_FACILITIES } from "@/api-services/constant-api";
 import { TypeHealthFacility } from "@/models";
 import { getErrorMessage } from "@/untils";
 import { ExclamationCircleFilled } from "@ant-design/icons";
@@ -13,6 +13,7 @@ import { BodyTypeHealth } from "../body-modal";
 import { ActionGroup } from "../box";
 import { ActionBox } from "../box/action.box";
 import { ModalPositionHere } from "../modal";
+import { BtnPlus } from "../button";
 const { confirm } = Modal;
 export interface ManagerTypeHealthFacilitesProps {}
 
@@ -150,19 +151,7 @@ export function ManagerTypeHealthFacilites(
       />
       <h3 className="gr-title-admin flex items-center justify-between">
         Loại bệnh viện
-        <span
-          onClick={toggleShowModalType}
-          className="cursor-pointer flex items-center justify-end gap-2 border border-pink-300
-            rounded-lg px-3 py-1 hover:text-pink-500
-            text-gray-900/80
-           transition-all duration-200"
-        >
-          <span className="mr-2 text-sm transition-all duration-200">Thêm</span>
-          <BsPlusSquareDotted
-            className="transition-all duration-200"
-            size={20}
-          />
-        </span>
+        <BtnPlus onClick={toggleShowModalType} />
       </h3>
       <div className="mt-3 ">
         {types && types.length > 0 ? (

@@ -3,7 +3,7 @@ import { healthFacilitiesApi } from "@/api-services";
 import {
   API_HEALTH_FACILITIES,
   API_TYPE_HEALTH_FACILITIES,
-} from "@/api-services/contrains-api";
+} from "@/api-services/constant-api";
 import { HealthFacility, TypeHealthFacility } from "@/models";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import { ExclamationCircleFilled } from "@ant-design/icons";
@@ -27,6 +27,7 @@ import BodyModalHealth, {
 import { ActionBox, ActionGroup } from "../box";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
+import { BtnPlus } from "../button";
 const { confirm } = Modal;
 
 export interface HealthFacilitiesBoxProps {}
@@ -391,21 +392,10 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
       />
       <h3 className="gr-title-admin mb-3 flex items-center justify-between">
         Cơ sở y tế
-        <span
+        <BtnPlus
+          title="Thêm cơ sở y tế"
           onClick={toggleShowModalAddHealthFacility}
-          className="cursor-pointer flex items-center justify-end gap-2 border border-pink-300
-              rounded-lg px-3 py-1 hover:text-pink-500
-              text-gray-900/80
-             transition-all duration-200"
-        >
-          <span className="mr-2 transition-all duration-200">
-            Thêm cơ sở y tế
-          </span>
-          <BsPlusSquareDotted
-            className="transition-all duration-200"
-            size={20}
-          />
-        </span>
+        />
       </h3>
       <TableSortFilter
         options={{

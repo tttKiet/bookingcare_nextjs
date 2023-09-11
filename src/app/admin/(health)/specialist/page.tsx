@@ -1,4 +1,4 @@
-import { ManagerSpecialist } from "@/components/admin";
+import { ManagerSpecialist } from "@/components/admin-box";
 import * as React from "react";
 
 export interface SpecialistAdminProps {}
