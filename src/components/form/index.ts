@@ -7,6 +7,7 @@ export * from "./radio-group-field";
 export * from "./select-field";
 export * from "./input-upload-field";
 export * from "./input-field-textarea";
+export * from "./input-field-textarea";
 
 export interface InputFieldProps {
   name: string;

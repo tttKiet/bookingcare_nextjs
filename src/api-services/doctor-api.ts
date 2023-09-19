@@ -1,21 +1,21 @@
 import { ResData } from "@/types";
 import axios from "../axios";
-import { Position } from "../models";
-import { API_POSITION } from "./constant-api";
+import { AcademicDegree } from "../models";
+import { API_ACEDEMIC_DEGREE } from "./constant-api";
 
 export const doctorApi = {
-  async createOrUpdatePosition({
+  async createOrUpdateAcademicDegree({
     name,
     id,
-  }: Partial<Position>): Promise<ResData> {
-    return await axios.post(API_POSITION, {
+  }: Partial<AcademicDegree>): Promise<ResData> {
+    return await axios.post(API_ACEDEMIC_DEGREE, {
       name,
       id,
     });
   },
 
-  async deletePosition({ id }: { id: string }): Promise<ResData> {
-    return await axios.delete(API_POSITION, {
+  async deleteAcademicDegree({ id }: { id: string }): Promise<ResData> {
+    return await axios.delete(API_ACEDEMIC_DEGREE, {
       data: {
         id,
       },

@@ -1,12 +1,12 @@
 "use client";
 
-import { healthFacilitiesApi } from "@/api-services";
-import { API_SPECIALIST } from "@/api-services/constant-api";
+import { healthFacilitiesApi, staffApi } from "@/api-services";
+import { API_ACCOUNT_STAFF, API_SPECIALIST } from "@/api-services/constant-api";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import { Button, Input, InputRef, Modal, Space } from "antd";
 import axios from "../../axios";
 
-import { Specialist } from "@/models";
+import { Specialist, Staff } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import type {
@@ -21,64 +21,87 @@ import * as React from "react";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
-import { BodyModalSpecialist } from "../body-modal";
 import { ActionGroup } from "../box";
 import { ActionBox } from "../box/action.box";
 import { BtnPlus } from "../button";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
+import { RegisterForm } from "../auth";
+import { BodyModalAccountDoctor } from "../body-modal";
 const { confirm } = Modal;
 
-type DataIndex = keyof Specialist;
+type DataIndex = keyof Staff;
 
-export function ManagerSpecialist() {
+export interface StaffResColumn extends Staff {
+  Specialist: Specialist;
+}
+
+export function ManagerAccountStaff() {
   // State components
-  const [specialistEdit, setSecialistEdit] =
-    React.useState<Partial<Specialist> | null>({
-      id: "",
-      descriptionDisease: "",
-      descriptionDoctor: "",
-      name: "",
-    });
+  const [accountEdit, setAccountEdit] = React.useState<Staff | null>();
 
-  const [showSpecialistCreateOrUpdate, setShowSpecialistCreateOrUpdate] =
+  const [showAccountCreateOrUpdateModal, setShowAccountCreateOrUpdateModal] =
     React.useState<boolean>(false);
 
   // Toggle show modal create or update
-  const toggleShowModalCreateOrUpdate = () => {
-    setShowSpecialistCreateOrUpdate((s) => {
+  const toggleShowAccountCreateOrUpdateModal = () => {
+    setShowAccountCreateOrUpdateModal((s) => {
       // s && setSecialistEdit(null);
       return !s;
     });
   };
 
-  async function submitFormCreateOrUpdateSpecialist(
-    data: Partial<Specialist>
-  ): Promise<boolean> {
-    const api = healthFacilitiesApi.createOrUpdateSpecialist(data);
+  async function submitFormCreateOrUpdateAccount({
+    address,
+    email,
+    id,
+    gender,
+    phone,
+    fullName,
+    password,
+    academicDegreeId,
+    certificate,
+    experience,
+    specialistId,
+    roleId,
+  }: Partial<Staff>): Promise<boolean> {
+    const api = staffApi.createOrUpdateDoctor({
+      address,
+      email,
+      id,
+      gender,
+      phone,
+      fullName,
+      password,
+      academicDegreeId,
+      certificate,
+      experience,
+      specialistId,
+      roleId,
+    });
     const isOk = await toastMsgFromPromise(api);
     if (isOk) {
-      setSecialistEdit(null);
-      mutateSpecialist();
+      setAccountEdit(null);
+      mutateStaff();
     }
     return isOk;
   }
 
-  function editSpecialist(record: Specialist): void {
-    setSecialistEdit(record);
-    toggleShowModalCreateOrUpdate();
+  function editAccount(record: Staff): void {
+    setAccountEdit(record);
+    toggleShowAccountCreateOrUpdateModal();
   }
 
-  function handleClickDeleteSpecialist(record: Specialist): void {
+  function handleClickDeleteAccount(record: Staff): void {
     confirm({
-      title: `Bạn có muốn xóa chuyên khoa "${record.name}"?`,
+      title: `Bạn có muốn xóa tài khoản"${record.fullName}"?`,
       icon: <ExclamationCircleFilled />,
-      content: `Thao tác này sẽ xóa tất cả dữ liệu về "${record.name}" và không thể khôi phục`,
+      content: `Thao tác này sẽ xóa tất cả dữ liệu về "${record.fullName}" và không thể khôi phục`,
       async onOk() {
-        const api = healthFacilitiesApi.deleteSpecialist({ id: record.id });
-        const isOk = await toastMsgFromPromise(api);
-        isOk && mutateSpecialist();
-        return isOk;
+        // const api = Staff.deletePosition({ id: record.id });
+        // const isOk = await toastMsgFromPromise(api);
+        // isOk && mutateStaff();
+        return true;
       },
       onCancel() {},
     });
@@ -96,8 +119,7 @@ export function ManagerSpecialist() {
       pageSize: 6,
     },
   });
-
-  const fetcher: BareFetcher<ResDataPaginations<Specialist>> = async ([
+  const fetcher: BareFetcher<ResDataPaginations<Staff>> = async ([
     url,
     token,
   ]) =>
@@ -109,13 +131,13 @@ export function ManagerSpecialist() {
       })
     ).data;
   const {
-    data: responseSpecialist,
-    mutate: mutateSpecialist,
+    data: responseStaff,
+    mutate: mutateStaff,
     error,
     isLoading,
-  } = useSWR<ResDataPaginations<Specialist>>(
+  } = useSWR<ResDataPaginations<Staff>>(
     [
-      API_SPECIALIST,
+      API_ACCOUNT_STAFF,
       {
         limit: tableParams.pagination.pageSize, // 4 page 2 => 3, 4 page 6 => 21
         offset:
@@ -129,15 +151,6 @@ export function ManagerSpecialist() {
       dedupingInterval: 5000,
     }
   );
-
-  const handleTableChange: TableProps<Specialist>["onChange"] = (
-    pagination,
-    filters
-  ) => {
-    setTableParams({
-      pagination,
-    });
-  };
 
   const handleReset = (clearFilters: () => void) => {
     clearFilters();
@@ -153,9 +166,16 @@ export function ManagerSpecialist() {
     confirm();
   };
 
-  const getColumnSearchProps = (
-    dataIndex: DataIndex
-  ): ColumnType<Specialist> => ({
+  const handleTableChange: TableProps<Staff>["onChange"] = (
+    pagination,
+    filters
+  ) => {
+    setTableParams({
+      pagination,
+    });
+  };
+
+  const getColumnSearchProps = (dataIndex: DataIndex): ColumnType<Staff> => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -245,43 +265,70 @@ export function ManagerSpecialist() {
     },
   });
 
-  const data = React.useMemo<Partial<Specialist>[]>(() => {
-    return responseSpecialist?.rows?.map((specialist: Specialist) => ({
-      ...specialist,
-      key: specialist.id,
-      id: specialist.id,
-      name: specialist.name,
-      descriptionDisease: specialist.descriptionDisease,
-      descriptionDoctor: specialist.descriptionDoctor,
-      createdAt: specialist.createdAt,
+  const data = React.useMemo<Partial<Staff>[]>(() => {
+    return responseStaff?.rows.map((staff: StaffResColumn) => ({
+      ...staff,
+      key: staff.id,
+      id: staff.id,
+      email: staff.email,
+      fullName: staff.fullName,
     }));
-  }, [responseSpecialist]);
+  }, [responseStaff]);
 
-  // Columns
-  const columns: ColumnsType<Specialist> = React.useMemo(() => {
+  const columnsStaff: ColumnsType<Staff> = React.useMemo(() => {
     return [
       {
         title: "Id",
         dataIndex: "id",
         key: "id",
-        render: (text) => <a>{text}</a>,
-        width: "16%",
+        render: (text) => (
+          <a className="text-ellipsis overflow-clip whitespace-nowrap pr-1 block">
+            {text}
+          </a>
+        ),
+        width: "120px",
       },
       {
-        title: "Tên chuyên khoa",
-        dataIndex: "name",
-        key: "name",
+        title: "Tên",
+        dataIndex: "fullName",
+        key: "fullName",
         render: (text) => <a>{text}</a>,
-        sorter: (a, b) => a.name.localeCompare(b.name),
-        ...getColumnSearchProps("name"),
+        sorter: (a, b) => a.fullName.localeCompare(b.fullName),
+      },
+      {
+        title: "Email",
+        dataIndex: "email",
+        key: "email",
+        render: (text) => <a>{text}</a>,
+        sorter: (a, b) => a.email.localeCompare(b.email),
+      },
+      {
+        title: "Số điện thoại",
+        dataIndex: "phone",
+        key: "phone",
+        render: (text) => <a>{text}</a>,
+        sorter: (a, b) => a.email.localeCompare(b.email),
+      },
+      {
+        title: "Chuyên khoa",
+        dataIndex: ["Specialist", "name"],
+        key: "Specialist.name",
+        render: (text) => <a>{text}</a>,
+        sorter: (a, b) => a.email.localeCompare(b.email),
+      },
+      {
+        title: "Học vị",
+        dataIndex: ["AcademicDegree", "name"],
+        key: "AcadamicDegree.name",
+        render: (text) => <a>{text}</a>,
+        sorter: (a, b) => a.email.localeCompare(b.email),
       },
       {
         title: "Ngày tạo",
         dataIndex: "createdAt",
         key: "createdAt",
-        render: (text) => <a>{moment(text).calendar()}</a>,
-        sorter: (a, b) => a.name.localeCompare(b.name),
-        // ...getColumnSearchProps("createdAt"),
+        render: (text) => <a>{moment(text).locale("vi").calendar()}</a>,
+        sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
       },
       {
         title: "Hành động",
@@ -289,14 +336,15 @@ export function ManagerSpecialist() {
         render: (_, record) => {
           return (
             <ActionGroup className="justify-start">
-              <ActionBox type="edit" onClick={() => editSpecialist(record)} />
+              <ActionBox type="edit" onClick={() => editAccount(record)} />
               <ActionBox
                 type="delete"
-                onClick={() => handleClickDeleteSpecialist(record)}
+                onClick={() => handleClickDeleteAccount(record)}
               />
             </ActionGroup>
           );
         },
+        width: "150px",
       },
     ];
   }, [getColumnSearchProps]);
@@ -304,31 +352,31 @@ export function ManagerSpecialist() {
   return (
     <div className="p-4 px-6">
       <ModalPositionHere
-        show={showSpecialistCreateOrUpdate}
+        show={showAccountCreateOrUpdateModal}
         toggle={() => {
-          toggleShowModalCreateOrUpdate();
+          toggleShowAccountCreateOrUpdateModal();
         }}
+        width={800}
         footer={false}
         body={
-          <BodyModalSpecialist
-            clickCancel={toggleShowModalCreateOrUpdate}
-            handleSubmitForm={submitFormCreateOrUpdateSpecialist}
-            obEditSpecialist={specialistEdit}
+          <BodyModalAccountDoctor
+            clickCancel={toggleShowAccountCreateOrUpdateModal}
+            handleSubmitForm={submitFormCreateOrUpdateAccount}
+            obEditStaff={accountEdit}
           />
         }
-        width={720}
         title={
-          specialistEdit?.id
-            ? `Sửa chuyên khoa * ${specialistEdit.name} *`
-            : "Thêm mới chuyên khoa"
+          accountEdit?.id
+            ? `Sửa tài khoản * ${accountEdit.email} *`
+            : "Thêm mới tài khoản"
         }
       />
       <h3 className="gr-title-admin flex items-center justify-between  mb-3">
-        Chuyên khoa
+        Tài khoản bác sỉ
         <BtnPlus
           onClick={() => {
-            toggleShowModalCreateOrUpdate();
-            setSecialistEdit(null);
+            toggleShowAccountCreateOrUpdateModal();
+            setAccountEdit(null);
           }}
         />
       </h3>
@@ -337,37 +385,15 @@ export function ManagerSpecialist() {
           sticky: true,
           loading: isLoading,
           pagination: {
-            total: responseSpecialist?.count,
+            total: responseStaff?.count,
             pageSize: tableParams.pagination.pageSize,
             showSizeChanger: true,
             pageSizeOptions: ["3", "6", "12", "24", "50"],
           },
-          onChange: handleTableChange,
           showSorterTooltip: false,
-          expandedRowRender: (record) => (
-            <div className="m-0 px-4 mx-[32px]">
-              <div className="grid grid-cols-2 gap-4  text-[rgba(0, 0, 0, 0.88)] rounded-lg shadow-sm ">
-                <div className="">
-                  <h4 className="text-black mb-3 font-medium">
-                    Mô tả căn bệnh
-                  </h4>
-                  <p className="mx-[-30px] p-[30px] p-y-[20px] rounded bg-white rounded-l-lg">
-                    {record.descriptionDisease}
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-black mb-3 font-medium">
-                    Mô tả bác sỉ chửa bệnh
-                  </h4>
-                  <p className="mx-[-30px] p-[30px] p-y-[20px] rounded bg-white rounded-r-lg">
-                    {record.descriptionDoctor}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ),
+          onChange: handleTableChange,
         }}
-        columns={columns}
+        columns={columnsStaff}
         data={data}
       />
     </div>

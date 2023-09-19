@@ -1,28 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface LoginProfile {
+  id: string;
   fullname: string;
   email: string;
   Role: {
     id: string;
     keyType: string;
-  };
+  } | null;
   address: string;
   gender: string;
-  position: string;
   createdAt: string;
 }
 
-const initialState = {
+const initialState: LoginProfile = {
+  id: "",
   fullname: "",
   email: "",
-  Role: {
-    id: "",
-    keyType: "",
-  },
+  Role: null,
   address: "",
   gender: "",
-  position: "",
   createdAt: "",
 };
 
@@ -31,24 +28,21 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     loginStore(state: LoginProfile, payload) {
+      state.id = payload.payload.id;
       state.fullname = payload.payload.fullname;
       state.email = payload.payload.email;
-      state.Role = payload.payload.Role;
+      state.Role = payload.payload?.Role || null;
       state.address = payload.payload.address;
       state.gender = payload.payload.gender;
-      state.position = payload.payload.position;
       state.createdAt = payload.payload.createdAt;
     },
     logoutStore(state) {
+      state.id = "";
       state.fullname = "";
       state.email = "";
-      state.Role = {
-        id: "",
-        keyType: "",
-      };
+      state.Role = null;
       state.address = "";
       state.gender = "";
-      state.position = "";
       state.createdAt = "";
     },
   },

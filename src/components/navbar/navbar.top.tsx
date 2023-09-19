@@ -3,7 +3,6 @@
 import { userApi } from "@/api-services";
 import { useAuth } from "@/hooks";
 import { menuNavLink } from "@/list";
-import { RegisterFormInterface } from "@/types/auth";
 import axios from "axios";
 import Link from "next/link";
 import { useState } from "react";
@@ -19,6 +18,7 @@ import { Profile } from "../common";
 import { ContactItem } from "../contact";
 import { ModalPositionHere } from "../modal";
 import { NavBarMobile } from "./navbar.mobile.right";
+import { User } from "@/models";
 type Props = {};
 
 const NavBarTop = () => {
@@ -75,9 +75,8 @@ const NavBarTop = () => {
     }
     return isOk;
   }
-
   // Handle register
-  async function handleRegister(data: RegisterFormInterface): Promise<boolean> {
+  async function handleRegister(data: Partial<User>): Promise<boolean> {
     try {
       const res = await userApi.register(data);
       toast.success("Đăng ký thành công");
@@ -110,8 +109,9 @@ const NavBarTop = () => {
     setShowModalRegister((s) => !s);
   }
 
-  // toggle show modal both login and register. Besides login and register are show single
+  // Toggle show modal both login and register. Besides login and register are show single
   function toggleShowModalFromForm() {
+    console.log("toggleShowModalFromForm");
     toggleShowModal();
     toggleShowModalRegister();
   }

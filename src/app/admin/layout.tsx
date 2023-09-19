@@ -26,7 +26,6 @@ export default function RootLayout({
 }) {
   const url = usePathname();
   const { profile } = useAuth();
-  console.log("profile", profile);
   const breadcrumbArraySplit = url.toString().split("/");
   const breadcrumbArray = breadcrumbArraySplit.map((path, index, arrayThis) => {
     return {
@@ -84,10 +83,8 @@ export default function RootLayout({
         icon: <LiaUserNurseSolid size={20} />,
         children: [
           {
-            key: "/admin/position",
-            label: (
-              <Link href="/admin/position">Quản lý vị trí, danh hiệu</Link>
-            ),
+            key: "/admin/academic-degree",
+            label: <Link href="/admin/academic-degree">Quản lý học vị</Link>,
             icon: <MdSupervisorAccount size={20} />,
           },
         ],

@@ -1,7 +1,7 @@
-import { LoginPayLoad } from "@/models";
+import { LoginPayLoad, User } from "@/models";
 import axios from "../axios";
 import { ResData } from "@/types";
-import { RegisterFormInterface } from "@/types/auth";
+import { API_ACCOUNT_USER } from "./constant-api";
 
 export const userApi = {
   async register({
@@ -11,14 +11,16 @@ export const userApi = {
     fullName,
     phone,
     gender,
-  }: RegisterFormInterface): Promise<ResData> {
-    return await axios.post("/api/v1/user/register", {
+    id,
+  }: Partial<User>): Promise<ResData> {
+    return await axios.post(API_ACCOUNT_USER, {
       email,
       password,
       address,
       fullName,
       phone,
       gender,
+      id,
     });
   },
 };

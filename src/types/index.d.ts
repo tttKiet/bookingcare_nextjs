@@ -1,3 +1,5 @@
+import { User, AcademicDegree, Specialist, Role, Staff } from "@/models";
+
 export {};
 
 declare global {
@@ -23,4 +25,10 @@ export interface ResDataPaginations<T> {
 export interface MenuItem {
   title: string;
   href: string;
+}
+
+export interface StaffAccountRes extends Staff {
+  AcademicDegree: typeof AcademicDegree;
+  Specialist: typeof Specialist;
+  Role: typeof Role;
 }

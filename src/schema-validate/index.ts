@@ -95,3 +95,33 @@ export const schemaSpecialistBody = yup.object().shape({
     .required("Vui lòng điền mô tả của bác sỉ.")
     .max(1000, "Chỉ được điền từ đến 1000 kí tự tối đa."),
 });
+
+export const schemaStaffBody = yup.object().shape({
+  fullName: yup.string().required("Vui lòng điền tên nhân viên."),
+  email: yup
+    .string()
+    .required("Vui lòng điền email.")
+    .email("Email không đúng định dạng."),
+
+  phone: yup
+    .string()
+    .required("Vui lòng số điện thoại.")
+    .test("phone", "Số điện thoại không đúng định dạng.", function (value) {
+      const phoneRegExp = /^\+?[0-9]{10,}$/; // Định dạng số điện thoại, ví dụ: +84912345678 hoặc 0912345678
+      return phoneRegExp.test(value);
+    }),
+  password: yup.string().required("Vui lòng điền mật khẩu."),
+  rePassword: yup
+    .string()
+    .required("Vui lòng nhập lại mật khẩu.")
+    .test("match", "Mật khẩu nhập lại không đúng.", function (value) {
+      return value === this.parent.password;
+    }),
+  roleId: yup.string().required("Vui lòng chọn quyền nhân viên"),
+  address: yup.string().required("Vui lòng nhập địa chỉ."),
+  gender: yup.string().required("Vui lòng chọn giới tính."),
+  academicDegreeId: yup.string().required("Vui lòng chọn vị trí , danh hiệu."),
+  specialistId: yup.string().required("Vui lòng chọn chuyên khoa."),
+  experience: yup.string().required("Vui lòng điền kinh nghiệm làm việc."),
+  certificate: yup.string().required("Vui lòng điền bằng cấp."),
+});

@@ -1,6 +1,5 @@
 // import { schemaValidateRegister } from "@/schema-validate";
 import { schemaValidateRegister } from "@/schema-validate";
-import { RegisterFormInterface } from "@/types/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Space } from "antd";
 import Link from "next/link";
@@ -8,13 +7,17 @@ import { useForm } from "react-hook-form";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { TbLockSquareRounded } from "react-icons/tb";
 import { CheckBoxField, InputField, RadioGroupField } from "../form";
+import { useAuth } from "@/hooks";
+import { useEffect } from "react";
+import { User } from "@/models";
 export interface RegisterFormProps {
-  handleRegister: (data: RegisterFormInterface) => Promise<boolean>;
+  handleRegister: (data: Partial<User>) => Promise<boolean>;
   cancelModal: () => void;
   loading?: boolean;
   handleClickLogin: () => void;
   cancelText?: string;
   okText?: string;
+  obUserEdit?: User | null;
 }
 
 export function RegisterForm({
@@ -24,11 +27,14 @@ export function RegisterForm({
   okText,
   loading,
   handleClickLogin,
+  obUserEdit,
 }: RegisterFormProps) {
   const {
     control,
     handleSubmit,
     formState: { isSubmitted, isSubmitting },
+    setValue,
+    reset,
   } = useForm({
     defaultValues: {
       email: "",
@@ -43,12 +49,66 @@ export function RegisterForm({
     resolver: yupResolver(schemaValidateRegister),
   });
 
-  async function handleRegisterSubmit(data: any) {
-    const isOk = await handleRegister(data);
-    if (isOk) {
-      control._reset();
+  const { profile } = useAuth();
+  console.log("profile", profile);
+
+  async function handleRegisterSubmit({
+    address,
+    email,
+    id,
+    gender,
+    phone,
+    fullName,
+    password,
+  }: Partial<User>) {
+    const isOk = await handleRegister({
+      address,
+      email,
+      id: obUserEdit?.id,
+      gender,
+      phone,
+      fullName,
+      password,
+    });
+    if (isOk && profile?.Role?.keyType === "admin") {
+      cancelModal();
+      reset({
+        email: "",
+        password: "",
+        phone: "",
+        rePassword: "",
+        address: "",
+        fullName: "",
+        gender: "",
+        checkTerm: false,
+      });
     }
   }
+
+  useEffect(() => {
+    if (profile?.Role?.keyType === "admin") {
+      setValue("checkTerm", true);
+    }
+  }, [profile?.Role?.keyType, profile]);
+
+  useEffect(() => {
+    if (obUserEdit) {
+      reset({
+        ...obUserEdit,
+        rePassword: obUserEdit.password,
+      });
+    } else {
+      reset({
+        email: "",
+        password: "",
+        phone: "",
+        rePassword: "",
+        address: "",
+        fullName: "",
+        gender: "",
+      });
+    }
+  }, [obUserEdit]);
 
   return (
     <form
@@ -60,7 +120,11 @@ export function RegisterForm({
           <InputField
             control={control}
             name="fullName"
-            label="Họ, tên của bạn"
+            label={
+              profile?.Role?.keyType === "admin"
+                ? "Họ, tên tài khoản"
+                : "Họ, tên của bạn"
+            }
             icon={<MdOutlineMailOutline />}
           />
           <InputField
@@ -108,33 +172,36 @@ export function RegisterForm({
             icon={<TbLockSquareRounded />}
           />
         </div>
-        <div className="grid grid-cols-1 mt-4">
-          <CheckBoxField
-            control={control}
-            name="checkTerm"
-            label={
-              <span>
-                Bằng cách đăng ký, bạn đồng ý với các
-                <Link href="#" className="text-blue-500 px-1">
-                  điều khoản
-                </Link>
-                của chúng tôi.
-              </span>
-            }
-          />
-        </div>
       </div>
-
-      <div className="flex items-center ">
-        <h4>Bạn đã có tài khoản?</h4>
-        <button
-          className="text-blue-600 ml-2"
-          onClick={handleClickLogin}
-          type="button"
-        >
-          Đăng nhập ngay.
-        </button>
-      </div>
+      {profile.role === "user" && handleClickLogin && (
+        <>
+          <div className="grid grid-cols-1 mt-4">
+            <CheckBoxField
+              control={control}
+              name="checkTerm"
+              label={
+                <span>
+                  Bằng cách đăng ký, bạn đồng ý với các
+                  <Link href="#" className="text-blue-500 px-1">
+                    điều khoản
+                  </Link>
+                  của chúng tôi.
+                </span>
+              }
+            />
+          </div>
+          <div className="flex items-center ">
+            <h4>Bạn đã có tài khoản?</h4>
+            <button
+              className="text-blue-600 ml-2"
+              onClick={handleClickLogin}
+              type="button"
+            >
+              Đăng nhập ngay.
+            </button>
+          </div>
+        </>
+      )}
 
       <div className="flex items-center gap-2 justify-end mt-2  border-t pt-[20px]">
         <Button type="text" size="middle" onClick={cancelModal}>
@@ -147,7 +214,7 @@ export function RegisterForm({
             loading={isSubmitting}
             htmlType="submit"
           >
-            {okText ? okText : "Đăng ký"}
+            {okText ? okText : "Tạo tài khoản"}
           </Button>
         </Space>
       </div>

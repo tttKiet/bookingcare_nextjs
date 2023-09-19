@@ -26,7 +26,7 @@ export interface Specialist {
   updatedAt: string;
 }
 
-export interface Position {
+export interface AcademicDegree {
   id: string;
   name: string;
   createdAt: string;

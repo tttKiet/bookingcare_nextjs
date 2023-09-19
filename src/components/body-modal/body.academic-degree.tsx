@@ -4,11 +4,11 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { InputField } from "../form";
 import { Button, Space } from "antd";
-import { Position } from "@/models";
-export const schemaPosition = yup.object().shape({
-  name: yup.string().required("Bạn chưa điền tên vị trí, danh hiệu."),
+import { AcademicDegree } from "@/models";
+export const schemaAcademicDegree = yup.object().shape({
+  name: yup.string().required("Bạn chưa điền tên học vị."),
 });
-export interface BodyModalPositionProps {
+export interface BodyModalAcademicDegreeProps {
   handleSubmitForm: ({
     name,
     id,
@@ -18,15 +18,15 @@ export interface BodyModalPositionProps {
   }) => Promise<boolean>;
   clickCancel: () => void;
   loading?: boolean;
-  obPositionEdit: Partial<Position> | null;
+  obAcademicDegreeEdit: Partial<AcademicDegree> | null;
 }
 
-export function BodyModalPosition({
+export function BodyModalAcademicDegree({
   handleSubmitForm,
   clickCancel,
   loading = false,
-  obPositionEdit,
-}: BodyModalPositionProps) {
+  obAcademicDegreeEdit,
+}: BodyModalAcademicDegreeProps) {
   const {
     control,
     handleSubmit,
@@ -36,14 +36,14 @@ export function BodyModalPosition({
     defaultValues: {
       name: "",
     },
-    resolver: yupResolver(schemaPosition),
+    resolver: yupResolver(schemaAcademicDegree),
   });
   React.useEffect(() => {
-    reset({ name: obPositionEdit?.name || "" });
-  }, [obPositionEdit?.name, reset]);
+    reset({ name: obAcademicDegreeEdit?.name || "" });
+  }, [obAcademicDegreeEdit?.name, reset]);
 
   async function handleSubmitLocal({ name }: { name: string }) {
-    const isOk = await handleSubmitForm({ name, id: obPositionEdit?.id });
+    const isOk = await handleSubmitForm({ name, id: obAcademicDegreeEdit?.id });
     if (isOk) {
       control._reset({
         name: "",
@@ -55,9 +55,9 @@ export function BodyModalPosition({
     <form onSubmit={handleSubmit(handleSubmitLocal)} className="pt-4">
       <InputField
         control={control}
-        label="Tên vị trí, danh hiệu"
+        label="Tên học vị"
         name="name"
-        placeholder="Nhập tên vị trí, danh hiệu"
+        placeholder="Nhập tên học vị"
       />
       <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
         <Button type="default" size="middle" onClick={clickCancel}>
@@ -71,7 +71,7 @@ export function BodyModalPosition({
             // onClick={() => true}
             htmlType="submit"
           >
-            {obPositionEdit?.id ? "Lưu" : "Thêm"}
+            {obAcademicDegreeEdit?.id ? "Lưu" : "Thêm"}
           </Button>
         </Space>
       </div>

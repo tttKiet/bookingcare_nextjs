@@ -237,7 +237,7 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
     setObEditHealthFacility(null);
   }
   function handleClickEditHealthFacility(record: HealthFacilityColumns) {
-    setObEditHealthFacility({ ...record });
+    setObEditHealthFacility(() => ({ ...record }));
     toggleShowModalAddHealthFacility();
   }
   function handleClickDeleteHealthFacility(
@@ -297,7 +297,7 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
         render: (text) => <a>{text}</a>,
       },
       {
-        title: "Tạo ngày",
+        title: "Ngày tạo",
         dataIndex: "createdAt",
         key: "createdAt",
         render: (text) => <a>{moment(text).locale("vi").calendar()}</a>,

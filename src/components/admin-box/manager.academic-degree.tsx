@@ -1,12 +1,12 @@
 "use client";
 
 import { doctorApi } from "@/api-services";
-import { API_POSITION } from "@/api-services/constant-api";
+import { API_ACEDEMIC_DEGREE } from "@/api-services/constant-api";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import { Button, Input, InputRef, Modal, Space } from "antd";
 import axios from "../../axios";
 
-import { Position } from "@/models";
+import { AcademicDegree } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import type {
@@ -20,61 +20,64 @@ import * as React from "react";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
-import { BodyModalPosition } from "../body-modal";
+import { BodyModalAcademicDegree } from "../body-modal";
 import { ActionGroup } from "../box";
 import { ActionBox } from "../box/action.box";
 import { BtnPlus } from "../button";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
+import moment from "moment";
 const { confirm } = Modal;
 
-type DataIndex = keyof Position;
+type DataIndex = keyof AcademicDegree;
 
-export function ManagerPosition() {
+export function ManagerAcademicDegree() {
   // State components
-  const [positionEdit, setPositionEdit] =
-    React.useState<Partial<Position> | null>({
+  const [academicDegreeEdit, setAcademicDegreeEdit] =
+    React.useState<Partial<AcademicDegree> | null>({
       id: "",
       name: "",
     });
 
-  const [showPositionCreateOrUpdateModal, setShowPositionCreateOrUpdateModal] =
-    React.useState<boolean>(false);
+  const [
+    showAcademicDegreeCreateOrUpdateModal,
+    setShowAcademicDegreeCreateOrUpdateModal,
+  ] = React.useState<boolean>(false);
 
   // Toggle show modal create or update
-  const toggleShowPositionCreateOrUpdateModal = () => {
-    setShowPositionCreateOrUpdateModal((s) => {
+  const toggleShowAcademicDegreeCreateOrUpdateModal = () => {
+    setShowAcademicDegreeCreateOrUpdateModal((s) => {
       // s && setSecialistEdit(null);
       return !s;
     });
   };
 
-  async function submitFormCreateOrUpdatePosition(
-    data: Partial<Position>
+  async function submitFormCreateOrUpdateAcademicDegree(
+    data: Partial<AcademicDegree>
   ): Promise<boolean> {
-    const api = doctorApi.createOrUpdatePosition(data);
+    const api = doctorApi.createOrUpdateAcademicDegree(data);
     const isOk = await toastMsgFromPromise(api);
     if (isOk) {
-      setPositionEdit(null);
-      mutatePosition();
+      setAcademicDegreeEdit(null);
+      mutateAcademicDegree();
     }
     return isOk;
   }
 
-  function editPosition(record: Position): void {
-    setPositionEdit(record);
-    toggleShowPositionCreateOrUpdateModal();
+  function editAcademicDegree(record: AcademicDegree): void {
+    setAcademicDegreeEdit(record);
+    toggleShowAcademicDegreeCreateOrUpdateModal();
   }
 
-  function handleClickDeletePosition(record: Position): void {
+  function handleClickDeleteAcademicDegree(record: AcademicDegree): void {
     confirm({
-      title: `Bạn có muốn xóa vị trí, danh hiệu "${record.name}"?`,
+      title: `Bạn có muốn xóa học vị "${record.name}"?`,
       icon: <ExclamationCircleFilled />,
       content: `Thao tác này sẽ xóa tất cả dữ liệu về "${record.name}" và không thể khôi phục`,
       async onOk() {
-        const api = doctorApi.deletePosition({ id: record.id });
+        const api = doctorApi.deleteAcademicDegree({ id: record.id });
         const isOk = await toastMsgFromPromise(api);
-        isOk && mutatePosition();
+        isOk && mutateAcademicDegree();
         return isOk;
       },
       onCancel() {},
@@ -93,7 +96,7 @@ export function ManagerPosition() {
       pageSize: 6,
     },
   });
-  const fetcher: BareFetcher<ResDataPaginations<Position>> = async ([
+  const fetcher: BareFetcher<ResDataPaginations<AcademicDegree>> = async ([
     url,
     token,
   ]) =>
@@ -105,13 +108,13 @@ export function ManagerPosition() {
       })
     ).data;
   const {
-    data: responsePosition,
-    mutate: mutatePosition,
+    data: responseAcademicDegree,
+    mutate: mutateAcademicDegree,
     error,
     isLoading,
-  } = useSWR<ResDataPaginations<Position>>(
+  } = useSWR<ResDataPaginations<AcademicDegree>>(
     [
-      API_POSITION,
+      API_ACEDEMIC_DEGREE,
       {
         limit: tableParams.pagination.pageSize, // 4 page 2 => 3, 4 page 6 => 21
         offset:
@@ -140,7 +143,7 @@ export function ManagerPosition() {
     confirm();
   };
 
-  const handleTableChange: TableProps<Position>["onChange"] = (
+  const handleTableChange: TableProps<AcademicDegree>["onChange"] = (
     pagination,
     filters
   ) => {
@@ -151,7 +154,7 @@ export function ManagerPosition() {
 
   const getColumnSearchProps = (
     dataIndex: DataIndex
-  ): ColumnType<Position> => ({
+  ): ColumnType<AcademicDegree> => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -241,17 +244,19 @@ export function ManagerPosition() {
     },
   });
 
-  const data = React.useMemo<Partial<Position>[]>(() => {
-    return responsePosition?.rows.map((position: Position) => ({
-      ...position,
-      key: position.id,
-      id: position.id,
-      name: position.name,
-    }));
-  }, [responsePosition]);
+  const data = React.useMemo<Partial<AcademicDegree>[]>(() => {
+    return responseAcademicDegree?.rows.map(
+      (academicDegree: AcademicDegree) => ({
+        ...academicDegree,
+        key: academicDegree.id,
+        id: academicDegree.id,
+        name: academicDegree.name,
+      })
+    );
+  }, [responseAcademicDegree]);
 
   // Columns
-  const columns: ColumnsType<Position> = React.useMemo(() => {
+  const columns: ColumnsType<AcademicDegree> = React.useMemo(() => {
     return [
       {
         title: "Id",
@@ -261,7 +266,7 @@ export function ManagerPosition() {
         width: "16%",
       },
       {
-        title: "Tên chuyên khoa",
+        title: "Tên học vị",
         dataIndex: "name",
         key: "name",
         render: (text) => <a>{text}</a>,
@@ -269,15 +274,25 @@ export function ManagerPosition() {
         ...getColumnSearchProps("name"),
       },
       {
+        title: "Ngày tạo",
+        dataIndex: "createdAt",
+        key: "createdAt",
+        render: (text) => <a>{moment(text).locale("vi").calendar()}</a>,
+        sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
+      },
+      {
         title: "Hành động",
         key: "action",
         render: (_, record) => {
           return (
             <ActionGroup className="justify-start">
-              <ActionBox type="edit" onClick={() => editPosition(record)} />
+              <ActionBox
+                type="edit"
+                onClick={() => editAcademicDegree(record)}
+              />
               <ActionBox
                 type="delete"
-                onClick={() => handleClickDeletePosition(record)}
+                onClick={() => handleClickDeleteAcademicDegree(record)}
               />
             </ActionGroup>
           );
@@ -289,30 +304,30 @@ export function ManagerPosition() {
   return (
     <div className="p-4 px-6">
       <ModalPositionHere
-        show={showPositionCreateOrUpdateModal}
+        show={showAcademicDegreeCreateOrUpdateModal}
         toggle={() => {
-          toggleShowPositionCreateOrUpdateModal();
+          toggleShowAcademicDegreeCreateOrUpdateModal();
         }}
         footer={false}
         body={
-          <BodyModalPosition
-            clickCancel={toggleShowPositionCreateOrUpdateModal}
-            handleSubmitForm={submitFormCreateOrUpdatePosition}
-            obPositionEdit={positionEdit}
+          <BodyModalAcademicDegree
+            clickCancel={toggleShowAcademicDegreeCreateOrUpdateModal}
+            handleSubmitForm={submitFormCreateOrUpdateAcademicDegree}
+            obAcademicDegreeEdit={academicDegreeEdit}
           />
         }
         title={
-          positionEdit?.id
-            ? `Sửa vị trí, danh hiệu * ${positionEdit.name} *`
-            : "Thêm mới vị trí, danh hiệu"
+          academicDegreeEdit?.id
+            ? `Sửa học vị * ${academicDegreeEdit.name} *`
+            : "Thêm mới học vị"
         }
       />
       <h3 className="gr-title-admin flex items-center justify-between  mb-3">
-        Vị trí, danh hiệu bác sỉ
+        học vị bác sỉ
         <BtnPlus
           onClick={() => {
-            toggleShowPositionCreateOrUpdateModal();
-            setPositionEdit(null);
+            toggleShowAcademicDegreeCreateOrUpdateModal();
+            setAcademicDegreeEdit(null);
           }}
         />
       </h3>
@@ -321,7 +336,7 @@ export function ManagerPosition() {
           sticky: true,
           loading: isLoading,
           pagination: {
-            total: responsePosition?.count,
+            total: responseAcademicDegree?.count,
             pageSize: tableParams.pagination.pageSize,
             showSizeChanger: true,
             pageSizeOptions: ["3", "6", "12", "24", "50"],

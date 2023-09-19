@@ -67,7 +67,7 @@ export default function BodyModalHealth({
         };
       }) || ["Loi"],
     });
-  }, [obEditHealthFacility?.id]);
+  }, [obEditHealthFacility?.id, obEditHealthFacility]);
 
   async function handleSubmitLocal({
     name,
@@ -87,7 +87,7 @@ export default function BodyModalHealth({
       id: obEditHealthFacility?.id,
     });
     if (isOk) {
-      control._reset();
+      reset({});
       clickCancel();
     }
     return false;

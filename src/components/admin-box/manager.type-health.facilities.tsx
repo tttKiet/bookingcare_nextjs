@@ -104,7 +104,7 @@ export function ManagerTypeHealthFacilites(
       title: `Bạn có muốn xóa loại "${type.name}"?`,
       icon: <ExclamationCircleFilled />,
       content: `Thao tác này sẽ xóa tất cả dữ liệu về "${type.name}" và không thể khôi phục`,
-      onOk() {
+      async onOk() {
         return healthFacilitiesApi
           .deleteTypeHealthFacility({ id: type.id })
           .then((res) => {

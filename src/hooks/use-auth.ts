@@ -29,11 +29,9 @@ export function useAuth(options?: Partial<PublicConfiguration>) {
         loginStore({
           email: data.email,
           fullname: data.fullname,
-          Role: data.Role,
+          Role: data?.Role || null,
           address: data.address,
           gender: data.gender,
-          // position dont match
-          position: "",
           createdAt: data.createdAt,
         })
       );
@@ -53,7 +51,7 @@ export function useAuth(options?: Partial<PublicConfiguration>) {
     password: string;
   }): Promise<ResData> {
     const res = await authApi.login({ email, password });
-    if (res?.user?.role?.keyType === "admin") {
+    if (res?.user?.role) {
       router.push("/admin");
     }
 

@@ -11,7 +11,9 @@ export interface SelectFieldProps {
   control: Control<any>;
   icon?: React.ReactNode;
   width?: number;
+  placeholder?: string;
   options: DefaultOptionType[] | undefined;
+  onChangeParent?: (e: Event) => void;
 }
 
 export function SelectField({
@@ -22,6 +24,8 @@ export function SelectField({
   options,
   icon,
   width,
+  placeholder,
+  onChangeParent,
 }: SelectFieldProps) {
   const {
     field: { onChange, onBlur, value, ref },
@@ -30,6 +34,17 @@ export function SelectField({
     name,
     control,
   });
+
+  const onSearch = (value: string) => {
+    console.log("search:", value);
+  };
+
+  const filterOption: any = (
+    input: string,
+    option: { label: string; value: string }
+  ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+
+  const refSelect = React.useRef();
   return (
     <div
       className={`border rounded-lg border-while py-2 px-3 pt-8 relative col-span-1 ${
@@ -44,11 +59,31 @@ export function SelectField({
       </label>
       <div className="flex items-center gap-1 relative">
         <Select
-          defaultValue={""}
+          // defaultValue={""}
           value={value}
           style={{ width: width || 160 }}
-          onChange={onChange}
+          onChange={(e) => {
+            onChange(e);
+            onChangeParent && onChangeParent(e);
+          }}
+          placeholder={
+            placeholder ||
+            `Chọn ${
+              typeof label === "string" ? label?.toLocaleLowerCase() : label
+            } ...`
+          }
+          virtual={false}
+          showSearch
+          optionFilterProp="children"
+          notFoundContent={<div>Khônng tìm thây...</div>}
+          // listHeight={260}
+          // tokenSeparators={[","]}
+          // dropdownStyle={{ position: "fixed" }}
+          getPopupContainer={(triggerNode) => triggerNode.parentElement}
+          // ref={refSelect.current}
+          // getPopupContainer={() => refSelect.current || document.body}
           options={options}
+          filterOption={filterOption}
         />
         <span className="flex items-center absolute right-1 text-xl">
           {icon}
