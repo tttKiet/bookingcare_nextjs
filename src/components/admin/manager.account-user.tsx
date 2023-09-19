@@ -27,6 +27,7 @@ import { BtnPlus } from "../button";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
 import { RegisterForm } from "../auth";
+import toast from "react-hot-toast";
 const { confirm } = Modal;
 
 type DataIndex = keyof User;
@@ -86,6 +87,7 @@ export function ManagerAccountUser() {
         // const api = user.deletePosition({ id: record.id });
         // const isOk = await toastMsgFromPromise(api);
         // isOk && mutateUser();
+        toast("Cập nhật sau.");
         return true;
       },
       onCancel() {},
@@ -93,6 +95,10 @@ export function ManagerAccountUser() {
   }
 
   // Table
+  const [queryParams, setQueryParams] = React.useState<Partial<User>>({
+    fullName: "",
+    email: "",
+  });
   const [searchText, setSearchText] = React.useState("");
   const [searchedColumn, setSearchedColumn] = React.useState("");
   const searchInput = React.useRef<InputRef>(null);
@@ -121,6 +127,7 @@ export function ManagerAccountUser() {
     [
       API_ACCOUNT_USER,
       {
+        ...queryParams,
         limit: tableParams.pagination.pageSize, // 4 page 2 => 3, 4 page 6 => 21
         offset:
           ((tableParams.pagination.current || 0) - 1) *
@@ -155,6 +162,10 @@ export function ManagerAccountUser() {
     setTableParams({
       pagination,
     });
+    setQueryParams((prev) => ({
+      ...prev,
+      ...filters,
+    }));
   };
 
   const getColumnSearchProps = (dataIndex: DataIndex): ColumnType<User> => ({
@@ -276,6 +287,7 @@ export function ManagerAccountUser() {
         key: "fullName",
         render: (text) => <a>{text}</a>,
         sorter: (a, b) => a.fullName.localeCompare(b.fullName),
+        ...getColumnSearchProps("fullName"),
       },
       {
         title: "Email",
@@ -283,6 +295,7 @@ export function ManagerAccountUser() {
         key: "email",
         render: (text) => <a>{text}</a>,
         sorter: (a, b) => a.email.localeCompare(b.email),
+        ...getColumnSearchProps("email"),
       },
       {
         title: "Số điện thoại",

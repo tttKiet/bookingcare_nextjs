@@ -130,6 +130,10 @@ export function ManagerAccountStaff() {
         },
       })
     ).data;
+  const [queryParams, setQueryParams] = React.useState<Partial<Staff>>({
+    fullName: "",
+    email: "",
+  });
   const {
     data: responseStaff,
     mutate: mutateStaff,
@@ -139,6 +143,7 @@ export function ManagerAccountStaff() {
     [
       API_ACCOUNT_STAFF,
       {
+        ...queryParams,
         limit: tableParams.pagination.pageSize, // 4 page 2 => 3, 4 page 6 => 21
         offset:
           ((tableParams.pagination.current || 0) - 1) *
@@ -173,6 +178,10 @@ export function ManagerAccountStaff() {
     setTableParams({
       pagination,
     });
+    setQueryParams((prev) => ({
+      ...prev,
+      ...filters,
+    }));
   };
 
   const getColumnSearchProps = (dataIndex: DataIndex): ColumnType<Staff> => ({
@@ -294,6 +303,7 @@ export function ManagerAccountStaff() {
         key: "fullName",
         render: (text) => <a>{text}</a>,
         sorter: (a, b) => a.fullName.localeCompare(b.fullName),
+        ...getColumnSearchProps("fullName"),
       },
       {
         title: "Email",
@@ -301,6 +311,7 @@ export function ManagerAccountStaff() {
         key: "email",
         render: (text) => <a>{text}</a>,
         sorter: (a, b) => a.email.localeCompare(b.email),
+        ...getColumnSearchProps("email"),
       },
       {
         title: "Số điện thoại",
