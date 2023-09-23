@@ -1,5 +1,6 @@
+"use client";
+
 import { TotalDashBoardHealthFacilitiesAdmin } from "@/components/common";
-import React from "react";
 
 export default function Admin() {
   return (

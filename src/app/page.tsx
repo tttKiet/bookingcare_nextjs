@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import imgDocter from "../assets/images/home-layer1.png";
 import profit1Img from "../assets/images/profit1.png";

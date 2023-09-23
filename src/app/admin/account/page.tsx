@@ -4,7 +4,7 @@ import * as React from "react";
 
 export interface AccountAdmimProps {}
 
-export default function AccountAdmim(props: AccountAdmimProps) {
+export default function AccountAdmin(props: AccountAdmimProps) {
   return (
     <div>
       <ManagerAccount />

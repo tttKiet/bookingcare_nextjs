@@ -1,3 +1,4 @@
+import { Working } from "@/models";
 import * as yup from "yup";
 const FILE_SIZE = 2000000;
 export const schemaValidateLoginForm = yup.object().shape({
@@ -124,4 +125,11 @@ export const schemaStaffBody = yup.object().shape({
   specialistId: yup.string().required("Vui lòng chọn chuyên khoa."),
   experience: yup.string().required("Vui lòng điền kinh nghiệm làm việc."),
   certificate: yup.string().required("Vui lòng điền bằng cấp."),
+});
+
+export const schemaWorkingBody = yup.object().shape({
+  staffId: yup.string().required("Vui lòng chọn bác sỉ."),
+  healthFacilityId: yup.string().required("Vui lòng chọn cơ sở y tế."),
+  startDate: yup.object().required("Vui lòng chọn ngày bắt đầu."),
+  endDate: yup.object().nullable(),
 });

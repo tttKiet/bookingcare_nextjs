@@ -11,6 +11,8 @@ import { FiPlusCircle } from "react-icons/fi";
 import { LiaUserNurseSolid } from "react-icons/lia";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { MdSupervisorAccount } from "react-icons/md";
+import { BsPersonWorkspace } from "react-icons/bs";
+
 import "../globals.css";
 const { Header, Content, Footer, Sider } = Layout;
 export const metadata: Metadata = {
@@ -88,6 +90,11 @@ export default function RootLayout({
             icon: <MdSupervisorAccount size={20} />,
           },
         ],
+      },
+      {
+        key: "/admin/work",
+        label: <Link href="/admin/work">Công tác </Link>,
+        icon: <BsPersonWorkspace size={20} />,
       },
     ],
     []

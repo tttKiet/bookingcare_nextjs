@@ -1,8 +1,11 @@
+"use client";
+
 import { Checkbox, Select } from "antd";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { DefaultOptionType } from "antd/es/select";
 import * as React from "react";
 import { Control, useController } from "react-hook-form";
+import debounce from "lodash.debounce";
 
 export interface SelectFieldProps {
   className?: string;
@@ -14,6 +17,8 @@ export interface SelectFieldProps {
   placeholder?: string;
   options: DefaultOptionType[] | undefined;
   onChangeParent?: (e: Event) => void;
+  debounceSeconds?: number;
+  onSearchSelect?: (value: string) => void;
 }
 
 export function SelectField({
@@ -26,6 +31,8 @@ export function SelectField({
   width,
   placeholder,
   onChangeParent,
+  debounceSeconds,
+  onSearchSelect,
 }: SelectFieldProps) {
   const {
     field: { onChange, onBlur, value, ref },
@@ -36,15 +43,18 @@ export function SelectField({
   });
 
   const onSearch = (value: string) => {
-    console.log("search:", value);
+    onSearchSelect && onSearchSelect(value);
   };
 
   const filterOption: any = (
     input: string,
     option: { label: string; value: string }
-  ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+  ) => {
+    return !!onSearchSelect
+      ? true
+      : (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+  };
 
-  const refSelect = React.useRef();
   return (
     <div
       className={`border rounded-lg border-while py-2 px-3 pt-8 relative col-span-1 ${
@@ -60,8 +70,11 @@ export function SelectField({
       <div className="flex items-center gap-1 relative">
         <Select
           // defaultValue={""}
-          value={value}
+          onSearch={debounce(onSearch, debounceSeconds || 0)}
+          value={value || placeholder}
+          placement="bottomLeft"
           style={{ width: width || 160 }}
+          size="large"
           onChange={(e) => {
             onChange(e);
             onChangeParent && onChangeParent(e);
@@ -76,12 +89,7 @@ export function SelectField({
           showSearch
           optionFilterProp="children"
           notFoundContent={<div>Khônng tìm thây...</div>}
-          // listHeight={260}
-          // tokenSeparators={[","]}
-          // dropdownStyle={{ position: "fixed" }}
           getPopupContainer={(triggerNode) => triggerNode.parentElement}
-          // ref={refSelect.current}
-          // getPopupContainer={() => refSelect.current || document.body}
           options={options}
           filterOption={filterOption}
         />

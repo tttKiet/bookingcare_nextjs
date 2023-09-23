@@ -1,3 +1,5 @@
+import { AcademicDegree, HealthFacility, Specialist } from "./healthFacilities";
+
 export interface User {
   id: string;
   fullName: string;
@@ -25,6 +27,8 @@ export interface Staff {
   specialistId: string;
   createdAt: string;
   updatedAt: string;
+  AcademicDegree: AcademicDegree;
+  Specialist: Specialist;
 }
 
 export interface Role {
@@ -32,4 +36,16 @@ export interface Role {
   keyType: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Working {
+  id: string;
+  staffId: string;
+  healthFacilityId: string;
+  startDate: string;
+  endDate: string;
+  createdAt: string;
+  updatedAt: string;
+  Staff: Staff;
+  HealthFacility: HealthFacility;
 }
