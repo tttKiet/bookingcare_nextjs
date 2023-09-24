@@ -1,12 +1,9 @@
 "use client";
 
-import { doctorApi, healthFacilitiesApi } from "@/api-services";
-import {
-  API_HEALTH_FACILITIES,
-  API_TYPE_HEALTH_FACILITIES,
-  API_WORKING,
-} from "@/api-services/constant-api";
-import { HealthFacility, TypeHealthFacility, Working } from "@/models";
+import { doctorApi } from "@/api-services";
+import { API_WORKING } from "@/api-services/constant-api";
+import { Working } from "@/models";
+import { ResDataPaginations } from "@/types";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import { Button, Input, InputRef, Modal, Space } from "antd";
@@ -17,23 +14,19 @@ import type {
   TableProps,
 } from "antd/es/table";
 import { FilterConfirmProps } from "antd/es/table/interface";
+import get from "lodash.get";
+import isequal from "lodash.isequal";
 import moment from "moment";
 import * as React from "react";
 import Highlighter from "react-highlight-words";
-import { BsPlusSquareDotted, BsSearch } from "react-icons/bs";
+import { BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
 import axios from "../../axios";
-import get from "lodash.get";
-import isequal from "lodash.isequal";
-import BodyModalHealth, {
-  HealthFacilityClient,
-} from "../body-modal/body.add-edit-health";
+import { BodyModalWorking } from "../body-modal/body.add-edit-working";
 import { ActionBox, ActionGroup } from "../box";
+import { BtnPlus } from "../button";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
-import { BtnPlus } from "../button";
-import { ResDataPaginations } from "@/types";
-import { BodyModalWorking } from "../body-modal/body.add-edit-working";
 const { confirm } = Modal;
 
 type DataIndex = keyof Working;

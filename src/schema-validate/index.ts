@@ -133,3 +133,8 @@ export const schemaWorkingBody = yup.object().shape({
   startDate: yup.object().required("Vui lòng chọn ngày bắt đầu."),
   endDate: yup.object().nullable(),
 });
+
+export const schemaClinicRoomBody = yup.object().shape({
+  roomNumber: yup.number().required("Vui lòng điền số phòng."),
+  capacity: yup.number().required("Vui lòng điền sức chứa."),
+});

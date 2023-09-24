@@ -12,6 +12,11 @@ import { LiaUserNurseSolid } from "react-icons/lia";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { MdSupervisorAccount } from "react-icons/md";
 import { BsPersonWorkspace } from "react-icons/bs";
+import { CiBookmarkMinus } from "react-icons/ci";
+import { AiOutlineSlack } from "react-icons/ai";
+import { BiBulb } from "react-icons/bi";
+import { HiOutlineAcademicCap } from "react-icons/hi";
+import { PiFlowerTulipThin } from "react-icons/pi";
 
 import "../globals.css";
 const { Header, Content, Footer, Sider } = Layout;
@@ -62,19 +67,33 @@ export default function RootLayout({
                 Quản lý loại bệnh viện
               </Link>
             ),
-            icon: <MdSupervisorAccount size={20} />,
+            icon: <CiBookmarkMinus size={20} />,
           },
           {
-            key: "/admin/health-facility",
-            label: (
-              <Link href="/admin/health-facility">Quản lý cơ sở y tế</Link>
-            ),
-            icon: <MdSupervisorAccount size={20} />,
+            key: "health-facility",
+            label: "Quản lý cơ sở y tế",
+            icon: <AiOutlineSlack size={20} />,
+            children: [
+              {
+                key: "/admin/health-facility",
+                label: <Link href="/admin/health-facility">Cơ sở y tế</Link>,
+                icon: <PiFlowerTulipThin size={20} />,
+              },
+              {
+                key: "/admin/health-facility/room",
+                label: (
+                  <Link href="/admin/health-facility/clinic-room">
+                    Phòng khám
+                  </Link>
+                ),
+                icon: <BiBulb size={20} />,
+              },
+            ],
           },
           {
             key: "/admin/specialist",
             label: <Link href="/admin/specialist">Chuyên khoa</Link>,
-            icon: <MdSupervisorAccount size={20} />,
+            icon: <BiBulb size={20} />,
           },
         ],
         icon: <FiPlusCircle size={20} />,
@@ -87,7 +106,7 @@ export default function RootLayout({
           {
             key: "/admin/academic-degree",
             label: <Link href="/admin/academic-degree">Quản lý học vị</Link>,
-            icon: <MdSupervisorAccount size={20} />,
+            icon: <HiOutlineAcademicCap size={20} />,
           },
         ],
       },
@@ -107,7 +126,7 @@ export default function RootLayout({
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
-        width={230}
+        width={280}
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}

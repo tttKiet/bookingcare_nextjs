@@ -1,8 +1,9 @@
 import axios from "../axios";
 import { ResData } from "@/types";
-import { HealthFacility } from "../models/index";
+import { ClinicRoom, HealthFacility } from "../models/index";
 import {
   API_HEALTH_FACILITIES,
+  API_HEALTH_FACILITY_ROOM,
   API_SPECIALIST,
   API_TYPE_HEALTH_FACILITIES,
 } from "./constant-api";
@@ -10,7 +11,9 @@ import {
 import { Specialist } from "../models";
 
 import { HealthFacilityClient } from "@/components/body-modal";
-
+export interface ReqClinicRoom extends ClinicRoom {
+  oldRoomNumber: number;
+}
 export const healthFacilitiesApi = {
   async createTypeHealthFacility({ name }: { name: string }): Promise<ResData> {
     return await axios.post(API_TYPE_HEALTH_FACILITIES, {
@@ -124,6 +127,35 @@ export const healthFacilitiesApi = {
     return await axios.delete(API_SPECIALIST, {
       data: {
         id,
+      },
+    });
+  },
+
+  async createOrUpdateHealthRoom({
+    roomNumber,
+    oldRoomNumber,
+    healthFacilityId,
+    capacity,
+  }: Partial<ReqClinicRoom>): Promise<ResData> {
+    return await axios.post(API_HEALTH_FACILITY_ROOM, {
+      roomNumber,
+      oldRoomNumber,
+      healthFacilityId,
+      capacity,
+    });
+  },
+
+  async deleteHealthRoom({
+    healthFacilityId,
+    roomNumber,
+  }: {
+    roomNumber: number;
+    healthFacilityId: string;
+  }): Promise<ResData> {
+    return await axios.delete(API_HEALTH_FACILITY_ROOM, {
+      data: {
+        roomNumber,
+        healthFacilityId,
       },
     });
   },

@@ -53,6 +53,15 @@ body {
   @apply border border-blue-500 text-blue-500 hover:border-blue-400 hover:text-blue-400 !important;
 }
 
+.ant-select-selector {
+  height: auto !important;
+  @apply py-1 !important;
+}
+
+.ant-select-selection-item {
+  line-height: 8px !important;
+}
+
 @layer base {
   :root {
     --color-primary: 255 115 179;

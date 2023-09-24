@@ -26,6 +26,15 @@ export interface Specialist {
   updatedAt: string;
 }
 
+export interface ClinicRoom {
+  roomNumber: number;
+  healthFacilityId: string;
+  capacity: number;
+  HealthFacility: HealthFacility;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AcademicDegree {
   id: string;
   name: string;

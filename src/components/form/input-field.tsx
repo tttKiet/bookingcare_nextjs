@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Control, useController } from "react-hook-form";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { InputFieldProps } from ".";
+import { InputNumber } from "antd";
 
 export function InputField({
   name,
@@ -47,17 +48,35 @@ export function InputField({
         )}
       </label>
       <div className="flex items-center gap-1 relative">
-        <input
-          type={type == "password" && !showPass ? "password" : "text"}
-          placeholder={placeholder || `Nhập ${label?.toLocaleLowerCase()} ...`}
-          className="px  w-[86%]  outline-none border-transparent text-base"
-          onChange={onChange}
-          onBlur={onBlur}
-          ref={ref}
-          spellCheck={false}
-          name={name}
-          value={value}
-        />
+        {type === "number" ? (
+          <InputNumber
+            placeholder={
+              placeholder || `Nhập ${label?.toLocaleLowerCase()} ...`
+            }
+            className="px w-[86%] outline-none border-transparent text-base"
+            onChange={onChange}
+            onBlur={onBlur}
+            ref={ref}
+            spellCheck={false}
+            name={name}
+            value={value}
+          />
+        ) : (
+          <input
+            type={type == "password" && !showPass ? "password" : "text"}
+            placeholder={
+              placeholder || `Nhập ${label?.toLocaleLowerCase()} ...`
+            }
+            className="px  w-[86%]  outline-none border-transparent text-base"
+            onChange={onChange}
+            onBlur={onBlur}
+            ref={ref}
+            spellCheck={false}
+            name={name}
+            value={value}
+          />
+        )}
+
         <span className="flex items-center absolute right-1 text-xl">
           {icon}
         </span>
