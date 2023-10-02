@@ -2,4 +2,8 @@ export * from "./service-card";
 export * from "./dash-board.total.heath-facilities-admin";
 export * from "./profile";
 export * from "./not.permission";
+export * from "./search.health-facilty";
 export * from "./date.calendar";
+export * from "./list.health-facilities";
+export * from "./item.health-facility";
+export * from "./box.health-facility";

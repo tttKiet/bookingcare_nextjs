@@ -1,12 +1,16 @@
 "use client";
 
 import { healthFacilitiesApi, staffApi } from "@/api-services";
-import { API_ACCOUNT_STAFF, API_SPECIALIST } from "@/api-services/constant-api";
+import {
+  API_ACCOUNT_STAFF,
+  API_ROLE,
+  API_SPECIALIST,
+} from "@/api-services/constant-api";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import { Button, Input, InputRef, Modal, Space } from "antd";
 import axios from "../../axios";
 
-import { Specialist, Staff } from "@/models";
+import { Role, Specialist, Staff } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import type {
@@ -28,6 +32,7 @@ import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
 import { RegisterForm } from "../auth";
 import { BodyModalAccountDoctor } from "../body-modal";
+import toast from "react-hot-toast";
 const { confirm } = Modal;
 
 type DataIndex = keyof Staff;
@@ -63,7 +68,6 @@ export function ManagerAccountStaff() {
     certificate,
     experience,
     specialistId,
-    roleId,
   }: Partial<Staff>): Promise<boolean> {
     const api = staffApi.createOrUpdateDoctor({
       address,
@@ -77,7 +81,7 @@ export function ManagerAccountStaff() {
       certificate,
       experience,
       specialistId,
-      roleId,
+      roleId: roleDoctor?.id,
     });
     const isOk = await toastMsgFromPromise(api);
     if (isOk) {
@@ -101,6 +105,8 @@ export function ManagerAccountStaff() {
         // const api = Staff.deletePosition({ id: record.id });
         // const isOk = await toastMsgFromPromise(api);
         // isOk && mutateStaff();
+
+        toast("Đang cập nhật");
         return true;
       },
       onCancel() {},
@@ -273,6 +279,13 @@ export function ManagerAccountStaff() {
       );
     },
   });
+
+  const { data: role } = useSWR<Role[]>(API_ROLE);
+
+  const roleDoctor: Role | undefined = React.useMemo(
+    () => role?.find((roleDoctor) => roleDoctor.keyType === "doctor"),
+    [role]
+  );
 
   const data = React.useMemo<Partial<Staff>[]>(() => {
     return responseStaff?.rows.map((staff: StaffResColumn) => ({

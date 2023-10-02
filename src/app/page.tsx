@@ -7,12 +7,13 @@ import profit2Img from "../assets/images/profit2.png";
 import profit3Img from "../assets/images/profit3.png";
 import { ProfitUseBooking } from "@/components/profit";
 import { ServiceCard } from "@/components/common";
+import { CiDiscount1 } from "react-icons/ci";
 
 export default function Home() {
   return (
     <>
-      <main className="">
-        <div className="bg-home min-h-[calc(100vh-128px)] bg-no-repeat bg-cover relative">
+      <main className="bg-body object-cover bg-no-repeat">
+        <div className="min-h-[calc(100vh-128px)] bg-no-repeat bg-cover relative">
           <div className="bg-gradient-to-b from-black/5 to-black/10 absolute inset-0 z-0">
             {/* filter bg */}
           </div>
@@ -27,10 +28,10 @@ export default function Home() {
               <h3 className="mb-3 text-3xl  font-extrabold text-blue-500">
                 Cơ sở - Dịch vụ Y tế
               </h3>
-              <h4 className="mb-3 text-base font-light text-blue-700">
+              <h4 className="mb-3 text-base font-light text-blue-500">
                 Dịch vụ sức khỏe tốt nhất
               </h4>
-              <p className="mb-3 text-base text-gray-700  ">
+              <p className="mb-3 text-base text-white  ">
                 3/2 CTU, Booking care best chosse
               </p>
             </div>
@@ -40,7 +41,7 @@ export default function Home() {
           </div>
         </div>
 
-        <section className=" relative">
+        <section className="relative">
           <div className="sm:absolute sm:top-0 z-20 sm:translate-y-[-50%] w-full static">
             <div className="container mx-auto py-4">
               <div className="grid sm:grid-cols-3 sm:gap-1 gap-4 grid-cols-1 ">
@@ -90,7 +91,7 @@ export default function Home() {
               <div className="grid md:grid-cols-3 grid-cols-1 gap-4 mt-4">
                 <ServiceCard
                   description="Đặt khám nhanh, thanh toán và lấy số thứ tự trực tuyến tiết
-                      kiệm thời gian công sức"
+                        kiệm thời gian công sức"
                   title="Đặt khám nhanh"
                   linkto="#"
                   src="https://res.cloudinary.com/djvlxywoe/image/upload/v1692149199/motel_posts/xlire5kduge7x2kdvvmt.jpg"
@@ -111,6 +112,40 @@ export default function Home() {
             </div>
           </div>
         </section>
+        <section className="mt-10 bg-[#ecf0f7] py-4 ">
+          <div className="container ">
+            <div className="p-3 rounded-xl bg-blue text-black">
+              <h3 className="text-xl text-center ">Số liệu thống kê</h3>
+              <div className="grid grid-cols-4 gap-3 mt-8">
+                <div className="flex justify-center flex-col items-center">
+                  <div className="w-[90px] h-[90px] bg-white flex items-center justify-center  rounded-full">
+                    <CiDiscount1 size={30} color="#000" />
+                  </div>
+                  <span className="mt-3 text-gray-700">Hơn 3M lượt khám</span>
+                </div>
+                <div className="flex justify-center flex-col items-center">
+                  <div className="w-[90px] h-[90px] bg-white flex items-center justify-center  rounded-full">
+                    <CiDiscount1 size={30} color="#000" />
+                  </div>
+                  <span className="mt-3 text-gray-700">Hơn 3M lượt khám</span>
+                </div>
+                <div className="flex justify-center flex-col items-center">
+                  <div className="w-[90px] h-[90px] bg-white flex items-center justify-center  rounded-full">
+                    <CiDiscount1 size={30} color="#000" />
+                  </div>
+                  <span className="mt-3 text-gray-700">Hơn 3M lượt khám</span>
+                </div>
+                <div className="flex justify-center flex-col items-center">
+                  <div className="w-[90px] h-[90px] bg-white flex items-center justify-center  rounded-full">
+                    <CiDiscount1 size={30} color="#000" />
+                  </div>
+                  <span className="mt-3 text-gray-700">Hơn 3M lượt khám</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <div className="h-screen"></div>
       </main>
     </>

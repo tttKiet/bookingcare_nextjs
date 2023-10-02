@@ -94,7 +94,8 @@ export function WorkingCurrentTag() {
     ],
     fetcher,
     {
-      dedupingInterval: 1000,
+      dedupingInterval: 5000,
+      revalidateOnFocus: true,
     }
   );
 

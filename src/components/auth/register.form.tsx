@@ -214,7 +214,11 @@ export function RegisterForm({
             loading={isSubmitting}
             htmlType="submit"
           >
-            {okText ? okText : "Tạo tài khoản"}
+            {okText ? (
+              okText
+            ) : (
+              <>{obUserEdit ? "Lưu thay đổi" : "Tạo tài khoản"}</>
+            )}
           </Button>
         </Space>
       </div>

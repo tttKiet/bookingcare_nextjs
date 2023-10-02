@@ -11,7 +11,7 @@ import { FiPlusCircle } from "react-icons/fi";
 import { LiaUserNurseSolid } from "react-icons/lia";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { MdSupervisorAccount } from "react-icons/md";
-import { BsPersonWorkspace } from "react-icons/bs";
+import { BsCode, BsPersonWorkspace } from "react-icons/bs";
 import { CiBookmarkMinus } from "react-icons/ci";
 import { AiOutlineSlack } from "react-icons/ai";
 import { BiBulb } from "react-icons/bi";
@@ -31,8 +31,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const url = usePathname();
   const { profile } = useAuth();
+  const url = usePathname();
   const breadcrumbArraySplit = url.toString().split("/");
   const breadcrumbArray = breadcrumbArraySplit.map((path, index, arrayThis) => {
     return {
@@ -61,15 +61,6 @@ export default function RootLayout({
         label: "Cơ sở y tế",
         children: [
           {
-            key: "/admin/type-health-facility",
-            label: (
-              <Link href="/admin/type-health-facility">
-                Quản lý loại bệnh viện
-              </Link>
-            ),
-            icon: <CiBookmarkMinus size={20} />,
-          },
-          {
             key: "health-facility",
             label: "Quản lý cơ sở y tế",
             icon: <AiOutlineSlack size={20} />,
@@ -90,6 +81,16 @@ export default function RootLayout({
               },
             ],
           },
+          {
+            key: "/admin/type-health-facility",
+            label: (
+              <Link href="/admin/type-health-facility">
+                Quản lý loại bệnh viện
+              </Link>
+            ),
+            icon: <CiBookmarkMinus size={20} />,
+          },
+
           {
             key: "/admin/specialist",
             label: <Link href="/admin/specialist">Chuyên khoa</Link>,
@@ -114,6 +115,11 @@ export default function RootLayout({
         key: "/admin/work",
         label: <Link href="/admin/work">Công tác </Link>,
         icon: <BsPersonWorkspace size={20} />,
+      },
+      {
+        key: "/admin/code",
+        label: <Link href="/admin/code">Code</Link>,
+        icon: <BsCode size={20} />,
       },
     ],
     []

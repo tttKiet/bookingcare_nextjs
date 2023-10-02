@@ -117,7 +117,7 @@ const NavBarTop = () => {
   }
 
   return (
-    <div className="backdrop-sepia-0 sticky top-0 bg-white z-50  flex justify-center items-center shadow-md   border-b bottom-0">
+    <div className="backdrop-sepia-0 sticky left-0 top-0 bg-white z-50  flex justify-center items-center shadow-md  border-b ">
       <ModalPositionHere
         title="Đăng nhập"
         body={

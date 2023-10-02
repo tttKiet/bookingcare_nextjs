@@ -49,3 +49,9 @@ export interface Working {
   Staff: Staff;
   HealthFacility: HealthFacility;
 }
+
+export interface Code {
+  key: string;
+  name: string;
+  value: string;
+}

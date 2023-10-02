@@ -118,7 +118,6 @@ export const schemaStaffBody = yup.object().shape({
     .test("match", "Mật khẩu nhập lại không đúng.", function (value) {
       return value === this.parent.password;
     }),
-  roleId: yup.string().required("Vui lòng chọn quyền nhân viên"),
   address: yup.string().required("Vui lòng nhập địa chỉ."),
   gender: yup.string().required("Vui lòng chọn giới tính."),
   academicDegreeId: yup.string().required("Vui lòng chọn vị trí , danh hiệu."),
@@ -137,4 +136,10 @@ export const schemaWorkingBody = yup.object().shape({
 export const schemaClinicRoomBody = yup.object().shape({
   roomNumber: yup.number().required("Vui lòng điền số phòng."),
   capacity: yup.number().required("Vui lòng điền sức chứa."),
+});
+
+export const schemaCodeBody = yup.object().shape({
+  key: yup.string().required("Vui lòng điền mã."),
+  name: yup.string().required("Vui lòng chọn tên mã."),
+  value: yup.string().required("Vui lòng điền giá trị."),
 });

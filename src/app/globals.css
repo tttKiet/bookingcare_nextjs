@@ -32,6 +32,10 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+input {
+  line-height: normal;
+}
+
 .ant-btn-primary {
   background-color: #1677ff !important;
 }
@@ -53,12 +57,12 @@ body {
   @apply border border-blue-500 text-blue-500 hover:border-blue-400 hover:text-blue-400 !important;
 }
 
-.ant-select-selector {
+/* .ant-select-selector {
   height: auto !important;
   @apply py-1 !important;
-}
+} */
 
-.ant-select-selection-item {
+.no-line-height .ant-select-selection-item {
   line-height: 8px !important;
 }
 

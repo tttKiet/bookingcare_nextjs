@@ -1,13 +1,21 @@
 "use client";
 
-import { Checkbox, Select } from "antd";
+import {
+  Button,
+  Checkbox,
+  Divider,
+  Input,
+  InputRef,
+  Select,
+  Space,
+} from "antd";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { DefaultOptionType } from "antd/es/select";
 import * as React from "react";
 import { Control, useController } from "react-hook-form";
 import debounce from "lodash.debounce";
-
-export interface SelectFieldProps {
+import { PlusOutlined } from "@ant-design/icons";
+export interface SelectFieldAddOptionProps {
   className?: string;
   name: string;
   label: string | React.ReactNode;
@@ -15,13 +23,13 @@ export interface SelectFieldProps {
   icon?: React.ReactNode;
   width?: number | string;
   placeholder?: string;
-  options: DefaultOptionType[] | undefined;
+  options: string[] | undefined;
   onChangeParent?: (e: Event) => void;
   debounceSeconds?: number;
   onSearchSelect?: (value: string) => void;
 }
 
-export function SelectField({
+export function SelectFieldAddOption({
   name,
   label,
   control,
@@ -33,7 +41,7 @@ export function SelectField({
   onChangeParent,
   debounceSeconds,
   onSearchSelect,
-}: SelectFieldProps) {
+}: SelectFieldAddOptionProps) {
   const {
     field: { onChange, onBlur, value, ref },
     fieldState: { error },
@@ -53,6 +61,23 @@ export function SelectField({
     return !!onSearchSelect
       ? true
       : (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+  };
+  const [items, setItems] = React.useState(options || []);
+  const [nameInput, setNameInput] = React.useState("");
+  const inputRef = React.useRef<InputRef>(null);
+  const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNameInput(event.target.value);
+  };
+  const addItem = (
+    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+  ) => {
+    if (!nameInput) return;
+    e.preventDefault();
+    setItems([...items, nameInput]);
+    setNameInput("");
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
   };
 
   return (
@@ -90,8 +115,25 @@ export function SelectField({
           optionFilterProp="children"
           notFoundContent={<div>Khônng tìm thây...</div>}
           getPopupContainer={(triggerNode) => triggerNode.parentElement}
-          options={options}
+          options={items.map((item) => ({ label: item, value: item }))}
           filterOption={filterOption}
+          dropdownRender={(menu) => (
+            <>
+              {menu}
+              <Divider style={{ margin: "8px 0" }} />
+              <Space style={{ padding: "0 8px 4px" }}>
+                <Input
+                  placeholder="Điền tên mới...."
+                  ref={inputRef}
+                  value={nameInput}
+                  onChange={onNameChange}
+                />
+                <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
+                  Thêm tên
+                </Button>
+              </Space>
+            </>
+          )}
         />
         <span className="flex items-center absolute right-1 text-xl">
           {icon}

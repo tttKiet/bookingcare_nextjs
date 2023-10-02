@@ -39,6 +39,7 @@ export function BodyModalAccountDoctor({
     handleSubmit,
     formState: { isSubmitted, isSubmitting },
     setValue,
+    getValues,
     reset,
   } = useForm({
     defaultValues: {
@@ -52,7 +53,6 @@ export function BodyModalAccountDoctor({
       academicDegreeId: "",
       certificate: "",
       experience: "",
-      roleId: "",
       specialistId: "",
     },
     resolver: yupResolver(schemaStaffBody),
@@ -73,7 +73,6 @@ export function BodyModalAccountDoctor({
       value: t.id,
       label: t.name,
     })) || [];
-
   React.useEffect(() => {
     reset({
       email: obEditStaff?.email || "",
@@ -86,12 +85,10 @@ export function BodyModalAccountDoctor({
       academicDegreeId: obEditStaff?.academicDegreeId || "",
       certificate: obEditStaff?.certificate || "",
       experience: obEditStaff?.experience || "",
-      roleId: obEditStaff?.roleId || "",
       specialistId: obEditStaff?.specialistId || "",
     });
   }, [obEditStaff]);
 
-  const { data: role } = useSWR<Role[]>(API_ROLE);
   async function handleSubmitLocal(data: Partial<Staff>) {
     const isOk = await handleSubmitForm({
       ...data,
@@ -103,15 +100,6 @@ export function BodyModalAccountDoctor({
     }
     return isOk;
   }
-
-  const roleDoctor: Role | undefined = useMemo(
-    () => role?.find((roleDoctor) => roleDoctor.keyType === "doctor"),
-    [role]
-  );
-
-  useEffect(() => {
-    setValue("roleId", roleDoctor?.id || "");
-  }, [roleDoctor]);
 
   return (
     <form

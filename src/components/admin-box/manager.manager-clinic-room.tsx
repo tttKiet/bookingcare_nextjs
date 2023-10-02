@@ -344,12 +344,12 @@ export function ManagerHealthRoom() {
           <Image
             className="rounded-full border border-white object-cover w-[32px] h-[32px]"
             alt="Health Facility"
-            width={30}
-            height={30}
+            width={28}
+            height={28}
             src={healh?.images?.[0] || ""}
           />
           <div className="flex-1">
-            <h4 className="text-sm font-medium text-black">{healh.name}</h4>
+            <h4 className="text-sm p-y-[1px]  text-black">{healh.name}</h4>
             <div className="flex items-center justify-between gap-x-4">
               <span className="text-xs font-normal text-blue-600">
                 {healh.email}
@@ -375,7 +375,7 @@ export function ManagerHealthRoom() {
   return (
     <div className="">
       <h3 className="mb-2">Tìm kiếm cơ sở y tế</h3>
-      <div className="flex items-center gap-2 ">
+      <div className="flex items-end gap-2 ">
         <SelectSearchField
           placeholder="Nhập tên hoặc email cơ sơ y tế"
           data={dataSearch}
@@ -384,7 +384,7 @@ export function ManagerHealthRoom() {
           value={selectValue}
         />
         <span
-          className="text-gray-500 cursor-pointer"
+          className="text-gray-500 cursor-pointer ml-2"
           onClick={() => {
             setSelectValue(null);
             setSearchHealthSelect(null);

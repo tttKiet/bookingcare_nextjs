@@ -8,6 +8,7 @@ export * from "./select-field";
 export * from "./input-upload-field";
 export * from "./input-field-textarea";
 export * from "./select-field-search";
+export * from "./select-field-add-option";
 
 export interface InputFieldProps {
   name: string;

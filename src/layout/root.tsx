@@ -40,7 +40,7 @@ export function RootLayout({ children }: { children: React.ReactNode }) {
             {!isAdminLink ? (
               <>
                 <NavBarTop />
-                {children}
+                <div className="">{children}</div>
               </>
             ) : (
               <>{children}</>

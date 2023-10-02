@@ -15,6 +15,7 @@ export interface HealthFacility {
   images: string[];
   createdAt: string;
   updatedAt: string;
+  TypeHealthFacility: TypeHealthFacility;
 }
 
 export interface Specialist {

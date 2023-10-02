@@ -122,9 +122,11 @@ export function BodyModalWorking({
           label: (
             <div>
               <h3 className="text-sm text-gray-600 font-medium"> {t.name}</h3>
-              <span className="text-xs text-black font-normal flex items-center justify-between">
+              <span className="text-xs text-black font-normal flex items-center gap-2 justify-between">
                 <span>{t.email}</span>
-                <span>{t.address}</span>
+                <span className="overflow-hidden text-ellipsis whitespace-nowrap max-w-[40%]">
+                  {t.address}
+                </span>
               </span>
             </div>
           ),
@@ -139,12 +141,6 @@ export function BodyModalWorking({
     startDate,
     endDate,
   }: any) {
-    console.log("handleSubmitLocal", {
-      healthFacilityId,
-      staffId,
-      startDate,
-      endDate,
-    });
     const isOk = await handleSubmitForm({
       healthFacilityId,
       staffId,
@@ -169,7 +165,7 @@ export function BodyModalWorking({
                 <h3 className="text-sm text-gray-600 font-medium">
                   {obEditWorking.Staff.fullName}
                 </h3>
-                <span className="text-xs text-black font-normal flex items-center justify-between">
+                <span className="text-xs text-black font-normal flex items-center justify-between gap-2">
                   <span>{obEditWorking.Staff.email}</span>
                   <span>{obEditWorking.Staff.fullName}</span>
                 </span>
@@ -217,7 +213,7 @@ export function BodyModalWorking({
       <div>
         <div className="grid md:grid-cols-2 gap-3 sm:grid-cols-1">
           <SelectField
-            width={400}
+            width="100%"
             control={control}
             placeholder="Nhập email bác sỉ..."
             label="Chọn bác sỉ"
@@ -227,7 +223,7 @@ export function BodyModalWorking({
             onSearchSelect={onSearchSelectDoctors}
           />
           <SelectField
-            width={400}
+            width="100%"
             control={control}
             placeholder="Nhập email cơ sở y tế ..."
             label="Chọn cơ sở y tế"

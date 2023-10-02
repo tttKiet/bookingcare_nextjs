@@ -9,10 +9,10 @@ declare global {
   }
 }
 
-export interface ResData {
+export interface ResData<T = any | [] | null> {
   statusCode: number;
   msg: string;
-  data?: any;
+  data?: T;
 }
 
 export interface ResDataPaginations<T> {

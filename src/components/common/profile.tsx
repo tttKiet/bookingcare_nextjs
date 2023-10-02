@@ -11,7 +11,7 @@ export interface ProfileProps {}
 export function Profile(props: ProfileProps) {
   const { profile, logout } = useAuth({ revalidateOnMount: true });
   const mode = useSelector(getMode);
-
+  console.log(profile);
   return (
     <div>
       {profile?.email && (

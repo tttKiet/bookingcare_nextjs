@@ -1,6 +1,10 @@
 import axios from "../axios";
 import { ResData } from "@/types";
-import { ClinicRoom, HealthFacility } from "../models/index";
+import {
+  ClinicRoom,
+  HealthFacility,
+  TypeHealthFacility,
+} from "../models/index";
 import {
   API_HEALTH_FACILITIES,
   API_HEALTH_FACILITY_ROOM,
@@ -11,11 +15,16 @@ import {
 import { Specialist } from "../models";
 
 import { HealthFacilityClient } from "@/components/body-modal";
+import { Room } from "aws-sdk/clients/alexaforbusiness";
 export interface ReqClinicRoom extends ClinicRoom {
   oldRoomNumber: number;
 }
 export const healthFacilitiesApi = {
-  async createTypeHealthFacility({ name }: { name: string }): Promise<ResData> {
+  async createTypeHealthFacility({
+    name,
+  }: {
+    name: string;
+  }): Promise<ResData<TypeHealthFacility>> {
     return await axios.post(API_TYPE_HEALTH_FACILITIES, {
       name,
     });
@@ -26,13 +35,17 @@ export const healthFacilitiesApi = {
   }: {
     id: string;
     nameUpdated: string;
-  }): Promise<ResData> {
+  }): Promise<ResData<Partial<TypeHealthFacility>>> {
     return await axios.patch(API_TYPE_HEALTH_FACILITIES, {
       id,
       name: nameUpdated,
     });
   },
-  async deleteTypeHealthFacility({ id }: { id: string }): Promise<ResData> {
+  async deleteTypeHealthFacility({
+    id,
+  }: {
+    id: string;
+  }): Promise<ResData<any>> {
     return await axios.delete(API_TYPE_HEALTH_FACILITIES, {
       data: {
         id,
@@ -56,6 +69,7 @@ export const healthFacilitiesApi = {
       return {
         statusCode: 1,
         msg: "Truyền tham số chưa đủ",
+        data: null,
       };
     bodyFormData.append("name", data.name);
     bodyFormData.append("address", data.address);
@@ -72,7 +86,7 @@ export const healthFacilitiesApi = {
 
   async updateHealthFacility(
     data: Partial<HealthFacilityClient>
-  ): Promise<ResData> {
+  ): Promise<ResData<HealthFacility>> {
     const bodyFormData = new FormData();
     if (
       !(
@@ -105,7 +119,7 @@ export const healthFacilitiesApi = {
     });
   },
 
-  async deleteHealthFacility(id: string): Promise<ResData> {
+  async deleteHealthFacility(id: string): Promise<ResData<HealthFacility>> {
     return await axios.delete(API_HEALTH_FACILITIES, { data: { id: id } });
   },
 
@@ -114,7 +128,7 @@ export const healthFacilitiesApi = {
     descriptionDisease,
     descriptionDoctor,
     id,
-  }: Partial<Specialist>): Promise<ResData> {
+  }: Partial<Specialist>): Promise<ResData<Specialist>> {
     return await axios.post(API_SPECIALIST, {
       name,
       descriptionDisease,
@@ -123,7 +137,7 @@ export const healthFacilitiesApi = {
     });
   },
 
-  async deleteSpecialist({ id }: { id: string }): Promise<ResData> {
+  async deleteSpecialist({ id }: { id: string }): Promise<any> {
     return await axios.delete(API_SPECIALIST, {
       data: {
         id,
@@ -136,7 +150,7 @@ export const healthFacilitiesApi = {
     oldRoomNumber,
     healthFacilityId,
     capacity,
-  }: Partial<ReqClinicRoom>): Promise<ResData> {
+  }: Partial<ReqClinicRoom>): Promise<ResData<Room>> {
     return await axios.post(API_HEALTH_FACILITY_ROOM, {
       roomNumber,
       oldRoomNumber,
@@ -151,7 +165,7 @@ export const healthFacilitiesApi = {
   }: {
     roomNumber: number;
     healthFacilityId: string;
-  }): Promise<ResData> {
+  }): Promise<ResData<Room>> {
     return await axios.delete(API_HEALTH_FACILITY_ROOM, {
       data: {
         roomNumber,

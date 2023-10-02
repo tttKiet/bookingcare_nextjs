@@ -51,7 +51,7 @@ export function useAuth(options?: Partial<PublicConfiguration>) {
     password: string;
   }): Promise<ResData> {
     const res = await authApi.login({ email, password });
-    if (res?.user?.role) {
+    if (res?.user?.role?.keyType === "admin") {
       router.push("/admin");
     }
 

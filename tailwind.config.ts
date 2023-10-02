@@ -13,6 +13,8 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
         home: "url('/images/bg-home-4.avif')",
+        "home-2": "url('/images/bg-home-2.jpg')",
+        body: "url('/images/bg-1.jpg')",
       },
       backgroundColor: {
         dard: "#001529",

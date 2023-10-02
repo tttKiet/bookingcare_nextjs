@@ -32,12 +32,6 @@ const { confirm } = Modal;
 
 export interface HealthFacilitiesBoxProps {}
 
-export interface HealthFacilityRes extends HealthFacility {
-  TypeHealthFacility: {
-    name: string;
-  };
-}
-
 export interface HealthFacilityColumns extends HealthFacility {
   typeHealthFacility: string;
 }
@@ -46,7 +40,7 @@ type DataIndex = keyof HealthFacilityColumns;
 
 export interface ResHealthFacilitiesBox {
   count: number;
-  rows: HealthFacilityRes[];
+  rows: HealthFacility[];
 }
 export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
   const [queryParams, setQueryParams] = React.useState<
