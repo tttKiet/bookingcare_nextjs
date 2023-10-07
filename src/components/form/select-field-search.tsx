@@ -20,6 +20,7 @@ export interface SelectSearchFieldProps {
   data: SelectProps["options"];
   handleSearchSelect: (value: string) => void;
   handleChangeSelect: (value: string) => void;
+  allowClear?: boolean;
 }
 
 export function SelectSearchField({
@@ -30,6 +31,7 @@ export function SelectSearchField({
   handleSearchSelect,
   handleChangeSelect,
   value,
+  allowClear = true,
 }: SelectSearchFieldProps) {
   const handleSearch = (newValue: string) => {
     handleSearchSelect(newValue);
@@ -45,17 +47,17 @@ export function SelectSearchField({
       value={value}
       placeholder={placeholder}
       style={{ minWidth: 280, ...style }}
-      defaultActiveFirstOption={false}
       suffixIcon={null}
-      filterOption={false}
+      // filterOption={false}
       virtual={false}
       onSearch={debounce(handleSearch, debounceSeconds || 300)}
       onChange={handleChange}
-      notFoundContent={<p>Không tìm thấy</p>}
+      // notFoundContent={<p className="p-2">Không tìm thấy</p>}
       options={(data || []).map((d) => ({
         value: d.value,
         label: d.text,
       }))}
+      allowClear={allowClear}
     />
   );
 }

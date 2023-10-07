@@ -7,3 +7,4 @@ export * from "./date.calendar";
 export * from "./list.health-facilities";
 export * from "./item.health-facility";
 export * from "./box.health-facility";
+export * from "./working.current.tag";

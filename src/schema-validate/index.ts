@@ -138,8 +138,26 @@ export const schemaClinicRoomBody = yup.object().shape({
   capacity: yup.number().required("Vui lòng điền sức chứa."),
 });
 
+export const schemaWorkClinicRoomBody = yup.object().shape({
+  checkUpPrice: yup.number().required("Vui lòng điền số tiền khám."),
+  workingId: yup.string().required("Vui lòng chọn bác sỉ cần thêm."),
+  applyDate: yup.object().required("Vui lòng chọn ngày áp dụng."),
+});
+
 export const schemaCodeBody = yup.object().shape({
   key: yup.string().required("Vui lòng điền mã."),
   name: yup.string().required("Vui lòng chọn tên mã."),
   value: yup.string().required("Vui lòng điền giá trị."),
+});
+
+export const schemaCodeScheduleHealth = yup.object().shape({
+  staffId: yup.string().required("Vui lòng chọn nhân viên."),
+  timeCodeArray: yup
+    .array()
+    .required("Vui lòng chọn thời gian")
+    .min(1, "Vui lòng chọn thời gian."),
+  maxNumber: yup
+    .number()
+    .required("Vui điền số lượng tối đã khám trong một thời gian."),
+  date: yup.object().required("Vui lòng chọn ngày khám."),
 });

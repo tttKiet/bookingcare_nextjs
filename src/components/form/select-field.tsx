@@ -19,6 +19,7 @@ export interface SelectFieldProps {
   onChangeParent?: (e: Event) => void;
   debounceSeconds?: number;
   onSearchSelect?: (value: string) => void;
+  disabled?: boolean;
 }
 
 export function SelectField({
@@ -33,6 +34,7 @@ export function SelectField({
   onChangeParent,
   debounceSeconds,
   onSearchSelect,
+  disabled = false,
 }: SelectFieldProps) {
   const {
     field: { onChange, onBlur, value, ref },
@@ -70,6 +72,7 @@ export function SelectField({
       <div className="flex items-center gap-1 relative">
         <Select
           // defaultValue={""}
+          disabled={disabled}
           onSearch={debounce(onSearch, debounceSeconds || 0)}
           value={value || placeholder}
           placement="bottomLeft"

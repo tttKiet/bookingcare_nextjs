@@ -14,7 +14,7 @@ import { MdSupervisorAccount } from "react-icons/md";
 import { BsCode, BsPersonWorkspace } from "react-icons/bs";
 import { CiBookmarkMinus } from "react-icons/ci";
 import { AiOutlineSlack } from "react-icons/ai";
-import { BiBulb } from "react-icons/bi";
+import { BiBulb, BiCalendarStar } from "react-icons/bi";
 import { HiOutlineAcademicCap } from "react-icons/hi";
 import { PiFlowerTulipThin } from "react-icons/pi";
 
@@ -108,6 +108,15 @@ export default function RootLayout({
             key: "/admin/academic-degree",
             label: <Link href="/admin/academic-degree">Quản lý học vị</Link>,
             icon: <HiOutlineAcademicCap size={20} />,
+          },
+          {
+            key: "/admin/health-axamination-schedule",
+            label: (
+              <Link href="/admin/health-axamination-schedule">
+                Lịch khám bệnh
+              </Link>
+            ),
+            icon: <BiCalendarStar size={20} />,
           },
         ],
       },

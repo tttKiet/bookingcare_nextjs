@@ -1,7 +1,11 @@
 import { ResData } from "@/types";
 import axios from "../axios";
-import { AcademicDegree, Working } from "../models";
-import { API_ACEDEMIC_DEGREE, API_WORKING } from "./constant-api";
+import { AcademicDegree, WorkRoom, Working } from "../models";
+import {
+  API_ACEDEMIC_DEGREE,
+  API_WORKING,
+  API_WORK_ROOM,
+} from "./constant-api";
 
 export const doctorApi = {
   async createOrUpdateAcademicDegree({
@@ -39,6 +43,19 @@ export const doctorApi = {
   },
   async deleteWorking(id: string): Promise<ResData> {
     return await axios.delete(API_WORKING, {
+      data: { id },
+    });
+  },
+
+  // Work Room
+  async createOrUpdateWorkRoom(data: Partial<WorkRoom>): Promise<ResData> {
+    return await axios.post(API_WORK_ROOM, {
+      ...data,
+    });
+  },
+
+  async deleteWorkRoom(id: string): Promise<ResData> {
+    return await axios.delete(API_WORK_ROOM, {
       data: { id },
     });
   },

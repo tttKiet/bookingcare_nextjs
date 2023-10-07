@@ -55,3 +55,13 @@ export interface Code {
   name: string;
   value: string;
 }
+
+export interface HealthExaminationSchedule {
+  id: string;
+  date: string | Date | Object;
+  timeCode: string;
+  TimeCode: Code;
+  staffId: string;
+  Staff: Staff;
+  maxNumber: number;
+}

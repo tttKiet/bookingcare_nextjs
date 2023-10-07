@@ -1,3 +1,6 @@
+import { Dayjs } from "dayjs";
+import { Working } from "./interface";
+
 export interface TypeHealthFacility {
   id: string;
   name: string;
@@ -41,4 +44,15 @@ export interface AcademicDegree {
   name: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface WorkRoom {
+  id: string;
+  checkUpPrice: number;
+  applyDate: Date | Dayjs | Object | string;
+  workingId: string;
+  ClinicRoomHealthFacilityId: string;
+  ClinicRoomRoomNumber: number;
+  ClinicRoom: ClinicRoom;
+  Working: Working;
 }

@@ -1,19 +1,15 @@
 "use client";
 
-import { ReqClinicRoom, healthFacilitiesApi, userApi } from "@/api-services";
 import {
-  API_ACCOUNT_USER,
   API_HEALTH_FACILITIES,
   API_HEALTH_FACILITY_ROOM,
-  API_SPECIALIST,
+  API_WORK_ROOM,
 } from "@/api-services/constant-api";
-import { ExclamationCircleFilled } from "@ant-design/icons";
 import { Button, Input, InputRef, Modal, SelectProps, Space } from "antd";
 import axios from "../../axios";
 
-import { ClinicRoom, HealthFacility, Specialist, User } from "@/models";
+import { ClinicRoom, HealthFacility, WorkRoom } from "@/models";
 import { ResDataPaginations } from "@/types";
-import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import type {
   ColumnType,
   ColumnsType,
@@ -21,79 +17,56 @@ import type {
   TableProps,
 } from "antd/es/table";
 import { FilterConfirmProps } from "antd/es/table/interface";
+import get from "lodash.get";
+import isequal from "lodash.isequal";
 import moment from "moment";
+import Image from "next/image";
 import * as React from "react";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
+import { BodyModalClinicRoomWork } from "../body-modal/body.add-edit-work-clinic-room";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 import { ActionGroup } from "../box";
 import { ActionBox } from "../box/action.box";
 import { BtnPlus } from "../button";
+import { SelectSearchField } from "../form";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
-import { RegisterForm } from "../auth";
-import toast from "react-hot-toast";
+import { doctorApi, staffApi } from "@/api-services";
+import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 const { confirm } = Modal;
-import get from "lodash.get";
-import isequal from "lodash.isequal";
-import { SelectSearchField } from "../form";
-import Image from "next/image";
-import { BodyModalClinicRoom } from "../body-modal/body.add-edit-clinic-room";
 
-type DataIndex = keyof ClinicRoom;
+type DataIndex = keyof WorkRoom;
 
-export function ManagerHealthRoom() {
+export function ManagerClinicWork() {
   // State components
-  const [obClinicRoomEdit, setObClinicRoomEdit] =
-    React.useState<ClinicRoom | null>();
+  const [obEdit, setObEdit] = React.useState<WorkRoom | null>();
 
-  const [
-    showClinicRoomCreateOrUpdateModal,
-    setShowClinicRoomCreateOrUpdateModal,
-  ] = React.useState<boolean>(false);
+  const [showCreateOrUpdateModal, setShowCreateOrUpdateModal] =
+    React.useState<boolean>(false);
 
   // Toggle show modal create or update
-  const toggleShowClinicRoomCreateOrUpdateModal = () => {
-    setShowClinicRoomCreateOrUpdateModal((s) => {
+  const toggleShowCreateOrUpdateModal = () => {
+    setShowCreateOrUpdateModal((s) => {
       return !s;
     });
   };
 
-  async function submitFormCreateOrUpdateClinicRoom({
-    capacity,
-    roomNumber,
-  }: Partial<ReqClinicRoom>): Promise<boolean> {
-    const api = healthFacilitiesApi.createOrUpdateHealthRoom({
-      capacity,
-      healthFacilityId: selectValue || "",
-      oldRoomNumber: obClinicRoomEdit?.roomNumber || undefined,
-      roomNumber,
-    });
-    const isOk = await toastMsgFromPromise(api);
-    if (isOk) {
-      setObClinicRoomEdit(null);
-      mutateClinicRooms();
-    }
-    return isOk;
+  function editWorkRoom(record: WorkRoom): void {
+    setObEdit(record);
+    toggleShowCreateOrUpdateModal();
   }
 
-  function editClinicRoom(record: ClinicRoom): void {
-    setObClinicRoomEdit(record);
-    toggleShowClinicRoomCreateOrUpdateModal();
-  }
-
-  function handleClickDeleteClinicRoom(record: ClinicRoom): void {
+  function handleDeleteWorkRoom(record: WorkRoom): void {
     confirm({
-      title: `Bạn có muốn xóa phòng khám"${record.roomNumber}"?`,
+      title: `Bạn có muốn xóa thành viên "${record.Working.Staff.fullName}"?`,
       icon: <ExclamationCircleFilled />,
-      content: `Thao tác này sẽ xóa tất cả dữ liệu về "${record.roomNumber}" và không thể khôi phục`,
+      content: `Thao tác này sẽ xóa tất cả dữ liệu về "${record.id}" và không thể khôi phục`,
       async onOk() {
-        const api = healthFacilitiesApi.deleteHealthRoom({
-          roomNumber: record.roomNumber,
-          healthFacilityId: record.healthFacilityId,
-        });
+        const api = doctorApi.deleteWorkRoom(record.id);
         const isOk = await toastMsgFromPromise(api);
-        isOk && mutateClinicRooms();
+        isOk && mutateWorkRooms();
         return isOk;
       },
       onCancel() {},
@@ -101,7 +74,7 @@ export function ManagerHealthRoom() {
   }
 
   // Table
-  const [queryParams, setQueryParams] = React.useState<Partial<ClinicRoom>>({});
+  const [queryParams, setQueryParams] = React.useState<Partial<WorkRoom>>({});
   const [searchText, setSearchText] = React.useState("");
   const [searchedColumn, setSearchedColumn] = React.useState("");
   const searchInput = React.useRef<InputRef>(null);
@@ -114,10 +87,20 @@ export function ManagerHealthRoom() {
     },
   });
   // Search health facilities state
-  const [selectValue, setSelectValue] = React.useState<string | null>(null);
+  const [selectHealthValue, setSelectHealthValue] = React.useState<
+    string | null
+  >(null);
   const [searchHealthSelect, setSearchHealthSelect] = React.useState<
     string | null
   >("");
+
+  function handleSearchSelect(value: string): void {
+    setSearchHealthSelect(value);
+  }
+
+  function handleChangeSelect(value: string): void {
+    setSelectHealthValue(value);
+  }
   const fetcher: BareFetcher<ResDataPaginations<any>> = async ([url, token]) =>
     (
       await axios.get(url, {
@@ -126,17 +109,49 @@ export function ManagerHealthRoom() {
         },
       })
     ).data;
-  const {
-    data: responseClinicRooms,
-    mutate: mutateClinicRooms,
-    error,
-    isLoading,
-  } = useSWR<ResDataPaginations<ClinicRoom>>(
+  // Room
+  const { data: responseClinics, mutate: mutateClinics } = useSWR<
+    ResDataPaginations<ClinicRoom>
+  >(
     [
       API_HEALTH_FACILITY_ROOM,
       {
+        healthFacilityId: selectHealthValue,
+      },
+    ],
+    fetcher,
+    {
+      revalidateOnMount: false,
+      dedupingInterval: 5000,
+    }
+  );
+  // Clinic
+  const [selectClinicRoomNumber, setselectClinicRoomNumber] = React.useState<
+    number | null
+  >(responseClinics?.rows?.[0]?.roomNumber || null);
+
+  React.useEffect(() => {
+    setselectClinicRoomNumber(responseClinics?.rows?.[0]?.roomNumber || null);
+  }, [responseClinics]);
+
+  function handleSearchSelectClinic(value: string): void {}
+
+  function handleChangeSelectClinic(value: string): void {
+    setselectClinicRoomNumber(Number.parseInt(value));
+  }
+
+  const {
+    data: responseWorkRooms,
+    mutate: mutateWorkRooms,
+    error,
+    isLoading,
+  } = useSWR<ResDataPaginations<WorkRoom>>(
+    [
+      API_WORK_ROOM,
+      {
         ...queryParams,
-        healthFacilityId: selectValue,
+        healthFacilityId: selectHealthValue,
+        roomNumber: selectClinicRoomNumber,
         limit: tableParams.pagination.pageSize, // 4 page 2 => 3, 4 page 6 => 21
         offset:
           ((tableParams.pagination.current || 0) - 1) *
@@ -149,6 +164,20 @@ export function ManagerHealthRoom() {
       dedupingInterval: 5000,
     }
   );
+
+  // Submit form
+  async function handleSubmitForm(data: Partial<WorkRoom>): Promise<boolean> {
+    const api = doctorApi.createOrUpdateWorkRoom({
+      ...data,
+      ClinicRoomHealthFacilityId: selectHealthValue || "",
+      ClinicRoomRoomNumber: selectClinicRoomNumber || undefined,
+    });
+    const isOk = await toastMsgFromPromise(api);
+    if (isOk) {
+      mutateWorkRooms();
+    }
+    return isOk;
+  }
 
   const handleReset = (clearFilters: () => void) => {
     clearFilters();
@@ -179,7 +208,7 @@ export function ManagerHealthRoom() {
 
   const getColumnSearchProps = (
     dataIndex: DataIndex | any
-  ): ColumnType<ClinicRoom> => ({
+  ): ColumnType<WorkRoom> => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -269,36 +298,37 @@ export function ManagerHealthRoom() {
     },
   });
 
-  const data = React.useMemo<ClinicRoom[]>(() => {
-    return responseClinicRooms?.rows.map((clinicRoom: ClinicRoom) => ({
-      ...clinicRoom,
-      key: "" + clinicRoom.healthFacilityId + clinicRoom.roomNumber,
+  const data = React.useMemo<WorkRoom[]>(() => {
+    return responseWorkRooms?.rows.map((workRoom: WorkRoom) => ({
+      ...workRoom,
+      key: workRoom.id,
     }));
-  }, [responseClinicRooms]);
+  }, [responseWorkRooms]);
 
-  const columns: ColumnsType<ClinicRoom> = React.useMemo(() => {
+  const columns: ColumnsType<WorkRoom> = React.useMemo(() => {
     return [
       {
-        title: "Số phòng",
-        dataIndex: "roomNumber",
-        key: "roomNumber",
+        title: "Bác sỉ",
+        dataIndex: ["Working", "Staff", "fullName"],
+        key: "Working.Staff.fullName",
         render: (text) => <a>{text}</a>,
-        sorter: (a, b) => a.roomNumber - b.roomNumber,
-        ...getColumnSearchProps("roomNumber"),
+        sorter: (a, b) =>
+          a.Working.Staff.fullName.localeCompare(b.Working.Staff.fullName),
       },
       {
-        title: "Sức chứa",
-        dataIndex: "capacity",
-        key: "capacity",
+        title: "Giá khám",
+        dataIndex: "checkUpPrice",
+        key: "checkUpPrice",
         render: (text) => <a>{text}</a>,
-        sorter: (a, b) => a.capacity - b.capacity,
+        sorter: (a, b) => a.checkUpPrice - b.checkUpPrice,
       },
       {
-        title: "Ngày tạo",
-        dataIndex: "createdAt",
-        key: "createdAt",
-        render: (text) => <a>{moment(text).locale("vi").calendar()}</a>,
-        sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
+        title: "Ngày áp dụng",
+        dataIndex: "applyDate",
+        key: "applyDate",
+        render: (text) => <a>{text && moment(text).format("L")}</a>,
+        sorter: (a, b) =>
+          a.applyDate.toString().localeCompare(b.applyDate.toString()),
       },
       {
         title: "Hành động",
@@ -306,10 +336,10 @@ export function ManagerHealthRoom() {
         render: (_, record) => {
           return (
             <ActionGroup className="justify-start">
-              <ActionBox type="edit" onClick={() => editClinicRoom(record)} />
+              <ActionBox type="edit" onClick={() => editWorkRoom(record)} />
               <ActionBox
                 type="delete"
-                onClick={() => handleClickDeleteClinicRoom(record)}
+                onClick={() => handleDeleteWorkRoom(record)}
               />
             </ActionGroup>
           );
@@ -334,6 +364,13 @@ export function ManagerHealthRoom() {
         dedupingInterval: 5000,
       }
     );
+
+  const dataSearchClinic: SelectProps["options"] = responseClinics?.rows.map(
+    (clinic: ClinicRoom) => ({
+      value: clinic.roomNumber,
+      text: <h3 className="text-cyan-600">{clinic.roomNumber}</h3>,
+    })
+  );
 
   const dataSearch: SelectProps["options"] = responseHealthFacilities?.rows.map(
     (healh: HealthFacility) => ({
@@ -363,67 +400,87 @@ export function ManagerHealthRoom() {
     })
   );
 
-  function handleSearchSelect(value: string): void {
-    setSearchHealthSelect(value);
-  }
-
-  function handleChangeSelect(value: string): void {
-    setSelectValue(value);
-  }
-
   return (
     <div className="">
-      <h3 className="mb-2">Tìm kiếm cơ sở y tế</h3>
-      <div className="flex items-end gap-2 ">
-        <SelectSearchField
-          placeholder="Nhập tên hoặc email cơ sơ y tế"
-          data={dataSearch}
-          handleSearchSelect={handleSearchSelect}
-          handleChangeSelect={handleChangeSelect}
-          value={selectValue}
-        />
-      </div>
-
       <ModalPositionHere
-        show={showClinicRoomCreateOrUpdateModal}
+        show={showCreateOrUpdateModal}
         toggle={() => {
-          toggleShowClinicRoomCreateOrUpdateModal();
+          toggleShowCreateOrUpdateModal();
         }}
         width={800}
         footer={false}
         body={
-          <BodyModalClinicRoom
-            clickCancel={toggleShowClinicRoomCreateOrUpdateModal}
-            handleSubmitForm={submitFormCreateOrUpdateClinicRoom}
-            obEditClinicRoom={obClinicRoomEdit}
+          <BodyModalClinicRoomWork
+            clickCancel={toggleShowCreateOrUpdateModal}
+            handleSubmitForm={handleSubmitForm}
+            obEdit={obEdit}
+            healthFacilityId={selectHealthValue}
           />
         }
         title={
-          obClinicRoomEdit?.roomNumber
-            ? `Sửa phòng * ${obClinicRoomEdit.roomNumber} *`
-            : "Thêm mới phòng"
+          obEdit?.ClinicRoomRoomNumber
+            ? `Sửa phân công phòng * ${obEdit.ClinicRoomRoomNumber} *`
+            : "Phân công phòng"
         }
       />
-      {selectValue && (
+      <div className="flex items-center gap-3">
+        <div>
+          <h3 className="mb-2">Tìm kiếm cơ sở y tế</h3>
+          <div className="flex items-end gap-2 ">
+            <SelectSearchField
+              placeholder="Nhập tên hoặc email cơ sơ y tế"
+              data={dataSearch}
+              handleSearchSelect={handleSearchSelect}
+              handleChangeSelect={handleChangeSelect}
+              value={selectHealthValue}
+            />
+          </div>
+        </div>
+        {selectHealthValue && selectClinicRoomNumber && (
+          <div>
+            <h3 className="mb-2">Phòng khám</h3>
+            <div className="flex items-end gap-2 ">
+              <SelectSearchField
+                allowClear={false}
+                placeholder="Phòng khám"
+                data={dataSearchClinic}
+                handleSearchSelect={handleSearchSelectClinic}
+                handleChangeSelect={handleChangeSelectClinic}
+                value={selectClinicRoomNumber?.toString()}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {!(selectHealthValue && selectClinicRoomNumber) && (
+        <h4 className="p-5 text-center">
+          {selectHealthValue && !selectClinicRoomNumber && (
+            <span>Cơ sở này chưa thêm dữ liệu phòng</span>
+          )}
+        </h4>
+      )}
+
+      {selectHealthValue && selectClinicRoomNumber && (
         <h3 className="gr-title-admin flex items-center justify-between mt-3  mb-3">
-          Quản lý phòng khám
+          Thành viên trong phòng
           <BtnPlus
-            title="Thêm phòng khám"
+            title="Thêm thành viên"
             onClick={() => {
-              toggleShowClinicRoomCreateOrUpdateModal();
-              setObClinicRoomEdit(null);
+              toggleShowCreateOrUpdateModal();
+              setObEdit(null);
             }}
           />
         </h3>
       )}
-      {data?.length > 0 && selectValue && (
+      {data?.length > 0 && selectHealthValue && selectClinicRoomNumber && (
         <>
           <TableSortFilter
             options={{
               sticky: true,
               loading: isLoading,
               pagination: {
-                total: responseClinicRooms?.count,
+                total: responseWorkRooms?.count,
                 pageSize: tableParams.pagination.pageSize,
                 showSizeChanger: true,
                 pageSizeOptions: ["3", "6", "12", "24", "50"],
@@ -436,10 +493,10 @@ export function ManagerHealthRoom() {
           />
         </>
       )}
-      {data?.length === 0 && selectValue && (
-        <p className="text-gray-500 text-center p-3 mt-4">
-          Chưa có phòng khám nào!
-        </p>
+      {data?.length === 0 && selectHealthValue && selectClinicRoomNumber && (
+        <div className="text-gray-500 text-center p-3 mt-4">
+          Tất cả chổ khám trong phòng đều trống!
+        </div>
       )}
     </div>
   );

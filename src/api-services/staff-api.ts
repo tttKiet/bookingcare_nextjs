@@ -1,7 +1,18 @@
-import { LoginPayLoad, Staff, User, Code } from "@/models";
+import {
+  LoginPayLoad,
+  Staff,
+  User,
+  Code,
+  HealthExaminationSchedule,
+} from "@/models";
 import axios from "../axios";
 import { ResData } from "@/types";
-import { API_ACCOUNT_STAFF, API_ACCOUNT_USER, API_CODE } from "./constant-api";
+import {
+  API_ACCOUNT_STAFF,
+  API_ACCOUNT_USER,
+  API_CODE,
+  API_DOCTOR_SCHEDULE_HEALTH_EXAM,
+} from "./constant-api";
 
 export const staffApi = {
   async createOrUpdateDoctor(data: Partial<Staff>): Promise<ResData> {
@@ -22,6 +33,15 @@ export const staffApi = {
       data: {
         key,
       },
+    });
+  },
+
+  // Schedule
+  async createOrUpdateSchedule(
+    data: any
+  ): Promise<ResData<HealthExaminationSchedule>> {
+    return await axios.post(API_DOCTOR_SCHEDULE_HEALTH_EXAM, {
+      ...data,
     });
   },
 };

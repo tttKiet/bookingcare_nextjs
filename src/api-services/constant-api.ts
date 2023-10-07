@@ -12,4 +12,7 @@ export const API_ACCOUNT_STAFF = "/api/v1/admin/staff";
 export const API_ACCOUNT_STAFF_DOCTOR = "/api/v1/admin/staff/doctor";
 export const API_ROLE = "/api/v1/admin/role";
 export const API_WORKING = "/api/v1/admin/work";
+export const API_WORK_ROOM = "/api/v1/admin/work-room";
 export const API_CODE = "/api/v1/admin/code";
+export const API_DOCTOR_SCHEDULE_HEALTH_EXAM =
+  "/api/v1/doctor/health-exam-schedule";

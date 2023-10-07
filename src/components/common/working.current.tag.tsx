@@ -289,7 +289,7 @@ export function WorkingCurrentTag() {
               </span>
             ) : (
               <span>
-                Vô hạn
+                ...đang làm việc
                 <span className="inline-block w-[5px] h-[5px] rounded-full bg-blue-400 ml-2"></span>
               </span>
             )}
