@@ -61,7 +61,7 @@ export interface HealthExaminationSchedule {
   date: string | Date | Object;
   timeCode: string;
   TimeCode: Code;
-  staffId: string;
-  Staff: Staff;
+  workingId: string;
+  Working: Working;
   maxNumber: number;
 }

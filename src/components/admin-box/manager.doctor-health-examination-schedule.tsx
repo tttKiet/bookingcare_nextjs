@@ -49,19 +49,22 @@ const { confirm } = Modal;
 import dayjs from "dayjs";
 import { SelectSearchField } from "../form";
 import { RxAvatar } from "react-icons/rx";
+import debounce from "lodash.debounce";
 
 type DataIndex = keyof HealthExaminationSchedule;
 
 export function ManagerHealthExamSchedule() {
   // State components
 
-  function handleClickDeleteAcademicDegree(record: AcademicDegree): void {
+  function handleClickDeleteSchedule(record: HealthExaminationSchedule): void {
     confirm({
-      title: `Bạn có muốn xóa học vị "${record.name}"?`,
+      title: `Bạn có muốn xóa lịch khám "${
+        record.TimeCode.value
+      }" của ngày ${moment(record.date).format("L")}?`,
       icon: <ExclamationCircleFilled />,
-      content: `Thao tác này sẽ xóa tất cả dữ liệu về "${record.name}" và không thể khôi phục`,
+      content: `Thao tác này sẽ xóa tất cả dữ liệu về "${record.TimeCode.value}" và không thể khôi phục`,
       async onOk() {
-        const api = doctorApi.deleteAcademicDegree({ id: record.id });
+        const api = staffApi.deleteScheduleDoctor(record.id);
         const isOk = await toastMsgFromPromise(api);
         isOk && mutateSchedules();
         return isOk;
@@ -102,8 +105,10 @@ export function ManagerHealthExamSchedule() {
     }
   );
 
-  const dataSearch: SelectProps["options"] = doctors?.rows.map(
-    (doctor: Staff) => ({
+  const [dataSearch, setDataSearch] = React.useState<SelectProps["options"]>();
+
+  React.useEffect(() => {
+    const data = doctors?.rows.map((doctor: Staff) => ({
       value: doctor.id,
       text: (
         <div className="flex items-center gap-2">
@@ -121,8 +126,9 @@ export function ManagerHealthExamSchedule() {
           </div>
         </div>
       ),
-    })
-  );
+    }));
+    setDataSearch(data);
+  }, [doctors]);
 
   async function handleSubmitFormSchedule(
     data: Partial<ReqSchedule>
@@ -332,24 +338,26 @@ export function ManagerHealthExamSchedule() {
 
       {
         title: "Bác sỉ",
-        dataIndex: ["Staff", "fullName"],
-        key: "Staff.fullName",
+        dataIndex: ["Working", "Staff", "fullName"],
+        key: "Working.Staff.fullName",
         render: (text) => <a>{text}</a>,
-        sorter: (a, b) => a.Staff.fullName.localeCompare(b.Staff.fullName),
+        sorter: (a, b) =>
+          a.Working.Staff.fullName.localeCompare(b.Working.Staff.fullName),
       },
-      {
-        title: "Mã thời gian",
-        dataIndex: "timeCode",
-        key: "timeCode",
-        render: (text) => <a>{text}</a>,
-        sorter: (a, b) => a.timeCode.localeCompare(b.timeCode),
-      },
+
       {
         title: "Thời gian",
         dataIndex: ["TimeCode", "value"],
         key: "TimeCode.value",
         render: (text) => <a>{text}</a>,
         sorter: (a, b) => a.TimeCode.value.localeCompare(b.TimeCode.value),
+      },
+      {
+        title: "Tối đa bệnh nhân khám",
+        dataIndex: "maxNumber",
+        key: "maxNumber",
+        render: (text) => <a>{text}</a>,
+        sorter: (a, b) => a.maxNumber - b.maxNumber,
       },
       {
         title: "Hành động",
@@ -359,8 +367,7 @@ export function ManagerHealthExamSchedule() {
             <ActionGroup className="justify-start">
               <ActionBox
                 type="delete"
-                onClick={() => {}}
-                // onClick={() => handleClickDeleteAcademicDegree(record)}
+                onClick={() => handleClickDeleteSchedule(record)}
               />
             </ActionGroup>
           );

@@ -11,6 +11,9 @@ export function InputField({
   placeholder,
   type = "text",
   icon,
+  min,
+  max,
+  width,
 }: InputFieldProps) {
   const [showPass, setShowPass] = useState<boolean>(false);
 
@@ -60,6 +63,9 @@ export function InputField({
             spellCheck={false}
             name={name}
             value={value}
+            min={min}
+            max={max}
+            width={width || "auto"}
           />
         ) : (
           <input

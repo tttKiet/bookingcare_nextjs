@@ -17,4 +17,7 @@ export interface InputFieldProps {
   type?: string;
   icon?: React.ReactNode;
   placeholder?: string;
+  min?: number;
+  max?: number;
+  width?: number | string;
 }

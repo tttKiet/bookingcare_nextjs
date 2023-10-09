@@ -44,4 +44,14 @@ export const staffApi = {
       ...data,
     });
   },
+
+  async deleteScheduleDoctor(
+    id: string
+  ): Promise<ResData<HealthExaminationSchedule>> {
+    return await axios.delete(API_DOCTOR_SCHEDULE_HEALTH_EXAM, {
+      data: {
+        id,
+      },
+    });
+  },
 };

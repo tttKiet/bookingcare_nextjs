@@ -151,7 +151,7 @@ export const schemaCodeBody = yup.object().shape({
 });
 
 export const schemaCodeScheduleHealth = yup.object().shape({
-  staffId: yup.string().required("Vui lòng chọn nhân viên."),
+  workingId: yup.string().required("Vui lòng chọn nhân viên."),
   timeCodeArray: yup
     .array()
     .required("Vui lòng chọn thời gian")

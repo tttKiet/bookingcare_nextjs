@@ -3,6 +3,7 @@
 // import { schemaValidateRegister } from "@/schema-validate";
 import {
   API_ACCOUNT_STAFF_DOCTOR,
+  API_ACCOUNT_STAFF_DOCTOR_WORKING,
   API_ACEDEMIC_DEGREE,
   API_CODE,
   API_DOCTOR_SCHEDULE_HEALTH_EXAM,
@@ -27,7 +28,16 @@ import {
 } from "@/schema-validate";
 import { ResDataPaginations } from "@/types";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Checkbox, Col, DatePicker, Row, Select, Space } from "antd";
+import {
+  Button,
+  Checkbox,
+  Col,
+  DatePicker,
+  InputNumber,
+  Row,
+  Select,
+  Space,
+} from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import { useController, useForm } from "react-hook-form";
 import { GoRepoForked } from "react-icons/go";
@@ -46,6 +56,7 @@ import debounce from "lodash.debounce";
 
 import axios from "../../axios";
 import { CheckboxValueType } from "antd/es/checkbox/Group";
+import Link from "next/link";
 export interface ReqSchedule extends HealthExaminationSchedule {
   timeCodeArray: Array<string>;
 }
@@ -72,7 +83,7 @@ export function BodyModalSchedule({
     register,
   } = useForm({
     defaultValues: {
-      staffId: "",
+      workingId: "",
       date: dayjs(new Date()),
       maxNumber: 3,
       timeCodeArray: [],
@@ -89,18 +100,26 @@ export function BodyModalSchedule({
   });
 
   const {
-    field: { value: staffIdValue, onChange: onChangeStaffId },
-    fieldState: { error: errorStaffId },
+    field: { value: maxNumber, onChange: onChangeMaxNumber },
+    fieldState: { error: errorMaxNumber },
   } = useController({
-    name: "staffId",
+    name: "maxNumber",
+    control,
+  });
+
+  const {
+    field: { value: workingIdValue, onChange: onChangeWorkingId },
+    fieldState: { error: errorWorkingId },
+  } = useController({
+    name: "workingId",
     control,
   });
 
   const [emailSearch, setEmailSearch] = useState<string>("");
   const { data: doctors } = useSWR(
-    `${API_ACCOUNT_STAFF_DOCTOR}?email=${emailSearch}`,
+    `${API_ACCOUNT_STAFF_DOCTOR_WORKING}?doctorEmail=${emailSearch}`,
     {
-      revalidateOnMount: false,
+      revalidateOnMount: true,
     }
   );
 
@@ -114,12 +133,12 @@ export function BodyModalSchedule({
     }
   };
 
-  const [doctorIdSelect, setDoctorIdSelect] = useState<Event>();
+  const [workingIdSelect, setDoctorIdSelect] = useState<Event>();
 
   const { data: scheduleDoctors } = useSWR<
     ResDataPaginations<HealthExaminationSchedule>
   >(
-    `${API_DOCTOR_SCHEDULE_HEALTH_EXAM}?staffId=${doctorIdSelect}&date=${dateSelect}`,
+    `${API_DOCTOR_SCHEDULE_HEALTH_EXAM}?workingId=${workingIdSelect}&date=${dateSelect}`,
     {
       revalidateOnMount: false,
     }
@@ -153,16 +172,16 @@ export function BodyModalSchedule({
   useEffect(() => {
     setOptionDoctors(() => {
       return (
-        doctors?.rows?.map((t: Staff) => ({
+        doctors?.rows?.map((t: Working) => ({
           value: t.id,
           label: (
             <div>
               <h3 className="text-sm text-gray-600 font-medium">
-                {t.fullName}
+                {t?.Staff?.fullName}
               </h3>
               <span className="text-xs text-black font-normal flex items-center justify-between">
-                <span>{t.email}</span>
-                <span>{t.AcademicDegree.name}</span>
+                <span>{t?.Staff?.email}</span>
+                <span>{t?.Staff?.AcademicDegree?.name}</span>
               </span>
             </div>
           ),
@@ -172,11 +191,15 @@ export function BodyModalSchedule({
   }, [doctors]);
 
   async function handleSubmitLocal(data: Partial<ReqSchedule>) {
+    console.log(data);
     const isOk = await handleSubmitForm({
       ...data,
     });
     if (isOk) {
-      reset({});
+      reset({
+        date: dayjs(new Date()),
+      });
+      setDateSelect(dayjs(new Date()));
       clickCancel();
     }
   }
@@ -198,19 +221,19 @@ export function BodyModalSchedule({
   };
 
   React.useEffect(() => {
-    if (obEdit?.staffId) {
+    if (obEdit?.Working) {
       setOptionDoctors(() => {
         return [
           {
-            value: obEdit.Staff.id,
+            value: obEdit.id,
             label: (
               <div>
                 <h3 className="text-sm text-gray-600 font-medium">
-                  {obEdit.Staff.fullName}
+                  {obEdit.Working.Staff.fullName}
                 </h3>
                 <span className="text-xs text-black font-normal flex items-center justify-between gap-2">
-                  <span>{obEdit.Staff.email}</span>
-                  <span>{obEdit.Staff.fullName}</span>
+                  <span>{obEdit.Working.Staff.email}</span>
+                  <span>{obEdit.Working.Staff.fullName}</span>
                 </span>
               </div>
             ),
@@ -226,45 +249,79 @@ export function BodyModalSchedule({
       className="flex flex-col gap-2 pt-4"
     >
       <div>
-        <div className="grid md:grid-cols-2 gap-3 sm:grid-cols-1">
-          <div className=" flex flex-col">
-            <Select
-              onSearch={debounce(onSearchSelectDoctors, 300)}
-              placement="bottomLeft"
-              // style={{ width: '100%' }}
-              size="large"
-              placeholder="Nhập email bác sỉ..."
-              virtual={false}
-              showSearch
-              optionFilterProp="children"
-              notFoundContent={<div>Khônng tìm thây...</div>}
-              getPopupContainer={(triggerNode) => triggerNode.parentElement}
-              options={optionDoctors}
-              filterOption={filterOption}
-              onChange={(e: any) => {
-                onChangeStaffId(e);
-                onChangeSelectDoctor(e);
-              }}
-              value={staffIdValue || null}
-            />
+        <div className="grid grid-cols-1 gap-3">
+          <div className="flex flex-col">
+            <label className="top-1 text-sm font-medium mb-2" htmlFor="">
+              Lịch của bác sỉ
+            </label>
+            <div>
+              <Select
+                onSearch={debounce(onSearchSelectDoctors, 300)}
+                placement="bottomLeft"
+                className="sm:w-[40%] w-full"
+                size="large"
+                placeholder="Nhập email bác sỉ..."
+                virtual={false}
+                showSearch
+                optionFilterProp="children"
+                notFoundContent={<div>Không tìm thây...</div>}
+                getPopupContainer={(triggerNode) => triggerNode.parentElement}
+                options={optionDoctors}
+                filterOption={filterOption}
+                onChange={(e: any) => {
+                  onChangeWorkingId(e);
+                  onChangeSelectDoctor(e);
+                }}
+                value={workingIdValue || null}
+              />
+            </div>
 
-            {errorStaffId && (
+            {errorWorkingId && (
               <p className="text-red-500 font-medium text-xs pt-1">
-                {errorStaffId?.message}
+                {errorWorkingId?.message}
               </p>
             )}
           </div>
-          <div>
-            <DatePicker
-              allowClear={false}
-              bordered={true}
-              value={dateSelect}
-              onChange={onChangeDate}
-              placement="bottomLeft"
+          <div className="flex flex-col">
+            <label className="top-1 text-sm font-medium mb-2" htmlFor="">
+              Ngày khám
+            </label>
+            <div>
+              <DatePicker
+                allowClear={false}
+                bordered={true}
+                value={dateSelect}
+                onChange={onChangeDate}
+                placement="bottomLeft"
+              />
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <label className="top-1 text-sm font-medium mb-2" htmlFor="">
+              Số lượng tối đa khám trên một đơn vị
+            </label>
+            <InputNumber
+              bordered
+              placeholder="Vd: 3"
+              className="px w-[50px] outline-none text-base"
+              spellCheck={false}
+              min={0}
+              max={5}
+              name="maxNumber"
+              onChange={onChangeMaxNumber}
+              value={maxNumber}
             />
+            {errorMaxNumber && (
+              <p className="text-red-500 font-medium text-xs pt-1">
+                {errorMaxNumber?.message}
+              </p>
+            )}
           </div>
 
-          <div>
+          <div className="flex flex-col">
+            <label className="top-1 text-sm font-medium mb-2" htmlFor="">
+              Khung giờ
+            </label>
             <Checkbox.Group
               style={{ width: "100%" }}
               onChange={onChangeCheckTimeCode}
@@ -286,6 +343,18 @@ export function BodyModalSchedule({
               </p>
             )}
           </div>
+        </div>
+        <div className="mt-3">
+          <h3 className="text-base text-gray-900">Lưu ý:</h3>
+          <ul className="mt-">
+            <li className="text-gray-400">
+              Chỉ hiển thị các bác sỉ đang công tác. Xem công tác ở
+              <Link href="/admin/work" className="pl-1 text-blue-500 underline">
+                đây
+              </Link>
+              .
+            </li>
+          </ul>
         </div>
       </div>
 

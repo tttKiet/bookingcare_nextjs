@@ -12,6 +12,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { SWRConfig } from "swr";
 import axios from "../axios";
 import Link from "next/link";
+import Footer from "@/components/footer";
 moment.locale("vi");
 
 export function RootLayout({ children }: { children: React.ReactNode }) {
@@ -41,6 +42,7 @@ export function RootLayout({ children }: { children: React.ReactNode }) {
               <>
                 <NavBarTop />
                 <div className="">{children}</div>
+                <Footer />
               </>
             ) : (
               <>{children}</>

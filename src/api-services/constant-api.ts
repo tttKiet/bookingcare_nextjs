@@ -10,6 +10,7 @@ export const API_ACEDEMIC_DEGREE = "/api/v1/admin/academic-degree";
 export const API_ACCOUNT_USER = "/api/v1/user";
 export const API_ACCOUNT_STAFF = "/api/v1/admin/staff";
 export const API_ACCOUNT_STAFF_DOCTOR = "/api/v1/admin/staff/doctor";
+export const API_ACCOUNT_STAFF_DOCTOR_WORKING = "/api/v1/doctor/working";
 export const API_ROLE = "/api/v1/admin/role";
 export const API_WORKING = "/api/v1/admin/work";
 export const API_WORK_ROOM = "/api/v1/admin/work-room";

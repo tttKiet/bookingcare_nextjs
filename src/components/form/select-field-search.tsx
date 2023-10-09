@@ -40,6 +40,7 @@ export function SelectSearchField({
   const handleChange = (newValue: string) => {
     handleChangeSelect(newValue);
   };
+
   return (
     <Select
       showSearch
@@ -47,13 +48,12 @@ export function SelectSearchField({
       value={value}
       placeholder={placeholder}
       style={{ minWidth: 280, ...style }}
-      suffixIcon={null}
-      // filterOption={false}
+      filterOption={false}
       virtual={false}
       onSearch={debounce(handleSearch, debounceSeconds || 300)}
       onChange={handleChange}
       // notFoundContent={<p className="p-2">Không tìm thấy</p>}
-      options={(data || []).map((d) => ({
+      options={data?.map((d) => ({
         value: d.value,
         label: d.text,
       }))}
