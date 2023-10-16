@@ -1,3 +1,4 @@
+import { Dayjs } from "dayjs";
 import { AcademicDegree, HealthFacility, Specialist } from "./healthFacilities";
 
 export interface User {
@@ -64,4 +65,19 @@ export interface HealthExaminationSchedule {
   workingId: string;
   Working: Working;
   maxNumber: number;
+}
+
+export interface PatientProfile {
+  id: string;
+  fullName: string;
+  phone: string;
+  profession: string;
+  email: string;
+  gender: string;
+  birthDay: string;
+  nation: string;
+  cccd: string;
+  addressCode: string[];
+  userId: string;
+  User: User;
 }

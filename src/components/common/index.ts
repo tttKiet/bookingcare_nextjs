@@ -8,3 +8,8 @@ export * from "./list.health-facilities";
 export * from "./item.health-facility";
 export * from "./box.health-facility";
 export * from "./working.current.tag";
+export * from "./breadcrumb-app";
+export * from "./content.tag.user.patient-profile";
+export * from "./tag.add-patient-profile";
+export * from "./tag.patient-profile";
+export * from "./patient-profile.item";

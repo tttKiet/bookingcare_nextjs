@@ -14,6 +14,10 @@ export const API_ACCOUNT_STAFF_DOCTOR_WORKING = "/api/v1/doctor/working";
 export const API_ROLE = "/api/v1/admin/role";
 export const API_WORKING = "/api/v1/admin/work";
 export const API_WORK_ROOM = "/api/v1/admin/work-room";
+export const API_WORK_ROOM_GET_FULL_LIST_DOCTOR_WORKING =
+  "/api/v1/user/list-doctor-working-health";
 export const API_CODE = "/api/v1/admin/code";
 export const API_DOCTOR_SCHEDULE_HEALTH_EXAM =
   "/api/v1/doctor/health-exam-schedule";
+
+export const API_PATIENT_PROFILE = "/api/v1/user/patient-profile";

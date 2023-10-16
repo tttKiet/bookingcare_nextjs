@@ -1,9 +1,8 @@
 "use client";
 
-import { doctorApi, staffApi } from "@/api-services";
+import { staffApi } from "@/api-services";
 import {
   API_ACCOUNT_STAFF_DOCTOR,
-  API_ACEDEMIC_DEGREE,
   API_DOCTOR_SCHEDULE_HEALTH_EXAM,
 } from "@/api-services/constant-api";
 import { ExclamationCircleFilled } from "@ant-design/icons";
@@ -18,7 +17,7 @@ import {
 } from "antd";
 import axios from "../../axios";
 
-import { AcademicDegree, HealthExaminationSchedule, Staff } from "@/models";
+import { HealthExaminationSchedule, Staff } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import type {
@@ -28,28 +27,21 @@ import type {
   TableProps,
 } from "antd/es/table";
 import { FilterConfirmProps } from "antd/es/table/interface";
+import { Dayjs } from "dayjs";
+import moment from "moment";
 import * as React from "react";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
-import useSWR, { BareFetcher, mutate } from "swr";
-import {
-  BodyModalAcademicDegree,
-  BodyModalSchedule,
-  ReqSchedule,
-} from "../body-modal";
+import { RxAvatar } from "react-icons/rx";
+import useSWR, { BareFetcher } from "swr";
+import { BodyModalSchedule, ReqSchedule } from "../body-modal";
 import { ActionGroup } from "../box";
 import { ActionBox } from "../box/action.box";
 import { BtnPlus } from "../button";
+import { SelectSearchField } from "../form";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
-import moment from "moment";
-import { SelectDateCalendarField } from "../form/select-date-field";
-import { Dayjs } from "dayjs";
 const { confirm } = Modal;
-import dayjs from "dayjs";
-import { SelectSearchField } from "../form";
-import { RxAvatar } from "react-icons/rx";
-import debounce from "lodash.debounce";
 
 type DataIndex = keyof HealthExaminationSchedule;
 
@@ -344,7 +336,6 @@ export function ManagerHealthExamSchedule() {
         sorter: (a, b) =>
           a.Working.Staff.fullName.localeCompare(b.Working.Staff.fullName),
       },
-
       {
         title: "Thời gian",
         dataIndex: ["TimeCode", "value"],

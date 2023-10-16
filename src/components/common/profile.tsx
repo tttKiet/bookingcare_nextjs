@@ -1,3 +1,5 @@
+"use client";
+
 import { Space, Avatar } from "antd";
 import * as React from "react";
 import { AiOutlineUser } from "react-icons/ai";
@@ -10,8 +12,7 @@ export interface ProfileProps {}
 
 export function Profile(props: ProfileProps) {
   const { profile, logout } = useAuth({ revalidateOnMount: true });
-  const mode = useSelector(getMode);
-  console.log(profile);
+  const isUser = React.useMemo(() => profile && !profile.Role, [profile]);
   return (
     <div>
       {profile?.email && (
@@ -22,7 +23,7 @@ export function Profile(props: ProfileProps) {
               crossOrigin={"use-credentials"}
               icon={<AiOutlineUser />}
               className={`${
-                mode === "dark"
+                !isUser
                   ? "text-white border-red-300"
                   : "border-pink-500 text-black"
               } flex items-center justify-center text-base bg-transparent rounded-full border-[2px] `}

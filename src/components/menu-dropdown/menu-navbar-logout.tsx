@@ -22,12 +22,20 @@ export default function MenuNavbarLogout({ options }: MenuNavbarLogoutProps) {
       {
         key: "profile",
         label: (
-          <Link href="/" className="px-1">
-            Hồ sơ
+          <Link href="/user" className="">
+            Hồ sơ bệnh nhân
           </Link>
         ),
         icon: <PiUserCircleLight size={20} />,
         className: "w-44 mb-1",
+        show: !(profile?.Role || false),
+      },
+      {
+        key: "admin",
+        label: "Admin",
+        icon: <PiUserCircleLight size={20} />,
+        className: "w-44 mb-1",
+        show: !!profile?.Role || false,
       },
       {
         key: "logout",
@@ -39,6 +47,19 @@ export default function MenuNavbarLogout({ options }: MenuNavbarLogoutProps) {
       },
     ];
   }, []);
+  const itemsFilter = React.useMemo(
+    () =>
+      items
+        .filter((s) => !(s.show == false))
+        .map((i) => {
+          const item = { ...i };
+          if (item.hasOwnProperty("show")) delete item.show;
+          return {
+            ...item,
+          };
+        }),
+    [items]
+  );
 
   function toggleShowModalConfirm() {
     setShowConfirm((s) => !s);
@@ -61,7 +82,7 @@ export default function MenuNavbarLogout({ options }: MenuNavbarLogoutProps) {
         toggle={toggleShowModalConfirm}
       />
       <MenuDropdown
-        items={items}
+        items={itemsFilter}
         options={{ placement: "bottom", arrow: true, ...options }}
         title={profile?.fullName || ""}
         titleType="text-blue-600 ml-1"

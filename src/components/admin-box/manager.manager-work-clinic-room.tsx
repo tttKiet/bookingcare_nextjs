@@ -5,7 +5,16 @@ import {
   API_HEALTH_FACILITY_ROOM,
   API_WORK_ROOM,
 } from "@/api-services/constant-api";
-import { Button, Input, InputRef, Modal, SelectProps, Space } from "antd";
+import {
+  Badge,
+  Button,
+  Input,
+  InputRef,
+  Modal,
+  SelectProps,
+  Space,
+  Tag,
+} from "antd";
 import axios from "../../axios";
 
 import { ClinicRoom, HealthFacility, WorkRoom } from "@/models";
@@ -35,14 +44,21 @@ import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
 import { doctorApi, staffApi } from "@/api-services";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
+import { useSearchParams } from "next/navigation";
 const { confirm } = Modal;
 
 type DataIndex = keyof WorkRoom;
 
+interface ResDataPaginationsParticipateMember
+  extends ResDataPaginations<WorkRoom> {
+  currentParticipate?: number;
+}
+
 export function ManagerClinicWork() {
   // State components
   const [obEdit, setObEdit] = React.useState<WorkRoom | null>();
-
+  const searchParams = useSearchParams();
+  const tag = searchParams.get("tag");
   const [showCreateOrUpdateModal, setShowCreateOrUpdateModal] =
     React.useState<boolean>(false);
 
@@ -101,6 +117,7 @@ export function ManagerClinicWork() {
   function handleChangeSelect(value: string): void {
     setSelectHealthValue(value);
   }
+  const [maxMember, setMaxMember] = React.useState<number>(0);
   const fetcher: BareFetcher<ResDataPaginations<any>> = async ([url, token]) =>
     (
       await axios.get(url, {
@@ -121,31 +138,48 @@ export function ManagerClinicWork() {
     ],
     fetcher,
     {
-      revalidateOnMount: false,
-      dedupingInterval: 5000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+
+      dedupingInterval: 2000,
     }
   );
   // Clinic
-  const [selectClinicRoomNumber, setselectClinicRoomNumber] = React.useState<
+  const [selectClinicRoomNumber, setSelectClinicRoomNumber] = React.useState<
     number | null
   >(responseClinics?.rows?.[0]?.roomNumber || null);
 
   React.useEffect(() => {
-    setselectClinicRoomNumber(responseClinics?.rows?.[0]?.roomNumber || null);
+    setSelectClinicRoomNumber(responseClinics?.rows?.[0]?.roomNumber || null);
   }, [responseClinics]);
 
   function handleSearchSelectClinic(value: string): void {}
 
   function handleChangeSelectClinic(value: string): void {
-    setselectClinicRoomNumber(Number.parseInt(value));
+    setSelectClinicRoomNumber(Number.parseInt(value));
   }
+
+  React.useEffect(() => {
+    mutateClinics();
+  }, [tag]);
+
+  React.useEffect(() => {
+    if (selectClinicRoomNumber) {
+      const clinic = responseClinics?.rows.find(
+        (r: ClinicRoom) => r.roomNumber == selectClinicRoomNumber
+      );
+
+      const maxMemberData = clinic?.capacity || 0;
+      setMaxMember(maxMemberData);
+    }
+  }, [selectClinicRoomNumber, responseClinics]);
 
   const {
     data: responseWorkRooms,
     mutate: mutateWorkRooms,
     error,
     isLoading,
-  } = useSWR<ResDataPaginations<WorkRoom>>(
+  } = useSWR<ResDataPaginationsParticipateMember>(
     [
       API_WORK_ROOM,
       {
@@ -319,7 +353,7 @@ export function ManagerClinicWork() {
         title: "Giá khám",
         dataIndex: "checkUpPrice",
         key: "checkUpPrice",
-        render: (text) => <a>{text}</a>,
+        render: (text) => <a>{text.toLocaleString()} vnđ</a>,
         sorter: (a, b) => a.checkUpPrice - b.checkUpPrice,
       },
       {
@@ -423,31 +457,57 @@ export function ManagerClinicWork() {
             : "Phân công phòng"
         }
       />
-      <div className="flex items-center gap-3">
-        <div>
-          <h3 className="mb-2">Tìm kiếm cơ sở y tế</h3>
-          <div className="flex items-end gap-2 ">
-            <SelectSearchField
-              placeholder="Nhập tên hoặc email cơ sơ y tế"
-              data={dataSearch}
-              handleSearchSelect={handleSearchSelect}
-              handleChangeSelect={handleChangeSelect}
-              value={selectHealthValue}
-            />
-          </div>
-        </div>
-        {selectHealthValue && selectClinicRoomNumber && (
-          <div>
-            <h3 className="mb-2">Phòng khám</h3>
+      <div>
+        <div className="grid grid-cols-12 gap-3">
+          <div className="col-span-12 md:col-span-3">
+            <h3 className="mb-2">Tìm kiếm cơ sở y tế</h3>
             <div className="flex items-end gap-2 ">
               <SelectSearchField
-                allowClear={false}
-                placeholder="Phòng khám"
-                data={dataSearchClinic}
-                handleSearchSelect={handleSearchSelectClinic}
-                handleChangeSelect={handleChangeSelectClinic}
-                value={selectClinicRoomNumber?.toString()}
+                style={{ minWidth: 200, width: "100%" }}
+                placeholder="Nhập tên hoặc email cơ sơ y tế"
+                data={dataSearch}
+                handleSearchSelect={handleSearchSelect}
+                handleChangeSelect={handleChangeSelect}
+                value={selectHealthValue}
               />
+            </div>
+          </div>
+          {selectHealthValue && selectClinicRoomNumber && (
+            <div className="col-span-12 md:col-span-3">
+              <h3 className="mb-2">Phòng khám</h3>
+              <div className="flex items-end gap-2 ">
+                <SelectSearchField
+                  style={{ minWidth: 200, width: "100%" }}
+                  allowClear={false}
+                  placeholder="Phòng khám"
+                  data={dataSearchClinic}
+                  handleSearchSelect={handleSearchSelectClinic}
+                  handleChangeSelect={handleChangeSelectClinic}
+                  value={selectClinicRoomNumber?.toString()}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+        {responseClinics && selectClinicRoomNumber && (
+          <div className="mt-4">
+            <div className="">
+              <Badge count={maxMember}>
+                <h3 className="mb-2 px-6 py-2 outline-dashed outline-1 outline-blue-500 rounded-md">
+                  Giới hạn số lượng thành viên
+                </h3>
+              </Badge>
+            </div>
+            <div className="mt-2">
+              <Badge
+                color="blue"
+                count={responseWorkRooms?.currentParticipate?.toString() || "0"}
+                showZero={true}
+              >
+                <h3 className="mb-2 px-6 py-2 outline-dashed outline-1 outline-blue-500 rounded-md">
+                  Số bác sỉ hiện tại
+                </h3>
+              </Badge>
             </div>
           </div>
         )}

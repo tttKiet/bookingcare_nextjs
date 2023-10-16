@@ -2,6 +2,7 @@ import { HealthFacility } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { Badge } from "antd";
 import Image from "next/image";
+import Link from "next/link";
 import * as React from "react";
 import { AiOutlineCaretRight } from "react-icons/ai";
 import { CiLocationArrow1, CiLocationOn } from "react-icons/ci";
@@ -17,7 +18,14 @@ export function ItemHealthFacility({
 }: IItemHealthFacilitiesProps) {
   return (
     <Badge.Ribbon
-      text={<p className="py-1 px-4 cursor-pointer">Đặt khám ngay</p>}
+      text={
+        <Link
+          href={`/booking?healthFacilityId=${healthFaicility.id}`}
+          className="py-1 px-4 cursor-pointer"
+        >
+          Đặt khám ngay
+        </Link>
+      }
     >
       <div
         key={healthFaicility.id}
