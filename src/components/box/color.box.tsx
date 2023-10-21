@@ -18,7 +18,9 @@ export function ColorBox({
     <div
       className={`${className} text-${titlePosition} bg-white text-base rounded-lg overflow-hidden shadow`}
     >
-      {title && <h4 className="text-white py-4 px-3 bg-blue-500">{title}</h4>}
+      {title && (
+        <h4 className="text-white text-lg py-4 px-6 bg-blue-500">{title}</h4>
+      )}
       <div className="py-2 px-8">{children}</div>
     </div>
   );

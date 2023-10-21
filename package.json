@@ -24,6 +24,7 @@
     "autoprefixer": "10.4.15",
     "aws-sdk": "^2.1450.0",
     "axios": "^1.4.0",
+    "date-fns": "^2.30.0",
     "dayjs": "^1.11.10",
     "firebase": "^10.3.0",
     "http-proxy": "^1.18.1",

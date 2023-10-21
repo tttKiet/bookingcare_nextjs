@@ -9,6 +9,8 @@ export const API_SPECIALIST = "/api/v1/admin/specialist";
 export const API_ACEDEMIC_DEGREE = "/api/v1/admin/academic-degree";
 export const API_ACCOUNT_USER = "/api/v1/user";
 export const API_ACCOUNT_STAFF = "/api/v1/admin/staff";
+export const API_ACCOUNT_STAFF_DOCTOR_BY_ID =
+  "/api/v1/admin/staff/doctor-by-id";
 export const API_ACCOUNT_STAFF_DOCTOR = "/api/v1/admin/staff/doctor";
 export const API_ACCOUNT_STAFF_DOCTOR_WORKING = "/api/v1/doctor/working";
 export const API_ROLE = "/api/v1/admin/role";
@@ -21,3 +23,5 @@ export const API_DOCTOR_SCHEDULE_HEALTH_EXAM =
   "/api/v1/doctor/health-exam-schedule";
 
 export const API_PATIENT_PROFILE = "/api/v1/user/patient-profile";
+export const API_BOOKING = "/api/v1/user/booking";
+export const API_HEALTH_RECORD = "/api/v1/user/health-record";

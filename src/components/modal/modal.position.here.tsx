@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Button, Divider, Modal } from "antd";
+import { ModalProps } from "antd/lib";
 
 export interface ModalPositionHereProps {
   title: string;
@@ -11,6 +12,7 @@ export interface ModalPositionHereProps {
   toggle: (e: React.MouseEvent) => void;
   footer?: boolean;
   width?: number;
+  config?: ModalProps;
 }
 
 export function ModalPositionHere({
@@ -23,6 +25,7 @@ export function ModalPositionHere({
   toggle,
   footer,
   width,
+  config,
 }: ModalPositionHereProps) {
   return (
     <div>
@@ -36,6 +39,7 @@ export function ModalPositionHere({
         style={{ top: 20 }}
         cancelText={contentBtnCancel}
         footer={footer}
+        {...config}
       >
         <hr />
 

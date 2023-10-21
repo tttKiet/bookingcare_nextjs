@@ -459,7 +459,7 @@ export function ManagerClinicWork() {
       />
       <div>
         <div className="grid grid-cols-12 gap-3">
-          <div className="col-span-12 md:col-span-3">
+          <div className="col-span-12 xl:col-span-3">
             <h3 className="mb-2">Tìm kiếm cơ sở y tế</h3>
             <div className="flex items-end gap-2 ">
               <SelectSearchField
@@ -473,7 +473,7 @@ export function ManagerClinicWork() {
             </div>
           </div>
           {selectHealthValue && selectClinicRoomNumber && (
-            <div className="col-span-12 md:col-span-3">
+            <div className="col-span-12 xl:col-span-3">
               <h3 className="mb-2">Phòng khám</h3>
               <div className="flex items-end gap-2 ">
                 <SelectSearchField
@@ -489,7 +489,7 @@ export function ManagerClinicWork() {
             </div>
           )}
         </div>
-        {responseClinics && selectClinicRoomNumber && (
+        {selectHealthValue && selectClinicRoomNumber && (
           <div className="mt-4">
             <div className="">
               <Badge count={maxMember}>

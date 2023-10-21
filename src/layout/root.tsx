@@ -13,6 +13,8 @@ import { SWRConfig } from "swr";
 import axios from "../axios";
 import Link from "next/link";
 import Footer from "@/components/footer";
+import { ConfigProvider } from "antd";
+import theme from "../theme/themeConfig";
 moment.locale("vi");
 
 export function RootLayout({ children }: { children: React.ReactNode }) {
@@ -20,36 +22,38 @@ export function RootLayout({ children }: { children: React.ReactNode }) {
   const isAdminLink = pathname.includes("/admin");
   return (
     <StyledComponentsRegistry>
-      <Provider store={store}>
-        <PersistGate persistor={persistor} loading={null}>
-          <SWRConfig
-            value={{
-              fetcher: (url) =>
-                axios
-                  .get(url)
-                  .then((res) => {
-                    return res.data;
-                  })
-                  .catch((err) => {
-                    console.log("fetcher error: " + err);
-                  }),
-              shouldRetryOnError: false,
-              revalidateOnFocus: false,
-            }}
-          >
-            <ToastMsg containerClassName="text-sm" />
-            {!isAdminLink ? (
-              <>
-                <NavBarTop />
-                <div className="">{children}</div>
-                <Footer />
-              </>
-            ) : (
-              <>{children}</>
-            )}
-          </SWRConfig>
-        </PersistGate>
-      </Provider>
+      <ConfigProvider theme={theme}>
+        <Provider store={store}>
+          <PersistGate persistor={persistor} loading={null}>
+            <SWRConfig
+              value={{
+                fetcher: (url) =>
+                  axios
+                    .get(url)
+                    .then((res) => {
+                      return res.data;
+                    })
+                    .catch((err) => {
+                      console.log("fetcher error: " + err);
+                    }),
+                shouldRetryOnError: false,
+                revalidateOnFocus: false,
+              }}
+            >
+              <ToastMsg containerClassName="text-sm" />
+              {!isAdminLink ? (
+                <>
+                  <NavBarTop />
+                  <div className="">{children}</div>
+                  <Footer />
+                </>
+              ) : (
+                <>{children}</>
+              )}
+            </SWRConfig>
+          </PersistGate>
+        </Provider>
+      </ConfigProvider>
     </StyledComponentsRegistry>
   );
 }

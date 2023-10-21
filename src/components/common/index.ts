@@ -13,3 +13,5 @@ export * from "./content.tag.user.patient-profile";
 export * from "./tag.add-patient-profile";
 export * from "./tag.patient-profile";
 export * from "./patient-profile.item";
+export * from "./schudule.box";
+export * from "./box.health-record";

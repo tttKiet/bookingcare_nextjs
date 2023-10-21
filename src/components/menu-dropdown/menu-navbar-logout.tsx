@@ -9,6 +9,7 @@ import { PiUserCircleLight } from "react-icons/pi";
 import MenuDropdown from ".";
 import { ModalPositionHere } from "../modal";
 import { DropDownProps } from "antd";
+import { RiBillLine } from "react-icons/ri";
 
 export interface MenuNavbarLogoutProps {
   options?: DropDownProps;
@@ -31,6 +32,21 @@ export default function MenuNavbarLogout({ options }: MenuNavbarLogoutProps) {
         show: !(profile?.Role || false),
       },
       {
+        key: "health-record",
+        label: (
+          <Link href="/user/health-record/" className="">
+            Phiếu khám bệnh
+          </Link>
+        ),
+        icon: (
+          <span className="flex items-center">
+            <RiBillLine size={20} />
+          </span>
+        ),
+        className: "w-44 mb-1 items-center",
+        show: !(profile?.Role || false),
+      },
+      {
         key: "admin",
         label: "Admin",
         icon: <PiUserCircleLight size={20} />,
@@ -42,7 +58,11 @@ export default function MenuNavbarLogout({ options }: MenuNavbarLogoutProps) {
         danger: true,
         label: "Đăng xuất",
         className: "border-t mb-1 rounded-none",
-        icon: <AiOutlinePoweroff size={20} />,
+        icon: (
+          <span className="flex items-center">
+            <AiOutlinePoweroff size={20} />
+          </span>
+        ),
         onClick: toggleShowModalConfirm,
       },
     ];

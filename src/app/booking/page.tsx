@@ -5,32 +5,162 @@ import { useSearchParams } from "next/navigation";
 import StepBookings from "@/components/steps/steps-booking,";
 import { StepProps, TabPaneProps, Tabs } from "antd";
 import { ColorBox } from "@/components/box";
-import { HealthFacility } from "@/models";
+import {
+  Booking,
+  HealthExaminationSchedule,
+  HealthFacility,
+  PatientProfile,
+  Staff,
+  WorkRoom,
+} from "@/models";
 import useSWR from "swr";
-import { API_HEALTH_FACILITIES } from "@/api-services/constant-api";
+import {
+  API_ACCOUNT_STAFF_DOCTOR_BY_ID,
+  API_HEALTH_FACILITIES,
+} from "@/api-services/constant-api";
 import { ResDataPaginations } from "@/types";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import Link from "next/link";
-import { ChooseDoctor } from "@/components/common/step-boking";
+import {
+  ChooseDoctor,
+  ChooseSchedule,
+  ComfirmInformation,
+} from "@/components/common/step-boking";
+import moment from "moment";
+import { ChoosePatientProfile } from "@/components/common/step-boking/ChoosePatientProfile";
+import { PaymentInformation } from "@/components/common/step-boking/PaymentInformation";
+import { CiLocationOn, CiUser } from "react-icons/ci";
+import { FcPhoneAndroid } from "react-icons/fc";
+import { useGetAddress } from "@/hooks/use-get-address-from-code";
+import { userApi } from "@/api-services";
+import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
+import { useRouter } from "next/navigation";
 export interface IAboutPageProps {}
 
 export default function Booking(props: IAboutPageProps) {
   const searchParams = useSearchParams();
-  const [current, setCurrent] = React.useState<number>(1);
-
+  const [current, setCurrent] = React.useState<number>(0);
   const healthFacilityId = searchParams.get("healthFacilityId");
-  console.log("healthFacilityId", healthFacilityId);
+  const router = useRouter();
+  // Data booking
+
+  const [doctorChoose, setDoctorChoose] = React.useState<WorkRoom | null>(null);
+  const [descStatusPatient, setDescStatusPatient] = React.useState<string>("");
+  const [healthExaminationSchedule, setHealthExaminationSchedule] =
+    React.useState<Partial<HealthExaminationSchedule> | null>(null);
+  const [patientProfile, setPatientProfile] =
+    React.useState<PatientProfile | null>(null);
+
+  function stepNext(step: number, value?: any) {
+    if (step == 1) {
+      setDoctorChoose(value);
+      setCurrent(1);
+      setInfoCheckupItems((prev) => {
+        const existed = prev.find((p: any) => p.key === "1");
+
+        const newArray = [...prev];
+        const item = {
+          key: "1",
+          title: "Bác sỉ",
+          description: (
+            <div>
+              <h5>{value.Working.Staff.fullName}</h5>
+              <div className="mt-1">
+                <span> {value.Working.Staff.AcademicDegree.name}</span>{" "}
+                <span className="px-2  text-pink-500">|</span>
+                <span>
+                  Khoa
+                  <span> {value.Working.Staff.Specialist.name}</span>
+                </span>
+              </div>
+              <div className=" mt-1 ">
+                Giá khám:{" "}
+                <span className="px-2 bg-blue-500 text-white rounded-lg">
+                  {value.checkUpPrice.toLocaleString()} vnđ
+                </span>
+              </div>
+            </div>
+          ),
+        };
+
+        if (existed) {
+          newArray.splice(1, 1, item);
+          return newArray;
+        } else {
+          return [...newArray, item];
+        }
+      });
+    } else if (step == 2) {
+      setHealthExaminationSchedule(value);
+      setCurrent(2);
+      setInfoCheckupItems((prev) => {
+        const existed = prev.find((p: any) => p.key === "2");
+
+        const newArray = [...prev];
+        const item = {
+          key: "2",
+          title: "Thời gian",
+          description: (
+            <div>
+              <div className=" flex items-center gap-2">
+                <span>Ngày khám: </span>
+                <span className="text-blue-500">
+                  {moment(value.date).format("L")}{" "}
+                </span>
+              </div>
+              <div className="mt-1 flex items-center gap-2">
+                <span>Khung giờ: </span>
+                <span className="px-2 border rounded-xl border-dashed border-blue-500">
+                  {value.TimeCode.value}
+                </span>
+              </div>
+            </div>
+          ),
+        };
+
+        if (existed) {
+          newArray.splice(2, 1, item);
+          return newArray;
+        } else {
+          return [...newArray, item];
+        }
+      });
+    } else if (step == 3) {
+      setCurrent(3);
+      setPatientProfile(value);
+      setDescStatusPatient(value.descStatusPatient);
+    } else if (step == 4) {
+      setCurrent(4);
+    }
+  }
+
+  function stepPrev() {
+    setCurrent((prev) => {
+      if (prev > 0) {
+        return prev - 1;
+      } else return prev;
+    });
+  }
 
   // Check effect of health facility
   const { data: healthFacility } = useSWR<ResDataPaginations<HealthFacility>>(
-    `${API_HEALTH_FACILITIES}?id=${healthFacilityId}`
+    `${API_HEALTH_FACILITIES}?id=${healthFacilityId}`,
+    {
+      dedupingInterval: 6000,
+    }
   );
+  // const { data: doctorInfo } = useSWR<Staff>(
+  //   `${API_ACCOUNT_STAFF_DOCTOR_BY_ID}?id=${doctorChoose?.staffId || ""}`,
+  //   {
+  //     dedupingInterval: 36000,
+  //   }
+  // );
 
   const tabItems: any[] = React.useMemo(() => {
     return [
       {
         label: `Cơ sở y tế`,
-        key: "1",
+        key: "0",
         children: (
           <div className="flex items-center justify-center ">
             <Link className="text-blue-600" href="/health-facility">
@@ -41,55 +171,150 @@ export default function Booking(props: IAboutPageProps) {
       },
       {
         label: `Chọn bác sỉ`,
+        key: "1",
+        children: (
+          <ChooseDoctor
+            next={stepNext}
+            healthFacilityId={healthFacilityId || ""}
+          />
+        ),
+      },
+      {
+        label: `Chọn thời gian khám`,
         key: "2",
-        children: <ChooseDoctor healthFacilityId={healthFacilityId} />,
+        children: (
+          <ChooseSchedule
+            next={stepNext}
+            previous={stepPrev}
+            staffId={doctorChoose?.Working.staffId || ""}
+          />
+        ),
+      },
+      {
+        label: `Chọn hồ sơ bệnh nhân`,
+        key: "3",
+        children: <ChoosePatientProfile next={stepNext} previous={stepPrev} />,
       },
     ];
   }, []);
+
+  // function onChangeSteps(value: number) {
+  //   console.log(value);
+  //   setCurrent(value);
+  // }
+
+  async function handleConfirmSuccess(): Promise<void> {
+    const api = userApi.booking({
+      descriptionDisease: descStatusPatient,
+      healthExaminationScheduleId: healthExaminationSchedule?.id || "",
+      patientProfileId: patientProfile?.id || "",
+    });
+    const isOk = await toastMsgFromPromise(api);
+    if (isOk) {
+      router.push(`/user/health-record/${isOk?.data?.id || ""}`);
+    }
+  }
+
   const [infoCheckupItems, setInfoCheckupItems] = React.useState<StepProps[]>([
     {
       title: "Cơ sở y tế",
       description: "Chưa chọn",
     },
   ]);
+
+  const { address } = useGetAddress({
+    wardCode: patientProfile?.addressCode[0] || "",
+    districtCode: patientProfile?.addressCode[1] || "",
+    provinceCode: patientProfile?.addressCode[2] || "",
+  });
   React.useEffect(() => {
     if (healthFacility) {
       setInfoCheckupItems(() => {
         return [
           {
+            key: "0",
             title: "Cơ sở y tế",
             description: (
               <div>
                 <h5>{healthFacility.rows?.[0].name}</h5>
-                <p>
-                  <HiOutlineLocationMarker /> {healthFacility.rows?.[0].address}
-                </p>
+                <span>
+                  <span className="inline-flex items-center">
+                    <HiOutlineLocationMarker className="inline-block" />
+                  </span>
+
+                  <span> {healthFacility.rows?.[0].address}</span>
+                </span>
               </div>
             ),
           },
         ];
       });
-      setCurrent(2);
     }
   }, [healthFacility]);
 
   return (
-    <div className="py-8 flex justify-center bg-blue-100/40">
+    <div className="py-8 flex justify-center bg-blue-100/40 min-h-screen">
       <div className="container">
-        <div className="grid grid-cols-12 gap-8">
-          <div className="col-span-4">
+        <div className="grid grid-cols-12 gap-8 text-base">
+          <div className="col-span-12 md:col-span-4">
             <ColorBox title="Thông tin khám" className="min-h-[200px]">
-              <StepBookings
-                // onChange={onChangeSteps}
-                items={infoCheckupItems}
-              />
+              {current != 4 && (
+                <StepBookings
+                  current={infoCheckupItems.length - 1}
+                  // onChange={onChangeSteps}
+                  items={infoCheckupItems}
+                />
+              )}
+              {current == 4 && (
+                <div>
+                  <div className="mt-2 flex items-center gap-2 text-gray-600">
+                    <span className="flex-shrink-0">
+                      <CiUser size={18} />
+                    </span>
+                    <span>{patientProfile?.fullName}</span>
+                  </div>
+                  <div className="mt-2 flex items-center gap-2 text-gray-600">
+                    <span className="flex-shrink-0">
+                      <FcPhoneAndroid size={18} />
+                    </span>
+                    <span>{patientProfile?.phone}</span>
+                  </div>
+                  <div className="text-left mt-2 flex items-start gap-2 text-gray-600">
+                    <span className="flex-shrink-0">
+                      <CiLocationOn size={18} />
+                    </span>
+                    <span>{address}</span>
+                  </div>
+                </div>
+              )}
             </ColorBox>
           </div>
 
-          <div className="col-span-8">
-            <ColorBox title={false} className="min-h-[400px]">
-              <Tabs activeKey={current.toString()} items={tabItems} />
-            </ColorBox>
+          <div className="col-span-12 md:col-span-8">
+            {current < 3 && (
+              <ColorBox title={false} className="min-h-[400px]">
+                <Tabs activeKey={(current + 1).toString()} items={tabItems} />
+              </ColorBox>
+            )}
+            {current == 3 && (
+              <ComfirmInformation
+                previous={stepPrev}
+                checkupInfo={doctorChoose}
+                next={stepNext}
+                schedule={healthExaminationSchedule}
+                patientProfile={patientProfile}
+                descStatusPatient={descStatusPatient}
+              />
+            )}
+            {current == 4 && (
+              <PaymentInformation
+                previous={stepPrev}
+                checkupInfo={doctorChoose}
+                schedule={healthExaminationSchedule}
+                patientProfile={patientProfile}
+                confirmSuccess={handleConfirmSuccess}
+              />
+            )}
           </div>
         </div>
       </div>

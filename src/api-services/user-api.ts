@@ -1,7 +1,11 @@
-import { LoginPayLoad, PatientProfile, User } from "@/models";
+import { Booking, LoginPayLoad, PatientProfile, User } from "@/models";
 import axios from "../axios";
 import { ResData } from "@/types";
-import { API_ACCOUNT_USER, API_PATIENT_PROFILE } from "./constant-api";
+import {
+  API_ACCOUNT_USER,
+  API_BOOKING,
+  API_PATIENT_PROFILE,
+} from "./constant-api";
 
 export const userApi = {
   async register({
@@ -37,6 +41,12 @@ export const userApi = {
       data: {
         id,
       },
+    });
+  },
+
+  async booking(data: Partial<Booking>): Promise<ResData> {
+    return await axios.post(API_BOOKING, {
+      ...data,
     });
   },
 };

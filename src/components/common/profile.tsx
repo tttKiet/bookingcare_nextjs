@@ -31,7 +31,7 @@ export function Profile(props: ProfileProps) {
           </Space>
           <div className=" font-medium text-sm px-3 flex hover:text-blue-800 transition-all">
             Hi
-            <MenuNavbarLogout options={{ placement: "bottomLeft" }} />
+            <MenuNavbarLogout options={{ placement: "bottomRight" }} />
           </div>
         </div>
       )}

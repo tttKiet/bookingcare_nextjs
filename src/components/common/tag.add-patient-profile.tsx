@@ -1,4 +1,5 @@
 "use client";
+
 import * as React from "react";
 import { ColorBox } from "../box";
 import { Button, DatePicker, Form, Input, Radio, Select } from "antd";
@@ -23,7 +24,6 @@ export function AddPatientProfile({}: AddPatientProfileProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const patientProfileId = searchParams.get("id");
-  console.log(patientProfileId);
 
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);

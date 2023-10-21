@@ -2,15 +2,13 @@ import { ResData } from "@/types";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-export async function toastMsgFromPromise(
-  api: Promise<ResData>
-): Promise<boolean> {
+export async function toastMsgFromPromise(api: Promise<ResData>): Promise<any> {
   try {
     const res = await api;
     if (res.statusCode === 0) {
       toast.success(res.msg || "Thành công");
     }
-    return true;
+    return res;
   } catch (err) {
     if (axios.isAxiosError(err)) {
       if (err.response) {

@@ -111,7 +111,6 @@ const NavBarTop = () => {
 
   // Toggle show modal both login and register. Besides login and register are show single
   function toggleShowModalFromForm() {
-    console.log("toggleShowModalFromForm");
     toggleShowModal();
     toggleShowModalRegister();
   }
