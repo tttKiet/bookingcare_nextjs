@@ -7,12 +7,13 @@ import {
 import { ListHealthFacilities, SeachHealthFacility } from "@/components/common";
 import { HealthFacility, TypeHealthFacility } from "@/models";
 import { ResData, ResDataPaginations } from "@/types";
-import { Breadcrumb, Divider } from "antd";
+import { Breadcrumb, Button, Divider, Select } from "antd";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import useSWR, { BareFetcher } from "swr";
 import axios from "../../axios";
+import { BsFilterCircle } from "react-icons/bs";
 
 export default function HealthFacilities() {
   const url = usePathname();
@@ -107,36 +108,67 @@ export default function HealthFacilities() {
     });
   }
 
-  return (
-    <main className="flex justify-center ">
-      <div className="container mt-4">
-        <Breadcrumb items={breadcrumbArray} />
-        <SeachHealthFacility handleClickSearch={handleClickSearchHealth} />
-        <Divider />
-        <div className="mb-4">
-          <h4 className="text-sm text-gray-400 font-light">Loại cơ sở y tế</h4>
-          <div className="mt-4 flex justify-center items-center gap-6">
-            {types?.map((row: TypeHealthFacility) => (
-              <div
-                onClick={() => toggleChoiceType(row.id)}
-                key={row.id}
-                className={`cursor-pointer px-4 py-2 text-base  rounded-lg  transition duration-500 ${
-                  typeChoices.indexOf(row.id) !== -1
-                    ? "shadow shadow-[rgba(129,70,91,0.27)] text-[#8e1540]"
-                    : "text-gray-500"
-                }`}
-              >
-                <h3>{row.name}</h3>
-              </div>
-            ))}
-          </div>
-        </div>
+  const provinceData = ["Loại"];
 
-        <ListHealthFacilities
-          page={pagination.current}
-          onChangePagination={onChangePagination}
-          data={healthFacilities}
-        />
+  return (
+    <main className="">
+      <div className="bg-linear-blue-pink relative h-[100px]">
+        <SeachHealthFacility handleClickSearch={handleClickSearchHealth} />
+      </div>
+      <div className="flex justify-center gap-2 flex-col mt-12">
+        <h3 className="text-3xl font-semibold text-black text-center">
+          Cơ sở y tế
+        </h3>
+
+        <p className="text-base text-center text-gray-700 my-3">
+          Với những cơ sở Y Tế hàng đầu sẽ giúp trải nghiệm khám, chữa bệnh của
+          bạn tốt hơn
+        </p>
+      </div>
+      <div className="flex justify-center min-h-screen">
+        <div className="container my-4">
+          {/* <Breadcrumb items={breadcrumbArray} /> */}
+          <div className="my-4 mb-8  flex justify-between items-center gap-6">
+            <Select
+              defaultValue={provinceData[0]}
+              style={{ width: 120 }}
+              options={provinceData.map((province) => ({
+                label: province,
+                value: province,
+              }))}
+            />
+            <div className="flex items-center justify-center gap-2">
+              {types?.map((row: TypeHealthFacility) => (
+                <Button
+                  onClick={() => toggleChoiceType(row.id)}
+                  key={row.id}
+                  className={`flex-shrink-0 cursor-pointer font-semibold  text-sm 
+                     rounded-3xl  transition duration-500 ${
+                       typeChoices.indexOf(row.id) !== -1
+                         ? "shadow  bg-[#f8f7f4]"
+                         : "text-black bg-transparent"
+                     }`}
+                  type="text"
+                >
+                  {row.name}
+                </Button>
+              ))}
+            </div>
+            <Button
+              type="dashed"
+              className="rounded-3xl flex items-center gap-2"
+            >
+              <BsFilterCircle />
+              Lọc
+            </Button>
+          </div>
+
+          <ListHealthFacilities
+            page={pagination.current}
+            onChangePagination={onChangePagination}
+            data={healthFacilities}
+          />
+        </div>
       </div>
     </main>
   );

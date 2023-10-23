@@ -62,15 +62,7 @@ export function SeachHealthFacility({
   }
 
   return (
-    <div className="mt-5">
-      <h3 className="text-3xl font-medium text-blue-700 text-center">
-        Cơ sở y tế
-      </h3>
-
-      <p className="text-base text-center text-gray-700 my-3">
-        Với những cơ sở Y Tế hàng đầu sẽ giúp trải nghiệm khám, chữa bệnh của
-        bạn tốt hơn
-      </p>
+    <div className="absolute left-[50%] top-full translate-y-[-50%] translate-x-[-50%]">
       <div className="flex justify-center">
         <div className="rounded-lg relative bg-white shadow py-1 px-7 grid grid-cols-1 md:grid-cols-2 gap-x-2">
           <div className="flex items-center  justify-start gap-1 px-[calc(11px+1rem)]">

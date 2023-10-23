@@ -122,7 +122,7 @@ export function ComfirmInformation({
     [patientProfile, address]
   );
   return (
-    <div>
+    <>
       <ColorBox title="Xác nhận thông tin khám" className="">
         <Table
           bordered={false}
@@ -150,6 +150,6 @@ export function ComfirmInformation({
           Xác nhận
         </Button>
       </div>
-    </div>
+    </>
   );
 }

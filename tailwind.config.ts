@@ -15,7 +15,9 @@ const config: Config = {
         home: "url('/images/bg-home-4.avif')",
         "home-2": "url('/images/bg-home-2.jpg')",
         body: "url('/images/bg-1.jpg')",
+        "linear-blue-pink": "linear-gradient(66deg, #e6fbfe 22%, #edddfb 100%)",
       },
+
       backgroundColor: {
         dard: "#001529",
         "edit-hover": "#ff9f00b0",

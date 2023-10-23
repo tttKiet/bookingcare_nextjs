@@ -19,7 +19,7 @@ import useSWR from "swr";
 import { ScheduleBox } from "../schudule.box";
 import { useRouter } from "next/navigation";
 import { Calendar } from "react-date-range";
-
+import { motion, Variants } from "framer-motion";
 import moment from "moment";
 export interface IChooseScheduleProps {
   staffId: string;
@@ -41,7 +41,6 @@ export function ChooseSchedule({
     nextDate.setDate(new Date().getDate() + 1);
     return nextDate;
   }, []);
-
   const [date, setDate] = React.useState(tomorrow);
   const [healthExaminationSchedule, setHealthExaminationSchedule] =
     React.useState<HealthExaminationSchedule | null>(null);
@@ -64,40 +63,104 @@ export function ChooseSchedule({
   function handleClickContinue() {
     next(2, healthExaminationSchedule);
   }
+  const cardVariants: Variants = {
+    offscreen: {
+      y: 70,
+      opacity: 0,
+    },
+    onscreen: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        bounce: 0.4,
+        duration: 2,
+      },
+    },
+  };
+
+  const scheduleVariants = {
+    container: {
+      initial: { opacity: 0, x: 100 },
+      visible: {
+        opacity: 1,
+        x: 0,
+        transition: {
+          when: "beforeChildren",
+          staggerChildren: 3,
+        },
+      },
+    },
+
+    item: {
+      initial: { opacity: 0, x: 200 },
+      visible: (i: number) => ({
+        opacity: 1,
+        x: 0,
+
+        transition: {
+          delay: i * 0.3,
+          duration: 0.2,
+        },
+      }), // Thay đổi giá trị delay tùy theo nhu cầu
+    },
+  };
 
   return (
     <div>
       <div className="flex justify-center">
         <div className="max-w-[556px] flex-1">
-          <Calendar
-            locale={locale}
-            date={date}
-            onChange={handleSelect}
-            minDate={tomorrow}
-            fixedHeight={true}
-            // className="w-full"
-          />
+          <motion.div
+            initial="offscreen"
+            whileInView="onscreen"
+            viewport={{ once: true, amount: 0.8 }}
+          >
+            <motion.div variants={cardVariants}>
+              <Calendar
+                locale={locale}
+                date={date}
+                onChange={handleSelect}
+                minDate={tomorrow}
+                fixedHeight={true}
+                // className="w-full"
+              />
+            </motion.div>
+          </motion.div>
         </div>
       </div>
       <Divider />
-      <div>
+      <div className="h-[64px]">
         <h4 className="text-base text-left text-gray-600 mb-3">Lịch khám</h4>
-        <div className="flex items-center gap-2 ">
-          {schedules?.rows.map((row: ScheduleAvailable) => (
-            <Button
-              className={`${
-                row.id === healthExaminationSchedule?.id
-                  ? "border-blue-600  text-blue-600"
-                  : ""
-              }`}
-              onClick={() => handleClickCard(row)}
-              type="dashed"
-              disabled={!row.isAvailableBooking}
-              key={row.TimeCode.key}
-            >
-              {row.TimeCode.value}
-            </Button>
-          ))}
+        <div>
+          <motion.div
+            animate="visible"
+            initial="initial"
+            variants={scheduleVariants.container}
+            className="flex items-center gap-2 "
+          >
+            {schedules?.rows.map((row: ScheduleAvailable, index: any) => (
+              <motion.div
+                animate="visible"
+                initial="initial"
+                custom={index}
+                key={row.id}
+                variants={scheduleVariants.item}
+              >
+                <Button
+                  className={`${
+                    row.id === healthExaminationSchedule?.id
+                      ? "border-blue-600  text-blue-600"
+                      : ""
+                  }`}
+                  onClick={() => handleClickCard(row)}
+                  type="dashed"
+                  disabled={!row.isAvailableBooking}
+                >
+                  {row.TimeCode.value}
+                </Button>
+              </motion.div>
+            ))}
+          </motion.div>
           {schedules?.rows.length === 0 && (
             <p className="text-red-950/70">
               Ngày {moment(date).format("L")} chưa tạo lịch khám. Vui lòng chọn

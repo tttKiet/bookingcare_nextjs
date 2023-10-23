@@ -1,43 +1,39 @@
 "use client";
 
-import * as React from "react";
-import { useSearchParams } from "next/navigation";
-import StepBookings from "@/components/steps/steps-booking,";
-import { StepProps, TabPaneProps, Tabs } from "antd";
+import { userApi } from "@/api-services";
+import { API_HEALTH_FACILITIES } from "@/api-services/constant-api";
 import { ColorBox } from "@/components/box";
-import {
-  Booking,
-  HealthExaminationSchedule,
-  HealthFacility,
-  PatientProfile,
-  Staff,
-  WorkRoom,
-} from "@/models";
-import useSWR from "swr";
-import {
-  API_ACCOUNT_STAFF_DOCTOR_BY_ID,
-  API_HEALTH_FACILITIES,
-} from "@/api-services/constant-api";
-import { ResDataPaginations } from "@/types";
-import { HiOutlineLocationMarker } from "react-icons/hi";
-import Link from "next/link";
 import {
   ChooseDoctor,
   ChooseSchedule,
   ComfirmInformation,
 } from "@/components/common/step-boking";
-import moment from "moment";
 import { ChoosePatientProfile } from "@/components/common/step-boking/ChoosePatientProfile";
 import { PaymentInformation } from "@/components/common/step-boking/PaymentInformation";
+import StepBookings from "@/components/steps/steps-booking,";
+import { useDisPlay } from "@/hooks";
+import { useGetAddress } from "@/hooks/use-get-address-from-code";
+import {
+  HealthExaminationSchedule,
+  HealthFacility,
+  PatientProfile,
+  WorkRoom,
+} from "@/models";
+import { ResDataPaginations } from "@/types";
+import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
+import { StepProps, Tabs } from "antd";
+import moment from "moment";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import * as React from "react";
 import { CiLocationOn, CiUser } from "react-icons/ci";
 import { FcPhoneAndroid } from "react-icons/fc";
-import { useGetAddress } from "@/hooks/use-get-address-from-code";
-import { userApi } from "@/api-services";
-import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
-import { useRouter } from "next/navigation";
+import { HiOutlineLocationMarker } from "react-icons/hi";
+import useSWR from "swr";
 export interface IAboutPageProps {}
 
 export default function Booking(props: IAboutPageProps) {
+  const refContent = React.useRef(null);
   const searchParams = useSearchParams();
   const [current, setCurrent] = React.useState<number>(0);
   const healthFacilityId = searchParams.get("healthFacilityId");
@@ -50,8 +46,12 @@ export default function Booking(props: IAboutPageProps) {
     React.useState<Partial<HealthExaminationSchedule> | null>(null);
   const [patientProfile, setPatientProfile] =
     React.useState<PatientProfile | null>(null);
-
+  const { scrollTo } = useDisPlay();
   function stepNext(step: number, value?: any) {
+    scrollTo(refContent?.current, {
+      top: 168,
+    });
+
     if (step == 1) {
       setDoctorChoose(value);
       setCurrent(1);
@@ -135,6 +135,10 @@ export default function Booking(props: IAboutPageProps) {
   }
 
   function stepPrev() {
+    scrollTo(refContent?.current, {
+      top: 168,
+    });
+
     setCurrent((prev) => {
       if (prev > 0) {
         return prev - 1;
@@ -290,12 +294,16 @@ export default function Booking(props: IAboutPageProps) {
             </ColorBox>
           </div>
 
-          <div className="col-span-12 md:col-span-8">
-            {current < 3 && (
-              <ColorBox title={false} className="min-h-[400px]">
-                <Tabs activeKey={(current + 1).toString()} items={tabItems} />
-              </ColorBox>
-            )}
+          <div className="col-span-12 md:col-span-8" ref={refContent}>
+            {/* {current < 3 && ( */}
+            <ColorBox
+              title={false}
+              className={`  ${current >= 3 ? "w-0 h-0" : "min-h-[400px]"}`}
+            >
+              <Tabs activeKey={(current + 1).toString()} items={tabItems} />
+            </ColorBox>
+            {/* )} */}
+
             {current == 3 && (
               <ComfirmInformation
                 previous={stepPrev}
@@ -306,6 +314,7 @@ export default function Booking(props: IAboutPageProps) {
                 descStatusPatient={descStatusPatient}
               />
             )}
+
             {current == 4 && (
               <PaymentInformation
                 previous={stepPrev}
