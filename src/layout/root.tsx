@@ -19,7 +19,8 @@ moment.locale("vi");
 
 export function RootLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAdminLink = pathname.includes("/admin");
+  const isAdminLink =
+    pathname.includes("/admin") || pathname.includes("/doctor");
   return (
     <StyledComponentsRegistry>
       <ConfigProvider theme={theme}>

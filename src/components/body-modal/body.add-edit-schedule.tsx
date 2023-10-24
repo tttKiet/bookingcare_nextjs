@@ -65,6 +65,7 @@ export interface BodyModalScheduleProps {
   clickCancel: () => void;
   loading?: boolean;
   obEdit?: ReqSchedule | null;
+  workingId?: string | undefined;
 }
 
 export function BodyModalSchedule({
@@ -72,6 +73,7 @@ export function BodyModalSchedule({
   handleSubmitForm,
   loading,
   obEdit,
+  workingId,
 }: BodyModalScheduleProps) {
   const {
     control,
@@ -90,7 +92,7 @@ export function BodyModalSchedule({
     },
     resolver: yupResolver(schemaCodeScheduleHealth),
   });
-
+  console.log("doctorId", workingId);
   const {
     field: { value: timeCodeArrayValue, onChange: onChangeTimeCodeArray },
     fieldState: { error: errorTimeCodeArray },
@@ -138,7 +140,9 @@ export function BodyModalSchedule({
   const { data: scheduleDoctors } = useSWR<
     ResDataPaginations<HealthExaminationSchedule>
   >(
-    `${API_DOCTOR_SCHEDULE_HEALTH_EXAM}?workingId=${workingIdSelect}&date=${dateSelect}`,
+    `${API_DOCTOR_SCHEDULE_HEALTH_EXAM}?workingId=${
+      workingId || workingIdSelect
+    }&date=${dateSelect}`,
     {
       revalidateOnMount: false,
     }
@@ -170,6 +174,12 @@ export function BodyModalSchedule({
   >([]);
 
   useEffect(() => {
+    if (workingId) {
+      setValue("workingId", workingId);
+    }
+  }, [workingId]);
+
+  useEffect(() => {
     setOptionDoctors(() => {
       return (
         doctors?.rows?.map((t: Working) => ({
@@ -191,7 +201,6 @@ export function BodyModalSchedule({
   }, [doctors]);
 
   async function handleSubmitLocal(data: Partial<ReqSchedule>) {
-    console.log(data);
     const isOk = await handleSubmitForm({
       ...data,
     });
@@ -251,30 +260,38 @@ export function BodyModalSchedule({
       <div>
         <div className="grid grid-cols-1 gap-3">
           <div className="flex flex-col">
-            <label className="top-1 text-sm font-medium mb-2" htmlFor="">
-              Lịch của bác sỉ
-            </label>
-            <div>
-              <Select
-                onSearch={debounce(onSearchSelectDoctors, 300)}
-                placement="bottomLeft"
-                className="sm:w-[40%] w-full"
-                size="large"
-                placeholder="Nhập email bác sỉ..."
-                virtual={false}
-                showSearch
-                optionFilterProp="children"
-                notFoundContent={<div>Không tìm thây...</div>}
-                getPopupContainer={(triggerNode) => triggerNode.parentElement}
-                options={optionDoctors}
-                filterOption={filterOption}
-                onChange={(e: any) => {
-                  onChangeWorkingId(e);
-                  onChangeSelectDoctor(e);
-                }}
-                value={workingIdValue || null}
-              />
-            </div>
+            {!workingId ? (
+              <>
+                <label className="top-1 text-sm font-medium mb-2" htmlFor="">
+                  Lịch của bác sỉ
+                </label>
+                <div>
+                  <Select
+                    onSearch={debounce(onSearchSelectDoctors, 300)}
+                    placement="bottomLeft"
+                    className="sm:w-[40%] w-full"
+                    size="large"
+                    placeholder="Nhập email bác sỉ..."
+                    virtual={false}
+                    showSearch
+                    optionFilterProp="children"
+                    notFoundContent={<div>Không tìm thây...</div>}
+                    getPopupContainer={(triggerNode) =>
+                      triggerNode.parentElement
+                    }
+                    options={optionDoctors}
+                    filterOption={filterOption}
+                    onChange={(e: any) => {
+                      onChangeWorkingId(e);
+                      onChangeSelectDoctor(e);
+                    }}
+                    value={workingIdValue || null}
+                  />
+                </div>
+              </>
+            ) : (
+              <p></p>
+            )}
 
             {errorWorkingId && (
               <p className="text-red-500 font-medium text-xs pt-1">
@@ -346,15 +363,22 @@ export function BodyModalSchedule({
         </div>
         <div className="mt-3">
           <h3 className="text-base text-gray-900">Lưu ý:</h3>
-          <ul className="mt-">
-            <li className="text-gray-400">
-              Chỉ hiển thị các bác sỉ đang công tác. Xem công tác ở
-              <Link href="/admin/work" className="pl-1 text-blue-500 underline">
-                đây
-              </Link>
-              .
-            </li>
-          </ul>
+          {!workingId ? (
+            <ul className="mt-">
+              <li className="text-gray-400">
+                Chỉ hiển thị các bác sỉ đang công tác. Xem công tác ở
+                <Link
+                  href="/admin/work"
+                  className="pl-1 text-blue-500 underline"
+                >
+                  đây
+                </Link>
+                .
+              </li>
+            </ul>
+          ) : (
+            <p>Tạo lịch cho chính bạn</p>
+          )}
         </div>
       </div>
 

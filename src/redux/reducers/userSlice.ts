@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export interface LoginProfile {
   id: string;
-  fullname: string;
+  fullName: string;
   email: string;
   Role: {
     id: string;
@@ -15,7 +15,7 @@ export interface LoginProfile {
 
 const initialState: LoginProfile = {
   id: "",
-  fullname: "",
+  fullName: "",
   email: "",
   Role: null,
   address: "",
@@ -29,7 +29,7 @@ const userSlice = createSlice({
   reducers: {
     loginStore(state: LoginProfile, payload) {
       state.id = payload.payload.id;
-      state.fullname = payload.payload.fullname;
+      state.fullName = payload.payload.fullName;
       state.email = payload.payload.email;
       state.Role = payload.payload?.Role || null;
       state.address = payload.payload.address;
@@ -38,7 +38,7 @@ const userSlice = createSlice({
     },
     logoutStore(state) {
       state.id = "";
-      state.fullname = "";
+      state.fullName = "";
       state.email = "";
       state.Role = null;
       state.address = "";

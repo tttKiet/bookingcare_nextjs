@@ -3,6 +3,7 @@
 import { staffApi } from "@/api-services";
 import {
   API_ACCOUNT_STAFF_DOCTOR,
+  API_ACCOUNT_STAFF_DOCTOR_WORKING,
   API_DOCTOR_SCHEDULE_HEALTH_EXAM,
 } from "@/api-services/constant-api";
 import { ExclamationCircleFilled } from "@ant-design/icons";
@@ -17,7 +18,7 @@ import {
 } from "antd";
 import axios from "../../axios";
 
-import { HealthExaminationSchedule, Staff } from "@/models";
+import { HealthExaminationSchedule, Staff, Working } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import type {
@@ -41,13 +42,21 @@ import { BtnPlus } from "../button";
 import { SelectSearchField } from "../form";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
+import { useAuth, userRandomBgLinearGradient } from "@/hooks";
 const { confirm } = Modal;
 
 type DataIndex = keyof HealthExaminationSchedule;
+interface ManagerHealthExamScheduleProps {
+  permission?: "doctor" | "admin";
+}
 
-export function ManagerHealthExamSchedule() {
+export function ManagerHealthExamSchedule({
+  permission = "admin",
+}: ManagerHealthExamScheduleProps) {
   // State components
-
+  const { profile } = useAuth();
+  const isDoctor = permission === "doctor";
+  const [bgRandom] = userRandomBgLinearGradient();
   function handleClickDeleteSchedule(record: HealthExaminationSchedule): void {
     confirm({
       title: `Bạn có muốn xóa lịch khám "${
@@ -296,6 +305,14 @@ export function ManagerHealthExamSchedule() {
       );
     },
   });
+  const { data: doctor } = useSWR<ResDataPaginations<Working>>(
+    `${API_ACCOUNT_STAFF_DOCTOR_WORKING}?doctorId=${(
+      isDoctor && profile?.id
+    )?.toString()}`,
+    {
+      revalidateOnMount: true,
+    }
+  );
 
   const data = React.useMemo<Partial<HealthExaminationSchedule>[]>(() => {
     return responseSchedules?.rows.map(
@@ -340,7 +357,14 @@ export function ManagerHealthExamSchedule() {
         title: "Thời gian",
         dataIndex: ["TimeCode", "value"],
         key: "TimeCode.value",
-        render: (text) => <a>{text}</a>,
+        render: (text) => (
+          <span
+            style={{ background: bgRandom }}
+            className="px-4 py-1 rounded-2xl text-white "
+          >
+            {text}
+          </span>
+        ),
         sorter: (a, b) => a.TimeCode.value.localeCompare(b.TimeCode.value),
       },
       {
@@ -378,6 +402,7 @@ export function ManagerHealthExamSchedule() {
         footer={false}
         body={
           <BodyModalSchedule
+            workingId={(isDoctor && doctor?.rows?.[0]?.id)?.toString()}
             clickCancel={toggleShowScheduleCreateOrUpdateModal}
             handleSubmitForm={handleSubmitFormSchedule}
           />
@@ -385,17 +410,23 @@ export function ManagerHealthExamSchedule() {
         title={"Thêm mới"}
       />
       <h3 className="gr-title-admin flex items-center justify-between  mb-3">
-        Lịch khám bệnh
-        <div className="flex-shrink-0">
-          <SelectSearchField
-            placeholder="Tìm kiếm: nhập email bác sỉ ..."
-            data={dataSearch}
-            handleSearchSelect={handleSearchSelect}
-            handleChangeSelect={handleChangeSelect}
-            value={doctorIdSelect}
-            debounceSeconds={300}
-          />
-        </div>
+        {!isDoctor ? (
+          <>
+            Lịch khám bệnh
+            <div className="flex-shrink-0">
+              <SelectSearchField
+                placeholder="Tìm kiếm: nhập email bác sỉ ..."
+                data={dataSearch}
+                handleSearchSelect={handleSearchSelect}
+                handleChangeSelect={handleChangeSelect}
+                value={doctorIdSelect}
+                debounceSeconds={300}
+              />
+            </div>
+          </>
+        ) : (
+          <div>Lịch khám bệnh - {profile?.fullName}</div>
+        )}
         <div className="flex items-center justify-end gap-3">
           <DatePicker
             bordered={true}
