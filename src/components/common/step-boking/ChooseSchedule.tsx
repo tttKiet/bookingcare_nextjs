@@ -99,7 +99,7 @@ export function ChooseSchedule({
         x: 0,
 
         transition: {
-          delay: i * 0.3,
+          delay: i * 0.1,
           duration: 0.2,
         },
       }), // Thay đổi giá trị delay tùy theo nhu cầu
@@ -129,14 +129,14 @@ export function ChooseSchedule({
         </div>
       </div>
       <Divider />
-      <div className="h-[64px]">
+      <div className="min-h-[64px]">
         <h4 className="text-base text-left text-gray-600 mb-3">Lịch khám</h4>
         <div>
           <motion.div
             animate="visible"
             initial="initial"
             variants={scheduleVariants.container}
-            className="flex items-center gap-2 "
+            className="flex items-center gap-2 flex-wrap"
           >
             {schedules?.rows.map((row: ScheduleAvailable, index: any) => (
               <motion.div

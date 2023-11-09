@@ -65,7 +65,7 @@ export interface BodyModalScheduleProps {
   clickCancel: () => void;
   loading?: boolean;
   obEdit?: ReqSchedule | null;
-  workingId?: string | undefined;
+  workingId?: string | boolean;
 }
 
 export function BodyModalSchedule({
@@ -92,7 +92,6 @@ export function BodyModalSchedule({
     },
     resolver: yupResolver(schemaCodeScheduleHealth),
   });
-  console.log("doctorId", workingId);
   const {
     field: { value: timeCodeArrayValue, onChange: onChangeTimeCodeArray },
     fieldState: { error: errorTimeCodeArray },
@@ -174,7 +173,7 @@ export function BodyModalSchedule({
   >([]);
 
   useEffect(() => {
-    if (workingId) {
+    if (workingId && workingId !== true) {
       setValue("workingId", workingId);
     }
   }, [workingId]);
@@ -260,7 +259,9 @@ export function BodyModalSchedule({
       <div>
         <div className="grid grid-cols-1 gap-3">
           <div className="flex flex-col">
-            {!workingId ? (
+            {workingId ? (
+              <></>
+            ) : (
               <>
                 <label className="top-1 text-sm font-medium mb-2" htmlFor="">
                   Lịch của bác sỉ
@@ -289,8 +290,6 @@ export function BodyModalSchedule({
                   />
                 </div>
               </>
-            ) : (
-              <p></p>
             )}
 
             {errorWorkingId && (

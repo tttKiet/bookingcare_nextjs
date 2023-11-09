@@ -15,6 +15,7 @@ import Link from "next/link";
 import Footer from "@/components/footer";
 import { ConfigProvider } from "antd";
 import theme from "../theme/themeConfig";
+import Header from "@/components/navbar/header";
 moment.locale("vi");
 
 export function RootLayout({ children }: { children: React.ReactNode }) {
@@ -44,7 +45,7 @@ export function RootLayout({ children }: { children: React.ReactNode }) {
               <ToastMsg containerClassName="text-sm" />
               {!isAdminLink ? (
                 <>
-                  <NavBarTop />
+                  <Header />
                   <div className="">{children}</div>
                   <Footer />
                 </>

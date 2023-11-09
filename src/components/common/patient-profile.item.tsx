@@ -12,7 +12,7 @@ import { LiaBirthdayCakeSolid } from "react-icons/lia";
 
 export interface IPatientProfileItemProps {
   data: PatientProfile;
-  onClickDelete: (id: string) => void;
+  onClickDelete?: (id: string) => void;
 }
 
 export function PatientProfileItem({
@@ -27,65 +27,81 @@ export function PatientProfileItem({
 
   return (
     <div className="text-base p-6 px-4 border-b border-b-gray-700/30">
-      <div className="flex gap-2 border-black mb-2">
-        <label className="flex items-center gap-2 text-neutral-700 ">
-          <BiUserPin />
-          Họ & tên:
-        </label>
+      <div className="flex gap-2 item-start border-black mb-2">
+        <div className="min-w-[80px] ">
+          <label className="flex gap-2 items-center  text-neutral-700 ">
+            <span className="flex-shrink-0">
+              <BiUserPin />
+            </span>
+            Họ & tên:
+          </label>
+        </div>
         <span className="text-blue-600">{data.fullName}</span>
       </div>
-      <div className="flex gap-2 border-black mb-2">
-        <label className="flex items-center gap-2 text-neutral-700 ">
-          <HiOutlineMail />
-          Email:
-        </label>
+      <div className="flex gap-2  item-start border-black mb-2">
+        <div className="min-w-[80px] ">
+          <label className="flex items-center gap-2 text-neutral-700 ">
+            <HiOutlineMail />
+            Email:
+          </label>
+        </div>
         <span className="text-blue-950">{data.email}</span>
       </div>
-      <div className="flex gap-2 border-black mb-2">
-        <label className="flex items-center gap-2 text-neutral-700 ">
-          <BsTelephone />
-          Số điện thoại:
-        </label>
+      <div className="flex gap-2  item-start border-black mb-2">
+        <div className="min-w-[80px] ">
+          <label className="flex items-center gap-2 text-neutral-700 ">
+            <BsTelephone />
+            Số điện thoại:
+          </label>
+        </div>
         <span className="text-blue-950">{data.phone}</span>
       </div>
-      <div className="flex gap-2 border-black mb-2">
-        <label className="flex items-center gap-2 text-neutral-700 ">
-          <LiaBirthdayCakeSolid />
-          Ngày sinh:
-        </label>
+      <div className="flex gap-2 item-start border-black mb-2">
+        <div className="min-w-[80px] ">
+          <label className="flex items-center  gap-2 text-neutral-700 m">
+            <LiaBirthdayCakeSolid />
+            Ngày sinh:
+          </label>
+        </div>
         <span className="text-blue-950">
           {moment(data.birthDay).format("L")}
         </span>
       </div>
 
-      <div className="flex gap-2 border-black mb-2">
-        <label className="flex items-center gap-2 text-neutral-700 ">
-          <LiaBirthdayCakeSolid />
-          Địa chỉ:
-        </label>
+      <div className="flex gap-2  item-start border-black mb-2">
+        <div className="min-w-[80px] ">
+          <label className="flex items-center gap-2 text-neutral-700  ">
+            <span className="flex-shrink-0">
+              <LiaBirthdayCakeSolid />
+            </span>
+            Địa chỉ:
+          </label>
+        </div>
         <span className="text-blue-950">{address || "Lỗi lấy địa chỉ"}</span>
       </div>
 
-      <div className="flex justify-end gap-2 py-2">
-        <Button
-          danger
-          type="dashed"
-          className="flex items-center gap-2 justify-center"
-          onClick={() => onClickDelete(data.id)}
-        >
-          <BsTrash />
-          Xóa hồ sơ
-        </Button>
-        <Link
-          className="p-1 px-[15px] text-sm text-blue-500 flex items-center  gap-2"
-          href={`/user?tag=add-patient-profile&id=${data.id}`}
-        >
-          Sửa hồ sơ
-        </Link>
-        <Button type="text" onClick={() => toast("Cập nhật sau...")}>
-          Chi tiết
-        </Button>
-      </div>
+      {onClickDelete && (
+        <div className="flex justify-end gap-2 py-2">
+          <Button
+            danger
+            type="dashed"
+            className="flex  gap-2 justify-center"
+            onClick={() => onClickDelete(data.id)}
+          >
+            <BsTrash />
+            Xóa hồ sơ
+          </Button>
+          <Link
+            className="p-1 px-[15px] text-sm text-blue-500 flex   gap-2"
+            href={`/user?tag=add-patient-profile&id=${data.id}`}
+          >
+            Sửa hồ sơ
+          </Link>
+          <Button type="text" onClick={() => toast("Cập nhật sau...")}>
+            Chi tiết
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

@@ -25,3 +25,5 @@ export const API_DOCTOR_SCHEDULE_HEALTH_EXAM =
 export const API_PATIENT_PROFILE = "/api/v1/user/patient-profile";
 export const API_BOOKING = "/api/v1/user/booking";
 export const API_HEALTH_RECORD = "/api/v1/user/health-record";
+export const API_CHECK_UP_HEALTH_RECORD =
+  "/api/v1/doctor/check-up/health-record";

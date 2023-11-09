@@ -5,7 +5,7 @@ import {
   API_HEALTH_RECORD,
 } from "@/api-services/constant-api";
 import { ColorBox } from "@/components/box";
-import { HealthRecordItem } from "@/components/common";
+import { HealthRecordItemDetails } from "@/components/common";
 import { HealthRecord } from "@/models";
 import { Breadcrumb } from "antd";
 import * as React from "react";
@@ -44,7 +44,7 @@ export default function HealthRecordPageDetail({
         <Breadcrumb style={{ margin: "32px 0" }} items={breadcrumbArray} />
         <ColorBox titlePosition="left" title="Thông tin phiếu khám bệnh">
           <div className="flex justify-center">
-            <HealthRecordItem healthRecord={resHealthRecord} />
+            <HealthRecordItemDetails healthRecord={resHealthRecord} />
           </div>
         </ColorBox>
       </div>

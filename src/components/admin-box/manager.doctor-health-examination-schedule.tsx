@@ -358,10 +358,7 @@ export function ManagerHealthExamSchedule({
         dataIndex: ["TimeCode", "value"],
         key: "TimeCode.value",
         render: (text) => (
-          <span
-            style={{ background: bgRandom }}
-            className="px-4 py-1 rounded-2xl text-white "
-          >
+          <span className="px-4 py-1 bg-green-500 rounded-2xl text-white ">
             {text}
           </span>
         ),
@@ -402,7 +399,7 @@ export function ManagerHealthExamSchedule({
         footer={false}
         body={
           <BodyModalSchedule
-            workingId={(isDoctor && doctor?.rows?.[0]?.id)?.toString()}
+            workingId={(isDoctor && doctor?.rows?.[0]?.id) || false}
             clickCancel={toggleShowScheduleCreateOrUpdateModal}
             handleSubmitForm={handleSubmitFormSchedule}
           />

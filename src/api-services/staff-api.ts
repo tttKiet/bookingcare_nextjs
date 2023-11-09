@@ -4,12 +4,14 @@ import {
   User,
   Code,
   HealthExaminationSchedule,
+  HealthRecord,
 } from "@/models";
 import axios from "../axios";
 import { ResData } from "@/types";
 import {
   API_ACCOUNT_STAFF,
   API_ACCOUNT_USER,
+  API_CHECK_UP_HEALTH_RECORD,
   API_CODE,
   API_DOCTOR_SCHEDULE_HEALTH_EXAM,
 } from "./constant-api";
@@ -52,6 +54,14 @@ export const staffApi = {
       data: {
         id,
       },
+    });
+  },
+
+  // Health record
+  async editStatusHealthRecord(data: Partial<HealthRecord>): Promise<ResData> {
+    return await axios.patch(API_CHECK_UP_HEALTH_RECORD, {
+      statusId: data.statusCode,
+      healthRecordId: data.id,
     });
   },
 };

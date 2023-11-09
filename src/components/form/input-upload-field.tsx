@@ -1,14 +1,9 @@
-import { s3 } from "@/config";
 import { Modal, UploadFile } from "antd";
 import type { UploadProps } from "antd/es/upload";
 import Upload, { RcFile } from "antd/es/upload";
-import { PromiseResult } from "aws-sdk/lib/request";
-import axios from "axios";
-import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { Control, useController } from "react-hook-form";
 import toast from "react-hot-toast";
-import S3 from "aws-sdk/clients/s3";
 
 export interface InputUploadFieldProps {
   name: string;

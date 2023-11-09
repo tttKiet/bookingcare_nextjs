@@ -173,7 +173,7 @@ export function RegisterForm({
           />
         </div>
       </div>
-      {profile.role === "user" && handleClickLogin && (
+      {profile?.Role?.keyType === "user" && handleClickLogin && (
         <>
           <div className="grid grid-cols-1 mt-4">
             <CheckBoxField
