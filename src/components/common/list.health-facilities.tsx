@@ -10,6 +10,7 @@ import { motion, Variants } from "framer-motion";
 export interface IListHealthFacilitiesProps {
   data: ResDataPaginations<HealthFacility> | undefined;
   page: number;
+  isLoading: boolean;
   onChangePagination: (page: number, pageSize: number) => void;
 }
 
@@ -17,6 +18,7 @@ export function ListHealthFacilities({
   data,
   onChangePagination,
   page,
+  isLoading,
 }: IListHealthFacilitiesProps) {
   if (data?.rows.length === 0) {
     return (
@@ -27,10 +29,9 @@ export function ListHealthFacilities({
   }
   const variants = {
     container: {
-      initial: { opacity: 0, x: 100 },
+      initial: { opacity: 0 },
       visible: {
         opacity: 1,
-        x: 0,
         transition: {
           when: "beforeChildren",
           staggerChildren: 3,
@@ -39,11 +40,9 @@ export function ListHealthFacilities({
     },
 
     item: {
-      initial: { opacity: 0, x: 200 },
+      initial: { opacity: 0 },
       visible: (i: number) => ({
         opacity: 1,
-        x: 0,
-
         transition: {
           delay: i * 0.3,
           duration: 0.2,
@@ -52,20 +51,13 @@ export function ListHealthFacilities({
     },
   };
 
-  const [healthFaicilityShow, setHealthFaicilityShow] =
-    React.useState<HealthFacility | null>(data?.rows[0] || null);
-
-  function handleClickItem(healthFaicility: HealthFacility): void {
-    setHealthFaicilityShow(healthFaicility);
-  }
-
   return (
     <div>
       <motion.div
         animate="visible"
         initial="initial"
         variants={variants.container}
-        className="grid grid-cols-12 gap-3 gap-x-8 min-h-[40vh]"
+        className="grid grid-cols-12  gap-8 min-h-[40vh]"
       >
         {data?.rows.map((row: HealthFacility, index: number) => (
           <motion.div
@@ -73,11 +65,11 @@ export function ListHealthFacilities({
             initial="initial"
             // custom={index}
             key={row.id}
-            className="col-span-12 md:col-span-4"
+            className="col-span-12 md:col-span-6 lg:col-span-4"
             variants={variants.item}
           >
             <ItemHealthFacility
-              handleClickItem={handleClickItem}
+              handleClickItem={() => {}}
               healthFaicility={row}
             />
           </motion.div>
@@ -87,14 +79,19 @@ export function ListHealthFacilities({
           <BoxHealthFacility healthFaicility={healthFaicilityShow} />
         </div> */}
       </motion.div>
-      <div className="col-span-12 mt-0">
-        <Pagination
-          onChange={onChangePagination}
-          className="mt-3"
-          defaultCurrent={page}
-          total={data?.count || 1}
-        />
-      </div>
+
+      {!isLoading && (
+        <div className="col-span-12 mt-0">
+          <Pagination
+            onChange={onChangePagination}
+            className="mt-6"
+            defaultCurrent={1}
+            current={page}
+            pageSize={6}
+            total={data?.count || 1}
+          />
+        </div>
+      )}
     </div>
   );
 }

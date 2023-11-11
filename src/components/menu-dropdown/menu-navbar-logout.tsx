@@ -105,7 +105,7 @@ export default function MenuNavbarLogout({ options }: MenuNavbarLogoutProps) {
         items={itemsFilter}
         options={{ placement: "bottom", arrow: true, ...options }}
         title={profile?.fullName || ""}
-        titleType="text-blue-600 ml-1"
+        titleType="text-white font-bold ml-1"
       />
     </div>
   );

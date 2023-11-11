@@ -298,9 +298,13 @@ export default function Booking(props: IAboutPageProps) {
             {/* {current < 3 && ( */}
             <ColorBox
               title={false}
-              className={`  ${current >= 3 ? "w-0 h-0" : "min-h-[400px]"}`}
+              className={`${current >= 3 ? "w-0 h-0" : ""}`}
             >
-              <Tabs activeKey={(current + 1).toString()} items={tabItems} />
+              <Tabs
+                activeKey={(current + 1).toString()}
+                items={tabItems}
+                className="h-full "
+              />
             </ColorBox>
             {/* )} */}
 

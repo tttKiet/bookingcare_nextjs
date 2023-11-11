@@ -28,11 +28,11 @@ export default function HealthRecordPage(props: IHealthRecordPageProps) {
 
   return (
     <div className="flex justify-center mb-10">
-      <div className="container ">
+      <div className="container h-screen">
         <Breadcrumb className="mt-[32px] mb-4" items={breadcrumbArray} />
 
         <h3 className="text-base mb-6">Danh sách phiếu khám bệnh</h3>
-        <div className="grid grid-cols-12 gap-8 h-screen">
+        <div className="grid grid-cols-12 gap-8 ">
           {resHealthRecords?.map((record) => (
             <div
               key={record.id}

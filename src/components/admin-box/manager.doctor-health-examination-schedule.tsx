@@ -399,6 +399,7 @@ export function ManagerHealthExamSchedule({
         footer={false}
         body={
           <BodyModalSchedule
+            maxNumberExists={(isDoctor && doctor?.rows?.[0]?.maxNumber) || 3}
             workingId={(isDoctor && doctor?.rows?.[0]?.id) || false}
             clickCancel={toggleShowScheduleCreateOrUpdateModal}
             handleSubmitForm={handleSubmitFormSchedule}

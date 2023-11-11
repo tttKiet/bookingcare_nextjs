@@ -62,7 +62,7 @@ export function SeachHealthFacility({
   }
 
   return (
-    <div className="absolute left-[50%] top-full translate-y-[-50%] translate-x-[-50%]">
+    <div className="absolute left-[50%] z-30 top-full translate-y-[-50%] translate-x-[-50%]">
       <div className="flex justify-center">
         <div className="rounded-lg relative bg-white shadow py-1 px-7 grid grid-cols-1 md:grid-cols-2 gap-x-2">
           <div className="flex items-center  justify-start gap-1 px-[calc(11px+1rem)]">

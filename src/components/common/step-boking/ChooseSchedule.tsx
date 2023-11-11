@@ -107,66 +107,68 @@ export function ChooseSchedule({
   };
 
   return (
-    <div>
-      <div className="flex justify-center">
-        <div className="max-w-[556px] flex-1">
-          <motion.div
-            initial="offscreen"
-            whileInView="onscreen"
-            viewport={{ once: true, amount: 0.8 }}
-          >
-            <motion.div variants={cardVariants}>
-              <Calendar
-                locale={locale}
-                date={date}
-                onChange={handleSelect}
-                minDate={tomorrow}
-                fixedHeight={true}
-                // className="w-full"
-              />
-            </motion.div>
-          </motion.div>
-        </div>
-      </div>
-      <Divider />
-      <div className="min-h-[64px]">
-        <h4 className="text-base text-left text-gray-600 mb-3">Lịch khám</h4>
-        <div>
-          <motion.div
-            animate="visible"
-            initial="initial"
-            variants={scheduleVariants.container}
-            className="flex items-center gap-2 flex-wrap"
-          >
-            {schedules?.rows.map((row: ScheduleAvailable, index: any) => (
-              <motion.div
-                animate="visible"
-                initial="initial"
-                custom={index}
-                key={row.id}
-                variants={scheduleVariants.item}
-              >
-                <Button
-                  className={`${
-                    row.id === healthExaminationSchedule?.id
-                      ? "border-blue-600  text-blue-600"
-                      : ""
-                  }`}
-                  onClick={() => handleClickCard(row)}
-                  type="dashed"
-                  disabled={!row.isAvailableBooking}
-                >
-                  {row.TimeCode.value}
-                </Button>
+    <div className="min-h-[400px] flex flex-col gap-1 justify-between">
+      <div>
+        <div className="flex justify-center">
+          <div className="max-w-[556px] flex-1">
+            <motion.div
+              initial="offscreen"
+              whileInView="onscreen"
+              viewport={{ once: true, amount: 0.8 }}
+            >
+              <motion.div variants={cardVariants}>
+                <Calendar
+                  locale={locale}
+                  date={date}
+                  onChange={handleSelect}
+                  minDate={tomorrow}
+                  fixedHeight={true}
+                  // className="w-full"
+                />
               </motion.div>
-            ))}
-          </motion.div>
-          {schedules?.rows.length === 0 && (
-            <p className="text-red-950/70">
-              Ngày {moment(date).format("L")} chưa tạo lịch khám. Vui lòng chọn
-              ngày khác.
-            </p>
-          )}
+            </motion.div>
+          </div>
+        </div>
+        <Divider />
+        <div className="min-h-[68px]">
+          <h4 className="text-base text-left text-gray-600 mb-3">Lịch khám</h4>
+          <div>
+            <motion.div
+              animate="visible"
+              initial="initial"
+              variants={scheduleVariants.container}
+              className="flex items-center gap-2 flex-wrap"
+            >
+              {schedules?.rows.map((row: ScheduleAvailable, index: any) => (
+                <motion.div
+                  animate="visible"
+                  initial="initial"
+                  custom={index}
+                  key={row.id}
+                  variants={scheduleVariants.item}
+                >
+                  <Button
+                    className={`${
+                      row.id === healthExaminationSchedule?.id
+                        ? "border-blue-600  text-blue-600"
+                        : ""
+                    }`}
+                    onClick={() => handleClickCard(row)}
+                    type="dashed"
+                    disabled={!row.isAvailableBooking}
+                  >
+                    {row.TimeCode.value}
+                  </Button>
+                </motion.div>
+              ))}
+            </motion.div>
+            {schedules?.rows.length === 0 && (
+              <p className="text-red-950/70">
+                Ngày {moment(date).format("L")} chưa tạo lịch khám. Vui lòng
+                chọn ngày khác.
+              </p>
+            )}
+          </div>
         </div>
       </div>
       <div className="flex justify-end gap-4 py-5">

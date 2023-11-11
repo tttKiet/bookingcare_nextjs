@@ -26,7 +26,7 @@ export function PatientProfileItem({
   });
 
   return (
-    <div className="text-base p-6 px-4 border-b border-b-gray-700/30">
+    <div className="text-base p-6 px-4 ">
       <div className="flex gap-2 item-start border-black mb-2">
         <div className="min-w-[80px] ">
           <label className="flex gap-2 items-center  text-neutral-700 ">
@@ -81,18 +81,18 @@ export function PatientProfileItem({
       </div>
 
       {onClickDelete && (
-        <div className="flex justify-end gap-2 py-2">
+        <div className="flex justify-end gap-2 py-2 items-center">
           <Button
             danger
             type="dashed"
-            className="flex  gap-2 justify-center"
+            className="flex items-center gap-2 justify-center"
             onClick={() => onClickDelete(data.id)}
           >
             <BsTrash />
             Xóa hồ sơ
           </Button>
           <Link
-            className="p-1 px-[15px] text-sm text-blue-500 flex   gap-2"
+            className="p-1 px-[15px] text-sm text-blue-500 flex items-center gap-2"
             href={`/user?tag=add-patient-profile&id=${data.id}`}
           >
             Sửa hồ sơ

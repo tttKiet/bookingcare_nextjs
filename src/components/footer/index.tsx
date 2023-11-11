@@ -1,14 +1,14 @@
 const links = [
-  { name: "Open roles", href: "#" },
+  { name: "", href: "#" },
   { name: "Internship program", href: "#" },
   { name: "Our values", href: "#" },
   { name: "Meet our leadership", href: "#" },
 ];
 const stats = [
-  { name: "Offices worldwide", value: "12" },
-  { name: "Full-time colleagues", value: "300+" },
-  { name: "Hours per week", value: "40" },
-  { name: "Paid time off", value: "Unlimited" },
+  { name: "Bệnh viện", value: "50+" },
+  { name: "Giờ khám", value: "300h+" },
+  { name: "Bác sỉ", value: "50+" },
+  { name: "Đánh giá", value: "1B+" },
 ];
 
 export default function Footer() {
@@ -46,12 +46,12 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:mx-0">
           <h2 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
-            Work with us
+            Hợp tác với chúng tôi
           </h2>
           <p className="mt-6 text-lg leading-8 text-gray-300">
-            Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui
-            lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat
-            fugiat aliqua.
+            Booking care nhận hợp tác với các bệnh viện lớn để thực hiện nhu cầu
+            khám bệnh trên cả nước một cách thuận tiện và dể dàng qua ứng dụng
+            web.
           </p>
         </div>
         <div className="mx-auto mt-10 max-w-2xl lg:mx-0 lg:max-w-none">

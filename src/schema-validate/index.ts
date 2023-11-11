@@ -83,7 +83,13 @@ export const schemaHealthFacilityBody = yup.object().shape({
     ),
 });
 
-const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"];
+const SUPPORTED_FORMATS = [
+  "image/jpg",
+  "image/jpeg",
+  "image/gif",
+  "image/png",
+  "image/webp",
+];
 
 export const schemaSpecialistBody = yup.object().shape({
   name: yup.string().required("Vui lòng tên chuyên khoa."),

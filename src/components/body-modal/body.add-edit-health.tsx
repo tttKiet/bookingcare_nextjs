@@ -32,6 +32,7 @@ export default function BodyModalHealth({
   loading,
   obEditHealthFacility,
 }: BodyModalHealthProps) {
+  console.log("obEditHealthFacility", obEditHealthFacility);
   const {
     control,
     handleSubmit,
@@ -57,15 +58,16 @@ export default function BodyModalHealth({
       phone: obEditHealthFacility?.phone || "",
       email: obEditHealthFacility?.email || "",
       typeHealthFacilityId: obEditHealthFacility?.typeHealthFacilityId || "",
-      files: obEditHealthFacility?.images.map((file, index) => {
-        return {
-          uid: `${file.split("/").pop()?.toString()}`,
-          name: "image.png",
-          status: "done",
-          url: file,
-          type: "image/jpeg",
-        };
-      }) || ["Loi"],
+      files:
+        obEditHealthFacility?.images.map((file, index) => {
+          return {
+            uid: `${file.split("/").pop()?.toString()}`,
+            name: "image.png",
+            status: "done",
+            url: file,
+            type: "image/jpeg",
+          };
+        }) || [],
     });
   }, [obEditHealthFacility?.id, obEditHealthFacility]);
 
@@ -87,7 +89,14 @@ export default function BodyModalHealth({
       id: obEditHealthFacility?.id,
     });
     if (isOk) {
-      reset({});
+      reset({
+        name: "",
+        address: "",
+        phone: "",
+        email: "",
+        typeHealthFacilityId: "",
+        files: [],
+      });
       clickCancel();
     }
     return false;

@@ -39,10 +39,9 @@ export function PartientProfile(props: IPartientProfileProps) {
       onCancel() {},
     });
   }
-
   return (
     <ColorBox title="Danh sách hồ sơ bệnh nhân">
-      <div className="grid grid-cols-12">
+      <div className="grid grid-cols-12 divide-y">
         {responsePatientProfile?.rows.map((p: PatientProfile) => (
           <div className="col-span-12" key={p.id}>
             <PatientProfileItem
@@ -53,7 +52,7 @@ export function PartientProfile(props: IPartientProfileProps) {
         ))}
         {responsePatientProfile?.rows.length == 0 && (
           <p className="col-span-12">
-            Bạn chưa có hồ sơ nào. Tạo hồ sơ ngay{" "}
+            Bạn chưa có hồ sơ nào. Tạo hồ sơ ngay
             <Link
               href="/user?tag=add-patient-profile"
               className="text-blue-500"

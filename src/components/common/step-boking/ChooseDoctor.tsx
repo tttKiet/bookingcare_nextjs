@@ -50,32 +50,37 @@ const ChooseDoctor = React.forwardRef(
     }
 
     return (
-      <div ref={ref}>
-        <Input
-          placeholder="Tìm kiếm bác sỉ"
-          size="large"
-          suffix={
-            <CiSearch
-              style={{
-                fontSize: 16,
-                color: "#1677ff",
-              }}
-            />
-          }
-        />
+      <div
+        ref={ref}
+        className="min-h-[400px] flex flex-col gap-1 justify-between"
+      >
+        <div>
+          <Input
+            placeholder="Tìm kiếm bác sỉ"
+            size="large"
+            suffix={
+              <CiSearch
+                style={{
+                  fontSize: 16,
+                  color: "#1677ff",
+                }}
+              />
+            }
+          />
 
-        <List
-          itemLayout="horizontal"
-          dataSource={doctorWorkings?.rows || []}
-          renderItem={(i: WorkRoomAndSchedule, index) => (
-            <DoctorItem
-              active={item?.Working.staffId === i.Working.staffId}
-              workRoomAndSchedule={i}
-              handleClickCard={handleClickCard}
-              index={index}
-            />
-          )}
-        />
+          <List
+            itemLayout="horizontal"
+            dataSource={doctorWorkings?.rows || []}
+            renderItem={(i: WorkRoomAndSchedule, index) => (
+              <DoctorItem
+                active={item?.Working.staffId === i.Working.staffId}
+                workRoomAndSchedule={i}
+                handleClickCard={handleClickCard}
+                index={index}
+              />
+            )}
+          />
+        </div>
 
         <div className="flex justify-end gap-4 py-5">
           <Button type="dashed" onClick={() => router.back()}>

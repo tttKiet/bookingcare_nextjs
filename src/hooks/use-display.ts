@@ -10,7 +10,6 @@ export function useDisPlay() {
     if (!element) {
       return; // Tránh cuộn khi phần tử không tồn tại
     }
-    console.log("offsetTop");
     const offsetTop = element.offsetTop - top;
     window.scrollTo({
       top: offsetTop,

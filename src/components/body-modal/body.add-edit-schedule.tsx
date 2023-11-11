@@ -63,6 +63,7 @@ export interface ReqSchedule extends HealthExaminationSchedule {
 export interface BodyModalScheduleProps {
   handleSubmitForm: (data: Partial<ReqSchedule>) => Promise<boolean>;
   clickCancel: () => void;
+  maxNumberExists: number;
   loading?: boolean;
   obEdit?: ReqSchedule | null;
   workingId?: string | boolean;
@@ -74,6 +75,7 @@ export function BodyModalSchedule({
   loading,
   obEdit,
   workingId,
+  maxNumberExists,
 }: BodyModalScheduleProps) {
   const {
     control,
@@ -107,6 +109,10 @@ export function BodyModalSchedule({
     name: "maxNumber",
     control,
   });
+
+  useEffect(() => {
+    setValue("maxNumber", maxNumberExists);
+  }, [maxNumberExists]);
 
   const {
     field: { value: workingIdValue, onChange: onChangeWorkingId },

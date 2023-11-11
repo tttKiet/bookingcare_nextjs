@@ -46,7 +46,7 @@ export function RootLayout({ children }: { children: React.ReactNode }) {
               {!isAdminLink ? (
                 <>
                   <Header />
-                  <div className="">{children}</div>
+                  {children}
                   <Footer />
                 </>
               ) : (

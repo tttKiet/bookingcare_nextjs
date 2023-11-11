@@ -10,13 +10,16 @@ import { ResData, ResDataPaginations } from "@/types";
 import { Breadcrumb, Button, Divider, Select } from "antd";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import useSWR, { BareFetcher } from "swr";
 import axios from "../../axios";
 import { BsFilterCircle } from "react-icons/bs";
+import { useDisPlay } from "@/hooks";
 
 export default function HealthFacilities() {
   const url = usePathname();
+  const { scrollTo } = useDisPlay();
+  const listHealRef = useRef(null);
   const breadcrumbArraySplit = url.toString().split("/");
   const breadcrumbArray = breadcrumbArraySplit.map((path, index, arrayThis) => {
     if (!path) return {};
@@ -64,9 +67,11 @@ export default function HealthFacilities() {
         },
       })
     ).data;
-  const { data: healthFacilities, mutate: mutateHealthFacilities } = useSWR<
-    ResDataPaginations<HealthFacility>
-  >(
+  const {
+    data: healthFacilities,
+    mutate: mutateHealthFacilities,
+    isLoading,
+  } = useSWR<ResDataPaginations<HealthFacility>>(
     [
       API_HEALTH_FACILITIES,
       {
@@ -84,6 +89,12 @@ export default function HealthFacilities() {
   );
 
   function toggleChoiceType(id: string): void {
+    setPagination(() => {
+      return {
+        current: 1,
+        pageSize: 6,
+      };
+    });
     setTypeChoices((prev) => {
       const isExited = prev.indexOf(id);
       if (isExited !== -1) {
@@ -100,6 +111,9 @@ export default function HealthFacilities() {
     setTypeChoices([]);
   }
   function onChangePagination(page: number, pageSize: number): void {
+    scrollTo(listHealRef?.current, {
+      top: 270,
+    });
     setPagination(() => {
       return {
         current: page,
@@ -111,11 +125,38 @@ export default function HealthFacilities() {
   const provinceData = ["Loại"];
 
   return (
-    <main className="">
-      <div className="bg-linear-blue-pink relative h-[100px]">
+    <main className="mt-[-80px]">
+      <div
+        className="relative  h-[200px] pt-[80px] "
+        style={{
+          backgroundImage:
+            "linear-gradient(270.3deg, rgb(84, 212, 228) 0.2%, rgb(68, 36, 164) 100%)",
+        }}
+      >
+        <div className="absolute right-0 top-0 w-full h-full overflow-hidden">
+          <svg
+            viewBox="0 0 1024 1024"
+            className="absolute right-0 top-0 z-10 h-[64rem] w-[64rem]  [mask-image:radial-gradient(closest-side,white,transparent)] translate-x-[50%] translate-y-[-50%]"
+            aria-hidden="true"
+          >
+            <circle
+              cx={512}
+              cy={512}
+              r={512}
+              fill="url(#759c1415-0410-454c-8f7c-9a820de03641)"
+              fillOpacity="0.7"
+            />
+            <defs>
+              <radialGradient id="759c1415-0410-454c-8f7c-9a820de03641">
+                <stop stopColor="#000" />
+                <stop offset={1} stopColor="blue" />
+              </radialGradient>
+            </defs>
+          </svg>
+        </div>
         <SeachHealthFacility handleClickSearch={handleClickSearchHealth} />
       </div>
-      <div className="flex justify-center gap-2 flex-col mt-12">
+      <div className="flex justify-center gap-2 flex-col mt-12 ">
         <h3 className="text-3xl font-semibold text-black text-center">
           Cơ sở y tế
         </h3>
@@ -128,7 +169,7 @@ export default function HealthFacilities() {
       <div className="flex justify-center min-h-screen">
         <div className="container my-4">
           {/* <Breadcrumb items={breadcrumbArray} /> */}
-          <div className="my-4 mb-8  flex justify-between items-center gap-6">
+          <div className="my-4 mb-8 flex justify-between items-center gap-6">
             <Select
               defaultValue={provinceData[0]}
               style={{ width: 120 }}
@@ -162,8 +203,9 @@ export default function HealthFacilities() {
               Lọc
             </Button>
           </div>
-
+          <div ref={listHealRef}></div>
           <ListHealthFacilities
+            isLoading={isLoading}
             page={pagination.current}
             onChangePagination={onChangePagination}
             data={healthFacilities}

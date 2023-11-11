@@ -21,7 +21,7 @@ export function ColorBox({
       {title && (
         <h4 className="text-white text-lg py-4 px-6 bg-blue-500">{title}</h4>
       )}
-      <div className="py-2 px-8">{children}</div>
+      <div className="py-2 px-8 h-full">{children}</div>
     </div>
   );
 }

@@ -2,7 +2,11 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["res.cloudinary.com", "bookingcare-clound.s3.amazonaws.com"],
+    domains: [
+      "res.cloudinary.com",
+      "bookingcare-clound.s3.amazonaws.com",
+      "cdn.bookingcare.vn",
+    ],
   },
 };
 

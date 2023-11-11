@@ -12,7 +12,11 @@ export interface IHealthRecordItemProps {
 
 export function HealthRecordItem({ healthRecord }: IHealthRecordItemProps) {
   return (
-    <div className="relative p-4 pb-6 px-10 h-40 rounded-3xl overflow-hidden shadow shadow-pink-400 border-pink-400 bg-pink-300/25 ">
+    <div
+      className="relative p-4 pb-6 px-10 h-40 rounded-md overflow-hidden shadow 
+    bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-[#6cff1a0f]  to-[#29292908]
+    "
+    >
       <div className=" ">
         <h5 className="flex justify-between text-base mb-1  text-gray-800">
           {healthRecord?.WorkRoom?.ClinicRoom?.HealthFacility?.name}
@@ -31,7 +35,7 @@ export function HealthRecordItem({ healthRecord }: IHealthRecordItemProps) {
             rounded-md px-4 py-1
             ${
               healthRecord?.status.key == "S1"
-                ? "bg-pink-100 text-pink-500 border-pink-400"
+                ? "bg-pink-100 text-gray-500 border-gray-400"
                 : ""
             }
             ${
@@ -59,7 +63,7 @@ export function HealthRecordItem({ healthRecord }: IHealthRecordItemProps) {
         </div>
         <div className="flex items-start justify-between gap-2 my-3">
           <span className="flex-1 text-gray-600">Số thứ tự:</span>
-          <span className="flex-1 text-slate-950 font-semibold min-w-[200px] text-right">
+          <span className="flex-1 text-blue-500 font-semibold min-w-[200px] text-right">
             {healthRecord?.orderNumber.toString()}
           </span>
         </div>

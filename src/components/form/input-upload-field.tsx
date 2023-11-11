@@ -28,6 +28,7 @@ export function InputUploadField({
   fileExisted,
   resetFiles,
 }: InputUploadFieldProps) {
+  console.log("fileExisted", fileExisted);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
@@ -41,6 +42,8 @@ export function InputUploadField({
     name,
     control,
   });
+
+  console.log("value img", value);
 
   const getBase64 = (file: RcFile): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -66,6 +69,7 @@ export function InputUploadField({
     "image/jpeg",
     "image/gif",
     "image/png",
+    "image/webp",
   ];
   function isValidFormatFiles(files: UploadFile[]) {
     if (!files || files.length === 0) return true; // Bỏ qua nếu không có tệp ảnh
@@ -88,6 +92,7 @@ export function InputUploadField({
   };
 
   useEffect(() => {
+    console.log("fileExisted useffe", fileExisted);
     if (!fileExisted || !resetFiles) return setFileList([]);
     const files: UploadFile[] = fileExisted.map((file, index) => {
       return {
@@ -101,6 +106,10 @@ export function InputUploadField({
     setFileList(files);
     resetFiles(files);
   }, [fileExisted]);
+
+  useEffect(() => {
+    setFileList(value);
+  }, [value]);
 
   return (
     <div

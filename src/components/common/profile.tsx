@@ -17,19 +17,14 @@ export function Profile(props: ProfileProps) {
     <div>
       {profile?.email && (
         <div className="flex items-center py-1 px-2">
-          <Space>
-            <Avatar
-              size={30}
-              crossOrigin={"use-credentials"}
-              icon={<AiOutlineUser />}
-              className={`${
-                !isUser
-                  ? "text-white border-red-300"
-                  : "border-pink-500 text-black"
-              } flex items-center justify-center text-base bg-transparent rounded-full border-[2px] `}
+          <div className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+            <img
+              className="h-8 w-8 rounded-full"
+              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+              alt=""
             />
-          </Space>
-          <div className=" font-medium text-sm px-3 flex hover:text-blue-800 transition-all">
+          </div>
+          <div className="text-white font-medium text-sm px-3 flex hover:text-blue-900 transition-all">
             Hi
             <MenuNavbarLogout options={{ placement: "bottomRight" }} />
           </div>

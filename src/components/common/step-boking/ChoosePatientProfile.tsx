@@ -78,83 +78,87 @@ export function ChoosePatientProfile({ next, previous }: ChooseScheduleProps) {
   }
 
   return (
-    <div>
-      <div className="">
-        <motion.div
-          animate="visible"
-          initial="initial"
-          variants={variants.container}
-          className="grid grid-cols-2 gap-6"
-        >
-          {responsePatientProfile?.rows.map(
-            (profile: PatientProfile, index: any) => (
-              <motion.div
-                animate="visible"
-                initial="initial"
-                custom={index}
-                key={profile.id}
-                variants={variants.item}
-              >
-                <Card
-                  onClick={() => handleClickCard(profile)}
-                  title={<h5 className="text-blue-500">{profile.fullName}</h5>}
-                  className={`${
-                    profile.id === patientProfile?.id
-                      ? " border-blue-500"
-                      : "border-transparent"
-                  } cursor-pointer border hover:border-blue-500 transition-all duration-250`}
-                  bordered={false}
-                >
-                  <div className="flex flex-col gap-1 items-start">
-                    <div>
-                      <span>Email: </span>
-                      <span>{profile.email}</span>
-                    </div>
-                    <div>
-                      <span>CCCD: </span>
-                      <span>{profile.cccd}</span>
-                    </div>
-                    <div>
-                      <span>Số điện thoại: </span>
-                      <span>{profile.phone}</span>
-                    </div>
-                    <div>
-                      <span>Dân tộc: </span>
-                      <span>{profile.nation}</span>
-                    </div>
-                    <div>
-                      <span>Nghề nghiệp: </span>
-                      <span>{profile.profession}</span>
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            )
-          )}
-        </motion.div>
-      </div>
-      {/* <div className="flex justify-end gap-2 pt-5">
-        <Link
-          className="flex items-center gap-2 justify-center border border-dashed rounded-lg px-4 py-1 border-gray-600"
-          href={`/user?tag=add-patient-profile&backHref=${url}`}
-        >
-          <BiPlus />
-          Thêm hồ sơ
-        </Link>
-        <Button type="text" onClick={() => toast("Cập nhật sau...")}>
-          Chi tiết
-        </Button>
-      </div> */}
+    <div className=" flex flex-col justify-between min-h-[300px]">
+      {responsePatientProfile?.rows.length > 0 ? (
+        <div>
+          <div className="">
+            <motion.div
+              animate="visible"
+              initial="initial"
+              variants={variants.container}
+              className="grid grid-cols-2 gap-6"
+            >
+              {responsePatientProfile?.rows.map(
+                (profile: PatientProfile, index: any) => (
+                  <motion.div
+                    animate="visible"
+                    initial="initial"
+                    custom={index}
+                    key={profile.id}
+                    variants={variants.item}
+                  >
+                    <Card
+                      onClick={() => handleClickCard(profile)}
+                      title={
+                        <h5 className="text-blue-500">{profile.fullName}</h5>
+                      }
+                      className={`${
+                        profile.id === patientProfile?.id
+                          ? " border-blue-500"
+                          : "border-transparent"
+                      } cursor-pointer border hover:border-blue-500 transition-all duration-250`}
+                      bordered={false}
+                    >
+                      <div className="flex flex-col gap-1 items-start">
+                        <div>
+                          <span>Email: </span>
+                          <span>{profile.email}</span>
+                        </div>
+                        <div>
+                          <span>CCCD: </span>
+                          <span>{profile.cccd}</span>
+                        </div>
+                        <div>
+                          <span>Số điện thoại: </span>
+                          <span>{profile.phone}</span>
+                        </div>
+                        <div>
+                          <span>Dân tộc: </span>
+                          <span>{profile.nation}</span>
+                        </div>
+                        <div>
+                          <span>Nghề nghiệp: </span>
+                          <span>{profile.profession}</span>
+                        </div>
+                      </div>
+                    </Card>
+                  </motion.div>
+                )
+              )}
+            </motion.div>
+          </div>
 
-      <div className="pt-5">
-        <h4 className="text-base mb-2 text-left">Lý do khám</h4>
-        <TextArea
-          value={descStatusPatient}
-          onChange={(e) => setDescStatusPatient(e.target.value)}
-          title=""
-          placeholder="Mô tả ngắn gọn tình trạng của bạn..."
-        />
-      </div>
+          <div className="pt-5">
+            <h4 className="text-base mb-2 text-left">Lý do khám</h4>
+            <TextArea
+              value={descStatusPatient}
+              onChange={(e) => setDescStatusPatient(e.target.value)}
+              title=""
+              placeholder="Mô tả ngắn gọn tình trạng của bạn..."
+            />
+          </div>
+        </div>
+      ) : (
+        <p className=" py-3 pt-6 text-gray-500 text-center">
+          Vui lòng thêm
+          <Link
+            href={"/user?tag=add-patient-profile"}
+            className="font-semibold text-blue-500 ml-1"
+          >
+            hồ sơ khám bệnh
+          </Link>
+        </p>
+      )}
       <div className="flex justify-end gap-4 py-5">
         <Button type="dashed" onClick={previous}>
           Trở lại
