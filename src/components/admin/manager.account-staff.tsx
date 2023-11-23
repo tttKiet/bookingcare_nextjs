@@ -406,7 +406,6 @@ export function ManagerAccountStaff() {
       </h3>
       <TableSortFilter
         options={{
-          sticky: true,
           loading: isLoading,
           pagination: {
             total: responseStaff?.count,

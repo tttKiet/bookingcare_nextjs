@@ -364,7 +364,6 @@ export function ManagerAccountUser() {
       </h3>
       <TableSortFilter
         options={{
-          sticky: true,
           loading: isLoading,
           pagination: {
             total: responseUser?.count,

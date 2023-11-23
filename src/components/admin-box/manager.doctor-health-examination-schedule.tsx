@@ -56,6 +56,8 @@ export function ManagerHealthExamSchedule({
   // State components
   const { profile } = useAuth();
   const isDoctor = permission === "doctor";
+  const [workingIdDoctorLogined, setWorkingIdDoctorLogined] =
+    React.useState<string>("");
   const [bgRandom] = userRandomBgLinearGradient();
   function handleClickDeleteSchedule(record: HealthExaminationSchedule): void {
     confirm({
@@ -91,6 +93,12 @@ export function ManagerHealthExamSchedule({
   const [doctorIdSelect, setDoctorIdSelect] = React.useState<string | null>(
     null
   );
+
+  React.useEffect(() => {
+    if (isDoctor && profile?.id) {
+      setDoctorIdSelect(profile?.id);
+    }
+  }, [profile, permission]);
 
   function handleSearchSelect(value: string): void {
     setSelectValue(value);
@@ -388,6 +396,10 @@ export function ManagerHealthExamSchedule({
     ];
   }, [getColumnSearchProps]);
 
+  React.useEffect(() => {
+    if (doctor?.rows?.[0]?.id) setWorkingIdDoctorLogined(doctor?.rows?.[0]?.id);
+  }, [doctor?.rows?.[0]?.id]);
+
   return (
     <div className="p-4 px-6">
       <ModalPositionHere
@@ -399,8 +411,7 @@ export function ManagerHealthExamSchedule({
         footer={false}
         body={
           <BodyModalSchedule
-            maxNumberExists={(isDoctor && doctor?.rows?.[0]?.maxNumber) || 3}
-            workingId={(isDoctor && doctor?.rows?.[0]?.id) || false}
+            workingId={(isDoctor && workingIdDoctorLogined) || false}
             clickCancel={toggleShowScheduleCreateOrUpdateModal}
             handleSubmitForm={handleSubmitFormSchedule}
           />
@@ -442,7 +453,6 @@ export function ManagerHealthExamSchedule({
       </h3>
       <TableSortFilter
         options={{
-          sticky: true,
           loading: isLoading,
           pagination: {
             total: responseSchedules?.count,

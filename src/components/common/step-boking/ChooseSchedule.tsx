@@ -36,6 +36,9 @@ export function ChooseSchedule({
   next,
   previous,
 }: IChooseScheduleProps) {
+  if (!staffId) {
+    return "Loi";
+  }
   const tomorrow = React.useMemo(() => {
     const nextDate = new Date();
     nextDate.setDate(new Date().getDate() + 1);

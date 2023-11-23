@@ -377,7 +377,6 @@ export function WorkingCurrentTag() {
       </h3>
       <TableSortFilter
         options={{
-          sticky: true,
           loading: isLoading,
           pagination: {
             total: workings?.count || 0,

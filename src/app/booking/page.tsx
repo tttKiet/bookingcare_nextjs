@@ -11,7 +11,7 @@ import {
 import { ChoosePatientProfile } from "@/components/common/step-boking/ChoosePatientProfile";
 import { PaymentInformation } from "@/components/common/step-boking/PaymentInformation";
 import StepBookings from "@/components/steps/steps-booking,";
-import { useDisPlay } from "@/hooks";
+import { useAuth, useDisPlay } from "@/hooks";
 import { useGetAddress } from "@/hooks/use-get-address-from-code";
 import {
   HealthExaminationSchedule,
@@ -38,9 +38,11 @@ export default function Booking(props: IAboutPageProps) {
   const [current, setCurrent] = React.useState<number>(0);
   const healthFacilityId = searchParams.get("healthFacilityId");
   const router = useRouter();
-  // Data booking
+  const { profile } = useAuth();
 
+  // Data booking
   const [doctorChoose, setDoctorChoose] = React.useState<WorkRoom | null>(null);
+
   const [descStatusPatient, setDescStatusPatient] = React.useState<string>("");
   const [healthExaminationSchedule, setHealthExaminationSchedule] =
     React.useState<Partial<HealthExaminationSchedule> | null>(null);
@@ -200,7 +202,7 @@ export default function Booking(props: IAboutPageProps) {
         children: <ChoosePatientProfile next={stepNext} previous={stepPrev} />,
       },
     ];
-  }, []);
+  }, [doctorChoose?.Working.staffId]);
 
   // function onChangeSteps(value: number) {
   //   console.log(value);
@@ -255,7 +257,13 @@ export default function Booking(props: IAboutPageProps) {
       });
     }
   }, [healthFacility]);
-
+  if (!profile?.id) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        Hãy đăng nhập để đặt lịch!!
+      </div>
+    );
+  }
   return (
     <div className="py-8 flex justify-center bg-blue-100/40 min-h-screen">
       <div className="container">

@@ -333,7 +333,6 @@ export function ManagerAcademicDegree() {
       </h3>
       <TableSortFilter
         options={{
-          sticky: true,
           loading: isLoading,
           pagination: {
             total: responseAcademicDegree?.count,

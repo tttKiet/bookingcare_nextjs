@@ -289,7 +289,6 @@ export function ManagerCheckUp() {
         </div>
         <TableSortFilter
           options={{
-            sticky: true,
             loading: isLoading,
             showSorterTooltip: false,
           }}

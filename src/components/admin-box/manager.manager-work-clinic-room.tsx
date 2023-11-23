@@ -537,7 +537,6 @@ export function ManagerClinicWork() {
         <>
           <TableSortFilter
             options={{
-              sticky: true,
               loading: isLoading,
               pagination: {
                 total: responseWorkRooms?.count,

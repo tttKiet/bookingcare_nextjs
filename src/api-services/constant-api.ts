@@ -27,3 +27,6 @@ export const API_BOOKING = "/api/v1/user/booking";
 export const API_HEALTH_RECORD = "/api/v1/user/health-record";
 export const API_CHECK_UP_HEALTH_RECORD =
   "/api/v1/doctor/check-up/health-record";
+
+export const API_ADMIN_RANK = "/api/v1/admin/rank";
+export const API_DOCTOR_CHART_REVENUE = "/api/v1/doctor/chart/revenue";

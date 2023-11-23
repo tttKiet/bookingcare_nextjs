@@ -420,7 +420,6 @@ export function ManagerHealthRoom() {
         <>
           <TableSortFilter
             options={{
-              sticky: true,
               loading: isLoading,
               pagination: {
                 total: responseClinicRooms?.count,

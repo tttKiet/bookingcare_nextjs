@@ -304,7 +304,6 @@ export function ManagerCode() {
 
       <TableSortFilter
         options={{
-          sticky: true,
           loading: isLoading,
           pagination: {
             total: responseCode?.count,

@@ -10,6 +10,7 @@ import MenuDropdown from ".";
 import { ModalPositionHere } from "../modal";
 import { DropDownProps } from "antd";
 import { RiBillLine } from "react-icons/ri";
+import { useRouter } from "next/navigation";
 
 export interface MenuNavbarLogoutProps {
   options?: DropDownProps;
@@ -17,6 +18,7 @@ export interface MenuNavbarLogoutProps {
 
 export default function MenuNavbarLogout({ options }: MenuNavbarLogoutProps) {
   const { profile, logout } = useAuth();
+  const router = useRouter();
   const [showConfirm, setShowConfirm] = React.useState<boolean>(false);
   const items = React.useMemo(() => {
     return [
@@ -86,6 +88,9 @@ export default function MenuNavbarLogout({ options }: MenuNavbarLogoutProps) {
   }
 
   async function handleLogout(): Promise<void> {
+    if (profile?.Role?.keyType !== "user") {
+      router.push("/");
+    }
     await logout();
     toast.success("Đã đăng xuất");
   }

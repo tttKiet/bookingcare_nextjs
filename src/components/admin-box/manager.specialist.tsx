@@ -334,7 +334,6 @@ export function ManagerSpecialist() {
       </h3>
       <TableSortFilter
         options={{
-          sticky: true,
           loading: isLoading,
           pagination: {
             total: responseSpecialist?.count,

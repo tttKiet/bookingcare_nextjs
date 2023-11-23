@@ -243,7 +243,6 @@ export function ManagerClinicRoom() {
       </h3>
       <TableSortFilter
         options={{
-          sticky: true,
           loading: isLoading,
           pagination: {
             total: responseClinicRooms?.count,

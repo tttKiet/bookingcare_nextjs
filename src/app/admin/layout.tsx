@@ -17,6 +17,7 @@ import { AiOutlineSlack } from "react-icons/ai";
 import { BiBulb, BiCalendarStar } from "react-icons/bi";
 import { HiOutlineAcademicCap } from "react-icons/hi";
 import { PiFlowerTulipThin } from "react-icons/pi";
+import { FaRankingStar } from "react-icons/fa6";
 
 import "../globals.css";
 const { Header, Content, Footer, Sider } = Layout;
@@ -130,6 +131,11 @@ export default function RootLayout({
         label: <Link href="/admin/code">Code</Link>,
         icon: <BsCode size={20} />,
       },
+      {
+        key: "/admin/rank",
+        label: <Link href="/admin/rank">Bảng xếp hạng</Link>,
+        icon: <FaRankingStar size={20} />,
+      },
     ],
     []
   );
@@ -167,7 +173,7 @@ export default function RootLayout({
         </Header>
         <Content style={{ margin: "0 16px" }}>
           <Breadcrumb style={{ margin: "16px 0" }} items={breadcrumbArray} />
-          <div className="bg-white rounded-lg min-h-[360px] p[24] shadow-md">
+          <div className="bg-white rounded-lg min-h-screen p[24] shadow-md">
             {children}
           </div>
         </Content>

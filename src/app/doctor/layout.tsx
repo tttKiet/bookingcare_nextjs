@@ -7,17 +7,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
-import { FiPlusCircle } from "react-icons/fi";
-import { LiaUserNurseSolid } from "react-icons/lia";
-import { LuLayoutDashboard } from "react-icons/lu";
-import { MdSupervisorAccount } from "react-icons/md";
-import { BsCode, BsPersonWorkspace, BsPlusCircleDotted } from "react-icons/bs";
-import { CiBookmarkMinus } from "react-icons/ci";
-import { AiOutlineSlack } from "react-icons/ai";
-import { BiBulb, BiCalendarStar, BiHomeAlt2 } from "react-icons/bi";
-import { HiOutlineAcademicCap } from "react-icons/hi";
-import { PiFlowerTulipThin } from "react-icons/pi";
-
+import { BiCalendarStar, BiHomeAlt2 } from "react-icons/bi";
+import { BsPlusCircleDotted } from "react-icons/bs";
+import { IoBarChartOutline } from "react-icons/io5";
 import "../globals.css";
 const { Header, Content, Footer, Sider } = Layout;
 export const metadata: Metadata = {
@@ -62,6 +54,11 @@ export default function RootLayout({
         key: "/doctor/check-health",
         label: <Link href="/doctor/check-health">Khám bệnh</Link>,
         icon: <BsPlusCircleDotted size={20} />,
+      },
+      {
+        key: "/doctor/chart/revenue",
+        label: <Link href="/doctor/chart/revenue">Thống kê</Link>,
+        icon: <IoBarChartOutline size={20} />,
       },
     ],
     []

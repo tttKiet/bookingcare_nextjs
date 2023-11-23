@@ -393,7 +393,6 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
       </h3>
       <TableSortFilter
         options={{
-          sticky: true,
           loading: isLoading,
           pagination: {
             total: healthFacilities?.count || 0,

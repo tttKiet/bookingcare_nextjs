@@ -63,7 +63,6 @@ export interface ReqSchedule extends HealthExaminationSchedule {
 export interface BodyModalScheduleProps {
   handleSubmitForm: (data: Partial<ReqSchedule>) => Promise<boolean>;
   clickCancel: () => void;
-  maxNumberExists: number;
   loading?: boolean;
   obEdit?: ReqSchedule | null;
   workingId?: string | boolean;
@@ -75,7 +74,6 @@ export function BodyModalSchedule({
   loading,
   obEdit,
   workingId,
-  maxNumberExists,
 }: BodyModalScheduleProps) {
   const {
     control,
@@ -87,13 +85,14 @@ export function BodyModalSchedule({
     register,
   } = useForm({
     defaultValues: {
-      workingId: "",
+      workingId: workingId && workingId !== true ? workingId : "",
       date: dayjs(new Date()),
       maxNumber: 3,
       timeCodeArray: [],
     },
     resolver: yupResolver(schemaCodeScheduleHealth),
   });
+
   const {
     field: { value: timeCodeArrayValue, onChange: onChangeTimeCodeArray },
     fieldState: { error: errorTimeCodeArray },
@@ -109,10 +108,6 @@ export function BodyModalSchedule({
     name: "maxNumber",
     control,
   });
-
-  useEffect(() => {
-    setValue("maxNumber", maxNumberExists);
-  }, [maxNumberExists]);
 
   const {
     field: { value: workingIdValue, onChange: onChangeWorkingId },
@@ -162,11 +157,22 @@ export function BodyModalSchedule({
 
   useEffect(() => {
     if (scheduleDoctors) {
+      console.log(scheduleDoctors);
       const timeCodes =
         scheduleDoctors?.rows.map((row: any) => row.timeCode) || [];
+      console.log(timeCodes);
+
       setValue("timeCodeArray", timeCodes);
     }
   }, [scheduleDoctors]);
+
+  useEffect(() => {
+    if (scheduleDoctors) {
+      const maxNumber = scheduleDoctors?.rows?.[0]?.maxNumber || 1;
+      setValue("maxNumber", maxNumber);
+    }
+  }, [scheduleDoctors]);
+
   function onSearchSelectDoctors(value: string): void {
     setEmailSearch(value);
   }
@@ -179,6 +185,7 @@ export function BodyModalSchedule({
   >([]);
 
   useEffect(() => {
+    console.log("workingId", workingId);
     if (workingId && workingId !== true) {
       setValue("workingId", workingId);
     }
