@@ -17,7 +17,11 @@ export default function HealthRecordPageDetail({
 }: {
   params: { record: string };
 }) {
-  const { data: resHealthRecord, error } = useSWR<HealthRecord>(
+  const {
+    data: resHealthRecord,
+    error,
+    mutate,
+  } = useSWR<HealthRecord>(
     `${API_HEALTH_RECORD}?healthRecordId=${params.record}`,
     {
       revalidateOnMount: true,
@@ -44,7 +48,10 @@ export default function HealthRecordPageDetail({
         <Breadcrumb style={{ margin: "32px 0" }} items={breadcrumbArray} />
         <ColorBox titlePosition="left" title="Thông tin phiếu khám bệnh">
           <div className="flex justify-center">
-            <HealthRecordItemDetails healthRecord={resHealthRecord} />
+            <HealthRecordItemDetails
+              fetchData={mutate}
+              healthRecord={resHealthRecord}
+            />
           </div>
         </ColorBox>
       </div>

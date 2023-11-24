@@ -58,15 +58,44 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-        <div className="flex items-center justify-center p-12 lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden">
-          <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl ">
-            <Image
-              className="w-full max-w-none rounded-xl  shadow-xl "
-              width={400}
-              height={400}
-              src={flask}
-              alt=""
-            />
+        <div className="lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden flex flex-col gap-3">
+          <div className="flex gap-3 items-center justify-center p-3">
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+          </div>
+          <div className="flex gap-3 items-center justify-center p-3 lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden">
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+          </div>
+          <div className="flex gap-3 items-center justify-center p-3">
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+          </div>
+          <div className="flex gap-3 items-center justify-center p-3 lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden">
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+          </div>
+          <div className="flex gap-3 items-center justify-center p-3">
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+          </div>
+          <div className="flex gap-3 items-center justify-center p-3 lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden">
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+          </div>
+          <div className="flex gap-3 items-center justify-center p-3">
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
+            <div className="ring-1 bg-black/50 w-[400px] p-4 rounded-xl "></div>
           </div>
         </div>
         <div className="lg:col-span-2 lg:col-start-1 lg:row-start-2 lg:mx-auto lg:grid lg:w-full lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8">

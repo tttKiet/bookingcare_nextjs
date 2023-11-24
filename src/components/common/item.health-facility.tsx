@@ -12,6 +12,7 @@ import { CiLocationArrow1, CiLocationOn } from "react-icons/ci";
 import ImageWithFallback from "../img/ImageWithFallback";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { toast as toastify } from "react-toastify";
 
 export interface IItemHealthFacilitiesProps {
   healthFaicility: HealthFacility;
@@ -28,7 +29,7 @@ export function ItemHealthFacility({
     if (profile?.id) {
       router.push(`/booking?healthFacilityId=${id}`);
     } else {
-      toast("Hãy đăng nhập để đặt lịch!");
+      toastify.warn("Hãy đăng nhập để đặt lịch!");
     }
   }
 

@@ -1,23 +1,61 @@
 import { useGetAddress } from "@/hooks/use-get-address-from-code";
 import { HealthRecord } from "@/models";
-import { Button, Divider } from "antd";
+import { Button, Divider, Modal } from "antd";
 import moment from "moment";
 import * as React from "react";
+import { AiOutlineFieldTime } from "react-icons/ai";
+import { BsPatchCheckFill } from "react-icons/bs";
+import { FcCancel } from "react-icons/fc";
+import { MdCancel } from "react-icons/md";
+import { ExclamationCircleFilled } from "@ant-design/icons";
+import { staffApi } from "@/api-services";
+import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
+
+const { confirm } = Modal;
 
 export interface IHealthRecordItemDetailsProps {
   healthRecord: HealthRecord | undefined;
+  fetchData: () => void;
 }
 
 export function HealthRecordItemDetails({
   healthRecord,
+  fetchData,
 }: IHealthRecordItemDetailsProps) {
   const { address: addressRaw } = useGetAddress({
     provinceCode: healthRecord?.Booking?.PatientProfile?.addressCode[2] || "",
     districtCode: healthRecord?.Booking?.PatientProfile?.addressCode[1] || "",
     wardCode: healthRecord?.Booking?.PatientProfile?.addressCode[0] || "",
   });
+
+  async function onChangeStatus() {
+    const api = staffApi.editStatusHealthRecord({
+      statusCode: "S4",
+      id: healthRecord?.id || "",
+    });
+
+    const isOk = await toastMsgFromPromise(api);
+
+    if (isOk) {
+      fetchData();
+    }
+  }
+  function handleCancel() {
+    confirm({
+      title: "Bạn thật sự muốn hủy phiếu khám?",
+      icon: <ExclamationCircleFilled />,
+      content:
+        "Thao tác này sẽ làm phiếu khám mất hiệu lực và không thể khôi phục.",
+      async onOk() {
+        await onChangeStatus();
+        return true;
+      },
+
+      onCancel() {},
+    });
+  }
   return (
-    <div className="p-4 pb-6 px-10 max-w-[426px] border rounded-3xl shadow-lg bg-white ">
+    <div className="p-4 mt-4 pb-6 px-10 max-w-[426px] border rounded-3xl shadow-lg bg-white ">
       <header>
         <h3 className="text-lg text-center p-2 pt-3 text-black font-medium">
           Phiếu khám bệnh
@@ -30,30 +68,47 @@ export function HealthRecordItemDetails({
             {healthRecord?.WorkRoom?.ClinicRoom?.HealthFacility?.address}
           </p>
         </div>
-        <div className="flex mb-4 justify-center">
-          <span
-            className={`
-            border border-dashed
-            rounded-md px-4 py-1
-            ${
-              healthRecord?.status.key == "S1"
-                ? "bg-pink-100 text-pink-500 border-pink-400"
-                : ""
-            }
-            ${
-              healthRecord?.status.key == "S2"
-                ? "bg-blue-100 text-blue-600 border-blue-500"
-                : ""
-            }
-            ${
-              healthRecord?.status.key == "S3"
-                ? "bg-red-100 text-red-600 border-red-500"
-                : ""
-            }
-          `}
-          >
-            {healthRecord?.status.value}
-          </span>
+        <div className="flex mb-4 justify-center text-sm">
+          {healthRecord?.status.key === "S1" && (
+            <div className="flex items-center gap-2">
+              <span
+                className={`bg-gray-400 text-white px-2  rounded-md inline-flex items-center gap-1`}
+              >
+                <span className="mr-1"> ...</span>
+                {healthRecord?.status?.value?.toLowerCase()}
+              </span>
+              <span
+                onClick={handleCancel}
+                className="hover:text-red-600 text-red-400 transition-all cursor-pointer duration-300"
+              >
+                <MdCancel size={22} />
+              </span>
+            </div>
+          )}
+          {healthRecord?.status.key === "S2" && (
+            <span
+              className={`bg-yellow-400 text-white px-2  rounded-md  inline-flex items-center gap-1`}
+            >
+              <AiOutlineFieldTime />
+              {healthRecord?.status?.value.toLowerCase()}
+            </span>
+          )}
+          {healthRecord?.status.key === "S3" && (
+            <span
+              className={`border border-dashed font-bold border-green-500 text-green-500 px-2 rounded-md  inline-flex items-center gap-1`}
+            >
+              <BsPatchCheckFill />
+              {healthRecord?.status?.value.toLowerCase()}
+            </span>
+          )}
+          {healthRecord?.status.key === "S4" && (
+            <span
+              className={`border border-dashed border-red-400  text-red-400 px-2 rounded-md  inline-flex items-center gap-1`}
+            >
+              <FcCancel />
+              {healthRecord?.status?.value.toLowerCase()}
+            </span>
+          )}
         </div>
         <p className="text-center text-sm text-red-500 font-light">
           Phiếu này xác nhận bạn đã đặt lịch thành công. Nếu bạn đã thanh toán

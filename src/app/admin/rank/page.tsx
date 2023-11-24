@@ -36,7 +36,7 @@ export default function CodeAdminPage() {
         title: "Tổng doanh thu",
         dataIndex: "total",
         key: "total",
-        render: (text) => <a>{text.toLocaleString()}</a>,
+        render: (text) => <a>{text.toLocaleString()} vnđ</a>,
       },
     ];
   }, []);

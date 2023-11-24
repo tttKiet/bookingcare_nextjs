@@ -20,8 +20,12 @@ export function ControlMiddalNavTop({ menu }: ControlMiddalNavTopProps) {
               href={menu.href}
               key={i}
               passHref={true}
-              className={`text-sm font-semibold p-1 px-4 hover:text-blue-500 transition-colors cursor-pointer duration-200
-                ${pathName == menu.href ? "text-white " : "text-gray-300"}
+              className={`text-sm p-1 px-4 relative hover:text-white transition-colors cursor-pointer duration-200
+                ${
+                  pathName == menu.href
+                    ? "transition-all duration-200 text-white font-semibold before:absolute before:top-full before:left-0 before:w-[60%] before:h-1 before:block before:content before:bg-white before:rounded-lg before:animate-bounce "
+                    : "text-gray-200"
+                }
               `}
             >
               {menu.title}

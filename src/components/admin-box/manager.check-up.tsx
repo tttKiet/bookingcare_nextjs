@@ -1,5 +1,6 @@
 "use client";
 
+import { staffApi } from "@/api-services";
 import {
   API_CHECK_UP_HEALTH_RECORD,
   API_CODE,
@@ -14,19 +15,23 @@ import {
   PatientProfile,
   WorkRoom,
 } from "@/models";
-import { Button, DatePicker, Modal, Select } from "antd";
+import { ResDataPaginations } from "@/types";
+import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
+import { ExclamationCircleFilled } from "@ant-design/icons";
+import { DatePicker, Modal, Select } from "antd";
+import { DefaultOptionType } from "antd/es/select";
 import type { ColumnsType } from "antd/es/table";
+import { RadioChangeEvent } from "antd/lib";
 import dayjs, { Dayjs } from "dayjs";
 import * as React from "react";
-import { AiOutlineEye } from "react-icons/ai";
+import { AiOutlineEye, AiOutlineFieldTime } from "react-icons/ai";
+import { BsDot, BsPatchCheckFill } from "react-icons/bs";
+import { FcCancel } from "react-icons/fc";
+import { IoCheckmarkDoneOutline, IoCloseSharp } from "react-icons/io5";
 import useSWR from "swr";
 import { PatientProfileItem } from "../common";
+import ChangeStatusHealthRecord from "../common/ChangeStatusHealthRecord";
 import { TableSortFilter } from "../table";
-import { ResDataPaginations } from "@/types";
-import { DefaultOptionType } from "antd/es/select";
-import { staffApi } from "@/api-services";
-import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
-import { Option } from "antd/es/mentions";
 const { confirm } = Modal;
 
 type DataIndex = keyof ClinicRoom;
@@ -42,8 +47,16 @@ export interface DoctorCheckupInfo {
 export function ManagerCheckUp() {
   const { profile } = useAuth();
   const isDoctor = profile?.Role?.keyType === "doctor";
-
+  const [valueCheckBoxChangeStatus, setValueCheckBoxChangeStatus] =
+    React.useState("S1");
+  const [editHealthRecordId, setEditHealthRecordId] = React.useState("");
+  const onChangeStt = (e: RadioChangeEvent) => {
+    console.log(e.target.value);
+    setValueCheckBoxChangeStatus(e.target.value);
+  };
   const [isShowModalDetailPatient, setIsShowModalDetailPatient] =
+    React.useState(false);
+  const [isShowModalChangeStatus, setIsShowModalChangeStatus] =
     React.useState(false);
   const [doctorInfor, setDoctorInfor] = React.useState<WorkRoom | null>(null);
   const [loadingSelectValue, setLoadingSelectValue] = React.useState<
@@ -80,9 +93,12 @@ export function ManagerCheckUp() {
     }));
     setOptionCodes(data);
   }, [statusCodes]);
-  console.log("optionCodes", optionCodes);
   function toggleShowModalDetailProfileChoose() {
     setIsShowModalDetailPatient((s) => !s);
+  }
+
+  function toggleShowModalChangeStatus() {
+    setIsShowModalChangeStatus((s) => !s);
   }
 
   const {
@@ -92,7 +108,6 @@ export function ManagerCheckUp() {
   } = useSWR<HealthRecord[]>(`${API_HEALTH_RECORD}?timeCodeId=${selectTime}`, {
     dedupingInterval: 2000,
   });
-  console.log("healthRecords", healthRecords);
 
   // Select date
   function handleChangeSelectDate(date: Dayjs | null) {
@@ -121,16 +136,26 @@ export function ManagerCheckUp() {
     const isOk = await toastMsgFromPromise(api);
     setLoadingSelectValue(null);
 
-    // const newPosns = new Promise((resolve, reject) => {
-    //   setTimeout(resolve, 2000);
-    // });
-    // setLoadingSelectValue(healthRecordId);
-    // newPosns.then(() => {
-    //   setLoadingSelectValue(null);
-    // });
     if (isOk) {
       mutateHealthRecord();
     }
+  }
+  function handleClickAction(
+    text: string,
+    content: string,
+    statusKey: string,
+    healthRecordId: string
+  ): void {
+    confirm({
+      title: text,
+      icon: <ExclamationCircleFilled />,
+      content: content,
+      async onOk() {
+        await onChangeStatus(statusKey, healthRecordId);
+        return true;
+      },
+      onCancel() {},
+    });
   }
 
   // Table
@@ -156,9 +181,26 @@ export function ManagerCheckUp() {
       },
       {
         title: "Bệnh nhân",
-        dataIndex: ["Booking", "PatientProfile", "fullName"],
+        // dataIndex: ["Booking", "PatientProfile", "fullName"],
         key: "Booking.PatientProfile.fullName",
-        render: (text) => <a>{text}</a>,
+
+        render: (text) => {
+          return (
+            <p className="flex items-center gap-2">
+              <a className="">{text.Booking.PatientProfile.fullName}</a>
+              <button
+                className="flex items-center gap-2 border 
+                 outline-none border-dashed px-2 py-1 rounded-md border-gray-700"
+                onClick={() => {
+                  setDataPatientProfileChoose(text.Booking.PatientProfile);
+                  toggleShowModalDetailProfileChoose();
+                }}
+              >
+                <AiOutlineEye />
+              </button>
+            </p>
+          );
+        },
         sorter: (a, b) =>
           a.Booking.PatientProfile.fullName.localeCompare(
             b.Booking.PatientProfile.fullName
@@ -175,60 +217,145 @@ export function ManagerCheckUp() {
           ),
       },
       {
+        title: "Trạng thái",
+        dataIndex: ["status"],
+        key: "status",
+        render: (text) => {
+          let Style: any = "Loi";
+          if (text.key === "S1") {
+            Style = (
+              <span
+                className={`bg-gray-500 text-white px-2  rounded-md inline-flex items-center gap-1`}
+              >
+                <span className="mr-1"> ...</span>
+                {text?.value?.toLowerCase()}
+              </span>
+            );
+          } else if (text.key === "S2") {
+            Style = (
+              <span
+                className={`bg-yellow-400 text-white px-2  rounded-md  inline-flex items-center gap-1`}
+              >
+                <AiOutlineFieldTime />
+                {text.value?.toLowerCase()}
+              </span>
+            );
+          } else if (text.key === "S3") {
+            Style = (
+              <span
+                className={`border border-dashed font-bold border-green-500 text-green-500 px-2 rounded-md  inline-flex items-center gap-1`}
+              >
+                <BsPatchCheckFill />
+                {text.value?.toLowerCase()}
+              </span>
+            );
+          } else {
+            Style = (
+              <span
+                className={`border border-dashed border-red-400  text-red-400 px-2 rounded-md  inline-flex items-center gap-1`}
+              >
+                <FcCancel />
+                {text.value?.toLowerCase()}
+              </span>
+            );
+          }
+
+          return Style;
+        },
+      },
+      {
         title: "Hành động",
         key: "actions",
         render: (text) => {
-          console.log(text);
+          let Style: any = "Loi";
+          if (text.status.key === "S1") {
+            Style = (
+              <>
+                <button
+                  onClick={() =>
+                    handleClickAction(
+                      "Xác nhận bệnh nhân đã thanh toán?",
+                      "Bạn sẽ xác nhận bệnh nhân này đã đến quầy thanh toán, thanh toán và chờ khám bệnh.",
+                      "S2",
+                      text.id
+                    )
+                  }
+                  className=" px-2 rounded-md flex items-center gap-1 bg-blue-400 text-white transition-all hover:opacity-90 hover:scale-105"
+                >
+                  <IoCheckmarkDoneOutline />
+                  thanh toán
+                </button>
+              </>
+            );
+          } else if (text.status.key === "S2") {
+            Style = (
+              <button
+                onClick={() =>
+                  handleClickAction(
+                    "Xác nhận bệnh nhân đã khánm?",
+                    "Bạn sẽ xác nhận bệnh nhân này đã được khám bệnh.",
+                    "S3",
+                    text.id
+                  )
+                }
+                className=" px-2 rounded-md flex items-center gap-1 bg-blue-400 text-white transition-all hover:opacity-90 hover:scale-105"
+              >
+                <IoCheckmarkDoneOutline />
+                khám bệnh
+              </button>
+            );
+          } else if (text.status.key === "S3" || text.status.key === "S4") {
+            Style = (
+              <button
+                onClick={() => {
+                  setEditHealthRecordId(text.id);
+                  setValueCheckBoxChangeStatus(text.status.key);
+                  toggleShowModalChangeStatus();
+                }}
+                className=" px-2 rounded-md flex items-center gap-1 bg-blue-400 text-white transition-all hover:opacity-90 hover:scale-105"
+              >
+                <BsDot />
+                thay đổi trạng thái
+              </button>
+            );
+          } else {
+            Style = (
+              <span
+                className={`bg-red-400 text-white px-2 rounded-md  inline-flex items-center gap-1`}
+              >
+                <FcCancel />
+                {text.status?.value.toLowerCase()}
+              </span>
+            );
+          }
 
           return (
             <div className="flex items-center gap-2">
-              <Button
-                type="dashed"
-                className="flex items-center gap-2"
-                onClick={() => {
-                  setDataPatientProfileChoose(text.Booking.PatientProfile);
-                  toggleShowModalDetailProfileChoose();
-                }}
-              >
-                Thông tin <AiOutlineEye />
-              </Button>
-              <Select
-                style={{ width: 160 }}
-                // value={text.statusCode}
-                defaultValue={text.statusCode}
-                disabled={!!loadingSelectValue}
-                onChange={(value) => onChangeStatus(value, text.id)}
-                loading={loadingSelectValue == text.id}
-                virtual={false}
-              >
-                {optionCodes?.map((op) => {
-                  let style = "";
-
-                  if (op.value === "S1") {
-                    style = "bg-pink-400";
-                  } else if (op.value === "S2") {
-                    style = "bg-blue-400";
-                  } else if (op.value === "S3") {
-                    style = "bg-red-400";
-                  }
-                  return (
-                    <Select.Option value={op.value} key={op.value}>
-                      <span className="flex items-center gap-2">
-                        <span
-                          className={`w-2 h-2 rounded-full ${style}`}
-                        ></span>
-                        {op.label}
-                      </span>
-                    </Select.Option>
-                  );
-                })}
-              </Select>
+              <div className="flex items-center gap-2 ">
+                {Style}
+                {text.status.key < "S3" && (
+                  <button
+                    onClick={() =>
+                      handleClickAction(
+                        "Xác nhận hủy phiếu khám bệnh này?",
+                        "Bạn sẽ xác nhận bệnh nhân này chưa thanh toán hoặc không đến khám, hủy.",
+                        "S4",
+                        text.id
+                      )
+                    }
+                    className=" px-2 rounded-md flex items-center gap-1 bg-red-400 text-white transition-all hover:opacity-90 hover:scale-105"
+                  >
+                    <IoCloseSharp />
+                    xóa
+                  </button>
+                )}
+              </div>
             </div>
           );
         },
       },
     ];
-  }, [optionCodes, loadingSelectValue]);
+  }, [optionCodes, loadingSelectValue, valueCheckBoxChangeStatus]);
 
   React.useEffect(() => {
     setSelectTime(doctorData?.schedules?.rows?.[0]?.id || null);
@@ -245,10 +372,26 @@ export function ManagerCheckUp() {
         open={isShowModalDetailPatient}
         onCancel={toggleShowModalDetailProfileChoose}
         width={620}
+        onOk={toggleShowModalDetailProfileChoose}
       >
         {dataPatientProfileChoose && (
           <PatientProfileItem data={dataPatientProfileChoose} />
         )}
+      </Modal>
+      <Modal
+        title="Thay đổi trạng thái của phiếu khám"
+        open={isShowModalChangeStatus}
+        onCancel={toggleShowModalChangeStatus}
+        width={620}
+        onOk={() => {
+          onChangeStatus(valueCheckBoxChangeStatus, editHealthRecordId);
+          toggleShowModalChangeStatus();
+        }}
+      >
+        <ChangeStatusHealthRecord
+          onChange={onChangeStt}
+          value={valueCheckBoxChangeStatus}
+        />
       </Modal>
       <div>
         <h4 className="text-black">{doctorInfor?.Working.Staff.fullName}</h4>

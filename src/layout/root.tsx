@@ -16,6 +16,8 @@ import Footer from "@/components/footer";
 import { ConfigProvider } from "antd";
 import theme from "../theme/themeConfig";
 import Header from "@/components/navbar/header";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 moment.locale("vi");
 
 export function RootLayout({ children }: { children: React.ReactNode }) {
@@ -43,6 +45,15 @@ export function RootLayout({ children }: { children: React.ReactNode }) {
               }}
             >
               <ToastMsg containerClassName="text-sm" />
+              <div>
+                <ToastContainer
+                  position="top-right"
+                  autoClose={4000}
+                  limit={3}
+                  hideProgressBar={false}
+                  newestOnTop={false}
+                />
+              </div>
               {!isAdminLink ? (
                 <>
                   <Header />

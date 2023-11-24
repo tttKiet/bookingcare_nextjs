@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import hospitalImg from "../../assets/images/hospital.png";
+import hospitalImg from "../../assets/images/hospital_db.png";
 import hospitaTypelImg from "../../assets/images/hospital-sign.png";
 import useSWR from "swr";
 export interface TotalDashBoardHealthFacilitiesAdminProps {}

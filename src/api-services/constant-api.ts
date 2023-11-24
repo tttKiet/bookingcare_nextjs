@@ -30,3 +30,4 @@ export const API_CHECK_UP_HEALTH_RECORD =
 
 export const API_ADMIN_RANK = "/api/v1/admin/rank";
 export const API_DOCTOR_CHART_REVENUE = "/api/v1/doctor/chart/revenue";
+export const API_ADMIN_CHART = "/api/v1/admin/chart";

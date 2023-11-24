@@ -9,7 +9,6 @@ import axios from "axios";
 import Link from "next/link";
 import hospital from "@/assets/images/hospital.png";
 import { Fragment, useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
 import { LoginForm, RegisterForm } from "../auth";
 import { ModalPositionHere } from "../modal";
 import MenuNavbarLogout from "../menu-dropdown/menu-navbar-logout";
@@ -19,6 +18,7 @@ import { menuNavLink } from "@/list";
 import Image from "next/image";
 import { Btn } from "../button";
 import { usePathname, useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 type Props = {};
 
 const showListToFloat = ["/", "/health-facility"];
@@ -41,22 +41,20 @@ export default function Header() {
     try {
       setLoadingLogin(true);
       const res = await login({ email, password });
-
       if (res.statusCode > 0) {
         toast.error(res.msg, {
-          duration: 2400,
+          autoClose: 3000,
           position: "top-right",
         });
       } else if (res.statusCode === 0) {
         setShowModalLogin(false);
         isOk = true;
         toast.success(res.msg, {
-          duration: 2400,
+          autoClose: 2000,
           position: "top-right",
         });
       } else {
         toast.error(res.msg, {
-          duration: 2400,
           position: "top-right",
         });
       }
@@ -173,7 +171,7 @@ export default function Header() {
       />
       <Disclosure
         as="nav"
-        className={` text-white transition-all duration-200 sticky  top-0 left-0 right-0 z-40 ${
+        className={` text-white transition-all duration-300 sticky  top-0 left-0 right-0 z-40 ${
           isAtTop && showListToFloat.includes(url)
             ? "bg-transparent"
             : "bg-blue-700 shadow-md"
@@ -184,18 +182,21 @@ export default function Header() {
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div className="flex h-16 items-center justify-between">
                 <div className="flex items-center">
-                  <div className="flex-shrink-0  flex items-center gap-1 ">
+                  <Link
+                    href={"/"}
+                    className="flex-shrink-0  flex items-center gap-1 "
+                  >
                     <Image
                       height={80}
                       width={80}
                       alt="Booking Care"
                       src={hospital}
-                      className="w-8 h-8 text-whit"
+                      className="w-8 h-8 text-white"
                     />
                     <span className="ml-2 whitespace-nowrap text-white font-semibold">
                       Booking Care
                     </span>
-                  </div>
+                  </Link>
                   <div className="hidden md:block">
                     <div className="ml-10 flex gap-2 items-baseline space-x-4">
                       <ControlMiddalNavTop menu={menuNavLink} />

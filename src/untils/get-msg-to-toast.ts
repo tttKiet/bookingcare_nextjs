@@ -1,12 +1,22 @@
 import { ResData } from "@/types";
 import axios from "axios";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
+// import toast from "react-hot-toast";
 
 export async function toastMsgFromPromise(api: Promise<ResData>): Promise<any> {
   try {
     const res = await api;
     if (res.statusCode === 0) {
-      toast.success(res.msg || "Thành công");
+      toast.success(res.msg || "Thành công", {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      // toast.success(res.msg || "Thành công");
     }
     return res;
   } catch (err) {

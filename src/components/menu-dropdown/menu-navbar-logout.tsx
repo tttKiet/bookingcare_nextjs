@@ -3,7 +3,6 @@
 import { useAuth } from "@/hooks";
 import Link from "next/link";
 import * as React from "react";
-import toast from "react-hot-toast";
 import { AiOutlinePoweroff } from "react-icons/ai";
 import { PiUserCircleLight } from "react-icons/pi";
 import MenuDropdown from ".";
@@ -11,6 +10,7 @@ import { ModalPositionHere } from "../modal";
 import { DropDownProps } from "antd";
 import { RiBillLine } from "react-icons/ri";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 export interface MenuNavbarLogoutProps {
   options?: DropDownProps;

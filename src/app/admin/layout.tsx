@@ -18,7 +18,7 @@ import { BiBulb, BiCalendarStar } from "react-icons/bi";
 import { HiOutlineAcademicCap } from "react-icons/hi";
 import { PiFlowerTulipThin } from "react-icons/pi";
 import { FaRankingStar } from "react-icons/fa6";
-
+import { BsBarChart } from "react-icons/bs";
 import "../globals.css";
 const { Header, Content, Footer, Sider } = Layout;
 export const metadata: Metadata = {
@@ -132,6 +132,11 @@ export default function RootLayout({
         icon: <BsCode size={20} />,
       },
       {
+        key: "/admin/chart",
+        label: <Link href="/admin/chart">Thống kê</Link>,
+        icon: <BsBarChart size={20} />,
+      },
+      {
         key: "/admin/rank",
         label: <Link href="/admin/rank">Bảng xếp hạng</Link>,
         icon: <FaRankingStar size={20} />,
@@ -153,9 +158,9 @@ export default function RootLayout({
         onCollapse={(value) => setCollapsed(value)}
       >
         {!collapsed ? (
-          <div className="h-[32px] m-[16px] whitespace-nowrap overflow-hidden rounded-[6px] text-white">
+          <span className="block  h-[32px] m-[16px] whitespace-nowrap overflow-hidden rounded-[6px] text-white">
             BOOKING CARE
-          </div>
+          </span>
         ) : (
           <div className="h-[32px] m-[16px] bg-[rgba(255,255,255,.2)] rounded-[6px]"></div>
         )}
