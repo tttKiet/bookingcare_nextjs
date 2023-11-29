@@ -77,12 +77,14 @@ export function HealthRecordItemDetails({
                 <span className="mr-1"> ...</span>
                 {healthRecord?.status?.value?.toLowerCase()}
               </span>
-              <span
-                onClick={handleCancel}
-                className="hover:text-red-600 text-red-400 transition-all cursor-pointer duration-300"
-              >
-                <MdCancel size={22} />
-              </span>
+              {healthRecord?.Booking?.HealthExaminationSchedule?.id && (
+                <span
+                  onClick={handleCancel}
+                  className="hover:text-red-600 text-red-400 transition-all cursor-pointer duration-300"
+                >
+                  <MdCancel size={22} />
+                </span>
+              )}
             </div>
           )}
           {healthRecord?.status.key === "S2" && (
@@ -131,47 +133,58 @@ export function HealthRecordItemDetails({
             {healthRecord?.orderNumber.toString()}
           </span>
         </div>
-        <div className="flex items-start justify-between gap-2 my-3">
-          <span className="flex-1 text-gray-600 ">Ngày khám:</span>
-          <span className="flex-1 text-blue-500 min-w-[200px] font-medium text-right">
-            {moment(
-              healthRecord?.Booking.HealthExaminationSchedule.date
-            ).format("L")}
+        {healthRecord?.Booking?.HealthExaminationSchedule?.id ? (
+          <>
+            <div className="flex items-start justify-between gap-2 my-3">
+              <span className="flex-1 text-gray-600 ">Ngày khám:</span>
+              <span className="flex-1 text-blue-500 min-w-[200px] font-medium text-right">
+                {moment(
+                  healthRecord?.Booking?.HealthExaminationSchedule?.date
+                ).format("L")}
+              </span>
+            </div>
+            <div className="flex items-start justify-between gap-2 my-3">
+              <span className="flex-1 text-gray-600">Giờ khám:</span>
+              <span className="flex-1  min-w-[200px] font-medium text-right text-blue-600">
+                {
+                  healthRecord?.Booking?.HealthExaminationSchedule?.TimeCode
+                    ?.value
+                }
+              </span>
+            </div>
+            <div className="flex items-start justify-between gap-2 my-3">
+              <span className="flex-1 text-gray-600">Dịch vụ:</span>
+              <span className="flex-1 text-black min-w-[200px] font-medium text-right">
+                Khám dịch vụ
+              </span>
+            </div>
+            <div className="flex items-start justify-between gap-2 my-3">
+              <span className="flex-1 text-gray-600">Phòng khám:</span>
+              <span className="flex-1 text-black min-w-[200px] font-medium text-right">
+                {healthRecord?.WorkRoom.ClinicRoomRoomNumber}
+              </span>
+            </div>
+            <div className="flex items-start justify-between gap-2 my-3">
+              <span className="flex-1 text-gray-600">Chuyên khoa:</span>
+              <span className="flex-1 text-black min-w-[200px] font-medium text-right">
+                {
+                  healthRecord?.Booking?.HealthExaminationSchedule?.Working
+                    ?.Staff?.Specialist?.name
+                }
+              </span>
+            </div>
+          </>
+        ) : (
+          <span className="flex-1 text-red-500 min-w-[200px] font-medium text-right">
+            Lịch Này đã được xóa
           </span>
-        </div>
-        <div className="flex items-start justify-between gap-2 my-3">
-          <span className="flex-1 text-gray-600">Giờ khám:</span>
-          <span className="flex-1  min-w-[200px] font-medium text-right text-blue-600">
-            {healthRecord?.Booking.HealthExaminationSchedule.TimeCode.value}
-          </span>
-        </div>
-        <div className="flex items-start justify-between gap-2 my-3">
-          <span className="flex-1 text-gray-600">Dịch vụ:</span>
-          <span className="flex-1 text-black min-w-[200px] font-medium text-right">
-            Khám dịch vụ
-          </span>
-        </div>
-        <div className="flex items-start justify-between gap-2 my-3">
-          <span className="flex-1 text-gray-600">Phòng khám:</span>
-          <span className="flex-1 text-black min-w-[200px] font-medium text-right">
-            {healthRecord?.WorkRoom.ClinicRoomRoomNumber}
-          </span>
-        </div>
-        <div className="flex items-start justify-between gap-2 my-3">
-          <span className="flex-1 text-gray-600">Chuyên khoa:</span>
-          <span className="flex-1 text-black min-w-[200px] font-medium text-right">
-            {
-              healthRecord?.Booking.HealthExaminationSchedule.Working.Staff
-                .Specialist.name
-            }
-          </span>
-        </div>
+        )}
         <div className="flex items-start justify-between gap-2 my-3">
           <span className="flex-1 text-gray-600">Bác sỉ:</span>
           <span className="flex-1 text-black min-w-[200px] font-medium text-right">
             {
-              healthRecord?.Booking.HealthExaminationSchedule.Working.Staff
-                .fullName
+              healthRecord?.Booking?.HealthExaminationSchedule?.Working?.Staff
+                ?.fullName
             }
           </span>
         </div>
