@@ -1,5 +1,4 @@
 import { ManagerHealthExamSchedule } from "@/components/admin-box";
-import * as React from "react";
 
 export default function HealthAxaminationSchedulePage() {
   return (

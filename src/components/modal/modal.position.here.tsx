@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Button, Divider, Modal } from "antd";
 import { ModalProps } from "antd/lib";
 

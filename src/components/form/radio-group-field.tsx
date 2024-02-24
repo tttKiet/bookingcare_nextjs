@@ -1,5 +1,4 @@
 import { Radio, RadioChangeEvent } from "antd";
-import * as React from "react";
 import { Control, useController } from "react-hook-form";
 
 export interface RadioGroupFieldProps {

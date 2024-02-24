@@ -1,5 +1,4 @@
 import { Button, Menu, MenuProps } from "antd";
-import * as React from "react";
 import {
   AppstoreOutlined,
   ContainerOutlined,
@@ -13,16 +12,17 @@ import { FiPlusCircle } from "react-icons/fi";
 import { LiaUserNurseSolid } from "react-icons/lia";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { MdSupervisorAccount } from "react-icons/md";
+import { useMemo, useState } from "react";
 type MenuItem = Required<MenuProps>["items"][number];
 export interface MenuSelectorProps {}
 
 export function MenuSelector(props: MenuSelectorProps) {
-  const [collapsed, setCollapsed] = React.useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
-  const menuMain: MenuItem[] = React.useMemo(
+  const menuMain: MenuItem[] = useMemo(
     () => [
       {
         key: "collapsed",

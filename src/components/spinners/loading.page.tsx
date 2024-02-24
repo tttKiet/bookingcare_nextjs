@@ -1,4 +1,3 @@
-import * as React from "react";
 import { ClipLoader } from "react-spinners";
 
 export interface LoadingPageProps {}

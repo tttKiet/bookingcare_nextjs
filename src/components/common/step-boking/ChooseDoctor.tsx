@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { AudioOutlined } from "@ant-design/icons";
 import { Avatar, Button, Input, List } from "antd";
 import { SearchProps } from "antd/es/input";
@@ -16,6 +15,7 @@ import useSWR from "swr";
 import { ScheduleBox } from "../schudule.box";
 import { useRouter } from "next/navigation";
 import DoctorItem from "./DoctorItem";
+import { LegacyRef, forwardRef, useRef, useState } from "react";
 export interface IChooseDoctorProps {
   healthFacilityId: string;
   next: (step: number, value: any) => void;
@@ -24,13 +24,13 @@ export interface IChooseDoctorProps {
 export interface WorkRoomAndSchedule extends WorkRoom {
   schedules: string[];
 }
-const ChooseDoctor = React.forwardRef(
+const ChooseDoctor = forwardRef(
   (
     { healthFacilityId, next }: IChooseDoctorProps,
-    ref: React.LegacyRef<HTMLDivElement>
+    ref: LegacyRef<HTMLDivElement>
   ) => {
     const router = useRouter();
-    const refDoctor = React.useRef(null);
+    const refDoctor = useRef(null);
     const { data: doctorWorkings } = useSWR<
       ResDataPaginations<WorkRoomAndSchedule>
     >(
@@ -39,7 +39,7 @@ const ChooseDoctor = React.forwardRef(
       }`
     );
 
-    const [item, setItem] = React.useState<WorkRoom | null>(null);
+    const [item, setItem] = useState<WorkRoom | null>(null);
 
     function handleClickCard(item: WorkRoomAndSchedule) {
       setItem(item);

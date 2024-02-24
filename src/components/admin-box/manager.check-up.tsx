@@ -23,7 +23,6 @@ import { DefaultOptionType } from "antd/es/select";
 import type { ColumnsType } from "antd/es/table";
 import { RadioChangeEvent } from "antd/lib";
 import dayjs, { Dayjs } from "dayjs";
-import * as React from "react";
 import { AiOutlineEye, AiOutlineFieldTime } from "react-icons/ai";
 import { BsDot, BsPatchCheckFill } from "react-icons/bs";
 import { FcCancel } from "react-icons/fc";
@@ -32,6 +31,7 @@ import useSWR from "swr";
 import { PatientProfileItem } from "../common";
 import ChangeStatusHealthRecord from "../common/ChangeStatusHealthRecord";
 import { TableSortFilter } from "../table";
+import { useEffect, useMemo, useState } from "react";
 const { confirm } = Modal;
 
 type DataIndex = keyof ClinicRoom;
@@ -48,24 +48,23 @@ export function ManagerCheckUp() {
   const { profile } = useAuth();
   const isDoctor = profile?.Role?.keyType === "doctor";
   const [valueCheckBoxChangeStatus, setValueCheckBoxChangeStatus] =
-    React.useState("S1");
-  const [editHealthRecordId, setEditHealthRecordId] = React.useState("");
+    useState("S1");
+  const [editHealthRecordId, setEditHealthRecordId] = useState("");
   const onChangeStt = (e: RadioChangeEvent) => {
     console.log(e.target.value);
     setValueCheckBoxChangeStatus(e.target.value);
   };
   const [isShowModalDetailPatient, setIsShowModalDetailPatient] =
-    React.useState(false);
-  const [isShowModalChangeStatus, setIsShowModalChangeStatus] =
-    React.useState(false);
-  const [doctorInfor, setDoctorInfor] = React.useState<WorkRoom | null>(null);
-  const [loadingSelectValue, setLoadingSelectValue] = React.useState<
-    string | null
-  >(null);
+    useState(false);
+  const [isShowModalChangeStatus, setIsShowModalChangeStatus] = useState(false);
+  const [doctorInfor, setDoctorInfor] = useState<WorkRoom | null>(null);
+  const [loadingSelectValue, setLoadingSelectValue] = useState<string | null>(
+    null
+  );
   const [dataPatientProfileChoose, setDataPatientProfileChoose] =
-    React.useState<PatientProfile | null>(null);
-  const [date, setDate] = React.useState<Dayjs>(dayjs(new Date()));
-  const [selectTime, setSelectTime] = React.useState<string | null>(null);
+    useState<PatientProfile | null>(null);
+  const [date, setDate] = useState<Dayjs>(dayjs(new Date()));
+  const [selectTime, setSelectTime] = useState<string | null>(null);
   const staffId = (isDoctor && profile?.id) || null;
   const { data: doctorData } = useSWR<DoctorCheckupInfo>(
     `${API_CHECK_UP_HEALTH_RECORD}?staffId=${staffId}&date=${date}`,
@@ -82,11 +81,11 @@ export function ManagerCheckUp() {
     }
   );
 
-  const [optionCodes, setOptionCodes] = React.useState<
+  const [optionCodes, setOptionCodes] = useState<
     DefaultOptionType[] | undefined
   >(undefined);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const data = statusCodes?.rows.map((r: Code) => ({
       label: r.value,
       value: r.key,
@@ -159,7 +158,7 @@ export function ManagerCheckUp() {
   }
 
   // Table
-  const data = React.useMemo<HealthRecord[]>(() => {
+  const data = useMemo<HealthRecord[]>(() => {
     return (
       healthRecords?.map((healthRecord: HealthRecord) => ({
         ...healthRecord,
@@ -168,7 +167,7 @@ export function ManagerCheckUp() {
     );
   }, [healthRecords]);
 
-  const columns: ColumnsType<HealthRecord> = React.useMemo(() => {
+  const columns: ColumnsType<HealthRecord> = useMemo(() => {
     return [
       {
         title: "Số thứ tự",
@@ -357,11 +356,11 @@ export function ManagerCheckUp() {
     ];
   }, [optionCodes, loadingSelectValue, valueCheckBoxChangeStatus]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setSelectTime(doctorData?.schedules?.rows?.[0]?.id || null);
   }, [doctorData?.schedules]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (doctorData?.workRoom) setDoctorInfor(doctorData.workRoom);
   }, [staffId, doctorData?.workRoom?.id]);
 

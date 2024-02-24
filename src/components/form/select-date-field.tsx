@@ -2,7 +2,6 @@
 
 import { DatePicker } from "antd";
 import type { Dayjs } from "dayjs";
-import * as React from "react";
 import { Control, useController } from "react-hook-form";
 
 export interface SelectDateFieldProps {

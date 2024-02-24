@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import * as React from "react";
 import { FiPlusCircle } from "react-icons/fi";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { MdSupervisorAccount } from "react-icons/md";
@@ -8,11 +7,12 @@ import { LiaUserNurseSolid } from "react-icons/lia";
 import { useSelectedLayoutSegment } from "next/navigation";
 import { isNumericLiteral } from "typescript";
 import { MenuSelector } from ".";
+import { useMemo } from "react";
 
 export interface NavAdminPcProps {}
 
 export function NavAdminPc(props: NavAdminPcProps) {
-  const menuMain = React.useMemo(
+  const menuMain = useMemo(
     () => [
       {
         title: "Tổng quan",

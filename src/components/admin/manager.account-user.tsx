@@ -17,7 +17,6 @@ import type {
 } from "antd/es/table";
 import { FilterConfirmProps } from "antd/es/table/interface";
 import moment from "moment";
-import * as React from "react";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
@@ -28,16 +27,17 @@ import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
 import { RegisterForm } from "../auth";
 import toast from "react-hot-toast";
+import { useMemo, useRef, useState } from "react";
 const { confirm } = Modal;
 
 type DataIndex = keyof User;
 
 export function ManagerAccountUser() {
   // State components
-  const [accountEdit, setAccountEdit] = React.useState<User | null>();
+  const [accountEdit, setAccountEdit] = useState<User | null>();
 
   const [showAccountCreateOrUpdateModal, setShowAccountCreateOrUpdateModal] =
-    React.useState<boolean>(false);
+    useState<boolean>(false);
 
   // Toggle show modal create or update
   const toggleShowAccountCreateOrUpdateModal = () => {
@@ -95,14 +95,14 @@ export function ManagerAccountUser() {
   }
 
   // Table
-  const [queryParams, setQueryParams] = React.useState<Partial<User>>({
+  const [queryParams, setQueryParams] = useState<Partial<User>>({
     fullName: "",
     email: "",
   });
-  const [searchText, setSearchText] = React.useState("");
-  const [searchedColumn, setSearchedColumn] = React.useState("");
-  const searchInput = React.useRef<InputRef>(null);
-  const [tableParams, setTableParams] = React.useState<{
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
+  const [tableParams, setTableParams] = useState<{
     pagination: TablePaginationConfig;
   }>({
     pagination: {
@@ -258,7 +258,7 @@ export function ManagerAccountUser() {
     },
   });
 
-  const data = React.useMemo<Partial<User>[]>(() => {
+  const data = useMemo<Partial<User>[]>(() => {
     return responseUser?.rows.map((user: User) => ({
       ...user,
       key: user.id,
@@ -268,7 +268,7 @@ export function ManagerAccountUser() {
     }));
   }, [responseUser]);
 
-  const columnsUser: ColumnsType<User> = React.useMemo(() => {
+  const columnsUser: ColumnsType<User> = useMemo(() => {
     return [
       {
         title: "Id",

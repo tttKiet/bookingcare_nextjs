@@ -1,18 +1,18 @@
 "use client";
 
 import { Space, Avatar } from "antd";
-import * as React from "react";
 import { AiOutlineUser } from "react-icons/ai";
 import MenuNavbarLogout from "../menu-dropdown/menu-navbar-logout";
 import { useAuth } from "@/hooks";
 import { useSelector } from "react-redux";
 import { getMode } from "@/redux/selector";
+import { useMemo } from "react";
 
 export interface ProfileProps {}
 
 export function Profile(props: ProfileProps) {
   const { profile, logout } = useAuth({ revalidateOnMount: true });
-  const isUser = React.useMemo(() => profile && !profile.Role, [profile]);
+  const isUser = useMemo(() => profile && !profile.Role, [profile]);
   return (
     <div>
       {profile?.email && (

@@ -5,7 +5,6 @@ import { TypeHealthFacility } from "@/models";
 import { getErrorMessage } from "@/untils";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import { Modal } from "antd";
-import * as React from "react";
 import toast from "react-hot-toast";
 import { BsPlusSquareDotted } from "react-icons/bs";
 import useSWR from "swr";
@@ -14,6 +13,7 @@ import { ActionGroup } from "../box";
 import { ActionBox } from "../box/action.box";
 import { ModalPositionHere } from "../modal";
 import { BtnPlus } from "../button";
+import { Fragment, useState } from "react";
 const { confirm } = Modal;
 export interface ManagerTypeHealthFacilitesProps {}
 
@@ -30,15 +30,14 @@ export function ManagerTypeHealthFacilites(
     dedupingInterval: 5000,
   });
 
-  const [typeHealthEdit, setTypeHealthEdit] =
-    React.useState<TypeHealthFacility>({
-      id: "",
-      name: "",
-      createdAt: "",
-      updatedAt: "",
-    });
-  const [showTypeModal, setShowTypeModal] = React.useState<boolean>(false);
-  const [loading, setLoading] = React.useState<boolean>(false);
+  const [typeHealthEdit, setTypeHealthEdit] = useState<TypeHealthFacility>({
+    id: "",
+    name: "",
+    createdAt: "",
+    updatedAt: "",
+  });
+  const [showTypeModal, setShowTypeModal] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   function toggleShowModalType(): void {
     setShowTypeModal((s) => !s);
@@ -157,16 +156,16 @@ export function ManagerTypeHealthFacilites(
         {types && types.length > 0 ? (
           <>
             <div className="text-sm text-black mb-2 grid grid-cols-12 gap-1">
-              <React.Fragment>
+              <Fragment>
                 <span className="max-w-[100px] col-span-4 font-bold overflow-hidden whitespace-nowrap mr-2 ">
                   ID
                 </span>
                 <span className="col-span-8 font-bold text-pink-500">
                   Tên loại
                 </span>
-              </React.Fragment>
+              </Fragment>
               {types.map((type: TypeHealthFacility) => (
-                <React.Fragment key={type.id}>
+                <Fragment key={type.id}>
                   <span
                     title={type.id}
                     className="max-w-[100px] p-2 px-0 col-span-4 text-ellipsis overflow-hidden whitespace-nowrap mr-2 "
@@ -190,7 +189,7 @@ export function ManagerTypeHealthFacilites(
                       </ActionGroup>
                     </div>
                   </span>
-                </React.Fragment>
+                </Fragment>
               ))}
             </div>
           </>

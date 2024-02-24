@@ -16,22 +16,22 @@ import { FilterConfirmProps } from "antd/es/table/interface";
 import get from "lodash.get";
 import isequal from "lodash.isequal";
 import moment from "moment";
-import * as React from "react";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
 import { TableSortFilter } from "../table";
+import { useMemo, useRef, useState } from "react";
 const { confirm } = Modal;
 
 type DataIndex = keyof ClinicRoom;
 
 export function ManagerClinicRoom() {
   // Table
-  const [queryParams, setQueryParams] = React.useState<Partial<ClinicRoom>>({});
-  const [searchText, setSearchText] = React.useState("");
-  const [searchedColumn, setSearchedColumn] = React.useState("");
-  const searchInput = React.useRef<InputRef>(null);
-  const [tableParams, setTableParams] = React.useState<{
+  const [queryParams, setQueryParams] = useState<Partial<ClinicRoom>>({});
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
+  const [tableParams, setTableParams] = useState<{
     pagination: TablePaginationConfig;
   }>({
     pagination: {
@@ -192,14 +192,14 @@ export function ManagerClinicRoom() {
     },
   });
 
-  const data = React.useMemo<ClinicRoom[]>(() => {
+  const data = useMemo<ClinicRoom[]>(() => {
     return responseClinicRooms?.rows.map((clinicRoom: ClinicRoom) => ({
       ...clinicRoom,
       key: "" + clinicRoom.healthFacilityId + clinicRoom.roomNumber,
     }));
   }, [responseClinicRooms]);
 
-  const columns: ColumnsType<ClinicRoom> = React.useMemo(() => {
+  const columns: ColumnsType<ClinicRoom> = useMemo(() => {
     return [
       {
         title: "Số phòng",

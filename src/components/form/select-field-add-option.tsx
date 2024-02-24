@@ -11,16 +11,16 @@ import {
 } from "antd";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { DefaultOptionType } from "antd/es/select";
-import * as React from "react";
 import { Control, useController } from "react-hook-form";
 import debounce from "lodash.debounce";
 import { PlusOutlined } from "@ant-design/icons";
+import { ChangeEvent, MouseEvent, ReactNode, useRef, useState } from "react";
 export interface SelectFieldAddOptionProps {
   className?: string;
   name: string;
-  label: string | React.ReactNode;
+  label: string | ReactNode;
   control: Control<any>;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   width?: number | string;
   placeholder?: string;
   options: string[] | undefined;
@@ -62,15 +62,13 @@ export function SelectFieldAddOption({
       ? true
       : (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
   };
-  const [items, setItems] = React.useState(options || []);
-  const [nameInput, setNameInput] = React.useState("");
-  const inputRef = React.useRef<InputRef>(null);
-  const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const [items, setItems] = useState(options || []);
+  const [nameInput, setNameInput] = useState("");
+  const inputRef = useRef<InputRef>(null);
+  const onNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNameInput(event.target.value);
   };
-  const addItem = (
-    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
-  ) => {
+  const addItem = (e: MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     if (!nameInput) return;
     e.preventDefault();
     setItems([...items, nameInput]);

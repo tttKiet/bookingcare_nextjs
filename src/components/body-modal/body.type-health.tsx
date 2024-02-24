@@ -1,10 +1,10 @@
-import * as React from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { InputField } from "../form";
 import { Button, Space } from "antd";
 import { TypeHealthFacility } from "@/models";
+import { useEffect } from "react";
 const schemaTypeHealth = yup.object().shape({
   name: yup.string().required("Bạn chưa điền tên loại bệnh viện."),
 });
@@ -38,7 +38,7 @@ export function BodyTypeHealth({
     },
     resolver: yupResolver(schemaTypeHealth),
   });
-  React.useEffect(() => {
+  useEffect(() => {
     reset({ name: typeHealthEdit?.name || "" });
   }, [typeHealthEdit?.name, reset]);
 

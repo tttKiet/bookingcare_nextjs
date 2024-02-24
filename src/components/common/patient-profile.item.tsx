@@ -3,7 +3,6 @@ import { PatientProfile } from "@/models";
 import { Button } from "antd";
 import moment from "moment";
 import Link from "next/link";
-import * as React from "react";
 import toast from "react-hot-toast";
 import { BiUserPin } from "react-icons/bi";
 import { BsTelephone, BsTrash } from "react-icons/bs";

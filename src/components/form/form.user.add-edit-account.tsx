@@ -3,7 +3,6 @@ import { schemaValidateRegister } from "@/schema-validate";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Space } from "antd";
-import * as React from "react";
 import { useForm } from "react-hook-form";
 import { InputField, RadioGroupField } from ".";
 
@@ -11,6 +10,7 @@ import { API_ROLE } from "@/api-services/constant-api";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { TbLockSquareRounded } from "react-icons/tb";
 import useSWR from "swr";
+import { useEffect } from "react";
 
 export interface FormBodyModalAccountUser {
   handleSubmitForm: (data: Partial<User>) => Promise<boolean>;
@@ -49,7 +49,7 @@ export function FormBodyModalAccountUser({
     dedupingInterval: 5000,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     reset({
       fullName: obEditAccount?.fullName || "",
     });

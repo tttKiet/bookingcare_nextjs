@@ -4,7 +4,7 @@ import { API_HEALTH_RECORD } from "@/api-services/constant-api";
 import { HealthRecordItem } from "@/components/common";
 import { HealthRecord } from "@/models";
 import { Breadcrumb } from "antd";
-import * as React from "react";
+import { useMemo } from "react";
 import useSWR from "swr";
 export interface IHealthRecordPageProps {}
 
@@ -16,7 +16,7 @@ export default function HealthRecordPage(props: IHealthRecordPageProps) {
       dedupingInterval: 5000,
     }
   );
-  const breadcrumbArray = React.useMemo(
+  const breadcrumbArray = useMemo(
     () => [
       { title: "Trang chủ" },
       {

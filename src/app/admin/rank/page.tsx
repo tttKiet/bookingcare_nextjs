@@ -5,7 +5,7 @@ import { ManagerCode } from "@/components/admin-box";
 import { TableSortFilter } from "@/components/table";
 import { Select, Space } from "antd";
 import { ColumnsType } from "antd/es/table";
-import * as React from "react";
+import { useMemo } from "react";
 import useSWR from "swr";
 export interface Rank {
   name: string;
@@ -24,7 +24,7 @@ export default function CodeAdminPage() {
     .sort((a, b) => {
       return b.total - a.total;
     });
-  const columns: ColumnsType<Rank> = React.useMemo(() => {
+  const columns: ColumnsType<Rank> = useMemo(() => {
     return [
       {
         title: "Tên cơ sỏ y tế",

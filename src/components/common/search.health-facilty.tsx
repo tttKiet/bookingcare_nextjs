@@ -2,7 +2,7 @@
 
 import { Select } from "antd";
 import axios, { AxiosResponse } from "axios";
-import * as React from "react";
+import { ChangeEvent, KeyboardEvent, useMemo, useState } from "react";
 import { CiLocationOn, CiSearch } from "react-icons/ci";
 import useSWR, { BareFetcher } from "swr";
 
@@ -33,7 +33,7 @@ export function SeachHealthFacility({
     }
   );
 
-  const optionSelectProvinces = React.useMemo(() => {
+  const optionSelectProvinces = useMemo(() => {
     return listProvinces?.map((province) => {
       return {
         value: province.code,
@@ -42,12 +42,12 @@ export function SeachHealthFacility({
     });
   }, [listProvinces]);
 
-  const [valueSelectLocation, setValueSelectLocation] = React.useState<
-    string | null
-  >(null);
-  const [searchHealthValue, setSearchHealthValue] = React.useState<string>("");
+  const [valueSelectLocation, setValueSelectLocation] = useState<string | null>(
+    null
+  );
+  const [searchHealthValue, setSearchHealthValue] = useState<string>("");
 
-  function handleChangeSearch(e: React.ChangeEvent<HTMLInputElement>): void {
+  function handleChangeSearch(e: ChangeEvent<HTMLInputElement>): void {
     setSearchHealthValue(e.target.value);
   }
 
@@ -55,7 +55,7 @@ export function SeachHealthFacility({
     setValueSelectLocation(value);
   }
 
-  function handleClickEnter(e: React.KeyboardEvent<HTMLInputElement>) {
+  function handleClickEnter(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
       handleClickSearch(searchHealthValue);
     }

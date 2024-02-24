@@ -6,7 +6,6 @@ import { ResDataPaginations } from "@/types";
 import { Badge, Button, Rate } from "antd";
 import Image from "next/image";
 import Link from "next/link";
-import * as React from "react";
 import { AiOutlineCaretRight, AiOutlineEye } from "react-icons/ai";
 import { CiLocationArrow1, CiLocationOn } from "react-icons/ci";
 import ImageWithFallback from "../img/ImageWithFallback";

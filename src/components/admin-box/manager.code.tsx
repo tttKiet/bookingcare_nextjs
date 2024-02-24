@@ -20,7 +20,6 @@ import { FilterConfirmProps } from "antd/es/table/interface";
 import get from "lodash.get";
 import isequal from "lodash.isequal";
 import moment from "moment";
-import * as React from "react";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
@@ -31,17 +30,18 @@ import { staffApi } from "@/api-services";
 import { BtnPlus } from "../button";
 import { ModalPositionHere } from "../modal";
 import { BodyModalCode } from "../body-modal";
+import { useMemo, useRef, useState } from "react";
 const { confirm } = Modal;
 
 type DataIndex = keyof Code;
 
 export function ManagerCode() {
   // Table
-  const [queryParams, setQueryParams] = React.useState<Partial<Code>>({});
-  const [searchText, setSearchText] = React.useState("");
-  const [searchedColumn, setSearchedColumn] = React.useState("");
-  const searchInput = React.useRef<InputRef>(null);
-  const [tableParams, setTableParams] = React.useState<{
+  const [queryParams, setQueryParams] = useState<Partial<Code>>({});
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
+  const [tableParams, setTableParams] = useState<{
     pagination: TablePaginationConfig;
   }>({
     pagination: {
@@ -80,8 +80,7 @@ export function ManagerCode() {
     }
   );
 
-  const [isShowModalAddCode, setIsShowModalAddCode] =
-    React.useState<boolean>(false);
+  const [isShowModalAddCode, setIsShowModalAddCode] = useState<boolean>(false);
 
   // Toggle show modal create or update
   const toggleModalAddCode = () => {
@@ -231,14 +230,14 @@ export function ManagerCode() {
     },
   });
 
-  const data = React.useMemo<Code[]>(() => {
+  const data = useMemo<Code[]>(() => {
     return responseCode?.rows.map((code: Code) => ({
       ...code,
       key: code.key,
     }));
   }, [responseCode]);
 
-  const columns: ColumnsType<Code> = React.useMemo(() => {
+  const columns: ColumnsType<Code> = useMemo(() => {
     return [
       {
         title: "Tên",

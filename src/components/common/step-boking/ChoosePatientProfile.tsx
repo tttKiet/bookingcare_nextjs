@@ -7,7 +7,6 @@ import { ResDataPaginations } from "@/types";
 import { Button, Card, Divider, Input } from "antd";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import * as React from "react";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css";
 import toast from "react-hot-toast";
@@ -16,6 +15,7 @@ import { BsTrash } from "react-icons/bs";
 import useSWR from "swr";
 const { TextArea } = Input;
 import { motion, Variants } from "framer-motion";
+import { useMemo, useState } from "react";
 
 export interface ChooseScheduleProps {
   next: (step: number, value: any) => void;
@@ -24,9 +24,10 @@ export interface ChooseScheduleProps {
 
 export function ChoosePatientProfile({ next, previous }: ChooseScheduleProps) {
   const { profile } = useAuth();
-  const [descStatusPatient, setDescStatusPatient] = React.useState<string>("");
-  const [patientProfile, setPatientProfile] =
-    React.useState<PatientProfile | null>(null);
+  const [descStatusPatient, setDescStatusPatient] = useState<string>("");
+  const [patientProfile, setPatientProfile] = useState<PatientProfile | null>(
+    null
+  );
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const url = `${pathname}?${searchParams.toString()}`;
@@ -37,7 +38,7 @@ export function ChoosePatientProfile({ next, previous }: ChooseScheduleProps) {
     dedupingInterval: 5000,
   });
 
-  const variants = React.useMemo(
+  const variants = useMemo(
     () => ({
       container: {
         initial: { opacity: 0, x: 100 },

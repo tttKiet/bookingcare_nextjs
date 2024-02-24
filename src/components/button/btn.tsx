@@ -1,5 +1,4 @@
 import { Button, ButtonProps } from "antd";
-import * as React from "react";
 
 export interface BtnProps {
   title: string;

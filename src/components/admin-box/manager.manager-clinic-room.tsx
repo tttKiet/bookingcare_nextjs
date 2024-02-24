@@ -22,7 +22,7 @@ import type {
 } from "antd/es/table";
 import { FilterConfirmProps } from "antd/es/table/interface";
 import moment from "moment";
-import * as React from "react";
+
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
@@ -39,18 +39,18 @@ import isequal from "lodash.isequal";
 import { SelectSearchField } from "../form";
 import Image from "next/image";
 import { BodyModalClinicRoom } from "../body-modal/body.add-edit-clinic-room";
+import { useMemo, useRef, useState } from "react";
 
 type DataIndex = keyof ClinicRoom;
 
 export function ManagerHealthRoom() {
   // State components
-  const [obClinicRoomEdit, setObClinicRoomEdit] =
-    React.useState<ClinicRoom | null>();
+  const [obClinicRoomEdit, setObClinicRoomEdit] = useState<ClinicRoom | null>();
 
   const [
     showClinicRoomCreateOrUpdateModal,
     setShowClinicRoomCreateOrUpdateModal,
-  ] = React.useState<boolean>(false);
+  ] = useState<boolean>(false);
 
   // Toggle show modal create or update
   const toggleShowClinicRoomCreateOrUpdateModal = () => {
@@ -101,11 +101,11 @@ export function ManagerHealthRoom() {
   }
 
   // Table
-  const [queryParams, setQueryParams] = React.useState<Partial<ClinicRoom>>({});
-  const [searchText, setSearchText] = React.useState("");
-  const [searchedColumn, setSearchedColumn] = React.useState("");
-  const searchInput = React.useRef<InputRef>(null);
-  const [tableParams, setTableParams] = React.useState<{
+  const [queryParams, setQueryParams] = useState<Partial<ClinicRoom>>({});
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
+  const [tableParams, setTableParams] = useState<{
     pagination: TablePaginationConfig;
   }>({
     pagination: {
@@ -114,10 +114,10 @@ export function ManagerHealthRoom() {
     },
   });
   // Search health facilities state
-  const [selectValue, setSelectValue] = React.useState<string | null>(null);
-  const [searchHealthSelect, setSearchHealthSelect] = React.useState<
-    string | null
-  >("");
+  const [selectValue, setSelectValue] = useState<string | null>(null);
+  const [searchHealthSelect, setSearchHealthSelect] = useState<string | null>(
+    ""
+  );
   const fetcher: BareFetcher<ResDataPaginations<any>> = async ([url, token]) =>
     (
       await axios.get(url, {
@@ -269,14 +269,14 @@ export function ManagerHealthRoom() {
     },
   });
 
-  const data = React.useMemo<ClinicRoom[]>(() => {
+  const data = useMemo<ClinicRoom[]>(() => {
     return responseClinicRooms?.rows.map((clinicRoom: ClinicRoom) => ({
       ...clinicRoom,
       key: "" + clinicRoom.healthFacilityId + clinicRoom.roomNumber,
     }));
   }, [responseClinicRooms]);
 
-  const columns: ColumnsType<ClinicRoom> = React.useMemo(() => {
+  const columns: ColumnsType<ClinicRoom> = useMemo(() => {
     return [
       {
         title: "Số phòng",

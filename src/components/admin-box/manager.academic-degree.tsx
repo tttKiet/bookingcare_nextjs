@@ -16,7 +16,6 @@ import type {
   TableProps,
 } from "antd/es/table";
 import { FilterConfirmProps } from "antd/es/table/interface";
-import * as React from "react";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
@@ -27,6 +26,7 @@ import { BtnPlus } from "../button";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
 import moment from "moment";
+import { useMemo, useRef, useState } from "react";
 const { confirm } = Modal;
 
 type DataIndex = keyof AcademicDegree;
@@ -34,7 +34,7 @@ type DataIndex = keyof AcademicDegree;
 export function ManagerAcademicDegree() {
   // State components
   const [academicDegreeEdit, setAcademicDegreeEdit] =
-    React.useState<Partial<AcademicDegree> | null>({
+    useState<Partial<AcademicDegree> | null>({
       id: "",
       name: "",
     });
@@ -42,7 +42,7 @@ export function ManagerAcademicDegree() {
   const [
     showAcademicDegreeCreateOrUpdateModal,
     setShowAcademicDegreeCreateOrUpdateModal,
-  ] = React.useState<boolean>(false);
+  ] = useState<boolean>(false);
 
   // Toggle show modal create or update
   const toggleShowAcademicDegreeCreateOrUpdateModal = () => {
@@ -85,10 +85,10 @@ export function ManagerAcademicDegree() {
   }
 
   // Table
-  const [searchText, setSearchText] = React.useState("");
-  const [searchedColumn, setSearchedColumn] = React.useState("");
-  const searchInput = React.useRef<InputRef>(null);
-  const [tableParams, setTableParams] = React.useState<{
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
+  const [tableParams, setTableParams] = useState<{
     pagination: TablePaginationConfig;
   }>({
     pagination: {
@@ -244,7 +244,7 @@ export function ManagerAcademicDegree() {
     },
   });
 
-  const data = React.useMemo<Partial<AcademicDegree>[]>(() => {
+  const data = useMemo<Partial<AcademicDegree>[]>(() => {
     return responseAcademicDegree?.rows.map(
       (academicDegree: AcademicDegree) => ({
         ...academicDegree,
@@ -256,7 +256,7 @@ export function ManagerAcademicDegree() {
   }, [responseAcademicDegree]);
 
   // Columns
-  const columns: ColumnsType<AcademicDegree> = React.useMemo(() => {
+  const columns: ColumnsType<AcademicDegree> = useMemo(() => {
     return [
       {
         title: "Id",

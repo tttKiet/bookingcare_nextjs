@@ -21,7 +21,6 @@ import type {
 } from "antd/es/table";
 import { FilterConfirmProps } from "antd/es/table/interface";
 import moment from "moment";
-import * as React from "react";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
@@ -33,6 +32,7 @@ import { TableSortFilter } from "../table";
 import { RegisterForm } from "../auth";
 import { BodyModalAccountDoctor } from "../body-modal";
 import toast from "react-hot-toast";
+import { useMemo, useRef, useState } from "react";
 const { confirm } = Modal;
 
 type DataIndex = keyof Staff;
@@ -43,10 +43,10 @@ export interface StaffResColumn extends Staff {
 
 export function ManagerAccountStaff() {
   // State components
-  const [accountEdit, setAccountEdit] = React.useState<Staff | null>();
+  const [accountEdit, setAccountEdit] = useState<Staff | null>();
 
   const [showAccountCreateOrUpdateModal, setShowAccountCreateOrUpdateModal] =
-    React.useState<boolean>(false);
+    useState<boolean>(false);
 
   // Toggle show modal create or update
   const toggleShowAccountCreateOrUpdateModal = () => {
@@ -114,10 +114,10 @@ export function ManagerAccountStaff() {
   }
 
   // Table
-  const [searchText, setSearchText] = React.useState("");
-  const [searchedColumn, setSearchedColumn] = React.useState("");
-  const searchInput = React.useRef<InputRef>(null);
-  const [tableParams, setTableParams] = React.useState<{
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
+  const [tableParams, setTableParams] = useState<{
     pagination: TablePaginationConfig;
   }>({
     pagination: {
@@ -136,7 +136,7 @@ export function ManagerAccountStaff() {
         },
       })
     ).data;
-  const [queryParams, setQueryParams] = React.useState<Partial<Staff>>({
+  const [queryParams, setQueryParams] = useState<Partial<Staff>>({
     fullName: "",
     email: "",
   });
@@ -282,12 +282,12 @@ export function ManagerAccountStaff() {
 
   const { data: role } = useSWR<Role[]>(API_ROLE);
 
-  const roleDoctor: Role | undefined = React.useMemo(
+  const roleDoctor: Role | undefined = useMemo(
     () => role?.find((roleDoctor) => roleDoctor.keyType === "doctor"),
     [role]
   );
 
-  const data = React.useMemo<Partial<Staff>[]>(() => {
+  const data = useMemo<Partial<Staff>[]>(() => {
     return responseStaff?.rows.map((staff: StaffResColumn) => ({
       ...staff,
       key: staff.id,
@@ -297,7 +297,7 @@ export function ManagerAccountStaff() {
     }));
   }, [responseStaff]);
 
-  const columnsStaff: ColumnsType<Staff> = React.useMemo(() => {
+  const columnsStaff: ColumnsType<Staff> = useMemo(() => {
     return [
       {
         title: "Id",

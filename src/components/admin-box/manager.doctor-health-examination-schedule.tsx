@@ -30,7 +30,6 @@ import type {
 import { FilterConfirmProps } from "antd/es/table/interface";
 import { Dayjs } from "dayjs";
 import moment from "moment";
-import * as React from "react";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
 import { RxAvatar } from "react-icons/rx";
@@ -43,6 +42,7 @@ import { SelectSearchField } from "../form";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
 import { useAuth, userRandomBgLinearGradient } from "@/hooks";
+import { useEffect, useMemo, useRef, useState } from "react";
 const { confirm } = Modal;
 
 type DataIndex = keyof HealthExaminationSchedule;
@@ -57,7 +57,7 @@ export function ManagerHealthExamSchedule({
   const { profile } = useAuth();
   const isDoctor = permission === "doctor";
   const [workingIdDoctorLogined, setWorkingIdDoctorLogined] =
-    React.useState<string>("");
+    useState<string>("");
   const [bgRandom] = userRandomBgLinearGradient();
   function handleClickDeleteSchedule(record: HealthExaminationSchedule): void {
     confirm({
@@ -77,24 +77,22 @@ export function ManagerHealthExamSchedule({
   }
 
   const [showScheduleCreateOrUpdateModal, setShowScheduleCreateOrUpdateModal] =
-    React.useState(false);
+    useState(false);
   const toggleShowScheduleCreateOrUpdateModal = () => {
     setShowScheduleCreateOrUpdateModal((s) => {
       return !s;
     });
   };
-  const [dateSelect, setDateSelect] = React.useState<Dayjs | null>(null);
+  const [dateSelect, setDateSelect] = useState<Dayjs | null>(null);
   const onChangeDate = (date: Dayjs | null) => {
     setDateSelect(date);
   };
 
   // Search health facilities state
-  const [selectValue, setSelectValue] = React.useState<string | null>(null);
-  const [doctorIdSelect, setDoctorIdSelect] = React.useState<string | null>(
-    null
-  );
+  const [selectValue, setSelectValue] = useState<string | null>(null);
+  const [doctorIdSelect, setDoctorIdSelect] = useState<string | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isDoctor && profile?.id) {
       setDoctorIdSelect(profile?.id);
     }
@@ -114,9 +112,9 @@ export function ManagerHealthExamSchedule({
     }
   );
 
-  const [dataSearch, setDataSearch] = React.useState<SelectProps["options"]>();
+  const [dataSearch, setDataSearch] = useState<SelectProps["options"]>();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const data = doctors?.rows.map((doctor: Staff) => ({
       value: doctor.id,
       text: (
@@ -154,10 +152,10 @@ export function ManagerHealthExamSchedule({
   }
 
   // Table
-  const [searchText, setSearchText] = React.useState("");
-  const [searchedColumn, setSearchedColumn] = React.useState("");
-  const searchInput = React.useRef<InputRef>(null);
-  const [tableParams, setTableParams] = React.useState<{
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
+  const [tableParams, setTableParams] = useState<{
     pagination: TablePaginationConfig;
   }>({
     pagination: {
@@ -322,7 +320,7 @@ export function ManagerHealthExamSchedule({
     }
   );
 
-  const data = React.useMemo<Partial<HealthExaminationSchedule>[]>(() => {
+  const data = useMemo<Partial<HealthExaminationSchedule>[]>(() => {
     return responseSchedules?.rows.map(
       (schedule: HealthExaminationSchedule) => ({
         ...schedule,
@@ -332,7 +330,7 @@ export function ManagerHealthExamSchedule({
   }, [responseSchedules]);
 
   // Columns
-  const columns: ColumnsType<HealthExaminationSchedule> = React.useMemo(() => {
+  const columns: ColumnsType<HealthExaminationSchedule> = useMemo(() => {
     return [
       {
         title: "Id",
@@ -396,7 +394,7 @@ export function ManagerHealthExamSchedule({
     ];
   }, [getColumnSearchProps]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (doctor?.rows?.[0]?.id) setWorkingIdDoctorLogined(doctor?.rows?.[0]?.id);
   }, [doctor?.rows?.[0]?.id]);
 

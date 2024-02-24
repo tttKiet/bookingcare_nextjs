@@ -1,5 +1,4 @@
 import { ManagerAcademicDegree } from "@/components/admin-box";
-import * as React from "react";
 
 export interface PositionPageProps {}
 

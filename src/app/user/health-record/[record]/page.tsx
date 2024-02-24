@@ -8,7 +8,7 @@ import { ColorBox } from "@/components/box";
 import { HealthRecordItemDetails } from "@/components/common";
 import { HealthRecord } from "@/models";
 import { Breadcrumb } from "antd";
-import * as React from "react";
+import { useMemo } from "react";
 import useSWR from "swr";
 export interface IHealthRecordDetailPageProps {}
 
@@ -29,7 +29,7 @@ export default function HealthRecordPageDetail({
     }
   );
 
-  const breadcrumbArray = React.useMemo(
+  const breadcrumbArray = useMemo(
     () => [
       { title: "Trang chủ" },
       {

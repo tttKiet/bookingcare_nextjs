@@ -1,6 +1,5 @@
 import { Radio } from "antd";
 import { RadioChangeEvent } from "antd/lib";
-import * as React from "react";
 
 export interface IChangeStatusHealthRecordProps {
   value: string;

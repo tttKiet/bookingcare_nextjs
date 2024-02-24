@@ -30,7 +30,6 @@ import get from "lodash.get";
 import isequal from "lodash.isequal";
 import moment from "moment";
 import Image from "next/image";
-import * as React from "react";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
@@ -45,6 +44,7 @@ import { TableSortFilter } from "../table";
 import { doctorApi, staffApi } from "@/api-services";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
 const { confirm } = Modal;
 
 type DataIndex = keyof WorkRoom;
@@ -56,11 +56,11 @@ interface ResDataPaginationsParticipateMember
 
 export function ManagerClinicWork() {
   // State components
-  const [obEdit, setObEdit] = React.useState<WorkRoom | null>();
+  const [obEdit, setObEdit] = useState<WorkRoom | null>();
   const searchParams = useSearchParams();
   const tag = searchParams.get("tag");
   const [showCreateOrUpdateModal, setShowCreateOrUpdateModal] =
-    React.useState<boolean>(false);
+    useState<boolean>(false);
 
   // Toggle show modal create or update
   const toggleShowCreateOrUpdateModal = () => {
@@ -90,11 +90,11 @@ export function ManagerClinicWork() {
   }
 
   // Table
-  const [queryParams, setQueryParams] = React.useState<Partial<WorkRoom>>({});
-  const [searchText, setSearchText] = React.useState("");
-  const [searchedColumn, setSearchedColumn] = React.useState("");
-  const searchInput = React.useRef<InputRef>(null);
-  const [tableParams, setTableParams] = React.useState<{
+  const [queryParams, setQueryParams] = useState<Partial<WorkRoom>>({});
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
+  const [tableParams, setTableParams] = useState<{
     pagination: TablePaginationConfig;
   }>({
     pagination: {
@@ -103,12 +103,12 @@ export function ManagerClinicWork() {
     },
   });
   // Search health facilities state
-  const [selectHealthValue, setSelectHealthValue] = React.useState<
-    string | null
-  >(null);
-  const [searchHealthSelect, setSearchHealthSelect] = React.useState<
-    string | null
-  >("");
+  const [selectHealthValue, setSelectHealthValue] = useState<string | null>(
+    null
+  );
+  const [searchHealthSelect, setSearchHealthSelect] = useState<string | null>(
+    ""
+  );
 
   function handleSearchSelect(value: string): void {
     setSearchHealthSelect(value);
@@ -117,7 +117,7 @@ export function ManagerClinicWork() {
   function handleChangeSelect(value: string): void {
     setSelectHealthValue(value);
   }
-  const [maxMember, setMaxMember] = React.useState<number>(0);
+  const [maxMember, setMaxMember] = useState<number>(0);
   const fetcher: BareFetcher<ResDataPaginations<any>> = async ([url, token]) =>
     (
       await axios.get(url, {
@@ -145,11 +145,11 @@ export function ManagerClinicWork() {
     }
   );
   // Clinic
-  const [selectClinicRoomNumber, setSelectClinicRoomNumber] = React.useState<
+  const [selectClinicRoomNumber, setSelectClinicRoomNumber] = useState<
     number | null
   >(responseClinics?.rows?.[0]?.roomNumber || null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setSelectClinicRoomNumber(responseClinics?.rows?.[0]?.roomNumber || null);
   }, [responseClinics]);
 
@@ -159,11 +159,11 @@ export function ManagerClinicWork() {
     setSelectClinicRoomNumber(Number.parseInt(value));
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     mutateClinics();
   }, [tag]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectClinicRoomNumber) {
       const clinic = responseClinics?.rows.find(
         (r: ClinicRoom) => r.roomNumber == selectClinicRoomNumber
@@ -332,14 +332,14 @@ export function ManagerClinicWork() {
     },
   });
 
-  const data = React.useMemo<WorkRoom[]>(() => {
+  const data = useMemo<WorkRoom[]>(() => {
     return responseWorkRooms?.rows.map((workRoom: WorkRoom) => ({
       ...workRoom,
       key: workRoom.id,
     }));
   }, [responseWorkRooms]);
 
-  const columns: ColumnsType<WorkRoom> = React.useMemo(() => {
+  const columns: ColumnsType<WorkRoom> = useMemo(() => {
     return [
       {
         title: "Bác sỉ",

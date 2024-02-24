@@ -1,7 +1,6 @@
 import { HealthFacility } from "@/models";
 import { ResDataPaginations } from "@/types";
 import Image from "next/image";
-import * as React from "react";
 import { ItemHealthFacility } from "./item.health-facility";
 import { BoxHealthFacility } from "./box.health-facility";
 import { Pagination } from "antd";

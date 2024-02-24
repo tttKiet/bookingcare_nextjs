@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { ColorBox } from "../box";
 import { Button, DatePicker, Form, Input, Radio, Select } from "antd";
 import { FieldType } from "aws-sdk/clients/iot";
@@ -13,6 +12,7 @@ import { userApi } from "@/api-services";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import axiosInstances from "../../axios";
 import dayjs from "dayjs";
+import { useEffect, useState } from "react";
 export interface AddPatientProfileProps {}
 
 interface SelectProps {
@@ -26,17 +26,15 @@ export function AddPatientProfile({}: AddPatientProfileProps) {
   const patientProfileId = searchParams.get("id");
 
   const [form] = Form.useForm();
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [optionProvinces, setOptionProvinces] = React.useState<
+  const [optionProvinces, setOptionProvinces] = useState<
     SelectProps[] | undefined
   >([]);
-  const [optionDistricts, setOptionDistricts] = React.useState<
+  const [optionDistricts, setOptionDistricts] = useState<
     SelectProps[] | undefined
   >();
-  const [optionWards, setOptionWards] = React.useState<
-    SelectProps[] | undefined
-  >();
+  const [optionWards, setOptionWards] = useState<SelectProps[] | undefined>();
 
   function onChangeSelectProvince(value: string) {
     form.setFieldsValue({
@@ -107,7 +105,7 @@ export function AddPatientProfile({}: AddPatientProfileProps) {
     }
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (patientProfileId) {
       axiosInstances
         .get(
@@ -173,7 +171,7 @@ export function AddPatientProfile({}: AddPatientProfileProps) {
     }
   }, [patientProfileId, form]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     axios
       .get("https://provinces.open-api.vn/api/p/")
       .then((data) => {

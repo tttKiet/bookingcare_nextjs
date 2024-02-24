@@ -1,9 +1,9 @@
 "use client";
 
 import { DropDownProps, Dropdown, MenuProps, Space } from "antd";
-import * as React from "react";
 import { RiArrowDownSFill } from "react-icons/ri";
 import { SmileOutlined } from "@ant-design/icons";
+import { useState } from "react";
 export interface MenuDropdownProps {
   title: string;
   icon?: React.ReactNode;
@@ -19,7 +19,7 @@ export default function MenuDropdown({
   titleType,
   items,
 }: MenuDropdownProps) {
-  const [showIcon, setShowIcon] = React.useState(false);
+  const [showIcon, setShowIcon] = useState(false);
   function changeOpenMenu(e: boolean) {
     setShowIcon(e);
   }

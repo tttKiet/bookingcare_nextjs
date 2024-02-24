@@ -1,4 +1,3 @@
-import * as React from "react";
 import Image, { StaticImageData } from "next/image";
 export interface INewsProps {
   img: string | StaticImageData;

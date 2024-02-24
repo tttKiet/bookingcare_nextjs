@@ -3,7 +3,6 @@ import { HealthRecord } from "@/models";
 import { Button, Divider } from "antd";
 import moment from "moment";
 import Link from "next/link";
-import * as React from "react";
 import { AiOutlineFieldTime } from "react-icons/ai";
 import { BsPatchCheckFill } from "react-icons/bs";
 import { CgDetailsMore } from "react-icons/cg";

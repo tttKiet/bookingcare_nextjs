@@ -1,7 +1,6 @@
 "use client";
 
 import { Avatar, Button, Drawer, Space } from "antd";
-import * as React from "react";
 import { Btn } from "../button";
 import { ControlMiddalNavMobile } from "./nav.middal.mobile";
 import { MenuItem } from "@/types";
@@ -14,6 +13,7 @@ import Link from "next/link";
 import { PiUserCircleLight } from "react-icons/pi";
 import toast from "react-hot-toast";
 import { ModalPositionHere } from "../modal";
+import { useMemo, useState } from "react";
 
 export interface NavBarMobileProps {
   open: boolean;
@@ -31,7 +31,7 @@ export function NavBarMobile({
   menu,
 }: NavBarMobileProps) {
   const { profile, logout } = useAuth({ revalidateOnMount: true });
-  const [showConfirm, setShowConfirm] = React.useState<boolean>(false);
+  const [showConfirm, setShowConfirm] = useState<boolean>(false);
 
   async function handleLogout(): Promise<void> {
     await logout();
@@ -42,7 +42,7 @@ export function NavBarMobile({
   function toggleShowModalConfirm() {
     setShowConfirm((s) => !s);
   }
-  const items = React.useMemo(() => {
+  const items = useMemo(() => {
     return [
       {
         key: "profile",

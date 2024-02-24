@@ -3,7 +3,6 @@
 import { Checkbox, Select } from "antd";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { DefaultOptionType } from "antd/es/select";
-import * as React from "react";
 import { Control, useController } from "react-hook-form";
 import debounce from "lodash.debounce";
 

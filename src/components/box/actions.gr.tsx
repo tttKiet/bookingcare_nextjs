@@ -1,5 +1,3 @@
-import * as React from "react";
-
 export interface ActionGroupProps {
   children: React.ReactNode;
   className?: string;

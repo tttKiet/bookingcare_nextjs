@@ -2,7 +2,6 @@ import { HealthFacility } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { Badge, Divider } from "antd";
 import Image from "next/image";
-import * as React from "react";
 import { AiOutlineCaretRight } from "react-icons/ai";
 import { CiLocationArrow1, CiLocationOn } from "react-icons/ci";
 

@@ -3,12 +3,12 @@ import { schemaSpecialistBody } from "@/schema-validate";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Space } from "antd";
-import * as React from "react";
 import { useForm } from "react-hook-form";
 import { VscSymbolNamespace } from "react-icons/vsc";
 import { InputField, InputTextareaField } from "../form";
 
 import { AiOutlinePhone } from "react-icons/ai";
+import { useEffect } from "react";
 
 export interface BodyModalSpecialistProps {
   handleSubmitForm: (data: Partial<Specialist>) => Promise<boolean>;
@@ -38,7 +38,7 @@ export function BodyModalSpecialist({
     resolver: yupResolver(schemaSpecialistBody),
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     reset({
       name: obEditSpecialist?.name || "",
       descriptionDisease: obEditSpecialist?.descriptionDisease || "",

@@ -16,7 +16,6 @@ import type {
 } from "antd/es/table";
 import { FilterConfirmProps } from "antd/es/table/interface";
 import moment from "moment";
-import * as React from "react";
 import Highlighter from "react-highlight-words";
 import { BsPlusSquareDotted, BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
@@ -28,6 +27,7 @@ import { ActionBox, ActionGroup } from "../box";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
 import { BtnPlus } from "../button";
+import { useMemo, useRef, useState } from "react";
 const { confirm } = Modal;
 
 export interface HealthFacilitiesBoxProps {}
@@ -43,7 +43,7 @@ export interface ResHealthFacilitiesBox {
   rows: HealthFacility[];
 }
 export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
-  const [queryParams, setQueryParams] = React.useState<
+  const [queryParams, setQueryParams] = useState<
     Partial<HealthFacilityColumns>
   >({
     name: "",
@@ -51,12 +51,12 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
     typeHealthFacility: "",
   });
   // Filter search
-  const [searchText, setSearchText] = React.useState("");
-  const [searchedColumn, setSearchedColumn] = React.useState("");
-  const searchInput = React.useRef<InputRef>(null);
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
 
   // Pagination
-  const [tableParams, setTableParams] = React.useState<{
+  const [tableParams, setTableParams] = useState<{
     pagination: TablePaginationConfig;
   }>({
     pagination: {
@@ -224,7 +224,7 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
   });
 
   const [obEditHealthFacility, setObEditHealthFacility] =
-    React.useState<HealthFacilityColumns | null>(null);
+    useState<HealthFacilityColumns | null>(null);
 
   // Edit Health Facility
   function resetObEdit() {
@@ -251,7 +251,7 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
     });
   }
   //HealthFacilityColumns
-  const columns: ColumnsType<HealthFacilityColumns> = React.useMemo(
+  const columns: ColumnsType<HealthFacilityColumns> = useMemo(
     () => [
       {
         title: "Id",
@@ -319,7 +319,7 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
     [types, getColumnSearchProps]
   );
 
-  const data = React.useMemo<Partial<HealthFacility>[]>(() => {
+  const data = useMemo<Partial<HealthFacility>[]>(() => {
     if (!healthFacilities?.rows) return [];
     return healthFacilities?.rows.map((row, index) => ({
       key: row.id,
@@ -335,8 +335,7 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
     }));
   }, [healthFacilities?.rows, healthFacilities]);
 
-  const [showModalAddHealth, setShowModalAddHealth] =
-    React.useState<boolean>(false);
+  const [showModalAddHealth, setShowModalAddHealth] = useState<boolean>(false);
 
   function toggleShowModalAddHealthFacility(): void {
     setShowModalAddHealth((s) => {

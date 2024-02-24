@@ -2,7 +2,6 @@
 import locale from "date-fns/locale/vi";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css";
-import * as React from "react";
 import { AudioOutlined } from "@ant-design/icons";
 import { Avatar, Button, Divider, Input, List } from "antd";
 import { SearchProps } from "antd/es/input";
@@ -21,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { Calendar } from "react-date-range";
 import { motion, Variants } from "framer-motion";
 import moment from "moment";
+import { useMemo, useState } from "react";
 export interface IChooseScheduleProps {
   staffId: string;
   next: (step: number, value: any) => void;
@@ -39,14 +39,14 @@ export function ChooseSchedule({
   if (!staffId) {
     return "Loi";
   }
-  const tomorrow = React.useMemo(() => {
+  const tomorrow = useMemo(() => {
     const nextDate = new Date();
     nextDate.setDate(new Date().getDate() + 1);
     return nextDate;
   }, []);
-  const [date, setDate] = React.useState(tomorrow);
+  const [date, setDate] = useState(tomorrow);
   const [healthExaminationSchedule, setHealthExaminationSchedule] =
-    React.useState<HealthExaminationSchedule | null>(null);
+    useState<HealthExaminationSchedule | null>(null);
 
   function handleSelect(date: Date) {
     setDate(date);

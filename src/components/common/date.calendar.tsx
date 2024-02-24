@@ -3,7 +3,6 @@ import "react-date-range/dist/theme/default.css";
 
 import { Calendar } from "react-date-range";
 
-import * as React from "react";
 import moment from "moment";
 
 export interface DateCalendarProps {

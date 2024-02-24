@@ -3,7 +3,6 @@
 import { Breadcrumb } from "antd";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import * as React from "react";
 
 export function BreadcrumbApp() {
   const url = usePathname();

@@ -10,7 +10,6 @@ import type { SelectProps } from "antd";
 import { Select } from "antd";
 import axios from "../../axios";
 import debounce from "lodash.debounce";
-import * as React from "react";
 import useSWR, { BareFetcher } from "swr";
 export interface SelectSearchFieldProps {
   placeholder: string;

@@ -3,7 +3,6 @@
 import { NotPermission, Profile } from "@/components/common";
 import { useAuth } from "@/hooks";
 import { Breadcrumb, Layout, Menu, MenuProps } from "antd";
-import type { Metadata } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -21,10 +20,7 @@ import { FaRankingStar } from "react-icons/fa6";
 import { BsBarChart } from "react-icons/bs";
 import "../globals.css";
 const { Header, Content, Footer, Sider } = Layout;
-export const metadata: Metadata = {
-  title: "Admin Booking Care",
-  description: "Manager for admin!",
-};
+
 type MenuItem = Required<MenuProps>["items"][number];
 
 export default function RootLayout({

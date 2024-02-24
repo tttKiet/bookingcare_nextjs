@@ -1,5 +1,4 @@
 import { StepProps, Steps } from "antd";
-import * as React from "react";
 
 export interface IStepBookingsProps {
   current?: number;

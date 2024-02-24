@@ -2,7 +2,6 @@
 
 import { useAuth } from "@/hooks";
 import Link from "next/link";
-import * as React from "react";
 import { AiOutlinePoweroff } from "react-icons/ai";
 import { PiUserCircleLight } from "react-icons/pi";
 import MenuDropdown from ".";
@@ -11,6 +10,7 @@ import { DropDownProps } from "antd";
 import { RiBillLine } from "react-icons/ri";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { useMemo, useState } from "react";
 
 export interface MenuNavbarLogoutProps {
   options?: DropDownProps;
@@ -19,8 +19,8 @@ export interface MenuNavbarLogoutProps {
 export default function MenuNavbarLogout({ options }: MenuNavbarLogoutProps) {
   const { profile, logout } = useAuth();
   const router = useRouter();
-  const [showConfirm, setShowConfirm] = React.useState<boolean>(false);
-  const items = React.useMemo(() => {
+  const [showConfirm, setShowConfirm] = useState<boolean>(false);
+  const items = useMemo(() => {
     return [
       {
         key: "profile",
@@ -69,7 +69,7 @@ export default function MenuNavbarLogout({ options }: MenuNavbarLogoutProps) {
       },
     ];
   }, []);
-  const itemsFilter = React.useMemo(
+  const itemsFilter = useMemo(
     () =>
       items
         .filter((s) => !(s.show == false))

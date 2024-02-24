@@ -1,5 +1,3 @@
-import * as React from "react";
-
 export interface ColorBoxProps {
   title: string | false;
   titlePosition?: "center" | "left" | "right";

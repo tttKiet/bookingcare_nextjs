@@ -1,8 +1,8 @@
 import { List, Avatar } from "antd";
-import * as React from "react";
 import { ScheduleBox } from "../schudule.box";
 import { WorkRoomAndSchedule } from "./ChooseDoctor";
 import { useInView } from "framer-motion";
+import { useEffect, useRef } from "react";
 
 export interface DoctorItemProps {
   workRoomAndSchedule: WorkRoomAndSchedule;
@@ -17,12 +17,12 @@ export default function DoctorItem({
   active = false,
   index = 1,
 }: DoctorItemProps) {
-  const ref = React.useRef(null);
+  const ref = useRef(null);
   const isInView = useInView(ref, {
     margin: "0px 100px -50px 0px",
     once: true,
   });
-  React.useEffect(() => {
+  useEffect(() => {
     console.log("Element is in view: ", isInView);
   }, [isInView]);
   // transition: "all 0.9s cubic-bezier(0.17, 0.55, 0.55, 1) 0.5s",

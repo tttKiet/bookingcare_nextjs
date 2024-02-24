@@ -1,6 +1,5 @@
 import { Button } from "antd";
 import Link from "next/link";
-import * as React from "react";
 
 export interface NotPermissionProps {}
 

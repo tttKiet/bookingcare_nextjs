@@ -1,5 +1,4 @@
 import Image, { StaticImageData } from "next/image";
-import * as React from "react";
 
 export interface ProfitUseBookingProps {
   src: StaticImageData;

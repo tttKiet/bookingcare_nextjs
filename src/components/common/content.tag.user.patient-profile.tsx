@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useMemo } from "react";
 
 export interface ItemContentPatientProfile {
   key: string | number;
@@ -14,7 +14,7 @@ export function ContentTagPatientProfile({
   items,
   activeKey,
 }: IContentTagPatientProfileProps) {
-  const itemActive = React.useMemo(() => {
+  const itemActive = useMemo(() => {
     const filter = items.find((item) => item.key === activeKey);
     if (!filter) return items?.[0] || [];
     return filter;

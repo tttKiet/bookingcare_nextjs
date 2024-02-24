@@ -3,7 +3,6 @@ import { HealthFacility, TypeHealthFacility } from "@/models";
 import { schemaHealthFacilityBody } from "@/schema-validate";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Space, UploadFile } from "antd";
-import * as React from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
 import { InputField, InputUploadField, SelectField } from "../form";
@@ -14,6 +13,7 @@ import { GiHospitalCross } from "react-icons/gi";
 import { GoRepoForked } from "react-icons/go";
 import { MdOutlineMail } from "react-icons/md";
 import { HealthFacilityColumns } from "../admin-box";
+import { useEffect } from "react";
 
 export interface BodyModalHealthProps {
   handleSubmitForm: (data: Partial<HealthFacilityClient>) => Promise<boolean>;
@@ -51,7 +51,7 @@ export default function BodyModalHealth({
     resolver: yupResolver(schemaHealthFacilityBody),
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     reset({
       name: obEditHealthFacility?.name || "",
       address: obEditHealthFacility?.address || "",

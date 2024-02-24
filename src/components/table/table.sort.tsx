@@ -2,7 +2,6 @@ import { Space, Table, Tag } from "antd";
 import { ColumnType } from "antd/es/list";
 import type { ColumnGroupType, ColumnsType, TableProps } from "antd/es/table";
 import { RefTable } from "antd/es/table/interface";
-import * as React from "react";
 
 export interface TableSortFilterProps {
   columns: any;

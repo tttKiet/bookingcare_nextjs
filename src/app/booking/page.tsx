@@ -25,7 +25,7 @@ import { StepProps, Tabs } from "antd";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import * as React from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CiLocationOn, CiUser } from "react-icons/ci";
 import { FcPhoneAndroid } from "react-icons/fc";
 import { HiOutlineLocationMarker } from "react-icons/hi";
@@ -33,21 +33,22 @@ import useSWR from "swr";
 export interface IAboutPageProps {}
 
 export default function Booking(props: IAboutPageProps) {
-  const refContent = React.useRef(null);
+  const refContent = useRef(null);
   const searchParams = useSearchParams();
-  const [current, setCurrent] = React.useState<number>(0);
+  const [current, setCurrent] = useState<number>(0);
   const healthFacilityId = searchParams.get("healthFacilityId");
   const router = useRouter();
   const { profile } = useAuth();
 
   // Data booking
-  const [doctorChoose, setDoctorChoose] = React.useState<WorkRoom | null>(null);
+  const [doctorChoose, setDoctorChoose] = useState<WorkRoom | null>(null);
 
-  const [descStatusPatient, setDescStatusPatient] = React.useState<string>("");
+  const [descStatusPatient, setDescStatusPatient] = useState<string>("");
   const [healthExaminationSchedule, setHealthExaminationSchedule] =
-    React.useState<Partial<HealthExaminationSchedule> | null>(null);
-  const [patientProfile, setPatientProfile] =
-    React.useState<PatientProfile | null>(null);
+    useState<Partial<HealthExaminationSchedule> | null>(null);
+  const [patientProfile, setPatientProfile] = useState<PatientProfile | null>(
+    null
+  );
   const { scrollTo } = useDisPlay();
   function stepNext(step: number, value?: any) {
     scrollTo(refContent?.current, {
@@ -162,7 +163,7 @@ export default function Booking(props: IAboutPageProps) {
   //   }
   // );
 
-  const tabItems: any[] = React.useMemo(() => {
+  const tabItems: any[] = useMemo(() => {
     return [
       {
         label: `Cơ sở y tế`,
@@ -221,7 +222,7 @@ export default function Booking(props: IAboutPageProps) {
     }
   }
 
-  const [infoCheckupItems, setInfoCheckupItems] = React.useState<StepProps[]>([
+  const [infoCheckupItems, setInfoCheckupItems] = useState<StepProps[]>([
     {
       title: "Cơ sở y tế",
       description: "Chưa chọn",
@@ -233,7 +234,7 @@ export default function Booking(props: IAboutPageProps) {
     districtCode: patientProfile?.addressCode[1] || "",
     provinceCode: patientProfile?.addressCode[2] || "",
   });
-  React.useEffect(() => {
+  useEffect(() => {
     if (healthFacility) {
       setInfoCheckupItems(() => {
         return [

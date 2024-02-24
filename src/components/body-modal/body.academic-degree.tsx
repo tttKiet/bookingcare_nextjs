@@ -1,10 +1,10 @@
-import * as React from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { InputField } from "../form";
 import { Button, Space } from "antd";
 import { AcademicDegree } from "@/models";
+import { useEffect } from "react";
 export const schemaAcademicDegree = yup.object().shape({
   name: yup.string().required("Bạn chưa điền tên học vị."),
 });
@@ -38,7 +38,7 @@ export function BodyModalAcademicDegree({
     },
     resolver: yupResolver(schemaAcademicDegree),
   });
-  React.useEffect(() => {
+  useEffect(() => {
     reset({ name: obAcademicDegreeEdit?.name || "" });
   }, [obAcademicDegreeEdit?.name, reset]);
 

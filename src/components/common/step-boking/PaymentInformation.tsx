@@ -10,7 +10,7 @@ import {
   WorkRoom,
 } from "@/models";
 import { Button, Divider, Form, Radio, RadioChangeEvent } from "antd";
-import * as React from "react";
+import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { BsCreditCard2Back } from "react-icons/bs";
 import { IoBagAddOutline } from "react-icons/io5";
@@ -32,7 +32,7 @@ export function PaymentInformation({
   checkupInfo,
   confirmSuccess,
 }: IPaymentInformation) {
-  const methodPayment = React.useMemo(
+  const methodPayment = useMemo(
     () => ({
       PAY_AT_HEALTH_FACILITY: "Thanh toán tại bệnh viện",
       MOMO: "Thanh toán bằng ví Momo",
@@ -40,9 +40,8 @@ export function PaymentInformation({
     []
   );
   type MethodKeys = keyof typeof methodPayment;
-  const [method, setMothod] = React.useState<MethodKeys | null>(null);
-  const [showPaymentModal, setShowPaymentModal] =
-    React.useState<boolean>(false);
+  const [method, setMothod] = useState<MethodKeys | null>(null);
+  const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
 
   function toggleShowPaymentModal() {
     setShowPaymentModal((s) => !s);
@@ -53,7 +52,7 @@ export function PaymentInformation({
   function onChangeMethod(e: RadioChangeEvent): void {
     setMothod(e.target.value);
   }
-  const [isLoading, setIsloading] = React.useState<boolean>(false);
+  const [isLoading, setIsloading] = useState<boolean>(false);
   async function handleClickAgreePayment() {
     const promisePaymentFake = new Promise((resolve) => {
       setTimeout(resolve, 2000);

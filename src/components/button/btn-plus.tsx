@@ -1,5 +1,4 @@
 import { Button } from "antd";
-import * as React from "react";
 import { BsPlusSquareDotted } from "react-icons/bs";
 
 export interface BtnPlusProps {

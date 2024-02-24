@@ -3,7 +3,6 @@ import { schemaCodeBody, schemaSpecialistBody } from "@/schema-validate";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Space } from "antd";
-import * as React from "react";
 import { useForm } from "react-hook-form";
 import { VscSymbolNamespace } from "react-icons/vsc";
 import { InputField, InputTextareaField, SelectFieldAddOption } from "../form";

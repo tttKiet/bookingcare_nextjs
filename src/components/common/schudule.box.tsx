@@ -1,7 +1,6 @@
 import { HealthExaminationSchedule } from "@/models";
 import { Button, Tag } from "antd";
 import moment from "moment";
-import * as React from "react";
 
 export interface IScheduleBoxProps {
   schedules: string[];

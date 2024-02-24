@@ -1,4 +1,3 @@
-import * as React from "react";
 import { ColorBox } from "../box";
 import useSWR from "swr";
 import { ResDataPaginations } from "@/types";

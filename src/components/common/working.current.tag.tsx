@@ -17,7 +17,6 @@ import { FilterConfirmProps } from "antd/es/table/interface";
 import get from "lodash.get";
 import isequal from "lodash.isequal";
 import moment from "moment";
-import * as React from "react";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
@@ -27,19 +26,20 @@ import { ActionBox, ActionGroup } from "../box";
 import { BtnPlus } from "../button";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
+import { useMemo, useRef, useState } from "react";
 const { confirm } = Modal;
 
 type DataIndex = keyof Working;
 
 export function WorkingCurrentTag() {
-  const [queryParams, setQueryParams] = React.useState({});
+  const [queryParams, setQueryParams] = useState({});
   // Filter search
-  const [searchText, setSearchText] = React.useState("");
-  const [searchedColumn, setSearchedColumn] = React.useState("");
-  const searchInput = React.useRef<InputRef>(null);
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
 
   // Pagination
-  const [tableParams, setTableParams] = React.useState<{
+  const [tableParams, setTableParams] = useState<{
     pagination: TablePaginationConfig;
   }>({
     pagination: {
@@ -207,9 +207,7 @@ export function WorkingCurrentTag() {
     },
   });
 
-  const [obEditWorking, setObEditWorking] = React.useState<Working | null>(
-    null
-  );
+  const [obEditWorking, setObEditWorking] = useState<Working | null>(null);
 
   // Edit Working
   function resetObEdit() {
@@ -234,7 +232,7 @@ export function WorkingCurrentTag() {
     });
   }
   //Working
-  const columns: ColumnsType<Working> = React.useMemo(
+  const columns: ColumnsType<Working> = useMemo(
     () => [
       {
         title: "Id",
@@ -319,7 +317,7 @@ export function WorkingCurrentTag() {
     [getColumnSearchProps]
   );
 
-  const data = React.useMemo<Partial<Working>[]>(() => {
+  const data = useMemo<Partial<Working>[]>(() => {
     if (!workings?.rows) return [];
     return workings?.rows.map((row: Working) => ({
       key: row.id,
@@ -327,8 +325,7 @@ export function WorkingCurrentTag() {
     }));
   }, [workings]);
 
-  const [showModalWorking, setShowModalAddWorking] =
-    React.useState<boolean>(false);
+  const [showModalWorking, setShowModalAddWorking] = useState<boolean>(false);
 
   function toggleShowModalAddWorking(): void {
     setShowModalAddWorking((s) => {

@@ -1,5 +1,4 @@
 import { ManagerChart } from "@/components/admin-box/manager.chart";
-import * as React from "react";
 
 export interface IChartProps {}
 

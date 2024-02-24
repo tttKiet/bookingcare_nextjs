@@ -5,14 +5,14 @@ import { ManagerClinicRoom } from "@/components/admin-box/manager.clinic-room";
 import { Tabs, TabsProps } from "antd";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import * as React from "react";
+import { useMemo } from "react";
 
 export interface IRoomProps {}
 
 export default function Room(props: IRoomProps) {
   const searchParams = useSearchParams();
   const tag = searchParams.get("tag");
-  const tags = React.useMemo(
+  const tags = useMemo(
     () => ["clinic-rooms", "manager-clinic-rooms", "manager-work-clinic-room"],
     []
   );

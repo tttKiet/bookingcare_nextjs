@@ -17,7 +17,6 @@ import type {
 } from "antd/es/table";
 import { FilterConfirmProps } from "antd/es/table/interface";
 import moment from "moment";
-import * as React from "react";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
@@ -27,6 +26,7 @@ import { ActionBox } from "../box/action.box";
 import { BtnPlus } from "../button";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
+import { useMemo, useRef, useState } from "react";
 const { confirm } = Modal;
 
 type DataIndex = keyof Specialist;
@@ -34,7 +34,7 @@ type DataIndex = keyof Specialist;
 export function ManagerSpecialist() {
   // State components
   const [specialistEdit, setSecialistEdit] =
-    React.useState<Partial<Specialist> | null>({
+    useState<Partial<Specialist> | null>({
       id: "",
       descriptionDisease: "",
       descriptionDoctor: "",
@@ -42,7 +42,7 @@ export function ManagerSpecialist() {
     });
 
   const [showSpecialistCreateOrUpdate, setShowSpecialistCreateOrUpdate] =
-    React.useState<boolean>(false);
+    useState<boolean>(false);
 
   // Toggle show modal create or update
   const toggleShowModalCreateOrUpdate = () => {
@@ -85,10 +85,10 @@ export function ManagerSpecialist() {
   }
 
   // Table
-  const [searchText, setSearchText] = React.useState("");
-  const [searchedColumn, setSearchedColumn] = React.useState("");
-  const searchInput = React.useRef<InputRef>(null);
-  const [tableParams, setTableParams] = React.useState<{
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
+  const [tableParams, setTableParams] = useState<{
     pagination: TablePaginationConfig;
   }>({
     pagination: {
@@ -245,7 +245,7 @@ export function ManagerSpecialist() {
     },
   });
 
-  const data = React.useMemo<Partial<Specialist>[]>(() => {
+  const data = useMemo<Partial<Specialist>[]>(() => {
     return responseSpecialist?.rows?.map((specialist: Specialist) => ({
       ...specialist,
       key: specialist.id,
@@ -258,7 +258,7 @@ export function ManagerSpecialist() {
   }, [responseSpecialist]);
 
   // Columns
-  const columns: ColumnsType<Specialist> = React.useMemo(() => {
+  const columns: ColumnsType<Specialist> = useMemo(() => {
     return [
       {
         title: "Id",

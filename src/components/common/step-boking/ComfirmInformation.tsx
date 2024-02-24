@@ -3,7 +3,7 @@ import { useGetAddress } from "@/hooks/use-get-address-from-code";
 import { HealthExaminationSchedule, PatientProfile, WorkRoom } from "@/models";
 import { Button, Descriptions, DescriptionsProps, Table } from "antd";
 import moment from "moment";
-import * as React from "react";
+import { useMemo } from "react";
 
 export interface IComfirmInformationProps {
   schedule: Partial<HealthExaminationSchedule> | null;
@@ -25,7 +25,7 @@ export function ComfirmInformation({
   function handleClickConfirm() {
     next(4, "");
   }
-  const dataSource = React.useMemo(
+  const dataSource = useMemo(
     () => [
       {
         key: "1",
@@ -76,7 +76,7 @@ export function ComfirmInformation({
     provinceCode: patientProfile?.addressCode[2] || "",
   });
 
-  const items: DescriptionsProps["items"] = React.useMemo(
+  const items: DescriptionsProps["items"] = useMemo(
     () => [
       {
         key: "1",

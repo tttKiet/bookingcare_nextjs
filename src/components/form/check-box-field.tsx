@@ -1,13 +1,13 @@
 import { Checkbox } from "antd";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
-import * as React from "react";
+import { ReactNode } from "react";
 import { Control, useController } from "react-hook-form";
 import { ClassificationTypeNames } from "typescript";
 
 export interface CheckBoxFieldProps {
   className?: string;
   name: string;
-  label: string | React.ReactNode;
+  label: string | ReactNode;
   control: Control<any>;
 }
 

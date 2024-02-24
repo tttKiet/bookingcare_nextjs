@@ -1,7 +1,6 @@
 import { Button } from "antd";
 import Image from "next/image";
 import Link from "next/link";
-import * as React from "react";
 
 export interface ServiceCardProps {
   src: string;

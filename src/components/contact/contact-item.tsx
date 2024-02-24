@@ -1,5 +1,3 @@
-import * as React from "react";
-
 export enum ContactItemSize {
   Small = "sm",
   Large = "lg",
