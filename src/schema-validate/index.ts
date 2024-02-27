@@ -167,3 +167,11 @@ export const schemaCodeScheduleHealth = yup.object().shape({
     .required("Vui điền số lượng tối đã khám trong một thời gian."),
   date: yup.object().required("Vui lòng chọn ngày khám."),
 });
+
+export const schemaCedicineBody = yup.object().shape({
+  name: yup.string().required("Vui lòng tên thuốc."),
+  price: yup
+    .number()
+    .required("Vui lòng điền đơn giá.")
+    .min(0, "Giá không được <= 0 vnđ."),
+});

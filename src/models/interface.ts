@@ -109,3 +109,9 @@ export interface HealthRecord {
   status: Code;
   WorkRoom: WorkRoom;
 }
+
+export interface Cedicine {
+  id: string;
+  name: string;
+  price: number;
+}

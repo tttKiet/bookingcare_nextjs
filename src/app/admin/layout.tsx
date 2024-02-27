@@ -19,6 +19,7 @@ import { PiFlowerTulipThin } from "react-icons/pi";
 import { FaRankingStar } from "react-icons/fa6";
 import { BsBarChart } from "react-icons/bs";
 import "../globals.css";
+import { GiPill } from "react-icons/gi";
 const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
@@ -87,7 +88,6 @@ export default function RootLayout({
             ),
             icon: <CiBookmarkMinus size={20} />,
           },
-
           {
             key: "/admin/specialist",
             label: <Link href="/admin/specialist">Chuyên khoa</Link>,
@@ -116,6 +116,12 @@ export default function RootLayout({
             icon: <BiCalendarStar size={20} />,
           },
         ],
+      },
+
+      {
+        key: "cedicine",
+        label: <Link href="/admin/cedicine">Quản Lý thuốc</Link>,
+        icon: <GiPill size={20} />,
       },
       {
         key: "/admin/work",

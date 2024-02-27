@@ -3,3 +3,4 @@ export * from "./staff-api";
 export * from "./user-api";
 export * from "./doctor-api";
 export * from "./health-facilities-api";
+export * from "./admin-api";

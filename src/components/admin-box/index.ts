@@ -7,3 +7,4 @@ export * from "./manager.manager-clinic-room";
 export * from "./manager.manager-work-clinic-room";
 export * from "./manager.code";
 export * from "./manager.doctor-health-examination-schedule";
+export * from "./ManagerCedicine";

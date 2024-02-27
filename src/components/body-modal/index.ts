@@ -6,3 +6,4 @@ export * from "./body.add-edit-account-doctor";
 export * from "./body.add-code";
 export * from "./body.add-edit-schedule";
 export * from "./body.add-edit-clinic-room";
+export * from "./BodyAddEditCedicine";

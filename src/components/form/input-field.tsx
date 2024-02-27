@@ -57,6 +57,10 @@ export function InputField({
               placeholder || `Nhập ${label?.toLocaleLowerCase()} ...`
             }
             className="px w-[86%] outline-none border-transparent text-base"
+            formatter={(value) =>
+              `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            }
+            parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
             onChange={onChange}
             onBlur={onBlur}
             ref={ref}
@@ -88,7 +92,7 @@ export function InputField({
         </span>
       </div>
       {error?.message && (
-        <span className="text-xs text-red-500 font-medium">
+        <span className="text-sm text-red-500 font-medium">
           {error?.message}
         </span>
       )}

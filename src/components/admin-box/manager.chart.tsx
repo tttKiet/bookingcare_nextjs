@@ -3,8 +3,8 @@
 import { Modal, Tabs, TabsProps } from "antd";
 
 import { User } from "@/models";
-import { ManagerAccountUser } from "../admin/manager.account-user";
-import { ManagerAccountStaff } from "../admin/manager.account-staff";
+import { ManagerAccountUser } from "../admin/ManagerAccountUser";
+import { ManagerAccountStaff } from "../admin/ManagerAccountStaff";
 import ChartRecord from "./manager.chart.record";
 import ChartAccount from "./manager.chart.account";
 const { confirm } = Modal;

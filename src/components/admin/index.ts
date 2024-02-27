@@ -1,1 +1,1 @@
-export * from "./manager.account-user";
+export * from "./ManagerAccountUser";
