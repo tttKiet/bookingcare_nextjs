@@ -33,3 +33,5 @@ export const API_DOCTOR_CHART_REVENUE = "/api/v1/doctor/chart/revenue";
 export const API_ADMIN_CHART = "/api/v1/admin/chart";
 
 export const API_ADMIN_CEDICINE = "/api/v1/admin/cedicine";
+export const API_ADMIN_MANAGER_ADMIN_HEALTH =
+  "/api/v1/admin/manager-admin-health-facility";

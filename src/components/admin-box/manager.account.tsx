@@ -5,6 +5,7 @@ import { Modal, Tabs, TabsProps } from "antd";
 import { User } from "@/models";
 import { ManagerAccountUser } from "../admin/ManagerAccountUser";
 import { ManagerAccountStaff } from "../admin/ManagerAccountStaff";
+import { ManagerAccountManager } from "../admin/ManagerAccountManager";
 const { confirm } = Modal;
 
 type DataIndex = keyof User;
@@ -20,6 +21,11 @@ export function ManagerAccount() {
       key: "doctor",
       label: "Bác sỉ",
       children: <ManagerAccountStaff />,
+    },
+    {
+      key: "hospital_manager",
+      label: "Quản lý bệnh viện",
+      children: <ManagerAccountManager />,
     },
   ];
   const onChange = (key: string) => {

@@ -32,7 +32,6 @@ export default function BodyModalHealth({
   loading,
   obEditHealthFacility,
 }: BodyModalHealthProps) {
-  console.log("obEditHealthFacility", obEditHealthFacility);
   const {
     control,
     handleSubmit,

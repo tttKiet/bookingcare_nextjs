@@ -7,10 +7,11 @@ import {
   HealthRecord,
 } from "@/models";
 import axios from "../axios";
-import { ResData } from "@/types";
+import { ResData, ResDataPaginations } from "@/types";
 import {
   API_ACCOUNT_STAFF,
   API_ACCOUNT_USER,
+  API_ADMIN_MANAGER_ADMIN_HEALTH,
   API_CHECK_UP_HEALTH_RECORD,
   API_CODE,
   API_DOCTOR_SCHEDULE_HEALTH_EXAM,
@@ -63,5 +64,18 @@ export const staffApi = {
       statusId: data.statusCode,
       healthRecordId: data.id,
     });
+  },
+
+  // get Staff
+  async getStaff({
+    type,
+    email,
+  }: {
+    type: "hospital_manager";
+    email?: string;
+  }): Promise<ResData<ResDataPaginations<Staff>>> {
+    return await axios.get(
+      `${API_ACCOUNT_STAFF}?type=${type}&email=${email || ""}`
+    );
   },
 };

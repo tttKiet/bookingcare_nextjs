@@ -363,7 +363,7 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
   }
 
   return (
-    <div className="p-4 px-6 col-span-12">
+    <div className="mt-2">
       <ModalPositionHere
         body={
           <BodyModalHealth
@@ -384,7 +384,7 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
         footer={false}
       />
       <h3 className="gr-title-admin mb-3 flex items-center justify-between">
-        Cơ sở y tế
+        Danh sách cơ sở y tế
         <BtnPlus
           title="Thêm cơ sở y tế"
           onClick={toggleShowModalAddHealthFacility}

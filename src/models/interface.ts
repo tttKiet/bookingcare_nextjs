@@ -115,3 +115,14 @@ export interface Cedicine {
   name: string;
   price: number;
 }
+
+export interface HospitalManager {
+  id: string;
+  staffId: string;
+  healthFacilityId: string;
+  isAcctive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  Staff: Staff;
+  HealthFacility: HealthFacility;
+}

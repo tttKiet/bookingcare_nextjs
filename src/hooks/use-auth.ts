@@ -55,6 +55,8 @@ export function useAuth(options?: Partial<SWRConfiguration>) {
       router.push("/admin");
     } else if (res?.user?.role?.keyType === "doctor") {
       router.push("/doctor");
+    } else if (res?.user?.role?.keyType === "hospital_manager") {
+      router.push("/hospital-manager");
     }
 
     await mutate();

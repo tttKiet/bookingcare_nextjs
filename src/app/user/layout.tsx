@@ -1,16 +1,11 @@
 "use client";
 
 import { Layout, MenuProps } from "antd";
-import type { Metadata } from "next";
 import React from "react";
 
 import "../globals.css";
 import { useAuth } from "@/hooks";
 const { Header, Content, Footer, Sider } = Layout;
-export const metadata: Metadata = {
-  title: "Admin Booking Care",
-  description: "Manager for admin!",
-};
 
 export default function RootLayout({
   children,

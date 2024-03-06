@@ -1,29 +1,30 @@
 "use client";
-
 import ToastMsg from "@/components/ToastMsg";
-import { NavBarTop } from "@/components/navbar";
+import Footer from "@/components/footer";
+import Header from "@/components/navbar/header";
 import StyledComponentsRegistry from "@/lib/AntdRegistry";
 import { persistor, store } from "@/redux/store";
+import { NextUIProvider } from "@nextui-org/react";
+import { ConfigProvider } from "antd";
 import moment from "moment";
 import "moment/locale/vi";
 import { usePathname } from "next/navigation";
 import { Provider } from "react-redux";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { PersistGate } from "redux-persist/integration/react";
 import { SWRConfig } from "swr";
 import axios from "../axios";
-import Link from "next/link";
-import Footer from "@/components/footer";
-import { ConfigProvider } from "antd";
 import theme from "../theme/themeConfig";
-import Header from "@/components/navbar/header";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 moment.locale("vi");
 
 export function RootLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdminLink =
-    pathname.includes("/admin") || pathname.includes("/doctor");
+    pathname.includes("/admin") ||
+    pathname.includes("/doctor") ||
+    pathname.includes("/hospital-manager");
+
   return (
     <StyledComponentsRegistry>
       <ConfigProvider theme={theme}>
@@ -54,15 +55,17 @@ export function RootLayout({ children }: { children: React.ReactNode }) {
                   newestOnTop={false}
                 />
               </div>
-              {!isAdminLink ? (
-                <>
-                  <Header />
-                  {children}
-                  <Footer />
-                </>
-              ) : (
-                <>{children}</>
-              )}
+              <NextUIProvider>
+                {!isAdminLink ? (
+                  <>
+                    <Header />
+                    {children}
+                    <Footer />
+                  </>
+                ) : (
+                  <>{children}</>
+                )}
+              </NextUIProvider>
             </SWRConfig>
           </PersistGate>
         </Provider>

@@ -1,4 +1,4 @@
-export * from "./health-facilities";
+export * from "./HealthFacilities";
 export * from "./manager.type-health.facilities";
 export * from "./manager.specialist";
 export * from "./manager.academic-degree";

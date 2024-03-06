@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 export async function toastMsgFromPromise(api: Promise<ResData>): Promise<any> {
   try {
     const res = await api;
-    if (res.statusCode === 0) {
+    if (res.statusCode === 0 || res.statusCode === 200) {
       toast.success(res.msg || "Thành công", {
         position: "top-right",
         autoClose: 4000,

@@ -1,5 +1,5 @@
-import { Button } from "antd";
-import { BsPlusSquareDotted } from "react-icons/bs";
+import { Button } from "@nextui-org/button";
+import { PlusIcon } from "../icons/PlusIcon";
 
 export interface BtnPlusProps {
   title?: string;
@@ -7,22 +7,14 @@ export interface BtnPlusProps {
   icon?: React.ReactNode;
 }
 
-export function BtnPlus({ title, onClick, icon }: BtnPlusProps) {
+export function BtnPlus({ title, onClick }: BtnPlusProps) {
   return (
     <Button
-      icon={
-        icon ? (
-          icon
-        ) : (
-          <BsPlusSquareDotted
-            className="transition-all duration-200"
-            // size={20}
-          />
-        )
-      }
+      color="primary"
+      className="text-sm"
+      endContent={<PlusIcon width={24} height={24} />}
       onClick={onClick}
-      type="dashed"
-      className="flex items-center gap-1 justify-center"
+      size="sm"
     >
       {title || "Thêm"}
     </Button>

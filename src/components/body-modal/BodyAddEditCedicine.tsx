@@ -28,23 +28,25 @@ export function BodyAddEditCedicine({
   const {
     control,
     handleSubmit,
-    formState: { isSubmitting, defaultValues },
+    formState: { isSubmitting },
     reset,
     setValue,
   } = useForm({
     defaultValues: {
       name: "",
-      price: Number.parseFloat(""),
+      price: 1000,
     },
     resolver: yupResolver(schemaCedicineBody),
   });
 
   useEffect(() => {
+    console.log("obEditCedicine", obEditCedicine);
+
     reset({
       name: obEditCedicine?.name || "",
-      price: obEditCedicine?.price || Number.parseFloat(""),
+      price: obEditCedicine?.price || 0,
     });
-  }, [obEditCedicine, reset]);
+  }, [obEditCedicine?.id, reset]);
 
   async function handleSubmitLocal({ name, price }: Partial<Cedicine>) {
     const isOk = await handleSubmitForm({

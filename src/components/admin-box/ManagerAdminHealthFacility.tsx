@@ -1,12 +1,20 @@
 "use client";
 
-import { API_ADMIN_CEDICINE } from "@/api-services/constant-api";
+import { doctorApi } from "@/api-services";
+import {
+  API_ACEDEMIC_DEGREE,
+  API_ADMIN_MANAGER_ADMIN_HEALTH,
+} from "@/api-services/constant-api";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import { Button, Input, InputRef, Modal, Space, Tag } from "antd";
 import axios from "../../axios";
 
-import { adminApi } from "@/api-services";
-import { Cedicine } from "@/models";
+import {
+  AcademicDegree,
+  HealthFacility,
+  HospitalManager,
+  ResManagerAdmin,
+} from "@/models";
 import { ResDataPaginations } from "@/types";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import type {
@@ -16,32 +24,48 @@ import type {
   TableProps,
 } from "antd/es/table";
 import { FilterConfirmProps } from "antd/es/table/interface";
-import get from "lodash.get";
-import isequal from "lodash.isequal";
-import { useEffect, useMemo, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
-import { ActionBox, ActionGroup } from "../box";
+import { BodyModalAcademicDegree } from "../body-modal";
+import { ActionGroup } from "../box";
+import { ActionBox } from "../box/action.box";
 import { BtnPlus } from "../button";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
-import { BodyAddEditCedicine } from "../body-modal";
+import moment from "moment";
+import { useEffect, useMemo, useRef, useState } from "react";
+import get from "lodash.get";
+import isEqual from "lodash.isequal";
+import { EyeActionBox } from "../box/EyeActionBox.";
+import { BodyManagerAdminHealth } from "../body-modal/BodyManagerAdminHealth";
+import { Chip } from "@nextui-org/react";
 const { confirm } = Modal;
 
-type DataIndex = keyof Cedicine;
+type DataIndex = keyof ResManagerAdmin;
 
-export function ManagerCedicine() {
-  const [obEditCedicine, setObEditCedicine] =
-    useState<Partial<Cedicine> | null>({
-      id: "",
-      name: "",
-      price: Number.parseFloat(""),
+export function ManagerAdminHealthFacility() {
+  // State components
+  const [hospitalManagerViewer, setHospitalManagerViewer] = useState<
+    ResManagerAdmin | null | undefined
+  >(null);
+
+  const [showModalDetails, setShowModalDetails] = useState<boolean>(false);
+
+  // Toggle show modal create or update
+  const toggleShowModalDetails = () => {
+    setShowModalDetails((s) => {
+      // s && setSecialistEdit(null);
+      return !s;
     });
-  // Table
-  const [queryParams, setQueryParams] = useState<Partial<Cedicine>>({});
+  };
+
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
+  const [queryParams, setQueryParams] = useState<{}>({
+    healthFacilityEmail: "",
+    healthFacilityName: "",
+  });
   const searchInput = useRef<InputRef>(null);
   const [tableParams, setTableParams] = useState<{
     pagination: TablePaginationConfig;
@@ -51,8 +75,10 @@ export function ManagerCedicine() {
       pageSize: 6,
     },
   });
-
-  const fetcher: BareFetcher<ResDataPaginations<any>> = async ([url, token]) =>
+  const fetcher: BareFetcher<ResDataPaginations<AcademicDegree>> = async ([
+    url,
+    token,
+  ]) =>
     (
       await axios.get(url, {
         params: {
@@ -60,21 +86,20 @@ export function ManagerCedicine() {
         },
       })
     ).data;
-
   const {
-    mutate: mutateCedicine,
-    data: responseCedicine,
+    data: responseManagerAdmin,
+    mutate: mutateManagerAdmin,
     error,
-    isLoading: isLoadingFetching,
-  } = useSWR<ResDataPaginations<Cedicine>>(
+    isLoading,
+  } = useSWR<ResDataPaginations<ResManagerAdmin>>(
     [
-      API_ADMIN_CEDICINE,
+      API_ADMIN_MANAGER_ADMIN_HEALTH,
       {
-        ...queryParams,
         limit: tableParams.pagination.pageSize, // 4 page 2 => 3, 4 page 6 => 21
         offset:
           ((tableParams.pagination.current || 0) - 1) *
           (tableParams.pagination.pageSize || 0),
+        ...queryParams,
       },
     ],
     fetcher,
@@ -83,30 +108,6 @@ export function ManagerCedicine() {
       dedupingInterval: 5000,
     }
   );
-
-  const [isShowModalCedicine, setIsShowModalCedicine] =
-    useState<boolean>(false);
-
-  // Toggle show modal create or update
-  const toggleModalCedicine = () => {
-    setIsShowModalCedicine((s) => {
-      return !s;
-    });
-  };
-
-  function handleClickEditCedicine(cedicine: Cedicine): void {
-    setObEditCedicine(cedicine);
-    toggleModalCedicine();
-  }
-
-  async function submitFormCedicine(data: Partial<Cedicine>): Promise<boolean> {
-    const api = adminApi.createOrUpdateCecidine(data);
-    const isOk = await toastMsgFromPromise(api);
-    if (isOk) {
-      mutateCedicine();
-    }
-    return isOk;
-  }
 
   const handleReset = (clearFilters: () => void) => {
     clearFilters();
@@ -122,35 +123,31 @@ export function ManagerCedicine() {
     confirm();
   };
 
-  const handleTableChange: TableProps<Cedicine>["onChange"] = (
+  const handleTableChange: TableProps<AcademicDegree>["onChange"] = (
     pagination,
     filters
   ) => {
     setTableParams({
       pagination,
     });
-    setQueryParams((prev) => ({
-      ...prev,
-      ...filters,
-    }));
-  };
-  function handleClickDeleteCedicine(record: Cedicine): void {
-    confirm({
-      title: `Bạn có muốn xóa thuốc "${record.name}"?`,
-      icon: <ExclamationCircleFilled />,
-      content: `Thao tác này sẽ xóa tất cả dữ liệu về "${record.name}" và không thể khôi phục`,
-      async onOk() {
-        const api = adminApi.deleteCecidine(record.id);
-        const isOk = await toastMsgFromPromise(api);
-        isOk && mutateCedicine();
-        return isOk;
-      },
-      onCancel() {},
+
+    setQueryParams((prev) => {
+      return {
+        healthFacilityEmail: filters["healthFacility.email"],
+        healthFacilityName: filters["healthFacility.name"],
+      };
     });
-  }
+  };
+
+  const handleClickView = (record: ResManagerAdmin) => {
+    console.log(record);
+    setHospitalManagerViewer(record);
+    toggleShowModalDetails();
+  };
+
   const getColumnSearchProps = (
     dataIndex: DataIndex | any
-  ): ColumnType<Cedicine> => ({
+  ): ColumnType<ResManagerAdmin> => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -227,7 +224,7 @@ export function ManagerCedicine() {
       }
     },
     render: (text) => {
-      return isequal(searchedColumn, dataIndex) ? (
+      return isEqual(searchedColumn, dataIndex) ? (
         <Highlighter
           highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
           searchWords={[searchText]}
@@ -240,33 +237,72 @@ export function ManagerCedicine() {
     },
   });
 
-  const data = useMemo<Cedicine[]>(() => {
-    return responseCedicine?.rows.map((cedicine: Cedicine) => ({
-      ...cedicine,
-      key: cedicine.id,
+  const data = useMemo<ResManagerAdmin[]>(() => {
+    return responseManagerAdmin?.rows?.map((d: ResManagerAdmin) => ({
+      ...d,
+      key: d.healthFacility.id,
     }));
-  }, [responseCedicine]);
-  const columns: ColumnsType<Cedicine> = useMemo(() => {
+  }, [responseManagerAdmin]);
+
+  // Columns
+  const columns: ColumnsType<ResManagerAdmin> = useMemo(() => {
     return [
       {
-        title: "Tên thuốc",
-        dataIndex: "name",
-        key: "name",
+        title: "Tên bệnh viện",
+        dataIndex: ["healthFacility", "name"],
+        key: "healthFacility.name",
         render: (text) => <a>{text}</a>,
-        sorter: (a, b) => a.name.localeCompare(b.name),
-        ...getColumnSearchProps("name"),
+        sorter: (a, b) =>
+          a.healthFacility.name.localeCompare(b.healthFacility.name),
+        ...getColumnSearchProps(["healthFacility", "name"]),
       },
       {
-        title: "Đơn giá",
-        dataIndex: "price",
-        key: "price",
+        title: "Email",
+        dataIndex: ["healthFacility", "email"],
+        key: "healthFacility.email",
+        render: (text) => <a>{text}</a>,
+        sorter: (a, b) =>
+          a.healthFacility.email.localeCompare(b.healthFacility.email),
+        ...getColumnSearchProps(["healthFacility", "email"]),
+      },
+      {
+        title: "Số nhân viên quản lý",
+        dataIndex: "managerCount",
+        key: "managerCount",
         render: (text: number) => (
-          <Tag className="text-sm" color="blue">
-            {text.toLocaleString()} vnđ
-          </Tag>
+          <a>
+            <Chip
+              className="capitalize"
+              color={"primary"}
+              size="sm"
+              variant="flat"
+            >
+              {text} nhân viên
+            </Chip>
+          </a>
         ),
-        sorter: (a, b) => a.price - b.price,
-        // ...getColumnSearchProps("price"),
+      },
+      {
+        title: "Hoạt động",
+        key: "active",
+        render: (d) => {
+          const count = d.manager.filter(
+            (m: HospitalManager) => m.isAcctive
+          ).length;
+
+          return (
+            <a>
+              <Chip
+                className="capitalize"
+                color={"success"}
+                size="sm"
+                variant="flat"
+              >
+                {count} nhân viên
+              </Chip>
+            </a>
+          );
+        },
       },
       {
         title: "Hành động",
@@ -274,54 +310,54 @@ export function ManagerCedicine() {
         render: (_, record) => {
           return (
             <ActionGroup className="justify-start">
-              <ActionBox
-                type="edit"
-                onClick={() => handleClickEditCedicine(record)}
-              />
-              <ActionBox
-                type="delete"
-                onClick={() => handleClickDeleteCedicine(record)}
+              <EyeActionBox
+                onClick={() => {
+                  handleClickView(record);
+                }}
               />
             </ActionGroup>
           );
         },
-        width: "150px",
       },
     ];
   }, [getColumnSearchProps]);
 
+  function refresh() {
+    mutateManagerAdmin();
+  }
+  useEffect(() => {
+    setHospitalManagerViewer((prev) => {
+      const newUpdate = data?.find(
+        (h) => h?.healthFacility?.id === prev?.healthFacility?.id
+      );
+      return newUpdate;
+    });
+  }, [data]);
+
   return (
-    <div className="">
+    <div className="mt-2">
       <ModalPositionHere
-        show={isShowModalCedicine}
-        toggle={toggleModalCedicine}
+        show={showModalDetails}
+        toggle={() => {
+          toggleShowModalDetails();
+        }}
+        config={{ zIndex: 40 }}
         width={800}
         footer={false}
         body={
-          <BodyAddEditCedicine
-            handleSubmitForm={submitFormCedicine}
-            clickCancel={toggleModalCedicine}
-            obEditCedicine={obEditCedicine}
+          <BodyManagerAdminHealth
+            refresh={refresh}
+            hospitalManagerViewer={hospitalManagerViewer}
           />
         }
-        title={obEditCedicine ? "Sửa thuốc" : "Thêm thuốc"}
+        title="Thông tin quản lý của của cơ sở y tế"
       />
-      <h3 className="gr-title-admin flex items-center justify-between  mb-3">
-        Danh sách thuốc chữa bệnh
-        <BtnPlus
-          title="Thêm thuốc"
-          onClick={() => {
-            setObEditCedicine(null);
-            toggleModalCedicine();
-          }}
-        />
-      </h3>
 
       <TableSortFilter
         options={{
-          loading: isLoadingFetching,
+          loading: isLoading,
           pagination: {
-            total: responseCedicine?.count,
+            total: responseManagerAdmin?.count,
             pageSize: tableParams.pagination.pageSize,
             showSizeChanger: true,
             pageSizeOptions: ["3", "6", "12", "24", "50"],

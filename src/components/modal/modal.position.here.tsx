@@ -32,6 +32,7 @@ export function ModalPositionHere({
         title={title}
         open={show}
         width={width || 440}
+        className="z-40"
         onOk={handleSubmit}
         onCancel={toggle}
         okText={contentBtnSubmit}

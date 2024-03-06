@@ -60,7 +60,7 @@ export default function RootLayout({
         children: [
           {
             key: "health-facility",
-            label: "Quản lý cơ sở y tế",
+            label: "Nhân viên quản lý",
             icon: <AiOutlineSlack size={20} />,
             children: [
               {

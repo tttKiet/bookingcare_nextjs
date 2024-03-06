@@ -157,10 +157,8 @@ export function BodyModalSchedule({
 
   useEffect(() => {
     if (scheduleDoctors) {
-      console.log(scheduleDoctors);
       const timeCodes =
         scheduleDoctors?.rows.map((row: any) => row.timeCode) || [];
-      console.log(timeCodes);
 
       setValue("timeCodeArray", timeCodes);
     }

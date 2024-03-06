@@ -1,17 +1,37 @@
 "use client";
 
-import { ManagerTypeHealthFacilites } from "@/components/admin-box";
 import { HealthFacilitiesBox } from "@/components/admin-box";
-import { TotalDashBoardHealthFacilitiesAdmin } from "@/components/common";
+import { ManagerAdminHealthFacility } from "@/components/admin-box/ManagerAdminHealthFacility";
+import { Tabs, TabsProps } from "antd";
 
 export interface HealthFacilitiesAdminProps {}
 
 export default function HealthFacilitiesAdmin(
   props: HealthFacilitiesAdminProps
 ) {
+  const items: TabsProps["items"] = [
+    {
+      key: "health",
+      label: "Cơ sở y tế",
+      children: <HealthFacilitiesBox />,
+    },
+    {
+      key: "manager_admin",
+      label: "Quản lý nhân viên",
+      children: <ManagerAdminHealthFacility />,
+    },
+  ];
+  const onChange = (key: string) => {
+    console.log(key);
+  };
   return (
-    <div className="grid md:grid-cols-12 grid-cols-1 gap-6">
-      <HealthFacilitiesBox />
+    <div className="p-6">
+      <Tabs
+        defaultActiveKey="health"
+        className="px-0"
+        items={items}
+        onChange={onChange}
+      />
     </div>
   );
 }
