@@ -28,7 +28,7 @@ export function ManagerChart() {
     console.log(key);
   };
   return (
-    <div className="p-4">
+    <div className="box-white">
       <Tabs defaultActiveKey="record" items={items} onChange={onChange} />
     </div>
   );

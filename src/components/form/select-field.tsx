@@ -58,12 +58,12 @@ export function SelectField({
 
   return (
     <div
-      className={`border rounded-lg border-while py-2 px-3 pt-8 relative col-span-1 ${
+      className={`border rounded-lg border-while py-4 px-3 pt-9 relative col-span-1 ${
         error?.message && "border-red-400"
       }`}
     >
       <label
-        className="absolute top-1 text-sm font-medium flex items-center gap-2"
+        className="absolute top-2 font-semibold text-sm flex items-center gap-2 "
         htmlFor=""
       >
         {label}
@@ -100,7 +100,7 @@ export function SelectField({
         </span>
       </div>
       {error && (
-        <p className="text-red-500 font-medium text-xs pt-1">
+        <p className="text-red-500 font-medium text-sm pt-1">
           {error?.message}
         </p>
       )}

@@ -1,30 +1,33 @@
-import { Cedicine } from "@/models";
-import { schemaCedicineBody } from "@/schema-validate";
+import { Cedicine, ExaminationService } from "@/models";
+import {
+  schemaCedicineBody,
+  schemaExaminationServiceBody,
+} from "@/schema-validate";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Space } from "antd";
 import { useForm } from "react-hook-form";
 import { VscSymbolNamespace } from "react-icons/vsc";
-import { InputField } from "../form";
+import { InputField, InputTextareaField } from "../form";
 
 import { useEffect } from "react";
 import { AiOutlinePhone } from "react-icons/ai";
 import { CgRename } from "react-icons/cg";
 import { CiBadgeDollar } from "react-icons/ci";
 
-export interface BodyAddEditCedicineProps {
-  handleSubmitForm: (data: Partial<Cedicine>) => Promise<boolean>;
+export interface BodyAddEditExaminationServiceProps {
+  handleSubmitForm: (data: Partial<ExaminationService>) => Promise<boolean>;
   clickCancel: () => void;
   loading?: boolean;
-  obEditCedicine: Partial<Cedicine> | null;
+  obEdit: Partial<ExaminationService> | null;
 }
 
-export function BodyAddEditCedicine({
+export function BodyAddEditExaminationService({
   clickCancel,
   handleSubmitForm,
   loading,
-  obEditCedicine,
-}: BodyAddEditCedicineProps) {
+  obEdit,
+}: BodyAddEditExaminationServiceProps) {
   const {
     control,
     handleSubmit,
@@ -34,23 +37,26 @@ export function BodyAddEditCedicine({
   } = useForm({
     defaultValues: {
       name: "",
-      price: 1000,
+      description: "",
     },
-    resolver: yupResolver(schemaCedicineBody),
+    resolver: yupResolver(schemaExaminationServiceBody),
   });
 
   useEffect(() => {
     reset({
-      name: obEditCedicine?.name || "",
-      price: obEditCedicine?.price || 0,
+      name: obEdit?.name || "",
+      description: obEdit?.description || "",
     });
-  }, [obEditCedicine?.id, reset]);
+  }, [obEdit?.id, reset]);
 
-  async function handleSubmitLocal({ name, price }: Partial<Cedicine>) {
+  async function handleSubmitLocal({
+    name,
+    description,
+  }: Partial<ExaminationService>) {
     const isOk = await handleSubmitForm({
-      id: obEditCedicine?.id || undefined,
+      id: obEdit?.id || undefined,
       name,
-      price,
+      description,
     });
     if (isOk) {
       control._resetDefaultValues();
@@ -60,25 +66,21 @@ export function BodyAddEditCedicine({
 
   return (
     <form onSubmit={handleSubmit(handleSubmitLocal)} className="pt-4">
-      <div className="grid md:grid-cols-2 gap-3 sm:grid-cols-1">
+      <div className="grid md:grid-cols-1 gap-3 ">
         <InputField
           control={control}
           label="Tên thuốc"
           name="name"
-          placeholder="Nhập tên thuốc"
+          placeholder="Nhập tên dịch vụ"
           icon={<CgRename />}
         />
-        <div className="">
-          <InputField
-            type="number"
-            width={"200px"}
-            control={control}
-            label="Đơn giá"
-            name="price"
-            icon={<CiBadgeDollar />}
-            placeholder="Nhập đơn giá của thuốc"
-          />
-        </div>
+        <InputTextareaField
+          control={control}
+          label="Mô tả"
+          name="description"
+          icon={<CiBadgeDollar />}
+          placeholder="Nhập mô tả cho dịch vụ"
+        />
       </div>
       <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
         <Button type="default" size="middle" onClick={clickCancel}>
@@ -92,7 +94,7 @@ export function BodyAddEditCedicine({
             // onClick={() => true}
             htmlType="submit"
           >
-            {obEditCedicine?.id ? "Lưu" : "Thêm"}
+            {obEdit?.id ? "Lưu" : "Thêm"}
           </Button>
         </Space>
       </div>

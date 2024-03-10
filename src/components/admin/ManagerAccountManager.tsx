@@ -1,16 +1,12 @@
 "use client";
 
-import { healthFacilitiesApi, staffApi } from "@/api-services";
-import {
-  API_ACCOUNT_STAFF,
-  API_ROLE,
-  API_SPECIALIST,
-} from "@/api-services/constant-api";
+import { staffApi } from "@/api-services";
+import { API_ACCOUNT_STAFF, API_ROLE } from "@/api-services/constant-api";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import { Button, Input, InputRef, Modal, Space } from "antd";
 import axios from "../../axios";
 
-import { Role, Specialist, Staff } from "@/models";
+import { Role, Staff } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import type {
@@ -21,19 +17,17 @@ import type {
 } from "antd/es/table";
 import { FilterConfirmProps } from "antd/es/table/interface";
 import moment from "moment";
+import { useMemo, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
+import toast from "react-hot-toast";
 import { BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
+import { BodyModalAccountManager } from "../body-modal/BodyAddEditAccountManager";
 import { ActionGroup } from "../box";
 import { ActionBox } from "../box/action.box";
 import { BtnPlus } from "../button";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
-import { RegisterForm } from "../auth";
-import { BodyModalAccountDoctor } from "../body-modal";
-import toast from "react-hot-toast";
-import { useMemo, useRef, useState } from "react";
-import { BodyModalAccountManager } from "../body-modal/BodyAddEditAccountManager";
 const { confirm } = Modal;
 
 type DataIndex = keyof Staff;
@@ -350,7 +344,7 @@ export function ManagerAccountManager() {
   }, [getColumnSearchProps]);
 
   return (
-    <div className="p-4">
+    <div className="box-white">
       <ModalPositionHere
         show={showAccountCreateOrUpdateModal}
         toggle={() => {

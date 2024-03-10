@@ -42,7 +42,7 @@ export default function CodeAdminPage() {
   }, []);
   console.log(data);
   return (
-    <div className="p-4">
+    <div className="box-white">
       <TableSortFilter
         options={{
           pagination: {

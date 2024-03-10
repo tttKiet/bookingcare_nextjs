@@ -32,7 +32,7 @@ export function ManagerAccount() {
     console.log(key);
   };
   return (
-    <div className="p-4">
+    <div className="box-white">
       <Tabs defaultActiveKey="user" items={items} onChange={onChange} />
     </div>
   );

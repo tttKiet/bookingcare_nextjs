@@ -1,14 +1,16 @@
 "use client";
 
-import { doctorApi } from "@/api-services";
-import { API_ACEDEMIC_DEGREE } from "@/api-services/constant-api";
-import { ExclamationCircleFilled } from "@ant-design/icons";
+import {
+  API_ADMIN_EXAMINATION_SERVICE,
+  API_CODE,
+  API_HEALTH_FACILITY_ROOM,
+} from "@/api-services/constant-api";
 import { Button, Input, InputRef, Modal, Space } from "antd";
 import axios from "../../axios";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
-import { AcademicDegree } from "@/models";
+import { ClinicRoom, Code, ExaminationService } from "@/models";
 import { ResDataPaginations } from "@/types";
-import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import type {
   ColumnType,
   ColumnsType,
@@ -16,75 +18,36 @@ import type {
   TableProps,
 } from "antd/es/table";
 import { FilterConfirmProps } from "antd/es/table/interface";
+import get from "lodash.get";
+import isequal from "lodash.isequal";
+import moment from "moment";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
-import { BodyModalAcademicDegree } from "../body-modal";
-import { ActionGroup } from "../box";
-import { ActionBox } from "../box/action.box";
+import { TableSortFilter } from "../table";
+import { ActionBox, ActionGroup } from "../box";
+import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
+import { adminApi, staffApi } from "@/api-services";
 import { BtnPlus } from "../button";
 import { ModalPositionHere } from "../modal";
-import { TableSortFilter } from "../table";
-import moment from "moment";
+import { BodyModalCode } from "../body-modal";
 import { useMemo, useRef, useState } from "react";
+import { BodyAddEditExaminationService } from "../body-modal/BodyAddEditExaminationService";
 const { confirm } = Modal;
 
-type DataIndex = keyof AcademicDegree;
+type DataIndex = keyof ExaminationService;
 
-export function ManagerAcademicDegree() {
-  // State components
-  const [academicDegreeEdit, setAcademicDegreeEdit] =
-    useState<Partial<AcademicDegree> | null>({
-      id: "",
-      name: "",
-    });
-
-  const [
-    showAcademicDegreeCreateOrUpdateModal,
-    setShowAcademicDegreeCreateOrUpdateModal,
-  ] = useState<boolean>(false);
-
-  // Toggle show modal create or update
-  const toggleShowAcademicDegreeCreateOrUpdateModal = () => {
-    setShowAcademicDegreeCreateOrUpdateModal((s) => {
-      // s && setSecialistEdit(null);
-      return !s;
-    });
-  };
-
-  async function submitFormCreateOrUpdateAcademicDegree(
-    data: Partial<AcademicDegree>
-  ): Promise<boolean> {
-    const api = doctorApi.createOrUpdateAcademicDegree(data);
-    const isOk = await toastMsgFromPromise(api);
-    if (isOk) {
-      setAcademicDegreeEdit(null);
-      mutateAcademicDegree();
-    }
-    return isOk;
-  }
-
-  function editAcademicDegree(record: AcademicDegree): void {
-    setAcademicDegreeEdit(record);
-    toggleShowAcademicDegreeCreateOrUpdateModal();
-  }
-
-  function handleClickDeleteAcademicDegree(record: AcademicDegree): void {
-    confirm({
-      title: `Bạn có muốn xóa học vị "${record.name}"?`,
-      icon: <ExclamationCircleFilled />,
-      content: `Thao tác này sẽ xóa tất cả dữ liệu về "${record.name}" và không thể khôi phục`,
-      async onOk() {
-        const api = doctorApi.deleteAcademicDegree({ id: record.id });
-        const isOk = await toastMsgFromPromise(api);
-        isOk && mutateAcademicDegree();
-        return isOk;
-      },
-      onCancel() {},
-    });
-  }
+export function ManagerExaminationService() {
+  const [obEdit, setObEdit] = useState<Partial<ExaminationService> | null>({
+    id: "",
+    name: "",
+    description: "",
+  });
 
   // Table
+  const [queryParams, setQueryParams] = useState<Partial<ExaminationService>>(
+    {}
+  );
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef<InputRef>(null);
@@ -96,7 +59,7 @@ export function ManagerAcademicDegree() {
       pageSize: 6,
     },
   });
-  const fetcher: BareFetcher<ResDataPaginations<AcademicDegree>> = async ([
+  const fetcher: BareFetcher<ResDataPaginations<ExaminationService>> = async ([
     url,
     token,
   ]) =>
@@ -108,14 +71,15 @@ export function ManagerAcademicDegree() {
       })
     ).data;
   const {
-    data: responseAcademicDegree,
-    mutate: mutateAcademicDegree,
+    data: responseData,
+    mutate: mutate,
     error,
     isLoading,
-  } = useSWR<ResDataPaginations<AcademicDegree>>(
+  } = useSWR<ResDataPaginations<ExaminationService>>(
     [
-      API_ACEDEMIC_DEGREE,
+      API_ADMIN_EXAMINATION_SERVICE,
       {
+        ...queryParams,
         limit: tableParams.pagination.pageSize, // 4 page 2 => 3, 4 page 6 => 21
         offset:
           ((tableParams.pagination.current || 0) - 1) *
@@ -129,10 +93,31 @@ export function ManagerAcademicDegree() {
     }
   );
 
+  const [isShowModalAdd, setIsShowModalAdd] = useState<boolean>(false);
+
+  // Toggle show modal create or update
+  const toggleModalAdd = () => {
+    setIsShowModalAdd((s) => {
+      return !s;
+    });
+  };
+
+  async function submitCreate(
+    data: Partial<ExaminationService>
+  ): Promise<boolean> {
+    const api = adminApi.createOrUpdateExaminationService(data);
+    const isOk = await toastMsgFromPromise(api);
+    if (isOk) {
+      mutate();
+    }
+    return true;
+  }
+
   const handleReset = (clearFilters: () => void) => {
     clearFilters();
     setSearchText("");
   };
+
   const handleSearch = (
     selectedKeys: string[],
     confirm: (param?: FilterConfirmProps) => void,
@@ -143,18 +128,42 @@ export function ManagerAcademicDegree() {
     confirm();
   };
 
-  const handleTableChange: TableProps<AcademicDegree>["onChange"] = (
+  const handleTableChange: TableProps<ExaminationService>["onChange"] = (
     pagination,
     filters
   ) => {
     setTableParams({
       pagination,
     });
+    setQueryParams((prev) => ({
+      ...prev,
+      ...filters,
+    }));
   };
 
+  function handleClickEdit(record: ExaminationService): void {
+    setObEdit(record);
+    toggleModalAdd();
+  }
+
+  function handleClickDelete(record: ExaminationService): void {
+    confirm({
+      title: `Bạn có muốn xóa dịch vụ "${record.name}"?`,
+      icon: <ExclamationCircleFilled />,
+      content: `Thao tác này sẽ xóa tất cả dữ liệu về "${record.name}" và không thể khôi phục!`,
+      async onOk() {
+        const api = adminApi.deleteExaminationService(record.id);
+        const isOk = await toastMsgFromPromise(api);
+        isOk && mutate();
+        return isOk;
+      },
+      onCancel() {},
+    });
+  }
+
   const getColumnSearchProps = (
-    dataIndex: DataIndex
-  ): ColumnType<AcademicDegree> => ({
+    dataIndex: DataIndex | any
+  ): ColumnType<ExaminationService> => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -221,17 +230,17 @@ export function ManagerAcademicDegree() {
       <BsSearch style={{ color: filtered ? "#1677ff" : undefined }} />
     ),
     onFilter: (value, record) =>
-      record[dataIndex]
+      get(record, dataIndex)
         .toString()
         .toLowerCase()
-        .includes((value as string).toLowerCase()),
+        .includes(value.toString().toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100);
       }
     },
     render: (text) => {
-      return searchedColumn === dataIndex ? (
+      return isequal(searchedColumn, dataIndex) ? (
         <Highlighter
           highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
           searchWords={[searchText]}
@@ -244,29 +253,31 @@ export function ManagerAcademicDegree() {
     },
   });
 
-  const data = useMemo<Partial<AcademicDegree>[]>(() => {
-    return responseAcademicDegree?.rows.map(
-      (academicDegree: AcademicDegree) => ({
-        ...academicDegree,
-        key: academicDegree.id,
-        id: academicDegree.id,
-        name: academicDegree.name,
-      })
-    );
-  }, [responseAcademicDegree]);
+  const data = useMemo<ExaminationService[]>(() => {
+    return responseData?.rows.map((data: ExaminationService) => ({
+      ...data,
+      key: data.id,
+    }));
+  }, [responseData]);
 
-  // Columns
-  const columns: ColumnsType<AcademicDegree> = useMemo(() => {
+  const columns: ColumnsType<ExaminationService> = useMemo(() => {
     return [
       {
         title: "Id",
         dataIndex: "id",
         key: "id",
-        render: (text) => <a>{text}</a>,
-        width: "16%",
+        render: (text) => (
+          <a className="">
+            <div className=" whitespace-nowrap text-ellipsis w-[120px] overflow-hidden">
+              {text}
+            </div>
+          </a>
+        ),
+        sorter: (a, b) => a.name.localeCompare(b.name),
+        width: "160px",
       },
       {
-        title: "Tên học vị",
+        title: "Tên dịch vụ",
         dataIndex: "name",
         key: "name",
         render: (text) => <a>{text}</a>,
@@ -274,11 +285,12 @@ export function ManagerAcademicDegree() {
         ...getColumnSearchProps("name"),
       },
       {
-        title: "Ngày tạo",
-        dataIndex: "createdAt",
-        key: "createdAt",
-        render: (text) => <a>{moment(text).locale("vi").calendar()}</a>,
-        sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
+        title: "Mô tả",
+        dataIndex: "description",
+        key: "description",
+        render: (text) => <a>{text}</a>,
+        sorter: (a, b) => a.description.localeCompare(b.description),
+        ...getColumnSearchProps("description"),
       },
       {
         title: "Hành động",
@@ -286,17 +298,15 @@ export function ManagerAcademicDegree() {
         render: (_, record) => {
           return (
             <ActionGroup className="justify-start">
-              <ActionBox
-                type="edit"
-                onClick={() => editAcademicDegree(record)}
-              />
+              <ActionBox type="edit" onClick={() => handleClickEdit(record)} />
               <ActionBox
                 type="delete"
-                onClick={() => handleClickDeleteAcademicDegree(record)}
+                onClick={() => handleClickDelete(record)}
               />
             </ActionGroup>
           );
         },
+        width: "150px",
       },
     ];
   }, [getColumnSearchProps]);
@@ -304,38 +314,36 @@ export function ManagerAcademicDegree() {
   return (
     <div className="">
       <ModalPositionHere
-        show={showAcademicDegreeCreateOrUpdateModal}
-        toggle={() => {
-          toggleShowAcademicDegreeCreateOrUpdateModal();
-        }}
+        show={isShowModalAdd}
+        toggle={toggleModalAdd}
+        width={800}
         footer={false}
         body={
-          <BodyModalAcademicDegree
-            clickCancel={toggleShowAcademicDegreeCreateOrUpdateModal}
-            handleSubmitForm={submitFormCreateOrUpdateAcademicDegree}
-            obAcademicDegreeEdit={academicDegreeEdit}
+          <BodyAddEditExaminationService
+            clickCancel={toggleModalAdd}
+            handleSubmitForm={submitCreate}
+            obEdit={obEdit}
           />
         }
-        title={
-          academicDegreeEdit?.id
-            ? `Sửa học vị * ${academicDegreeEdit.name} *`
-            : "Thêm mới học vị"
-        }
+        title={obEdit?.id ? "Sửa thông tin dịch vụ" : "Thêm dịch vụ"}
       />
       <h3 className="gr-title-admin flex items-center justify-between  mb-3">
-        Học vị
+        Danh sách các dịch vụ khám bệnh
         <BtnPlus
+          title="Thêm dịch vụ"
           onClick={() => {
-            toggleShowAcademicDegreeCreateOrUpdateModal();
-            setAcademicDegreeEdit(null);
+            toggleModalAdd();
+            setObEdit(null);
           }}
         />
       </h3>
+
       <TableSortFilter
         options={{
+          scroll: { y: 170 },
           loading: isLoading,
           pagination: {
-            total: responseAcademicDegree?.count,
+            total: responseData?.count,
             pageSize: tableParams.pagination.pageSize,
             showSizeChanger: true,
             pageSizeOptions: ["3", "6", "12", "24", "50"],

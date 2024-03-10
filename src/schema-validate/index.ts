@@ -200,3 +200,17 @@ export const schemaCedicineBody = yup.object().shape({
     .required("Vui lòng điền đơn giá.")
     .min(0, "Giá không được <= 0 vnđ."),
 });
+
+export const schemaExaminationServiceBody = yup.object().shape({
+  name: yup.string().required("Vui lòng tên dịch vụ khám bệnh."),
+  description: yup.string().required("Vui lòng điền mô tả cho dịch vụ."),
+});
+
+export const schemaHospitalServiceBody = yup.object().shape({
+  examinationServiceId: yup.string().required("Vui lòng chọn dịch vụ."),
+  price: yup
+    .number()
+    .required("Vui lòng điền đơn giá")
+    .min(0, "Giá không được <= 0 vnđ.")
+    .positive("Giá không được <= 0 vnđ."),
+});

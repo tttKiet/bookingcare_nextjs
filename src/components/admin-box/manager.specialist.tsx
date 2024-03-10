@@ -302,7 +302,7 @@ export function ManagerSpecialist() {
   }, [getColumnSearchProps]);
 
   return (
-    <div className="p-4 px-6">
+    <div className="">
       <ModalPositionHere
         show={showSpecialistCreateOrUpdate}
         toggle={() => {

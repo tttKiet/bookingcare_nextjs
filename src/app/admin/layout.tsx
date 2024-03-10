@@ -10,7 +10,7 @@ import { FiPlusCircle } from "react-icons/fi";
 import { LiaUserNurseSolid } from "react-icons/lia";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { MdSupervisorAccount } from "react-icons/md";
-import { BsCode, BsPersonWorkspace } from "react-icons/bs";
+import { BsCode, BsDpad, BsPersonWorkspace } from "react-icons/bs";
 import { CiBookmarkMinus } from "react-icons/ci";
 import { AiOutlineSlack } from "react-icons/ai";
 import { BiBulb, BiCalendarStar } from "react-icons/bi";
@@ -56,28 +56,19 @@ export default function RootLayout({
       },
       {
         key: "health",
-        label: "Cơ sở y tế",
+        label: "Quản lý thông tin y tế",
         children: [
           {
-            key: "health-facility",
-            label: "Nhân viên quản lý",
-            icon: <AiOutlineSlack size={20} />,
-            children: [
-              {
-                key: "/admin/health-facility",
-                label: <Link href="/admin/health-facility">Cơ sở y tế</Link>,
-                icon: <PiFlowerTulipThin size={20} />,
-              },
-              {
-                key: "/admin/health-facility/room",
-                label: (
-                  <Link href="/admin/health-facility/clinic-room">
-                    Phòng khám
-                  </Link>
-                ),
-                icon: <BiBulb size={20} />,
-              },
-            ],
+            key: "/admin/health-facility",
+            label: <Link href="/admin/health-facility">Cơ sở y tế</Link>,
+            icon: <PiFlowerTulipThin size={20} />,
+          },
+          {
+            key: "/admin/health-facility/room",
+            label: (
+              <Link href="/admin/health-facility/clinic-room">Phòng khám</Link>
+            ),
+            icon: <BiBulb size={20} />,
           },
           {
             key: "/admin/type-health-facility",
@@ -95,6 +86,13 @@ export default function RootLayout({
           },
         ],
         icon: <FiPlusCircle size={20} />,
+      },
+      {
+        key: "/admin/examination-services",
+        label: (
+          <Link href="/admin/examination-services">Dịch vụ khám bệnh</Link>
+        ),
+        icon: <BsDpad size={20} />,
       },
       {
         key: "manager-doctor",
@@ -152,7 +150,7 @@ export default function RootLayout({
     return <NotPermission />;
   }
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout style={{}}>
       <Sider
         width={280}
         collapsible
@@ -174,13 +172,15 @@ export default function RootLayout({
           items={items}
         />
       </Sider>
-      <Layout>
+      <Layout style={{ minHeight: "100vh" }}>
         <Header className="flex justify-end items-center text-white px-[16px] bg-dard">
           <Profile />
         </Header>
         <Content style={{ margin: "0 16px" }}>
           <Breadcrumb style={{ margin: "16px 0" }} items={breadcrumbArray} />
-          <div className="bg-white rounded-lg min-h-screen p[24] shadow-md">
+          <div
+          //  className="bg-white rounded-lg min-h-screen p[24] shadow-md"
+          >
             {children}
           </div>
         </Content>

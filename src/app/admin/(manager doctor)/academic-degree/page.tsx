@@ -4,7 +4,7 @@ export interface PositionPageProps {}
 
 export default function PositionPage(props: PositionPageProps) {
   return (
-    <div>
+    <div className="box-white">
       <ManagerAcademicDegree />
     </div>
   );

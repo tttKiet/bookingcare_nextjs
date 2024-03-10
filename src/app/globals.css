@@ -139,3 +139,7 @@ input {
 .tag-h-full .ant-tabs-content .ant-tabs-tabpane {
   height: 100% !important;
 }
+
+.box-white {
+  @apply bg-white rounded-lg p-[24px] shadow-md min-h-[382px];
+}

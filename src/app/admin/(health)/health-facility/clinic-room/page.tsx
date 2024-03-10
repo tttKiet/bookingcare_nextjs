@@ -43,7 +43,7 @@ export default function Room(props: IRoomProps) {
   ];
   const onChange = (key: string) => {};
   return (
-    <div className="p-4">
+    <div className="box-white">
       <Tabs
         defaultActiveKey="clinic-rooms"
         activeKey={tag && tags.includes(tag) ? tag : "clinic-rooms"}

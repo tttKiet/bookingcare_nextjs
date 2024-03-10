@@ -25,7 +25,7 @@ export default function HealthFacilitiesAdmin(
     console.log(key);
   };
   return (
-    <div className="p-6">
+    <div className="box-white">
       <Tabs
         defaultActiveKey="health"
         className="px-0"

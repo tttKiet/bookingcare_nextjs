@@ -349,7 +349,7 @@ export function WorkingCurrentTag() {
   }
 
   return (
-    <div className="p-4 px-6 col-span-12">
+    <div className="col-span-12">
       <ModalPositionHere
         body={
           <BodyModalWorking

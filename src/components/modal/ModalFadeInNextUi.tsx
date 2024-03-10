@@ -67,18 +67,20 @@ export function ModalFadeInNextUi({
             <>
               <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
               <ModalBody>{body}</ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Hủy
-                </Button>
-                <Button
-                  color="primary"
-                  onPress={handleSubmit}
-                  isLoading={isLoading}
-                >
-                  {contentBtnSubmit || "Lưu"}
-                </Button>
-              </ModalFooter>
+              {footer !== false && (
+                <ModalFooter>
+                  <Button color="danger" variant="light" onPress={onClose}>
+                    Hủy
+                  </Button>
+                  <Button
+                    color="primary"
+                    onPress={handleSubmit}
+                    isLoading={isLoading}
+                  >
+                    {contentBtnSubmit || "Lưu"}
+                  </Button>
+                </ModalFooter>
+              )}
             </>
           )}
         </ModalContent>

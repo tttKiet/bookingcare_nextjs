@@ -31,12 +31,12 @@ export function InputField({
 
   return (
     <div
-      className={`border rounded-lg border-while py-2 px-3 pt-8 relative ${
+      className={`border rounded-lg border-while py-4 px-3 pt-9 relative ${
         error?.message && "border-red-400"
       }`}
     >
       <label
-        className="absolute top-1 text-sm font-medium flex items-center gap-2"
+        className="absolute top-2 font-semibold text-sm flex items-center gap-2 "
         htmlFor=""
       >
         {label}
@@ -92,7 +92,7 @@ export function InputField({
         </span>
       </div>
       {error?.message && (
-        <span className="text-sm text-red-500 font-medium">
+        <span className="text-sm text-red-500 font-medium pt-1">
           {error?.message}
         </span>
       )}

@@ -126,3 +126,20 @@ export interface HospitalManager {
   Staff: Staff;
   HealthFacility: HealthFacility;
 }
+
+export interface ExaminationService {
+  id: string;
+  name: string;
+  description: string;
+}
+
+export interface HospitalService {
+  examinationServiceId: string;
+  healthFacilityId: string;
+  price: number;
+  isAcctive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  HealthFacility: HealthFacility;
+  ExaminationService: ExaminationService;
+}

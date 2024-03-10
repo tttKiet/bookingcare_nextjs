@@ -4,7 +4,7 @@ export interface SpecialistAdminProps {}
 
 export default function SpecialistAdminPage(props: SpecialistAdminProps) {
   return (
-    <div className="">
+    <div className="box-white">
       <ManagerSpecialist />
     </div>
   );

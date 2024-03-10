@@ -1,14 +1,19 @@
 "use client";
 
-import { doctorApi } from "@/api-services";
-import { API_ACEDEMIC_DEGREE } from "@/api-services/constant-api";
-import { ExclamationCircleFilled } from "@ant-design/icons";
+import {
+  API_ADMIN_HOSPITAL_SERVICE,
+  API_ADMIN_MANAGER_ADMIN_HEALTH,
+} from "@/api-services/constant-api";
 import { Button, Input, InputRef, Modal, Space } from "antd";
 import axios from "../../axios";
 
-import { AcademicDegree } from "@/models";
+import {
+  AcademicDegree,
+  HospitalService,
+  ResAdminManagerHospitalService,
+} from "@/models";
 import { ResDataPaginations } from "@/types";
-import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
+import { Chip } from "@nextui-org/react";
 import type {
   ColumnType,
   ColumnsType,
@@ -16,77 +21,44 @@ import type {
   TableProps,
 } from "antd/es/table";
 import { FilterConfirmProps } from "antd/es/table/interface";
+import get from "lodash.get";
+import isEqual from "lodash.isequal";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
-import { BodyModalAcademicDegree } from "../body-modal";
+import { BodyManagerAdminHealth } from "../body-modal/BodyManagerAdminHealth";
 import { ActionGroup } from "../box";
-import { ActionBox } from "../box/action.box";
-import { BtnPlus } from "../button";
+import { EyeActionBox } from "../box/EyeActionBox.";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
-import moment from "moment";
-import { useMemo, useRef, useState } from "react";
+import { BodyAdminHospitalService } from "../body-modal/BodyAdminHospitalService";
 const { confirm } = Modal;
 
-type DataIndex = keyof AcademicDegree;
+type DataIndex = keyof ResAdminManagerHospitalService;
 
-export function ManagerAcademicDegree() {
+export function ManagerHospitalService() {
   // State components
-  const [academicDegreeEdit, setAcademicDegreeEdit] =
-    useState<Partial<AcademicDegree> | null>({
-      id: "",
-      name: "",
-    });
+  const [viewer, setViewer] = useState<
+    ResAdminManagerHospitalService | null | undefined
+  >(null);
 
-  const [
-    showAcademicDegreeCreateOrUpdateModal,
-    setShowAcademicDegreeCreateOrUpdateModal,
-  ] = useState<boolean>(false);
+  const [showModalDetails, setShowModalDetails] = useState<boolean>(false);
 
   // Toggle show modal create or update
-  const toggleShowAcademicDegreeCreateOrUpdateModal = () => {
-    setShowAcademicDegreeCreateOrUpdateModal((s) => {
+  const toggleShowModalDetails = () => {
+    setShowModalDetails((s) => {
       // s && setSecialistEdit(null);
       return !s;
     });
   };
 
-  async function submitFormCreateOrUpdateAcademicDegree(
-    data: Partial<AcademicDegree>
-  ): Promise<boolean> {
-    const api = doctorApi.createOrUpdateAcademicDegree(data);
-    const isOk = await toastMsgFromPromise(api);
-    if (isOk) {
-      setAcademicDegreeEdit(null);
-      mutateAcademicDegree();
-    }
-    return isOk;
-  }
-
-  function editAcademicDegree(record: AcademicDegree): void {
-    setAcademicDegreeEdit(record);
-    toggleShowAcademicDegreeCreateOrUpdateModal();
-  }
-
-  function handleClickDeleteAcademicDegree(record: AcademicDegree): void {
-    confirm({
-      title: `Bạn có muốn xóa học vị "${record.name}"?`,
-      icon: <ExclamationCircleFilled />,
-      content: `Thao tác này sẽ xóa tất cả dữ liệu về "${record.name}" và không thể khôi phục`,
-      async onOk() {
-        const api = doctorApi.deleteAcademicDegree({ id: record.id });
-        const isOk = await toastMsgFromPromise(api);
-        isOk && mutateAcademicDegree();
-        return isOk;
-      },
-      onCancel() {},
-    });
-  }
-
-  // Table
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
+  const [queryParams, setQueryParams] = useState<{}>({
+    healthFacilityEmail: "",
+    healthFacilityName: "",
+  });
   const searchInput = useRef<InputRef>(null);
   const [tableParams, setTableParams] = useState<{
     pagination: TablePaginationConfig;
@@ -108,18 +80,19 @@ export function ManagerAcademicDegree() {
       })
     ).data;
   const {
-    data: responseAcademicDegree,
-    mutate: mutateAcademicDegree,
+    data: response,
+    mutate: mutate,
     error,
     isLoading,
-  } = useSWR<ResDataPaginations<AcademicDegree>>(
+  } = useSWR<ResDataPaginations<ResAdminManagerHospitalService>>(
     [
-      API_ACEDEMIC_DEGREE,
+      API_ADMIN_HOSPITAL_SERVICE,
       {
         limit: tableParams.pagination.pageSize, // 4 page 2 => 3, 4 page 6 => 21
         offset:
           ((tableParams.pagination.current || 0) - 1) *
           (tableParams.pagination.pageSize || 0),
+        ...queryParams,
       },
     ],
     fetcher,
@@ -133,6 +106,7 @@ export function ManagerAcademicDegree() {
     clearFilters();
     setSearchText("");
   };
+
   const handleSearch = (
     selectedKeys: string[],
     confirm: (param?: FilterConfirmProps) => void,
@@ -150,11 +124,23 @@ export function ManagerAcademicDegree() {
     setTableParams({
       pagination,
     });
+
+    setQueryParams((prev) => {
+      return {
+        healthFacilityEmail: filters["healthFacility.email"],
+        healthFacilityName: filters["healthFacility.name"],
+      };
+    });
+  };
+
+  const handleClickView = (record: ResAdminManagerHospitalService) => {
+    setViewer(record);
+    toggleShowModalDetails();
   };
 
   const getColumnSearchProps = (
-    dataIndex: DataIndex
-  ): ColumnType<AcademicDegree> => ({
+    dataIndex: DataIndex | any
+  ): ColumnType<ResAdminManagerHospitalService> => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -221,17 +207,17 @@ export function ManagerAcademicDegree() {
       <BsSearch style={{ color: filtered ? "#1677ff" : undefined }} />
     ),
     onFilter: (value, record) =>
-      record[dataIndex]
+      get(record, dataIndex)
         .toString()
         .toLowerCase()
-        .includes((value as string).toLowerCase()),
+        .includes(value.toString().toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100);
       }
     },
     render: (text) => {
-      return searchedColumn === dataIndex ? (
+      return isEqual(searchedColumn, dataIndex) ? (
         <Highlighter
           highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
           searchWords={[searchText]}
@@ -244,41 +230,72 @@ export function ManagerAcademicDegree() {
     },
   });
 
-  const data = useMemo<Partial<AcademicDegree>[]>(() => {
-    return responseAcademicDegree?.rows.map(
-      (academicDegree: AcademicDegree) => ({
-        ...academicDegree,
-        key: academicDegree.id,
-        id: academicDegree.id,
-        name: academicDegree.name,
-      })
-    );
-  }, [responseAcademicDegree]);
+  const data = useMemo<ResAdminManagerHospitalService[]>(() => {
+    return response?.rows?.map((d: ResAdminManagerHospitalService) => ({
+      ...d,
+      key: d.healthFacility.id,
+    }));
+  }, [response]);
 
   // Columns
-  const columns: ColumnsType<AcademicDegree> = useMemo(() => {
+  const columns: ColumnsType<ResAdminManagerHospitalService> = useMemo(() => {
     return [
       {
-        title: "Id",
-        dataIndex: "id",
-        key: "id",
+        title: "Tên bệnh viện",
+        dataIndex: ["healthFacility", "name"],
+        key: "healthFacility.name",
         render: (text) => <a>{text}</a>,
-        width: "16%",
+        sorter: (a, b) =>
+          a.healthFacility.name.localeCompare(b.healthFacility.name),
+        ...getColumnSearchProps(["healthFacility", "name"]),
       },
       {
-        title: "Tên học vị",
-        dataIndex: "name",
-        key: "name",
+        title: "Email",
+        dataIndex: ["healthFacility", "email"],
+        key: "healthFacility.email",
         render: (text) => <a>{text}</a>,
-        sorter: (a, b) => a.name.localeCompare(b.name),
-        ...getColumnSearchProps("name"),
+        sorter: (a, b) =>
+          a.healthFacility.email.localeCompare(b.healthFacility.email),
+        ...getColumnSearchProps(["healthFacility", "email"]),
       },
       {
-        title: "Ngày tạo",
-        dataIndex: "createdAt",
-        key: "createdAt",
-        render: (text) => <a>{moment(text).locale("vi").calendar()}</a>,
-        sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
+        title: "Số dịch vụ đang tạm ngưng",
+        dataIndex: "serviceCount",
+        key: "serviceCount",
+        render: (text: number) => (
+          <a>
+            <Chip
+              className="capitalize"
+              color={"primary"}
+              size="sm"
+              variant="flat"
+            >
+              {text} dịch vụ
+            </Chip>
+          </a>
+        ),
+      },
+      {
+        title: "Số dịch vụ đang hoạt đọngo",
+        key: "active",
+        render: (d) => {
+          const count = d.service.filter(
+            (m: HospitalService) => m.isAcctive
+          ).length;
+
+          return (
+            <a>
+              <Chip
+                className="capitalize"
+                color={"success"}
+                size="sm"
+                variant="flat"
+              >
+                {count} dịch vụ
+              </Chip>
+            </a>
+          );
+        },
       },
       {
         title: "Hành động",
@@ -286,13 +303,10 @@ export function ManagerAcademicDegree() {
         render: (_, record) => {
           return (
             <ActionGroup className="justify-start">
-              <ActionBox
-                type="edit"
-                onClick={() => editAcademicDegree(record)}
-              />
-              <ActionBox
-                type="delete"
-                onClick={() => handleClickDeleteAcademicDegree(record)}
+              <EyeActionBox
+                onClick={() => {
+                  handleClickView(record);
+                }}
               />
             </ActionGroup>
           );
@@ -301,41 +315,37 @@ export function ManagerAcademicDegree() {
     ];
   }, [getColumnSearchProps]);
 
+  function refresh() {
+    mutate();
+  }
+  useEffect(() => {
+    setViewer((prev) => {
+      const newUpdate = data?.find(
+        (h) => h?.healthFacility?.id === prev?.healthFacility?.id
+      );
+      return newUpdate;
+    });
+  }, [data]);
+
   return (
-    <div className="">
+    <div className="mt-2">
       <ModalPositionHere
-        show={showAcademicDegreeCreateOrUpdateModal}
+        show={showModalDetails}
         toggle={() => {
-          toggleShowAcademicDegreeCreateOrUpdateModal();
+          toggleShowModalDetails();
         }}
+        config={{ zIndex: 40 }}
+        width={800}
         footer={false}
-        body={
-          <BodyModalAcademicDegree
-            clickCancel={toggleShowAcademicDegreeCreateOrUpdateModal}
-            handleSubmitForm={submitFormCreateOrUpdateAcademicDegree}
-            obAcademicDegreeEdit={academicDegreeEdit}
-          />
-        }
-        title={
-          academicDegreeEdit?.id
-            ? `Sửa học vị * ${academicDegreeEdit.name} *`
-            : "Thêm mới học vị"
-        }
+        body={<BodyAdminHospitalService refresh={refresh} viewer={viewer} />}
+        title="Thông tin các dịch vụ của cơ sở y tế"
       />
-      <h3 className="gr-title-admin flex items-center justify-between  mb-3">
-        Học vị
-        <BtnPlus
-          onClick={() => {
-            toggleShowAcademicDegreeCreateOrUpdateModal();
-            setAcademicDegreeEdit(null);
-          }}
-        />
-      </h3>
+
       <TableSortFilter
         options={{
           loading: isLoading,
           pagination: {
-            total: responseAcademicDegree?.count,
+            total: response?.count,
             pageSize: tableParams.pagination.pageSize,
             showSizeChanger: true,
             pageSizeOptions: ["3", "6", "12", "24", "50"],

@@ -399,7 +399,7 @@ export function ManagerHealthExamSchedule({
   }, [doctor?.rows?.[0]?.id]);
 
   return (
-    <div className="p-4 px-6">
+    <div className="">
       <ModalPositionHere
         width={620}
         show={showScheduleCreateOrUpdateModal}

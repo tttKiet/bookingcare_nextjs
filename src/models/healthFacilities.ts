@@ -1,5 +1,5 @@
 import { Dayjs } from "dayjs";
-import { HospitalManager, Working } from "./interface";
+import { HospitalManager, HospitalService, Working } from "./interface";
 
 export interface TypeHealthFacility {
   id: string;
@@ -61,4 +61,10 @@ export interface ResManagerAdmin {
   healthFacility: HealthFacility;
   manager: HospitalManager[];
   managerCount: number;
+}
+
+export interface ResAdminManagerHospitalService {
+  healthFacility: HealthFacility;
+  service: HospitalService[];
+  serviceCount: number;
 }

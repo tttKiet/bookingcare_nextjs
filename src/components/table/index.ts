@@ -1,1 +1,1 @@
-export * from "./table.sort";
+export * from "./TableSort";

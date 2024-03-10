@@ -1,9 +1,12 @@
-import { Cedicine } from "@/models";
+import { Cedicine, ExaminationService, HospitalService } from "@/models";
 import { ResData } from "@/types";
 import axios from "../axios";
 import {
   API_ADMIN_CEDICINE,
+  API_ADMIN_EXAMINATION_SERVICE,
+  API_ADMIN_HOSPITAL_SERVICE,
   API_ADMIN_MANAGER_ADMIN_HEALTH,
+  API_ADMIN_MANAGER_SERVICE,
 } from "./constant-api";
 
 export const adminApi = {
@@ -41,6 +44,40 @@ export const adminApi = {
   async deleteHospitalManager(id: string): Promise<ResData> {
     return await axios.delete(API_ADMIN_MANAGER_ADMIN_HEALTH, {
       data: { id },
+    });
+  },
+
+  async createOrUpdateExaminationService(
+    data: Partial<ExaminationService>
+  ): Promise<ResData> {
+    return await axios.post(API_ADMIN_EXAMINATION_SERVICE, {
+      ...data,
+    });
+  },
+
+  async deleteExaminationService(id: string): Promise<ResData> {
+    return await axios.delete(API_ADMIN_EXAMINATION_SERVICE, {
+      data: { id },
+    });
+  },
+
+  async createOrUpdateHospitalService(
+    data: Partial<HospitalService>
+  ): Promise<ResData> {
+    return await axios.post(API_ADMIN_MANAGER_SERVICE, {
+      ...data,
+    });
+  },
+
+  async deleteHospitalService({
+    healthFacilityId,
+    examinationServiceId,
+  }: Partial<HospitalService>): Promise<ResData> {
+    return await axios.delete(API_ADMIN_MANAGER_SERVICE, {
+      data: {
+        healthFacilityId,
+        examinationServiceId,
+      },
     });
   },
 };
