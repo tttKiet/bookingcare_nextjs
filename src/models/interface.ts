@@ -72,6 +72,16 @@ export interface HealthExaminationSchedule {
   maxNumber: number;
 }
 
+export interface StaffAndSchedule {
+  working: Working;
+  schedules: HealthExaminationSchedule[];
+}
+
+export interface ResAdminHealthExaminationSchedule {
+  date: string | Date | Object;
+  data: StaffAndSchedule[];
+}
+
 export interface PatientProfile {
   id: string;
   fullName: string;

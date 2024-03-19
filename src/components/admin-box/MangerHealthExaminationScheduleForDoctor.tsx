@@ -55,22 +55,17 @@ import BodyViewSchedule from "../body-modal/BodyViewSchedule";
 const { confirm } = Modal;
 
 type DataIndex = keyof HealthExaminationSchedule;
-interface ManagerHealthExamScheduleProps {
-  permission?: "doctor" | "admin";
-}
+interface MangerHealthExaminationScheduleForDoctorProps {}
 
-export function ManagerHealthExamSchedule({
-  permission = "admin",
-}: ManagerHealthExamScheduleProps) {
+export function MangerHealthExaminationScheduleForDoctor({}: MangerHealthExaminationScheduleForDoctorProps) {
   // State components
   const [showModalDetails, setShowModalDetails] = useState<boolean>(false);
   const [scheduleViewer, setScheduleViewer] =
     useState<ResAdminHealthExaminationSchedule | null>(null);
-
-  const { profile } = useAuth();
-  const isDoctor = permission === "doctor";
   const [workingIdDoctorLogined, setWorkingIdDoctorLogined] =
     useState<string>("");
+
+  const { profile } = useAuth();
 
   const [showScheduleCreateOrUpdateModal, setShowScheduleCreateOrUpdateModal] =
     useState(false);
@@ -91,17 +86,15 @@ export function ManagerHealthExamSchedule({
   };
 
   // Search health facilities state
-  const [selectValue, setSelectValue] = useState<string | null>(null);
-  const [doctorIdSelect, setDoctorIdSelect] = useState<string | null>(null);
-  useEffect(() => {
-    if (isDoctor && profile?.id) {
-      setDoctorIdSelect(profile?.id);
-    }
-  }, [profile, permission]);
 
-  function handleChangeSelect(value: string): void {
-    setDoctorIdSelect(value);
-  }
+  const { data: doctor } = useSWR<ResDataPaginations<Working>>(
+    `${API_ACCOUNT_STAFF_DOCTOR_WORKING}?doctorId=${
+      profile?.id?.toString() || ""
+    }`,
+    {
+      revalidateOnMount: true,
+    }
+  );
 
   async function handleSubmitFormSchedule(
     data: Partial<ReqSchedule>
@@ -120,7 +113,9 @@ export function ManagerHealthExamSchedule({
     setScheduleViewer(record);
     toggleShowModalDetails();
   };
-
+  useEffect(() => {
+    if (doctor?.rows?.[0]?.id) setWorkingIdDoctorLogined(doctor?.rows?.[0]?.id);
+  }, [doctor?.rows?.[0]?.id]);
   // Table
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -152,7 +147,7 @@ export function ManagerHealthExamSchedule({
     [
       API_DOCTOR_SCHEDULE_HEALTH_EXAM,
       {
-        staffId: doctorIdSelect,
+        staffId: profile?.id,
         date: dateSelect,
         limit: tableParams.pagination.pageSize, // 4 page 2 => 3, 4 page 6 => 21
         offset:
@@ -280,15 +275,6 @@ export function ManagerHealthExamSchedule({
     },
   });
 
-  const { data: doctor } = useSWR<ResDataPaginations<Working>>(
-    `${API_ACCOUNT_STAFF_DOCTOR_WORKING}?doctorId=${(
-      isDoctor && profile?.id
-    )?.toString()}`,
-    {
-      revalidateOnMount: true,
-    }
-  );
-
   const [obEditScheduleDoctor, setBbEditScheduleDoctor] = useState<{
     workingId: string;
     staffId: string;
@@ -300,11 +286,6 @@ export function ManagerHealthExamSchedule({
     date: string | Object | Date | undefined | null,
     staffId: string
   ) {
-    console.log("handleClickEdit------------", {
-      date,
-      workingId,
-      staffId,
-    });
     setBbEditScheduleDoctor(() => ({
       date,
       workingId,
@@ -335,18 +316,6 @@ export function ManagerHealthExamSchedule({
           width: "16%",
         },
         {
-          title: "Tổng bác sỉ tạo lịch",
-          dataIndex: "data",
-          key: "data",
-          render: (text) => (
-            <a>
-              <Chip color="primary" variant="dot">
-                {text.length}
-              </Chip>
-            </a>
-          ),
-        },
-        {
           title: "Tổng số khung giờ khám",
           dataIndex: "data",
           key: "data",
@@ -359,7 +328,6 @@ export function ManagerHealthExamSchedule({
             </a>
           ),
         },
-
         {
           title: "Hành động",
           key: "action",
@@ -378,10 +346,6 @@ export function ManagerHealthExamSchedule({
       ];
     }, [getColumnSearchProps]);
 
-  useEffect(() => {
-    if (doctor?.rows?.[0]?.id) setWorkingIdDoctorLogined(doctor?.rows?.[0]?.id);
-  }, [doctor?.rows?.[0]?.id]);
-
   return (
     <div className="">
       <ModalPositionHere
@@ -394,7 +358,7 @@ export function ManagerHealthExamSchedule({
         body={
           <BodyModalSchedule
             obEditScheduleDoctor={obEditScheduleDoctor}
-            workingId={(isDoctor && workingIdDoctorLogined) || false}
+            workingId={workingIdDoctorLogined}
             clickCancel={toggleShowScheduleCreateOrUpdateModal}
             handleSubmitForm={handleSubmitFormSchedule}
           />
@@ -420,23 +384,8 @@ export function ManagerHealthExamSchedule({
         title={`Lịch khám bệnh ngày ${scheduleViewer?.date}`}
       />
       <h3 className="gr-title-admin flex items-center justify-between  mb-3">
-        {!isDoctor ? (
-          <>
-            Quản lý lịch khám bệnh
-            {/* <div className="flex-shrink-0">
-              <SelectSearchField
-                placeholder="Tìm kiếm: nhập email bác sỉ ..."
-                data={dataSearch}
-                handleSearchSelect={handleSearchSelect}
-                handleChangeSelect={handleChangeSelect}
-                value={doctorIdSelect}
-                debounceSeconds={300}
-              />
-            </div> */}
-          </>
-        ) : (
-          <div>Lịch khám bệnh - {profile?.fullName}</div>
-        )}
+        <div>Lịch khám bệnh - {profile?.fullName}</div>
+
         <div className="flex items-center justify-end gap-3">
           <DatePicker
             bordered={true}

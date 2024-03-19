@@ -183,10 +183,7 @@ export const schemaCodeBody = yup.object().shape({
 
 export const schemaCodeScheduleHealth = yup.object().shape({
   workingId: yup.string().required("Vui lòng chọn nhân viên."),
-  timeCodeArray: yup
-    .array()
-    .required("Vui lòng chọn thời gian")
-    .min(1, "Vui lòng chọn thời gian."),
+  timeCodeArray: yup.array(),
   maxNumber: yup
     .number()
     .required("Vui điền số lượng tối đã khám trong một thời gian."),

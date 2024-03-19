@@ -29,7 +29,6 @@ import {
 import { ResDataPaginations } from "@/types";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
-  Button,
   Checkbox,
   Col,
   DatePicker,
@@ -49,6 +48,7 @@ import {
   InputTextareaField,
   RadioGroupField,
   SelectField,
+  SelectSearchField,
 } from "../form";
 import { SelectDateCalendarField } from "../form/select-date-field";
 import dayjs, { Dayjs } from "dayjs";
@@ -57,6 +57,11 @@ import debounce from "lodash.debounce";
 import axios from "../../axios";
 import { CheckboxValueType } from "antd/es/checkbox/Group";
 import Link from "next/link";
+import moment from "moment";
+import { Button, CheckboxGroup, User } from "@nextui-org/react";
+import CheckBoxSchedule from "../common/CheckBoxSchedule";
+import { CheckIcon } from "../icons/CheckIcon";
+import { AiOutlineClose } from "react-icons/ai";
 export interface ReqSchedule extends HealthExaminationSchedule {
   timeCodeArray: Array<string>;
 }
@@ -66,6 +71,11 @@ export interface BodyModalScheduleProps {
   loading?: boolean;
   obEdit?: ReqSchedule | null;
   workingId?: string | boolean;
+  obEditScheduleDoctor: {
+    staffId: string;
+    workingId: string;
+    date: any;
+  } | null;
 }
 
 export function BodyModalSchedule({
@@ -74,6 +84,7 @@ export function BodyModalSchedule({
   loading,
   obEdit,
   workingId,
+  obEditScheduleDoctor,
 }: BodyModalScheduleProps) {
   const {
     control,
@@ -118,8 +129,11 @@ export function BodyModalSchedule({
   });
 
   const [emailSearch, setEmailSearch] = useState<string>("");
-  const { data: doctors } = useSWR(
-    `${API_ACCOUNT_STAFF_DOCTOR_WORKING}?doctorEmail=${emailSearch}`,
+
+  const { data: doctors } = useSWR<ResDataPaginations<Working>>(
+    `${API_ACCOUNT_STAFF_DOCTOR_WORKING}?doctorEmail=${emailSearch}&workingId=${
+      obEditScheduleDoctor?.workingId || ""
+    }`,
     {
       revalidateOnMount: true,
     }
@@ -135,13 +149,17 @@ export function BodyModalSchedule({
     }
   };
 
-  const [workingIdSelect, setDoctorIdSelect] = useState<Event>();
+  const [workingIdSelect, setWorkingIdSelect] = useState<string | null>(
+    obEditScheduleDoctor?.workingId || null
+  );
 
-  const { data: scheduleDoctors } = useSWR<
+  const [workingSelect, setWorkingSelect] = useState<Working | null>(null);
+
+  const { data: scheduleDoctors, mutate: mutateSchedules } = useSWR<
     ResDataPaginations<HealthExaminationSchedule>
   >(
-    `${API_DOCTOR_SCHEDULE_HEALTH_EXAM}?workingId=${
-      workingId || workingIdSelect
+    `${API_DOCTOR_SCHEDULE_HEALTH_EXAM}/doctor?workingId=${
+      obEditScheduleDoctor?.workingId || workingId || workingIdSelect
     }&date=${dateSelect}`,
     {
       revalidateOnMount: false,
@@ -154,6 +172,17 @@ export function BodyModalSchedule({
       revalidateOnMount: true,
     }
   );
+
+  useEffect(() => {
+    if (obEditScheduleDoctor) {
+      const doctorFilter: Working = doctors?.rows.find(
+        (d: Working) => d.id == obEditScheduleDoctor.workingId
+      );
+
+      const email = doctorFilter?.Staff?.email || "";
+      onChangeSelectDoctor(email);
+    }
+  }, [obEditScheduleDoctor, doctors]);
 
   useEffect(() => {
     if (scheduleDoctors) {
@@ -171,6 +200,18 @@ export function BodyModalSchedule({
     }
   }, [scheduleDoctors]);
 
+  useEffect(() => {
+    if (obEditScheduleDoctor?.workingId) {
+      setWorkingIdSelect(obEditScheduleDoctor.staffId);
+      onChangeWorkingId(obEditScheduleDoctor.workingId);
+
+      if (obEditScheduleDoctor.date) {
+        const datePassProps = dayjs(new Date(obEditScheduleDoctor.date));
+        onChangeDate(datePassProps);
+      }
+    }
+  }, [obEditScheduleDoctor?.workingId, obEditScheduleDoctor?.date]);
+
   function onSearchSelectDoctors(value: string): void {
     setEmailSearch(value);
   }
@@ -183,77 +224,53 @@ export function BodyModalSchedule({
   >([]);
 
   useEffect(() => {
-    console.log("workingId", workingId);
     if (workingId && workingId !== true) {
       setValue("workingId", workingId);
     }
   }, [workingId]);
-
-  useEffect(() => {
-    setOptionDoctors(() => {
-      return (
-        doctors?.rows?.map((t: Working) => ({
-          value: t.id,
-          label: (
-            <div>
-              <h3 className="text-sm text-gray-600 font-medium">
-                {t?.Staff?.fullName}
-              </h3>
-              <span className="text-xs text-black font-normal flex items-center justify-between">
-                <span>{t?.Staff?.email}</span>
-                <span>{t?.Staff?.AcademicDegree?.name}</span>
-              </span>
-            </div>
-          ),
-        })) || []
-      );
-    });
-  }, [doctors]);
 
   async function handleSubmitLocal(data: Partial<ReqSchedule>) {
     const isOk = await handleSubmitForm({
       ...data,
     });
     if (isOk) {
-      reset({
-        date: dayjs(new Date()),
-      });
-      setDateSelect(dayjs(new Date()));
       clickCancel();
     }
   }
 
-  async function onChangeSelectDoctor(e: Event) {
-    setDoctorIdSelect(e);
+  async function onChangeSelectDoctor(email: string) {
+    // email
+    const doctorFilter: Working = doctors?.rows.find(
+      (d: Working) => d.Staff.email == email
+    );
+    setWorkingSelect(doctorFilter);
+    const doctorWorkingId = doctorFilter?.id || "";
+    setWorkingIdSelect(doctorWorkingId);
+    onChangeWorkingId(doctorWorkingId);
   }
-  const filterOption: any = (
-    input: string,
-    option: { label: string; value: string }
-  ) => {
-    return !!onSearchSelectDoctors
-      ? true
-      : (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
-  };
 
-  const onChangeCheckTimeCode = (checkedValues: CheckboxValueType[]) => {
+  const onChangeCheckTimeCode = (checkedValues: any) => {
     onChangeTimeCodeArray(checkedValues);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (obEdit?.Working) {
+      setWorkingSelect(obEdit?.Working || null);
       setOptionDoctors(() => {
         return [
           {
             value: obEdit.id,
             label: (
-              <div>
-                <h3 className="text-sm text-gray-600 font-medium">
-                  {obEdit.Working.Staff.fullName}
-                </h3>
-                <span className="text-xs text-black font-normal flex items-center justify-between gap-2">
-                  <span>{obEdit.Working.Staff.email}</span>
-                  <span>{obEdit.Working.Staff.fullName}</span>
-                </span>
+              <div className="flex items-center justify-between gap-2">
+                <User
+                  avatarProps={{ radius: "lg" }}
+                  description={`doctor|${obEdit?.Working?.Staff?.AcademicDegree.name}`}
+                  name={`${obEdit?.Working?.Staff.fullName}`}
+                >
+                  {obEdit?.Working?.Staff.fullName}
+                </User>
+
+                <span>{obEdit?.Working?.Staff.email}</span>
               </div>
             ),
           },
@@ -262,6 +279,27 @@ export function BodyModalSchedule({
     }
   }, [obEdit, reset]);
 
+  useEffect(() => {
+    setOptionDoctors(() => {
+      return doctors?.rows?.map((t: Working) => ({
+        value: t.Staff.email,
+        label: (
+          <div className="flex items-center justify-between gap-2">
+            <User
+              avatarProps={{ radius: "lg" }}
+              description={`doctor|${t?.Staff?.AcademicDegree.name}`}
+              name={`${t?.Staff.fullName}`}
+            >
+              {t.Staff.fullName}
+            </User>
+
+            <span>{t.Staff.email}</span>
+          </div>
+        ),
+      }));
+    });
+  }, [doctors]);
+
   return (
     <form
       onSubmit={handleSubmit(handleSubmitLocal)}
@@ -269,48 +307,60 @@ export function BodyModalSchedule({
     >
       <div>
         <div className="grid grid-cols-1 gap-3">
-          <div className="flex flex-col">
-            {workingId ? (
-              <></>
-            ) : (
-              <>
-                <label className="top-1 text-sm font-medium mb-2" htmlFor="">
-                  Lịch của bác sỉ
-                </label>
-                <div>
-                  <Select
-                    onSearch={debounce(onSearchSelectDoctors, 300)}
-                    placement="bottomLeft"
-                    className="sm:w-[40%] w-full"
-                    size="large"
-                    placeholder="Nhập email bác sỉ..."
-                    virtual={false}
-                    showSearch
-                    optionFilterProp="children"
-                    notFoundContent={<div>Không tìm thây...</div>}
-                    getPopupContainer={(triggerNode) =>
-                      triggerNode.parentElement
-                    }
-                    options={optionDoctors}
-                    filterOption={filterOption}
-                    onChange={(e: any) => {
-                      onChangeWorkingId(e);
-                      onChangeSelectDoctor(e);
-                    }}
-                    value={workingIdValue || null}
-                  />
+          <div>
+            <div className="flex flex-col">
+              {!workingId && (
+                <div className="min-h-[160px]">
+                  <>
+                    <label
+                      className="top-1 text-base font-medium mb-2 block"
+                      htmlFor=""
+                    >
+                      Lịch của bác sỉ
+                    </label>
+                    <div>
+                      <SelectSearchField
+                        placeholder="Email bác sỉ..."
+                        data={optionDoctors}
+                        handleSearchSelect={debounce(
+                          onSearchSelectDoctors,
+                          300
+                        )}
+                        value={emailSearch}
+                        debounceSeconds={300}
+                        handleChangeSelect={(e: string) => {
+                          onChangeSelectDoctor(e);
+                        }}
+                      />
+                    </div>
+                    {workingSelect && (
+                      <div className="flex items-center justify-between gap-2 my-6">
+                        <User
+                          avatarProps={{ radius: "lg" }}
+                          description={`doctor|${workingSelect?.Staff?.AcademicDegree.name}`}
+                          name={`${workingSelect?.Staff.fullName}`}
+                        >
+                          <span className="font-bold">
+                            {workingSelect?.Staff.fullName}
+                          </span>
+                        </User>
+
+                        <span>{workingSelect?.Staff.email}</span>
+                      </div>
+                    )}
+                  </>
                 </div>
-              </>
-            )}
+              )}
+            </div>
 
             {errorWorkingId && (
-              <p className="text-red-500 font-medium text-xs pt-1">
+              <p className="text-sm text-red-500 font-medium">
                 {errorWorkingId?.message}
               </p>
             )}
           </div>
-          <div className="flex flex-col">
-            <label className="top-1 text-sm font-medium mb-2" htmlFor="">
+          <div className="flex flex-col mb-2">
+            <label className="top-1 text-base font-medium mb-2" htmlFor="">
               Ngày khám
             </label>
             <div>
@@ -324,8 +374,8 @@ export function BodyModalSchedule({
             </div>
           </div>
           <div className="flex flex-col">
-            <label className="top-1 text-sm font-medium mb-2" htmlFor="">
-              Số lượng tối đa khám trên một đơn vị
+            <label className="top-1 text-base font-medium mb-2" htmlFor="">
+              Số lượng bệnh nhân trong một khung giờ
             </label>
             <InputNumber
               bordered
@@ -339,74 +389,102 @@ export function BodyModalSchedule({
               value={maxNumber}
             />
             {errorMaxNumber && (
-              <p className="text-red-500 font-medium text-xs pt-1">
+              <p className="text-sm text-red-500 font-medium">
                 {errorMaxNumber?.message}
               </p>
             )}
           </div>
 
           <div className="flex flex-col">
-            <label className="top-1 text-sm font-medium mb-2" htmlFor="">
+            <label className="top-1 text-base font-medium mb-2" htmlFor="">
               Khung giờ
             </label>
-            <Checkbox.Group
-              style={{ width: "100%" }}
-              onChange={onChangeCheckTimeCode}
+
+            <CheckboxGroup
               value={timeCodeArrayValue}
+              onChange={onChangeCheckTimeCode}
+              classNames={{
+                base: "w-full",
+              }}
+              className="gap-1"
+              orientation="horizontal"
             >
-              <Row>
-                {allTimeCodes?.rows.map((code: Code) => {
-                  return (
-                    <Col span={8} key={code.key}>
-                      <Checkbox value={code.key}>{code.value}</Checkbox>
-                    </Col>
-                  );
-                })}
-              </Row>
-            </Checkbox.Group>
+              {allTimeCodes?.rows.map((code: Code) => {
+                return (
+                  <CheckBoxSchedule key={code.key} value={code.key}>
+                    {code.value}
+                  </CheckBoxSchedule>
+                );
+              })}
+            </CheckboxGroup>
             {errorTimeCodeArray && (
-              <p className="text-red-500 font-medium text-xs pt-1">
+              <p className="text-sm text-red-500 font-medium">
                 {errorTimeCodeArray?.message}
               </p>
             )}
           </div>
         </div>
-        <div className="mt-3">
-          <h3 className="text-base text-gray-900">Lưu ý:</h3>
-          {!workingId ? (
-            <ul className="mt-">
-              <li className="text-gray-400">
-                Chỉ hiển thị các bác sỉ đang công tác. Xem công tác ở
-                <Link
-                  href="/admin/work"
-                  className="pl-1 text-blue-500 underline"
-                >
-                  đây
-                </Link>
-                .
-              </li>
-            </ul>
-          ) : (
-            <p>Tạo lịch cho chính bạn</p>
-          )}
-        </div>
+
+        {!workingId ? (
+          <>
+            <div className="mt-3">
+              <h3 className="text-base text-gray-900">Lưu ý:</h3>
+              <ul className="mt-">
+                <li className="text-gray-400">
+                  Chỉ hiển thị các bác sỉ đang công tác. Xem công tác ở
+                  <Link
+                    href="/admin/work"
+                    className="pl-1 text-blue-500 underline"
+                  >
+                    đây
+                  </Link>
+                  .
+                </li>
+              </ul>
+            </div>
+          </>
+        ) : (
+          <></>
+        )}
       </div>
 
-      <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
-        <Button type="default" size="middle" onClick={clickCancel}>
-          Hủy
-        </Button>
-        <Space wrap>
+      <div className="flex items-center gap-2 justify-between mt-2 pt-[20px]">
+        <div className="flex gap-4 items-center">
           <Button
-            type="primary"
-            size="middle"
-            loading={isSubmitting}
-            // onClick={() => true}
-            htmlType="submit"
+            color="primary"
+            variant="flat"
+            size="sm"
+            startContent={<CheckIcon />}
+            onClick={() => {
+              const timeCodes = allTimeCodes?.rows.map((row: any) => row.key);
+              onChangeCheckTimeCode(timeCodes);
+              setValue("timeCodeArray", timeCodes);
+            }}
           >
+            Chọn tất cả
+          </Button>
+          <Button
+            color="danger"
+            variant="flat"
+            startContent={<AiOutlineClose />}
+            size="sm"
+            onClick={() => {
+              onChangeCheckTimeCode([]);
+              setValue("timeCodeArray", []);
+            }}
+          >
+            Xóa tất cả lịch
+          </Button>
+        </div>
+        <div className="flex items-center gap-2 justify-end ">
+          <Button color="danger" variant="light" onClick={clickCancel}>
+            Hủy
+          </Button>
+
+          <Button color="primary" isLoading={isSubmitting} type="submit">
             {obEdit?.id ? "Lưu" : "Thêm"}
           </Button>
-        </Space>
+        </div>
       </div>
     </form>
   );

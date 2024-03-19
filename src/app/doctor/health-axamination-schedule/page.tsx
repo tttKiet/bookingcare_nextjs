@@ -1,9 +1,9 @@
-import { ManagerHealthExamSchedule } from "@/components/admin-box";
+import { MangerHealthExaminationScheduleForDoctor } from "@/components/admin-box/MangerHealthExaminationScheduleForDoctor";
 
 export default function HealthAxaminationSchedule() {
   return (
     <div className="box-white">
-      <ManagerHealthExamSchedule permission="doctor" />
+      <MangerHealthExaminationScheduleForDoctor />
     </div>
   );
 }

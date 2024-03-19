@@ -52,7 +52,6 @@ export function ManagerAdminHealthFacility() {
 
   const [showModalDetails, setShowModalDetails] = useState<boolean>(false);
 
-  // Toggle show modal create or update
   const toggleShowModalDetails = () => {
     setShowModalDetails((s) => {
       // s && setSecialistEdit(null);
