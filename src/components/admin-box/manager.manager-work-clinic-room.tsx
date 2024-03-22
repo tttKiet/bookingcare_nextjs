@@ -115,7 +115,11 @@ export function ManagerClinicWork() {
   }
 
   function handleChangeSelect(value: string): void {
-    setSelectHealthValue(value);
+    const filter =
+      responseHealthFacilities?.rows.find(
+        (r: HealthFacility) => r.email == value
+      )?.id || "";
+    setSelectHealthValue(filter);
   }
   const [maxMember, setMaxMember] = useState<number>(0);
   const fetcher: BareFetcher<ResDataPaginations<any>> = async ([url, token]) =>
@@ -140,7 +144,6 @@ export function ManagerClinicWork() {
     {
       revalidateOnMount: true,
       revalidateOnFocus: true,
-
       dedupingInterval: 2000,
     }
   );
@@ -148,10 +151,6 @@ export function ManagerClinicWork() {
   const [selectClinicRoomNumber, setSelectClinicRoomNumber] = useState<
     number | null
   >(responseClinics?.rows?.[0]?.roomNumber || null);
-
-  useEffect(() => {
-    setSelectClinicRoomNumber(responseClinics?.rows?.[0]?.roomNumber || null);
-  }, [responseClinics]);
 
   function handleSearchSelectClinic(value: string): void {}
 
@@ -195,7 +194,6 @@ export function ManagerClinicWork() {
     fetcher,
     {
       revalidateOnMount: false,
-      dedupingInterval: 5000,
     }
   );
 
@@ -401,23 +399,24 @@ export function ManagerClinicWork() {
 
   const dataSearchClinic: SelectProps["options"] = responseClinics?.rows.map(
     (clinic: ClinicRoom) => ({
-      value: clinic.roomNumber,
-      text: <h3 className="text-cyan-600">{clinic.roomNumber}</h3>,
+      value: clinic.roomNumber.toString(),
+      label: <h3 className="text-cyan-600">{clinic.roomNumber}</h3>,
     })
   );
 
   const dataSearch: SelectProps["options"] = responseHealthFacilities?.rows.map(
     (healh: HealthFacility) => ({
-      value: healh.id,
-      text: (
+      value: healh.email,
+      label: (
         <div className="flex align-top gap-2">
           <Image
-            className="rounded-full border border-white object-cover w-[32px] h-[32px]"
+            className="rounded-full border-spacing-8 border  border-blue-400  object-cover w-[44px] h-[42px]"
             alt="Health Facility"
-            width={28}
-            height={28}
+            width={44}
+            height={44}
             src={healh?.images?.[0] || ""}
           />
+
           <div className="flex-1">
             <h4 className="text-sm p-y-[1px]  text-black">{healh.name}</h4>
             <div className="flex items-center justify-between gap-x-4">
@@ -433,6 +432,10 @@ export function ManagerClinicWork() {
       ),
     })
   );
+
+  useEffect(() => {
+    handleChangeSelectClinic(responseClinics?.rows?.[0]?.roomNumber);
+  }, [responseClinics]);
 
   return (
     <div className="">
@@ -459,27 +462,28 @@ export function ManagerClinicWork() {
       />
       <div>
         <div className="grid grid-cols-12 gap-3">
-          <div className="col-span-12 xl:col-span-3">
-            <h3 className="mb-2">Tìm kiếm cơ sở y tế</h3>
+          <div className="col-span-12 xl:col-span-6">
             <div className="flex items-end gap-2 ">
               <SelectSearchField
+                title="Tìm kiếm cơ sở y tế"
                 style={{ minWidth: 200, width: "100%" }}
-                placeholder="Nhập tên hoặc email cơ sơ y tế"
+                placeholder="Nhập email cơ sơ y tế"
                 data={dataSearch}
                 handleSearchSelect={handleSearchSelect}
                 handleChangeSelect={handleChangeSelect}
                 value={selectHealthValue}
+                isRequired
               />
             </div>
           </div>
           {selectHealthValue && selectClinicRoomNumber && (
-            <div className="col-span-12 xl:col-span-3">
-              <h3 className="mb-2">Phòng khám</h3>
+            <div className="col-span-12 xl:col-span-6">
               <div className="flex items-end gap-2 ">
                 <SelectSearchField
                   style={{ minWidth: 200, width: "100%" }}
                   allowClear={false}
                   placeholder="Phòng khám"
+                  title="Phòng khám"
                   data={dataSearchClinic}
                   handleSearchSelect={handleSearchSelectClinic}
                   handleChangeSelect={handleChangeSelectClinic}
@@ -516,7 +520,7 @@ export function ManagerClinicWork() {
       {!(selectHealthValue && selectClinicRoomNumber) && (
         <h4 className="p-5 text-center">
           {selectHealthValue && !selectClinicRoomNumber && (
-            <span>Cơ sở này chưa thêm dữ liệu phòng</span>
+            <span>Cơ sở này chưa thêm dữ liệu phòng khám</span>
           )}
         </h4>
       )}

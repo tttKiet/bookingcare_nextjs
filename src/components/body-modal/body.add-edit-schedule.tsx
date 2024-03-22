@@ -58,10 +58,11 @@ import axios from "../../axios";
 import { CheckboxValueType } from "antd/es/checkbox/Group";
 import Link from "next/link";
 import moment from "moment";
-import { Button, CheckboxGroup, User } from "@nextui-org/react";
+import { Button, CheckboxGroup, Chip, User } from "@nextui-org/react";
 import CheckBoxSchedule from "../common/CheckBoxSchedule";
 import { CheckIcon } from "../icons/CheckIcon";
 import { AiOutlineClose } from "react-icons/ai";
+import { NotificationIcon } from "../icons/NotificationIcon";
 export interface ReqSchedule extends HealthExaminationSchedule {
   timeCodeArray: Array<string>;
 }
@@ -76,6 +77,7 @@ export interface BodyModalScheduleProps {
     workingId: string;
     date: any;
   } | null;
+  auth?: "doctor";
 }
 
 export function BodyModalSchedule({
@@ -85,7 +87,9 @@ export function BodyModalSchedule({
   obEdit,
   workingId,
   obEditScheduleDoctor,
+  auth,
 }: BodyModalScheduleProps) {
+  console.log("workingId", workingId);
   const {
     control,
     handleSubmit,
@@ -127,7 +131,7 @@ export function BodyModalSchedule({
     name: "workingId",
     control,
   });
-
+  console.log("workingIdValue", workingIdValue);
   const [emailSearch, setEmailSearch] = useState<string>("");
 
   const { data: doctors } = useSWR<ResDataPaginations<Working>>(
@@ -204,7 +208,6 @@ export function BodyModalSchedule({
     if (obEditScheduleDoctor?.workingId) {
       setWorkingIdSelect(obEditScheduleDoctor.staffId);
       onChangeWorkingId(obEditScheduleDoctor.workingId);
-
       if (obEditScheduleDoctor.date) {
         const datePassProps = dayjs(new Date(obEditScheduleDoctor.date));
         onChangeDate(datePassProps);
@@ -230,6 +233,7 @@ export function BodyModalSchedule({
   }, [workingId]);
 
   async function handleSubmitLocal(data: Partial<ReqSchedule>) {
+    console.log("data", data);
     const isOk = await handleSubmitForm({
       ...data,
     });
@@ -243,6 +247,7 @@ export function BodyModalSchedule({
     const doctorFilter: Working = doctors?.rows.find(
       (d: Working) => d.Staff.email == email
     );
+
     setWorkingSelect(doctorFilter);
     const doctorWorkingId = doctorFilter?.id || "";
     setWorkingIdSelect(doctorWorkingId);
@@ -301,191 +306,207 @@ export function BodyModalSchedule({
   }, [doctors]);
 
   return (
-    <form
-      onSubmit={handleSubmit(handleSubmitLocal)}
-      className="flex flex-col gap-2 pt-4"
-    >
-      <div>
-        <div className="grid grid-cols-1 gap-3">
+    <div>
+      {auth === "doctor" && !workingId ? (
+        <div className=" pt-4">
+          <Chip
+            startContent={<NotificationIcon size={18} />}
+            variant="flat"
+            color="warning"
+          >
+            Bạn chưa được thêm vào danh sách công tác!
+          </Chip>
+        </div>
+      ) : (
+        <form
+          onSubmit={handleSubmit(handleSubmitLocal)}
+          className="flex flex-col gap-2 pt-4"
+        >
           <div>
-            <div className="flex flex-col">
-              {!workingId && (
-                <div className="min-h-[160px]">
-                  <>
-                    <label
-                      className="top-1 text-base font-medium mb-2 block"
-                      htmlFor=""
-                    >
-                      Lịch của bác sỉ
-                    </label>
-                    <div>
-                      <SelectSearchField
-                        placeholder="Email bác sỉ..."
-                        data={optionDoctors}
-                        handleSearchSelect={debounce(
-                          onSearchSelectDoctors,
-                          300
-                        )}
-                        value={emailSearch}
-                        debounceSeconds={300}
-                        handleChangeSelect={(e: string) => {
-                          onChangeSelectDoctor(e);
-                        }}
-                      />
-                    </div>
-                    {workingSelect && (
-                      <div className="flex items-center justify-between gap-2 my-6">
-                        <User
-                          avatarProps={{ radius: "lg" }}
-                          description={`doctor|${workingSelect?.Staff?.AcademicDegree.name}`}
-                          name={`${workingSelect?.Staff.fullName}`}
+            <div className="grid grid-cols-1 gap-3">
+              <div>
+                <div className="flex flex-col">
+                  {!workingId && auth != "doctor" && (
+                    <div className="min-h-[160px]">
+                      <>
+                        <label
+                          className="top-1 text-base font-medium mb-2 block"
+                          htmlFor=""
                         >
-                          <span className="font-bold">
-                            {workingSelect?.Staff.fullName}
-                          </span>
-                        </User>
+                          Lịch của bác sỉ
+                        </label>
+                        <div>
+                          <SelectSearchField
+                            placeholder="Email bác sỉ..."
+                            data={optionDoctors}
+                            handleSearchSelect={debounce(
+                              onSearchSelectDoctors,
+                              300
+                            )}
+                            value={emailSearch}
+                            debounceSeconds={300}
+                            handleChangeSelect={(e: string) => {
+                              onChangeSelectDoctor(e);
+                            }}
+                          />
+                        </div>
+                        {workingSelect && (
+                          <div className="flex items-center justify-between gap-2 my-6">
+                            <User
+                              avatarProps={{ radius: "lg" }}
+                              description={`doctor|${workingSelect?.Staff?.AcademicDegree.name}`}
+                              name={`${workingSelect?.Staff.fullName}`}
+                            >
+                              <span className="font-bold">
+                                {workingSelect?.Staff.fullName}
+                              </span>
+                            </User>
 
-                        <span>{workingSelect?.Staff.email}</span>
-                      </div>
-                    )}
-                  </>
+                            <span>{workingSelect?.Staff.email}</span>
+                          </div>
+                        )}
+                      </>
+                    </div>
+                  )}
                 </div>
-              )}
+
+                {errorWorkingId && (
+                  <p className="text-sm text-red-500 font-medium">
+                    {errorWorkingId?.message}
+                  </p>
+                )}
+              </div>
+              <div className="flex flex-col mb-2">
+                <label className="top-1 text-base font-medium mb-2" htmlFor="">
+                  Ngày khám
+                </label>
+                <div>
+                  <DatePicker
+                    allowClear={false}
+                    bordered={true}
+                    value={dateSelect}
+                    onChange={onChangeDate}
+                    placement="bottomLeft"
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <label className="top-1 text-base font-medium mb-2" htmlFor="">
+                  Số lượng bệnh nhân trong một khung giờ
+                </label>
+                <InputNumber
+                  bordered
+                  placeholder="Vd: 3"
+                  className="px w-[50px] outline-none text-base"
+                  spellCheck={false}
+                  min={0}
+                  max={5}
+                  name="maxNumber"
+                  onChange={onChangeMaxNumber}
+                  value={maxNumber}
+                />
+                {errorMaxNumber && (
+                  <p className="text-sm text-red-500 font-medium">
+                    {errorMaxNumber?.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex flex-col">
+                <label className="top-1 text-base font-medium mb-2" htmlFor="">
+                  Khung giờ
+                </label>
+
+                <CheckboxGroup
+                  value={timeCodeArrayValue}
+                  onChange={onChangeCheckTimeCode}
+                  classNames={{
+                    base: "w-full",
+                  }}
+                  className="gap-1"
+                  orientation="horizontal"
+                >
+                  {allTimeCodes?.rows.map((code: Code) => {
+                    return (
+                      <CheckBoxSchedule key={code.key} value={code.key}>
+                        {code.value}
+                      </CheckBoxSchedule>
+                    );
+                  })}
+                </CheckboxGroup>
+                {errorTimeCodeArray && (
+                  <p className="text-sm text-red-500 font-medium">
+                    {errorTimeCodeArray?.message}
+                  </p>
+                )}
+              </div>
             </div>
 
-            {errorWorkingId && (
-              <p className="text-sm text-red-500 font-medium">
-                {errorWorkingId?.message}
-              </p>
+            {!workingId ? (
+              <>
+                <div className="mt-3">
+                  <h3 className="text-base text-gray-900">Lưu ý:</h3>
+                  <ul className="mt-">
+                    <li className="text-gray-400">
+                      Chỉ hiển thị các bác sỉ đang công tác. Xem công tác ở
+                      <Link
+                        href="/admin/work"
+                        className="pl-1 text-blue-500 underline"
+                      >
+                        đây
+                      </Link>
+                      .
+                    </li>
+                  </ul>
+                </div>
+              </>
+            ) : (
+              <></>
             )}
           </div>
-          <div className="flex flex-col mb-2">
-            <label className="top-1 text-base font-medium mb-2" htmlFor="">
-              Ngày khám
-            </label>
-            <div>
-              <DatePicker
-                allowClear={false}
-                bordered={true}
-                value={dateSelect}
-                onChange={onChangeDate}
-                placement="bottomLeft"
-              />
+
+          <div className="flex items-center gap-2 justify-between mt-2 pt-[20px]">
+            <div className="flex gap-4 items-center">
+              <Button
+                color="primary"
+                variant="flat"
+                size="sm"
+                startContent={<CheckIcon />}
+                onClick={() => {
+                  const timeCodes = allTimeCodes?.rows.map(
+                    (row: any) => row.key
+                  );
+                  onChangeCheckTimeCode(timeCodes);
+                  setValue("timeCodeArray", timeCodes);
+                }}
+              >
+                Chọn tất cả
+              </Button>
+              <Button
+                color="danger"
+                variant="flat"
+                startContent={<AiOutlineClose />}
+                size="sm"
+                onClick={() => {
+                  onChangeCheckTimeCode([]);
+                  setValue("timeCodeArray", []);
+                }}
+              >
+                Xóa tất cả lịch
+              </Button>
+            </div>
+            <div className="flex items-center gap-2 justify-end ">
+              <Button color="danger" variant="light" onClick={clickCancel}>
+                Hủy
+              </Button>
+
+              <Button color="primary" isLoading={isSubmitting} type="submit">
+                {obEdit?.id ? "Lưu" : "Thêm"}
+              </Button>
             </div>
           </div>
-          <div className="flex flex-col">
-            <label className="top-1 text-base font-medium mb-2" htmlFor="">
-              Số lượng bệnh nhân trong một khung giờ
-            </label>
-            <InputNumber
-              bordered
-              placeholder="Vd: 3"
-              className="px w-[50px] outline-none text-base"
-              spellCheck={false}
-              min={0}
-              max={5}
-              name="maxNumber"
-              onChange={onChangeMaxNumber}
-              value={maxNumber}
-            />
-            {errorMaxNumber && (
-              <p className="text-sm text-red-500 font-medium">
-                {errorMaxNumber?.message}
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-col">
-            <label className="top-1 text-base font-medium mb-2" htmlFor="">
-              Khung giờ
-            </label>
-
-            <CheckboxGroup
-              value={timeCodeArrayValue}
-              onChange={onChangeCheckTimeCode}
-              classNames={{
-                base: "w-full",
-              }}
-              className="gap-1"
-              orientation="horizontal"
-            >
-              {allTimeCodes?.rows.map((code: Code) => {
-                return (
-                  <CheckBoxSchedule key={code.key} value={code.key}>
-                    {code.value}
-                  </CheckBoxSchedule>
-                );
-              })}
-            </CheckboxGroup>
-            {errorTimeCodeArray && (
-              <p className="text-sm text-red-500 font-medium">
-                {errorTimeCodeArray?.message}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {!workingId ? (
-          <>
-            <div className="mt-3">
-              <h3 className="text-base text-gray-900">Lưu ý:</h3>
-              <ul className="mt-">
-                <li className="text-gray-400">
-                  Chỉ hiển thị các bác sỉ đang công tác. Xem công tác ở
-                  <Link
-                    href="/admin/work"
-                    className="pl-1 text-blue-500 underline"
-                  >
-                    đây
-                  </Link>
-                  .
-                </li>
-              </ul>
-            </div>
-          </>
-        ) : (
-          <></>
-        )}
-      </div>
-
-      <div className="flex items-center gap-2 justify-between mt-2 pt-[20px]">
-        <div className="flex gap-4 items-center">
-          <Button
-            color="primary"
-            variant="flat"
-            size="sm"
-            startContent={<CheckIcon />}
-            onClick={() => {
-              const timeCodes = allTimeCodes?.rows.map((row: any) => row.key);
-              onChangeCheckTimeCode(timeCodes);
-              setValue("timeCodeArray", timeCodes);
-            }}
-          >
-            Chọn tất cả
-          </Button>
-          <Button
-            color="danger"
-            variant="flat"
-            startContent={<AiOutlineClose />}
-            size="sm"
-            onClick={() => {
-              onChangeCheckTimeCode([]);
-              setValue("timeCodeArray", []);
-            }}
-          >
-            Xóa tất cả lịch
-          </Button>
-        </div>
-        <div className="flex items-center gap-2 justify-end ">
-          <Button color="danger" variant="light" onClick={clickCancel}>
-            Hủy
-          </Button>
-
-          <Button color="primary" isLoading={isSubmitting} type="submit">
-            {obEdit?.id ? "Lưu" : "Thêm"}
-          </Button>
-        </div>
-      </div>
-    </form>
+        </form>
+      )}
+    </div>
   );
 }

@@ -115,7 +115,7 @@ export function ManagerCheckUp() {
 
   // Select time
   const optionSelectTime = doctorData?.schedules?.rows.map((r) => ({
-    label: r.TimeCode.value,
+    label: r?.TimeCode?.value,
     value: r.id,
   }));
   function handleChangeSelectTime(value: string) {

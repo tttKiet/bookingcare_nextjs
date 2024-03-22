@@ -37,9 +37,10 @@ const { confirm } = Modal;
 import get from "lodash.get";
 import isequal from "lodash.isequal";
 import { SelectSearchField } from "../form";
-import Image from "next/image";
 import { BodyModalClinicRoom } from "../body-modal/body.add-edit-clinic-room";
 import { useMemo, useRef, useState } from "react";
+import { Image } from "@nextui-org/image";
+import debounce from "lodash.debounce";
 
 type DataIndex = keyof ClinicRoom;
 
@@ -115,9 +116,7 @@ export function ManagerHealthRoom() {
   });
   // Search health facilities state
   const [selectValue, setSelectValue] = useState<string | null>(null);
-  const [searchHealthSelect, setSearchHealthSelect] = useState<string | null>(
-    ""
-  );
+  const [searchHealthSelect, setSearchHealthSelect] = useState<string>("");
   const fetcher: BareFetcher<ResDataPaginations<any>> = async ([url, token]) =>
     (
       await axios.get(url, {
@@ -145,7 +144,6 @@ export function ManagerHealthRoom() {
     ],
     fetcher,
     {
-      revalidateOnMount: false,
       dedupingInterval: 5000,
     }
   );
@@ -279,6 +277,14 @@ export function ManagerHealthRoom() {
   const columns: ColumnsType<ClinicRoom> = useMemo(() => {
     return [
       {
+        title: "Cơ sở y tế",
+        dataIndex: ["HealthFacility", "name"],
+        key: '["HealthFacility", "name"]',
+        render: (text) => <a>{text}</a>,
+        sorter: (a, b) => a.roomNumber - b.roomNumber,
+        ...getColumnSearchProps(["HealthFacility", "name"]),
+      },
+      {
         title: "Số phòng",
         dataIndex: "roomNumber",
         key: "roomNumber",
@@ -303,7 +309,7 @@ export function ManagerHealthRoom() {
       {
         title: "Hành động",
         key: "action",
-        render: (_, record) => {
+        render: (_, record: any) => {
           return (
             <ActionGroup className="justify-start">
               <ActionBox type="edit" onClick={() => editClinicRoom(record)} />
@@ -331,22 +337,22 @@ export function ManagerHealthRoom() {
       fetcher,
       {
         revalidateOnMount: true,
-        dedupingInterval: 5000,
       }
     );
 
-  const dataSearch: SelectProps["options"] = responseHealthFacilities?.rows.map(
-    (healh: HealthFacility) => ({
-      value: healh.id,
-      text: (
+  const dataSearch: SelectProps["options"] =
+    responseHealthFacilities?.rows.map((healh: HealthFacility) => ({
+      value: healh.email,
+      label: (
         <div className="flex align-top gap-2">
           <Image
-            className="rounded-full border border-white object-cover w-[32px] h-[32px]"
+            className="rounded-full border-spacing-8 border  border-blue-400  object-cover w-[44px] h-[42px]"
             alt="Health Facility"
-            width={28}
-            height={28}
+            width={44}
+            height={44}
             src={healh?.images?.[0] || ""}
           />
+
           <div className="flex-1">
             <h4 className="text-sm p-y-[1px]  text-black">{healh.name}</h4>
             <div className="flex items-center justify-between gap-x-4">
@@ -360,27 +366,31 @@ export function ManagerHealthRoom() {
           </div>
         </div>
       ),
-    })
-  );
+    })) || [];
 
   function handleSearchSelect(value: string): void {
     setSearchHealthSelect(value);
   }
 
   function handleChangeSelect(value: string): void {
-    setSelectValue(value);
+    const filter =
+      responseHealthFacilities?.rows.find(
+        (r: HealthFacility) => r.email == value
+      )?.id || "";
+    setSelectValue(filter);
   }
 
   return (
     <div className="">
-      <h3 className="mb-2">Tìm kiếm cơ sở y tế</h3>
       <div className="flex items-end gap-2 ">
         <SelectSearchField
-          placeholder="Nhập tên hoặc email cơ sơ y tế"
+          title="Tìm kiếm cơ sở y tế"
+          placeholder="Nhập email cơ sơ y tế"
           data={dataSearch}
           handleSearchSelect={handleSearchSelect}
           handleChangeSelect={handleChangeSelect}
-          value={selectValue}
+          value={searchHealthSelect}
+          isRequired
         />
       </div>
 
@@ -404,37 +414,34 @@ export function ManagerHealthRoom() {
             : "Thêm mới phòng"
         }
       />
-      {selectValue && (
-        <h3 className="gr-title-admin flex items-center justify-between mt-3  mb-3">
-          Quản lý phòng khám
-          <BtnPlus
-            title="Thêm phòng khám"
-            onClick={() => {
-              toggleShowClinicRoomCreateOrUpdateModal();
-              setObClinicRoomEdit(null);
-            }}
-          />
-        </h3>
-      )}
-      {data?.length > 0 && selectValue && (
-        <>
-          <TableSortFilter
-            options={{
-              loading: isLoading,
-              pagination: {
-                total: responseClinicRooms?.count,
-                pageSize: tableParams.pagination.pageSize,
-                showSizeChanger: true,
-                pageSizeOptions: ["3", "6", "12", "24", "50"],
-              },
-              showSorterTooltip: false,
-              onChange: handleTableChange,
-            }}
-            columns={columns}
-            data={data}
-          />
-        </>
-      )}
+      <h3 className="gr-title-admin flex items-center justify-between mt-3  mb-3">
+        Quản lý phòng khám
+        <BtnPlus
+          disabled={!!!selectValue}
+          title="Thêm phòng khám"
+          onClick={() => {
+            toggleShowClinicRoomCreateOrUpdateModal();
+            setObClinicRoomEdit(null);
+          }}
+        />
+      </h3>
+      <>
+        <TableSortFilter
+          options={{
+            loading: isLoading,
+            pagination: {
+              total: responseClinicRooms?.count,
+              pageSize: tableParams.pagination.pageSize,
+              showSizeChanger: true,
+              pageSizeOptions: ["3", "6", "12", "24", "50"],
+            },
+            showSorterTooltip: false,
+            onChange: handleTableChange,
+          }}
+          columns={columns}
+          data={data}
+        />
+      </>
       {data?.length === 0 && selectValue && (
         <p className="text-gray-500 text-center p-3 mt-4">
           Chưa có phòng khám nào!

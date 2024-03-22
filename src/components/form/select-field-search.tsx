@@ -1,22 +1,8 @@
 "use client";
 
-import {
-  API_HEALTH_FACILITIES,
-  API_HEALTH_FACILITY_ROOM,
-} from "@/api-services/constant-api";
-import { ClinicRoom, HealthFacility } from "@/models";
-import { ResDataPaginations } from "@/types";
+import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import type { SelectProps } from "antd";
-import { Select } from "antd";
-import axios from "../../axios";
 import debounce from "lodash.debounce";
-import useSWR, { BareFetcher } from "swr";
-import {
-  Autocomplete,
-  AutocompleteItem,
-  AutocompleteProps,
-} from "@nextui-org/react";
-import { ChangeEvent } from "react";
 export interface SelectSearchFieldProps {
   title?: string;
   placeholder: string;
@@ -27,6 +13,7 @@ export interface SelectSearchFieldProps {
   handleSearchSelect: (value: string) => void;
   handleChangeSelect: (value: string) => void;
   allowClear?: boolean;
+  isRequired?: boolean;
 }
 
 export function SelectSearchField({
@@ -37,6 +24,7 @@ export function SelectSearchField({
   handleSearchSelect,
   handleChangeSelect,
   value,
+  isRequired,
   title,
   allowClear = true,
 }: SelectSearchFieldProps) {
@@ -50,40 +38,26 @@ export function SelectSearchField({
 
   const dataResult =
     data?.map((d) => ({
-      value: d.value?.toString(),
+      value: d.value?.toString() || "",
       label: d.label,
     })) || [];
 
   return (
-    // <Select
-    //   showSearch
-    //   className="w-full"
-    //   size="large"
-    //   value={value}
-    //   placeholder={placeholder}
-    //   style={{ minWidth: 280, ...style }}
-    //   filterOption={false}
-    //   virtual={false}
-    //   onSearch={debounce(handleSearch, debounceSeconds || 300)}
-    //   onChange={handleChange}
-    //   // notFoundContent={<p className="p-2">Không tìm thấy</p>}
-    //   options={data?.map((d) => ({
-    //     value: d.value,
-    //     label: d.text,
-    //   }))}
-    //   allowClear={allowClear}
-    // />
     <Autocomplete
-      value={value?.toString() ?? ""}
+      isRequired={isRequired}
+      value={value ?? ""}
       onInputChange={debounce(handleSearch, debounceSeconds || 300)}
       onSelectionChange={(e) => {
         handleChange(e?.toString() || "");
       }}
       labelPlacement="inside"
-      defaultItems={dataResult}
-      allowsCustomValue={true}
+      defaultInputValue={value || ""}
+      // defaultItems={[]}
+      // items={[]}
+      // allowsCustomValue={true}
+      isClearable={allowClear}
       label={title || "Tìm kiếm"}
-      // placeholder={placeholder}
+      placeholder={placeholder}
       onKeyDown={(e: any) => e.continuePropagation()}
       className="max-w-2xl w-full"
     >
@@ -94,7 +68,11 @@ export function SelectSearchField({
       )} */}
 
       {dataResult.map((item) => (
-        <AutocompleteItem key={item.value ?? ""} textValue={item?.value ?? ""}>
+        <AutocompleteItem
+          key={item.value || ""}
+          value={item?.value || ""}
+          textValue={item?.value || ""}
+        >
           {item.label}
         </AutocompleteItem>
       ))}

@@ -92,9 +92,10 @@ export function MangerHealthExaminationScheduleForDoctor({}: MangerHealthExamina
       profile?.id?.toString() || ""
     }`,
     {
-      revalidateOnMount: true,
+      revalidateOnMount: false,
     }
   );
+  console.log("doctordoctordoctordoctor", doctor);
 
   async function handleSubmitFormSchedule(
     data: Partial<ReqSchedule>
@@ -115,7 +116,7 @@ export function MangerHealthExaminationScheduleForDoctor({}: MangerHealthExamina
   };
   useEffect(() => {
     if (doctor?.rows?.[0]?.id) setWorkingIdDoctorLogined(doctor?.rows?.[0]?.id);
-  }, [doctor?.rows?.[0]?.id]);
+  }, [doctor?.rows?.[0]?.id, doctor]);
   // Table
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -357,6 +358,7 @@ export function MangerHealthExaminationScheduleForDoctor({}: MangerHealthExamina
         footer={false}
         body={
           <BodyModalSchedule
+            auth="doctor"
             obEditScheduleDoctor={obEditScheduleDoctor}
             workingId={workingIdDoctorLogined}
             clickCancel={toggleShowScheduleCreateOrUpdateModal}
