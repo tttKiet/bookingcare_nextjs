@@ -1,7 +1,7 @@
 "use client";
 
 import { AudioOutlined } from "@ant-design/icons";
-import { Avatar, Button, Input, List } from "antd";
+import { Avatar, Input, List } from "antd";
 import { SearchProps } from "antd/es/input";
 import { CiSearch } from "react-icons/ci";
 import { ResDataPaginations } from "@/types";
@@ -16,6 +16,7 @@ import { ScheduleBox } from "../schudule.box";
 import { useRouter } from "next/navigation";
 import DoctorItem from "./DoctorItem";
 import { LegacyRef, forwardRef, useRef, useState } from "react";
+import { Button } from "@nextui-org/button";
 export interface IChooseDoctorProps {
   healthFacilityId: string;
   next: (step: number, value: any) => void;
@@ -83,13 +84,14 @@ const ChooseDoctor = forwardRef(
         </div>
 
         <div className="flex justify-end gap-4 py-5">
-          <Button type="dashed" onClick={() => router.back()}>
+          <Button onClick={() => router.back()} size="md">
             Trở lại
           </Button>
           <Button
-            type={item ? "primary" : "dashed"}
+            color={"primary"}
+            size="md"
             onClick={handleClickContinue}
-            disabled={!item}
+            className="cursor-pointer"
           >
             Tiếp tục
           </Button>

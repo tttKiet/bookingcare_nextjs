@@ -2,6 +2,7 @@
 
 import { userApi } from "@/api-services";
 import { API_HEALTH_FACILITIES } from "@/api-services/constant-api";
+import { paymentApi } from "@/api-services/payment-api";
 import { ColorBox } from "@/components/box";
 import {
   ChooseDoctor,
@@ -42,7 +43,6 @@ export default function Booking(props: IAboutPageProps) {
 
   // Data booking
   const [doctorChoose, setDoctorChoose] = useState<WorkRoom | null>(null);
-
   const [descStatusPatient, setDescStatusPatient] = useState<string>("");
   const [healthExaminationSchedule, setHealthExaminationSchedule] =
     useState<Partial<HealthExaminationSchedule> | null>(null);
@@ -114,7 +114,7 @@ export default function Booking(props: IAboutPageProps) {
               <div className="mt-1 flex items-center gap-2">
                 <span>Khung giờ: </span>
                 <span className="px-2 border rounded-xl border-dashed border-blue-500">
-                  {value.TimeCode.value}
+                  {value?.TimeCode?.value}
                 </span>
               </div>
             </div>
@@ -210,15 +210,22 @@ export default function Booking(props: IAboutPageProps) {
   //   setCurrent(value);
   // }
 
-  async function handleConfirmSuccess(): Promise<void> {
-    const api = userApi.booking({
-      descriptionDisease: descStatusPatient,
-      healthExaminationScheduleId: healthExaminationSchedule?.id || "",
-      patientProfileId: patientProfile?.id || "",
-    });
-    const isOk = await toastMsgFromPromise(api);
-    if (isOk) {
-      router.push(`/user/health-record/${isOk?.data?.id || ""}`);
+  async function handleConfirmSuccess({
+    paymentType,
+  }: {
+    paymentType: string;
+  }): Promise<void> {
+    try {
+      const res = await paymentApi.vnpayCreateUrl({
+        descriptionDisease: descStatusPatient,
+        healthExaminationScheduleId: healthExaminationSchedule?.id || "",
+        patientProfileId: patientProfile?.id || "",
+        paymentType: paymentType,
+      });
+      router.push(res.data?.url!);
+      console.log("res", res);
+    } catch (e) {
+      console.log(e);
     }
   }
 
@@ -312,7 +319,7 @@ export default function Booking(props: IAboutPageProps) {
               <Tabs
                 activeKey={(current + 1).toString()}
                 items={tabItems}
-                className="h-full "
+                className="h-full"
               />
             </ColorBox>
             {/* )} */}

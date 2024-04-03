@@ -55,7 +55,6 @@ export default function UserPage() {
       component: <AddPatientProfile />,
     },
   ];
-  console.log("profile", profile);
 
   useEffect(() => {
     if (!(tagName && Object.values(TagNames).includes(tagName))) {

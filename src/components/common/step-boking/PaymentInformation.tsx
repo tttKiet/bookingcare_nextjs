@@ -1,6 +1,7 @@
 "use client";
 
 import { userApi } from "@/api-services";
+import { paymentApi } from "@/api-services/payment-api";
 import { ColorBox } from "@/components/box";
 import { ModalPositionHere } from "@/components/modal";
 import {
@@ -22,7 +23,7 @@ export interface IPaymentInformation {
   patientProfile: PatientProfile | null;
   checkupInfo: WorkRoom | null;
   previous: () => void;
-  confirmSuccess: () => Promise<void>;
+  confirmSuccess: ({ paymentType }: { paymentType: string }) => Promise<void>;
 }
 
 export function PaymentInformation({
@@ -34,8 +35,8 @@ export function PaymentInformation({
 }: IPaymentInformation) {
   const methodPayment = useMemo(
     () => ({
-      PAY_AT_HEALTH_FACILITY: "Thanh toán tại bệnh viện",
-      MOMO: "Thanh toán bằng ví Momo",
+      hospital: "Thanh toán tại bệnh viện",
+      card: "Thanh toán bằng ví Momo",
     }),
     []
   );
@@ -46,7 +47,7 @@ export function PaymentInformation({
   function toggleShowPaymentModal() {
     setShowPaymentModal((s) => !s);
   }
-  function handleClickPayment() {}
+
   const [form] = Form.useForm();
 
   function onChangeMethod(e: RadioChangeEvent): void {
@@ -61,7 +62,7 @@ export function PaymentInformation({
     setIsloading(true);
     promisePaymentFake
       .then(() => {
-        confirmSuccess();
+        confirmSuccess({ paymentType: method || "" });
         toggleShowPaymentModal();
       })
       .finally(() => {
@@ -133,13 +134,13 @@ export function PaymentInformation({
                   size="large"
                 >
                   <div className="flex justify-start flex-col text-base">
-                    <Radio value={"PAY_AT_HEALTH_FACILITY"}>
+                    <Radio value={"hospital"}>
                       <span className="text-base">
-                        {methodPayment.PAY_AT_HEALTH_FACILITY}
+                        {methodPayment.hospital}
                       </span>
                     </Radio>
-                    <Radio className="text-base" value={"MOMO"}>
-                      <span className="text-base">{methodPayment.MOMO}</span>
+                    <Radio className="text-base" value={"card"}>
+                      <span className="text-base">{methodPayment.card}</span>
                     </Radio>
                   </div>
                 </Radio.Group>
@@ -210,7 +211,6 @@ export function PaymentInformation({
                 htmlType="submit"
                 type={method ? "primary" : "dashed"}
                 disabled={!method}
-                onClick={handleClickPayment}
               >
                 Thanh toán
               </Button>

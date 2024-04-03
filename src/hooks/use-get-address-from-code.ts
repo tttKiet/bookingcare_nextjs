@@ -14,16 +14,31 @@ export function useGetAddress({
 }: AddressCode): {
   address: string;
 } {
-  const [address, setAddress] = useState<string>("");
+  const [address, setAddress] = useState<string>("loading...");
+  console.log("address", { wardCode, districtCode, provinceCode });
 
   Promise.all([
-    axios.get(`https://provinces.open-api.vn/api/w/${wardCode}`),
-    axios.get(`https://provinces.open-api.vn/api/d/${districtCode}`),
-    axios.get(`https://provinces.open-api.vn/api/p/${provinceCode}`),
+    axios.get(`https://vapi.vnappmob.com/api/province`),
+    axios.get(`https://vapi.vnappmob.com/api/province/ward/${districtCode}`),
+    axios.get(
+      `https://vapi.vnappmob.com/api/province/district/${provinceCode}`
+    ),
   ])
-    .then(([w, d, p]: any) => {
+    .then(([p, w, d]: any) => {
       if (w?.status === 200 && d.status === 200 && p.status === 200) {
-        setAddress(`${w.data.name}, ${d.data.name}, ${p.data.name}`);
+        const pFilter = p.data.results.find(
+          (province: any) => province.province_id === provinceCode
+        );
+        const wFilter = w.data.results.find(
+          (ward: any) => ward.ward_id === wardCode
+        );
+        const dFilter = d.data.results.find(
+          (district: any) => district.district_id === districtCode
+        );
+
+        setAddress(
+          `${wFilter?.ward_name}, ${dFilter?.district_name}, ${pFilter?.province_name}`
+        );
       } else {
         setAddress("");
       }
@@ -31,7 +46,7 @@ export function useGetAddress({
     .catch((error) => {
       console.log("Use get address from code is error!!!");
       console.log(error);
-      setAddress("");
+      setAddress("...F5");
     });
 
   return { address };

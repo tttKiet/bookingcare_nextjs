@@ -1,9 +1,21 @@
+import {
+  API_ACCOUNT_STAFF_DOCTOR_WORKING,
+  API_WORKING,
+} from "@/api-services/constant-api";
 import { ColorBox } from "@/components/box";
 import { useGetAddress } from "@/hooks/use-get-address-from-code";
-import { HealthExaminationSchedule, PatientProfile, WorkRoom } from "@/models";
-import { Button, Descriptions, DescriptionsProps, Table } from "antd";
+import {
+  HealthExaminationSchedule,
+  PatientProfile,
+  Working,
+  WorkRoom,
+} from "@/models";
+import { ResDataPaginations } from "@/types";
+import { Button } from "@nextui-org/button";
+import { Descriptions, DescriptionsProps, Table } from "antd";
 import moment from "moment";
 import { useMemo } from "react";
+import useSWR from "swr";
 
 export interface IComfirmInformationProps {
   schedule: Partial<HealthExaminationSchedule> | null;
@@ -25,13 +37,18 @@ export function ComfirmInformation({
   function handleClickConfirm() {
     next(4, "");
   }
+
+  const { data: workingData } = useSWR<ResDataPaginations<Working>>(
+    `${API_ACCOUNT_STAFF_DOCTOR_WORKING}?workingId=${schedule?.workingId}`
+  );
+
   const dataSource = useMemo(
     () => [
       {
         key: "1",
         "#": "1",
-        specialist: schedule?.Working?.Staff.Specialist.name,
-        doctor: schedule?.Working?.Staff.fullName || "",
+        specialist: workingData?.rows?.[0]?.Staff.Specialist.name,
+        doctor: workingData?.rows?.[0]?.Staff.fullName || "",
         time:
           schedule?.TimeCode?.value +
           ", ngày " +
@@ -39,7 +56,7 @@ export function ComfirmInformation({
         price: checkupInfo?.checkUpPrice.toLocaleString() + " vnđ",
       },
     ],
-    [schedule]
+    [workingData, schedule]
   );
 
   const columns = [
@@ -143,11 +160,22 @@ export function ComfirmInformation({
         </Descriptions>
       </ColorBox>
       <div className="flex justify-end gap-4 py-5">
-        <Button type="dashed" onClick={previous}>
+        {/* <Button type="dashed" onClick={previous}>
           Trở lại
         </Button>
         <Button type={"primary"} onClick={handleClickConfirm}>
           Xác nhận
+        </Button> */}
+        <Button onClick={previous} size="md">
+          Trở lại
+        </Button>
+        <Button
+          color={"primary"}
+          size="md"
+          onClick={handleClickConfirm}
+          className="cursor-pointer"
+        >
+          Tiếp tục
         </Button>
       </div>
     </>

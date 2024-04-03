@@ -48,7 +48,7 @@ export default function RootLayout({
       },
       {
         key: "/doctor/check-health",
-        label: <Link href="/doctor/check-health">Khám bệnh</Link>,
+        label: <Link href="/doctor/check-health">Quản lý khám bệnh</Link>,
         icon: <BsPlusCircleDotted size={20} />,
       },
       {

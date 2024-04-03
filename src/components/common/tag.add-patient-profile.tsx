@@ -34,6 +34,7 @@ export function AddPatientProfile({}: AddPatientProfileProps) {
   const [optionDistricts, setOptionDistricts] = useState<
     SelectProps[] | undefined
   >();
+
   const [optionWards, setOptionWards] = useState<SelectProps[] | undefined>();
 
   function onChangeSelectProvince(value: string) {
@@ -42,10 +43,10 @@ export function AddPatientProfile({}: AddPatientProfileProps) {
       ward: null,
     });
     axios
-      .get(`https://provinces.open-api.vn/api/p/${value}?depth=2`)
+      .get(`https://vapi.vnappmob.com/api/province/district/${value}`)
       .then((data) => {
-        const options = data.data.districts.map((e: any) => {
-          return { label: e.name, value: e.code };
+        const options = data.data.results.map((e: any) => {
+          return { label: e.district_name, value: e.district_id };
         });
 
         setOptionDistricts(options);
@@ -64,12 +65,12 @@ export function AddPatientProfile({}: AddPatientProfileProps) {
       ward: null,
     });
     axios
-      .get(`https://provinces.open-api.vn/api/d/${value}?depth=2`)
+      .get(`https://vapi.vnappmob.com/api/province/ward/${value}`)
       .then((data) => {
         console.log(data);
         setOptionWards(
-          data.data.wards.map((e: any) => {
-            return { label: e.name, value: e.code };
+          data.data.results.map((e: any) => {
+            return { label: e.ward_name, value: e.ward_id };
           })
         );
       })
@@ -104,6 +105,23 @@ export function AddPatientProfile({}: AddPatientProfileProps) {
       router.push("/user?tag=patient-profile");
     }
   }
+  useEffect(() => {
+    axios
+      .get("https://vapi.vnappmob.com/api/province")
+      .then((data) => {
+        const options = data.data.results.map((e: any) => {
+          return { label: e.province_name, value: e.province_id };
+        });
+
+        // console.log("options", options);
+
+        setOptionProvinces(options);
+      })
+      .catch((err) => {
+        console.log("err", err);
+        toast("Lỗi lấy api tỉnh thành [Tinh]. Vui lòng nhấn F5 tải lại!");
+      });
+  }, []);
 
   useEffect(() => {
     if (patientProfileId) {
@@ -114,11 +132,14 @@ export function AddPatientProfile({}: AddPatientProfileProps) {
         .then((res) => {
           axios
             .get(
-              `https://provinces.open-api.vn/api/p/${res.data.addressCode[2]}?depth=2`
+              `https://vapi.vnappmob.com/api/province/district/${res.data.addressCode[2]}`
             )
             .then((data) => {
-              const options = data.data.districts.map((e: any) => {
-                return { label: e.name, value: e.code };
+              const options = data.data.results.map((e: any) => {
+                return { label: e.district_name, value: e.district_id };
+              });
+              form.setFieldsValue({
+                district: res.data.addressCode[1],
               });
 
               setOptionDistricts(options);
@@ -133,24 +154,30 @@ export function AddPatientProfile({}: AddPatientProfileProps) {
 
           axios
             .get(
-              `https://provinces.open-api.vn/api/d/${res.data.addressCode[1]}?depth=2`
+              `https://vapi.vnappmob.com/api/province/ward/${res.data.addressCode[1]}`
             )
             .then((data) => {
-              console.log("wars", data.data);
-
               setOptionWards(
-                data.data.wards.map((e: any) => {
-                  return { label: e.name, value: e.code };
+                data.data.results.map((e: any) => {
+                  return { label: e.ward_name, value: e.ward_id };
                 })
               );
+
+              form.setFieldsValue({
+                ward: res.data.addressCode[0],
+              });
             })
             .catch((err) => {
+              console.log("err", err);
+
               toast("Lỗi lấy api tỉnh thành. Vui lòng nhấn F5 tải lại!");
               form.setFieldsValue({
                 ward: null,
               });
             });
-
+          form.setFieldsValue({
+            province: res.data.addressCode[2],
+          });
           return res.data;
         })
         .then((data) => {
@@ -162,28 +189,11 @@ export function AddPatientProfile({}: AddPatientProfileProps) {
             gender: data.gender,
             cccd: data.cccd,
             nation: data.nation,
-            ward: Number.parseInt(data.addressCode[0]),
-            district: Number.parseInt(data.addressCode[1]),
-            province: Number.parseInt(data.addressCode[2]),
             birthDay: dayjs(data.birthDay),
           });
         });
     }
   }, [patientProfileId, form]);
-
-  useEffect(() => {
-    axios
-      .get("https://provinces.open-api.vn/api/p/")
-      .then((data) => {
-        const options = data.data.map((e: any) => {
-          return { label: e.name, value: e.code };
-        });
-        setOptionProvinces(options);
-      })
-      .catch((err) =>
-        toast("Lỗi lấy api tỉnh thành. Vui lòng nhấn F5 tải lại!")
-      );
-  }, []);
 
   return (
     <ColorBox title="Thêm hồ sơ bệnh nhân">

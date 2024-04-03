@@ -102,10 +102,14 @@ export interface Booking {
   descriptionDisease: string;
   healthExaminationScheduleId: string;
   patientProfileId: string;
+  doctorPrice: number;
+  status: string;
   createdAt: string;
   updatedAt: string;
+  paymentType: "card" | "hospital";
   HealthExaminationSchedule: HealthExaminationSchedule;
   PatientProfile: PatientProfile;
+  Code: Code;
 }
 
 export interface HealthRecord {
@@ -152,4 +156,14 @@ export interface HospitalService {
   updatedAt: string;
   HealthFacility: HealthFacility;
   ExaminationService: ExaminationService;
+}
+
+interface WorkingAndScheduleDoctor {
+  working: Working;
+  schedules: HealthExaminationSchedule[];
+}
+
+export interface ScheduleFilterDoctor {
+  date: string;
+  data: WorkingAndScheduleDoctor[];
 }

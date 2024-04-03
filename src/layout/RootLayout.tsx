@@ -39,10 +39,9 @@ export function RootLayout({ children }: { children: React.ReactNode }) {
                       return res.data;
                     })
                     .catch((err) => {
-                      console.log("fetcher error: " + err);
+                      return Promise.reject(err);
                     }),
-                shouldRetryOnError: false,
-                revalidateOnFocus: false,
+                // shouldRetryOnError: false,
               }}
             >
               <ToastMsg containerClassName="text-sm" />
