@@ -25,6 +25,10 @@ export function RootLayout({ children }: { children: React.ReactNode }) {
     pathname.includes("/doctor") ||
     pathname.includes("/hospital-manager");
 
+  const excludeLayout = pathname.includes("/result");
+
+  const showUserHeader = !isAdminLink && !excludeLayout;
+
   return (
     <StyledComponentsRegistry>
       <ConfigProvider theme={theme}>
@@ -55,7 +59,7 @@ export function RootLayout({ children }: { children: React.ReactNode }) {
                 />
               </div>
               <NextUIProvider>
-                {!isAdminLink ? (
+                {showUserHeader ? (
                   <>
                     <Header />
                     {children}
