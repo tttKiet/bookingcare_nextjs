@@ -3,6 +3,7 @@ import { ScheduleBox } from "../schudule.box";
 import { WorkRoomAndSchedule } from "./ChooseDoctor";
 import { useInView } from "framer-motion";
 import { useEffect, useRef } from "react";
+import { User } from "@nextui-org/react";
 
 export interface DoctorItemProps {
   workRoomAndSchedule: WorkRoomAndSchedule;
@@ -37,22 +38,22 @@ export default function DoctorItem({
       }}
       onClick={() => handleClickCard(workRoomAndSchedule)}
     >
-      <List.Item.Meta
+      <div
         className={`border rounded-md p-3 cursor-pointer
-               hover:border-blue-600 transition-all 
+               hover:border-blue-600 transition-all  w-full
                duration-200 ${active && "border-blue-600"}`}
-        avatar={
-          <Avatar
-            src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`}
-          />
-        }
-        title={
-          <div className="text-left">
-            {workRoomAndSchedule.Working.Staff.fullName}
-          </div>
-        }
-        description={
-          <div className="grid sm:grid-cols-2 grid-cols-1">
+      >
+        <div className="flex justify-between items-start gap-3">
+          <div className="flex flex-col justify-start gap-2 items-start">
+            <User
+              avatarProps={{ radius: "md" }}
+              description={`${workRoomAndSchedule.Working.Staff.fullName}`}
+              name={`${workRoomAndSchedule.Working.Staff.email}`}
+              className="text-left font-bold"
+            >
+              {workRoomAndSchedule.Working.Staff.fullName}
+            </User>
+
             <div className="text-left">
               {workRoomAndSchedule.Working.Staff.Specialist.name} -{" "}
               {workRoomAndSchedule.Working.Staff.experience}
@@ -61,17 +62,17 @@ export default function DoctorItem({
               </p>
               <p className="text-gray-600 mt-1">
                 Giá khám:
-                <span className="rounded-xl ml-1 text-blue-500 font-medium">
+                <span className="rounded-xl ml-1 text-blue-500 font-bold">
                   {workRoomAndSchedule.checkUpPrice.toLocaleString()} vnđ
                 </span>
               </p>
             </div>
-            <div className="">
-              <ScheduleBox schedules={workRoomAndSchedule.schedules} />
-            </div>
           </div>
-        }
-      />
+          <div className="">
+            <ScheduleBox schedules={workRoomAndSchedule.schedules} />
+          </div>
+        </div>
+      </div>
     </List.Item>
   );
 }

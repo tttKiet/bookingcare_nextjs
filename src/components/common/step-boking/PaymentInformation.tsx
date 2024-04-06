@@ -10,13 +10,17 @@ import {
   PatientProfile,
   WorkRoom,
 } from "@/models";
-import { Button, Divider, Form, Radio, RadioChangeEvent } from "antd";
+import { Button } from "@nextui-org/button";
+import { Divider, Form, Radio, RadioChangeEvent } from "antd";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { BsCreditCard2Back } from "react-icons/bs";
 import { IoBagAddOutline } from "react-icons/io5";
 import { LiaWalletSolid } from "react-icons/lia";
 import { RiServiceLine } from "react-icons/ri";
+import vnpay_logo from "../../../assets/images/logo-vi-vnpay.png";
+import Image from "next/image";
+import { FaRegHospital } from "react-icons/fa";
 
 export interface IPaymentInformation {
   schedule: Partial<HealthExaminationSchedule> | null;
@@ -36,7 +40,7 @@ export function PaymentInformation({
   const methodPayment = useMemo(
     () => ({
       hospital: "Thanh toán tại bệnh viện",
-      card: "Thanh toán bằng ví Momo",
+      card: "Thanh toán bằng VNPAY",
     }),
     []
   );
@@ -84,7 +88,7 @@ export function PaymentInformation({
                 {checkupInfo?.checkUpPrice.toLocaleString()}
               </span>{" "}
               vnđ{" "}
-              <span className="font-medium">
+              <span className="font-bold text-blue-500">
                 {method && methodPayment?.[method].split("Thanh toán ")[1]}
               </span>
             </div>
@@ -93,13 +97,13 @@ export function PaymentInformation({
               Trường hợp không nhận được phiếu khám bệnh, vui lòng liên hệ
               19002115.
             </div>
-            <div className="flex justify-end gap-4 py-5">
-              <Button type="dashed" onClick={toggleShowPaymentModal}>
-                Trở lại
+            <div className="flex justify-end gap-4 pt-6">
+              <Button color="danger" onClick={toggleShowPaymentModal}>
+                Hủy
               </Button>
               <Button
-                type={"primary"}
-                loading={isLoading}
+                color={"primary"}
+                isLoading={isLoading}
                 onClick={handleClickAgreePayment}
               >
                 Đồng ý
@@ -133,14 +137,23 @@ export function PaymentInformation({
                   value={method}
                   size="large"
                 >
-                  <div className="flex justify-start flex-col text-base">
+                  <div className="flex justify-start flex-col text-base gap-4">
                     <Radio value={"hospital"}>
-                      <span className="text-base">
+                      <span className="text-base flex items-center justify-start gap-2">
                         {methodPayment.hospital}
+                        <FaRegHospital size={26} />
                       </span>
                     </Radio>
                     <Radio className="text-base" value={"card"}>
-                      <span className="text-base">{methodPayment.card}</span>
+                      <span className="text-base flex items-center justify-start gap-2">
+                        {methodPayment.card}
+                        <Image
+                          src={vnpay_logo}
+                          alt="VNPAY"
+                          width={60}
+                          height={60}
+                        />
+                      </span>
                     </Radio>
                   </div>
                 </Radio.Group>
@@ -204,13 +217,17 @@ export function PaymentInformation({
               </div>
             </div>
             <div className="col-span-12 mt-6 flex justify-end gap-4 py-5">
-              <Button type="dashed" onClick={previous}>
+              <Button onClick={previous} size="md" color="default">
                 Trở lại
               </Button>
               <Button
-                htmlType="submit"
-                type={method ? "primary" : "dashed"}
-                disabled={!method}
+                color={method ? "primary" : "default"}
+                onClick={submitForm}
+                size="md"
+                isDisabled={!method}
+                className={
+                  method ? "cursor-pointer" : "cursor-default select-none"
+                }
               >
                 Thanh toán
               </Button>

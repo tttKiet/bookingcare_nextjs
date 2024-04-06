@@ -23,6 +23,7 @@ import {
 import { ResDataPaginations } from "@/types";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import { StepProps, Tabs } from "antd";
+import axios from "axios";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -30,6 +31,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { CiLocationOn, CiUser } from "react-icons/ci";
 import { FcPhoneAndroid } from "react-icons/fc";
 import { HiOutlineLocationMarker } from "react-icons/hi";
+import { toast } from "react-toastify";
 import useSWR from "swr";
 export interface IAboutPageProps {}
 
@@ -222,10 +224,23 @@ export default function Booking(props: IAboutPageProps) {
         patientProfileId: patientProfile?.id || "",
         paymentType: paymentType,
       });
-      router.push(res.data?.url!);
       console.log("res", res);
-    } catch (e) {
-      console.log(e);
+      if (res.statusCode === 0 || res.statusCode === 200) {
+        router.push(res.data?.url!);
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        if (err.response) {
+          const errorMsg = err.response.data.msg;
+          toast.error(errorMsg);
+        } else {
+          toast.error("Lỗi không có phản hồi từ server");
+        }
+      } else {
+        const errorWithMsg = err as { msg?: string };
+        const errorMsg = errorWithMsg.msg || "Lỗi không xác định";
+        toast.error(errorMsg);
+      }
     }
   }
 

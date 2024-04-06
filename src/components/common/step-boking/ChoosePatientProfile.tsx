@@ -4,7 +4,7 @@ import { API_PATIENT_PROFILE } from "@/api-services/constant-api";
 import { useAuth } from "@/hooks";
 import { PatientProfile } from "@/models";
 import { ResDataPaginations } from "@/types";
-import { Button, Card, Divider, Input } from "antd";
+import { Card, Divider } from "antd";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import "react-date-range/dist/styles.css"; // main style file
@@ -13,9 +13,13 @@ import toast from "react-hot-toast";
 import { BiPlus } from "react-icons/bi";
 import { BsTrash } from "react-icons/bs";
 import useSWR from "swr";
-const { TextArea } = Input;
+// const { TextArea } = Input;
 import { motion, Variants } from "framer-motion";
 import { useMemo, useState } from "react";
+import { Button } from "@nextui-org/button";
+import { Input, ScrollShadow, Textarea, User } from "@nextui-org/react";
+import debounce from "lodash.debounce";
+import { SearchIcon } from "@/components/icons/SearchIcon";
 
 export interface ChooseScheduleProps {
   next: (step: number, value: any) => void;
@@ -28,15 +32,26 @@ export function ChoosePatientProfile({ next, previous }: ChooseScheduleProps) {
   const [patientProfile, setPatientProfile] = useState<PatientProfile | null>(
     null
   );
+  const [searchName, setSearchName] = useState<string>("");
+
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const url = `${pathname}?${searchParams.toString()}`;
   const { data: responsePatientProfile, mutate: mutatePatientProfile } = useSWR<
     ResDataPaginations<PatientProfile>
-  >(`${API_PATIENT_PROFILE}?userId=${profile?.id || ""}`, {
-    revalidateOnMount: true,
-    dedupingInterval: 5000,
-  });
+  >(
+    `${API_PATIENT_PROFILE}?userId=${
+      profile?.id || ""
+    }&profileName=${searchName}`,
+    {
+      revalidateOnMount: true,
+      dedupingInterval: 5000,
+    }
+  );
+
+  function handleSearchName(value: string) {
+    setSearchName(value);
+  }
 
   const variants = useMemo(
     () => ({
@@ -80,77 +95,103 @@ export function ChoosePatientProfile({ next, previous }: ChooseScheduleProps) {
 
   return (
     <div className=" flex flex-col justify-between min-h-[300px]">
-      {responsePatientProfile?.rows.length > 0 ? (
-        <div>
-          <div className="">
-            <motion.div
-              animate="visible"
-              initial="initial"
-              variants={variants.container}
-              className="grid grid-cols-2 gap-6"
-            >
-              {responsePatientProfile?.rows.map(
-                (profile: PatientProfile, index: any) => (
-                  <motion.div
-                    animate="visible"
-                    initial="initial"
-                    custom={index}
-                    key={profile.id}
-                    variants={variants.item}
-                  >
-                    <Card
-                      onClick={() => handleClickCard(profile)}
-                      title={
-                        <h5 className="text-blue-500">{profile.fullName}</h5>
-                      }
-                      className={`${
-                        profile.id === patientProfile?.id
-                          ? " border-blue-500"
-                          : "border-transparent"
-                      } cursor-pointer border hover:border-blue-500 transition-all duration-250`}
-                      bordered={false}
-                    >
-                      <div className="flex flex-col gap-1 items-start">
-                        <div>
-                          <span>Email: </span>
-                          <span>{profile.email}</span>
-                        </div>
-                        <div>
-                          <span>CCCD: </span>
-                          <span>{profile.cccd}</span>
-                        </div>
-                        <div>
-                          <span>Số điện thoại: </span>
-                          <span>{profile.phone}</span>
-                        </div>
-                        <div>
-                          <span>Dân tộc: </span>
-                          <span>{profile.nation}</span>
-                        </div>
-                        <div>
-                          <span>Nghề nghiệp: </span>
-                          <span>{profile.profession}</span>
-                        </div>
-                      </div>
-                    </Card>
-                  </motion.div>
-                )
-              )}
-            </motion.div>
-          </div>
+      <div>
+        <div className="">
+          <Input
+            label="Tìm kiếm hồ sơ"
+            radius="sm"
+            isClearable={false}
+            onChange={debounce(function (e) {
+              handleSearchName(e.target.value);
+            }, 300)}
+            classNames={{
+              label: "text-black/50 text-base",
+              innerWrapper: "bg-transparent ",
+              // base: "border border-slate-400 rounded-sm",
+            }}
+            className="border border-slate-400/20 rounded-md"
+            placeholder="Nhập tên người khám..."
+            startContent={
+              <SearchIcon className="text-black/50 mb-0.5 text-slate-400 pointer-events-none flex-shrink-0" />
+            }
+          />
 
-          <div className="pt-5">
-            <h4 className="text-base mb-2 text-left">Lý do khám</h4>
-            <TextArea
+          <ScrollShadow className="h-[400px] my-4 pr-[4px]">
+            {responsePatientProfile?.rows.map(
+              (profile: PatientProfile, index: any) => (
+                <Card
+                  key={profile.id}
+                  onClick={() => handleClickCard(profile)}
+                  title={
+                    <div className="text-left my-3 flex items-center">
+                      <User
+                        avatarProps={{ radius: "md" }}
+                        description={`${profile.cccd}`}
+                        name={`${profile.fullName}`}
+                        className="text-left font-bold"
+                      >
+                        {profile.fullName}
+                      </User>
+                      {/* <h5 className="text-blue-500 text-left ">
+                        {profile.fullName}
+                      </h5> */}
+                    </div>
+                  }
+                  className={`${
+                    profile.id === patientProfile?.id
+                      ? " border-blue-600"
+                      : "border-gray-200"
+                  } cursor-pointer border hover:border-blue-500 transition-all duration-250 my-4 px-4`}
+                  bordered={false}
+                >
+                  <div className="flex flex-col gap-1 items-start">
+                    <div>
+                      <span className="font-bold mr-1">Email: </span>
+                      <span>{profile.email}</span>
+                    </div>
+                    <div>
+                      <span className="font-bold mr-1">CCCD: </span>
+                      <span>{profile.cccd}</span>
+                    </div>
+                    <div>
+                      <span className="font-bold mr-1">Số điện thoại: </span>
+                      <span>{profile.phone}</span>
+                    </div>
+                    <div>
+                      <span className="font-bold mr-1">Dân tộc: </span>
+                      <span>{profile.nation}</span>
+                    </div>
+                    <div>
+                      <span className="font-bold mr-1">Nghề nghiệp: </span>
+                      <span>{profile.profession}</span>
+                    </div>
+                  </div>
+                </Card>
+              )
+            )}
+          </ScrollShadow>
+        </div>
+
+        <div className="pt-5 text-left">
+          {/* <h4 className="text-base mb-2 text-left">Lý do khám</h4> */}
+          {/* <TextArea
               value={descStatusPatient}
               onChange={(e) => setDescStatusPatient(e.target.value)}
               title=""
               placeholder="Mô tả ngắn gọn tình trạng của bạn..."
-            />
-          </div>
+            /> */}
+
+          <Textarea
+            isRequired
+            value={descStatusPatient}
+            onChange={(e) => setDescStatusPatient(e.target.value)}
+            label={<span className="text-base mb-2 text-left">Lý do khám</span>}
+            labelPlacement="outside"
+            placeholder="Mô tả ngắn gọn tình trạng của bạn..."
+          />
         </div>
-      ) : (
-        <p className=" py-3 pt-6 text-gray-500 text-center">
+      </div>
+      {/* <p className=" py-3 pt-6 text-gray-500 text-center">
           Vui lòng thêm
           <Link
             href={"/user?tag=add-patient-profile"}
@@ -158,15 +199,20 @@ export function ChoosePatientProfile({ next, previous }: ChooseScheduleProps) {
           >
             hồ sơ khám bệnh
           </Link>
-        </p>
-      )}
+        </p> */}
       <div className="flex justify-end gap-4 py-5">
-        <Button type="dashed" onClick={previous}>
+        <Button onClick={previous} size="md">
           Trở lại
         </Button>
         <Button
-          type={patientProfile && descStatusPatient ? "primary" : "dashed"}
+          color={patientProfile && descStatusPatient ? "primary" : "default"}
+          size="md"
           onClick={handleClickContinue}
+          className={
+            patientProfile && descStatusPatient
+              ? "cursor-pointer"
+              : "cursor-default select-none"
+          }
           disabled={!(patientProfile && descStatusPatient)}
         >
           Tiếp tục

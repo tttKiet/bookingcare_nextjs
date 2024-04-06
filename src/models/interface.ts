@@ -158,12 +158,21 @@ export interface HospitalService {
   ExaminationService: ExaminationService;
 }
 
-interface WorkingAndScheduleDoctor {
+export interface ScheduleAvailable extends HealthExaminationSchedule {
+  isAvailableBooking: boolean;
+}
+
+export interface WorkingAndScheduleDoctor {
   working: Working;
-  schedules: HealthExaminationSchedule[];
+  schedules: ScheduleAvailable[];
 }
 
 export interface ScheduleFilterDoctor {
   date: string;
   data: WorkingAndScheduleDoctor[];
+}
+
+export interface TimeSlot {
+  Morning: ScheduleAvailable[];
+  Afternoon: ScheduleAvailable[];
 }

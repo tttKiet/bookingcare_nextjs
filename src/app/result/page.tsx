@@ -11,6 +11,7 @@ import { useEffect, useMemo } from "react";
 import useSWR from "swr";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
+import Link from "next/link";
 let querystring = require("qs");
 const { Paragraph, Text } = Typography;
 export interface ResultBookingPageProps {}
@@ -82,7 +83,9 @@ export default function ResultBookingPage(props: ResultBookingPageProps) {
           title={error?.msg}
           subTitle="Làm ơn kiểm tra lại thông tin thanh toán."
           extra={[
-            <Button color="primary">Về trang chủ</Button>,
+            <Link href="/">
+              <Button color="primary">Về trang chủ</Button>
+            </Link>,
             <Button key="buy">Thử mua lại</Button>,
           ]}
         >
