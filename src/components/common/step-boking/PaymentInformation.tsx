@@ -29,7 +29,11 @@ export interface IPaymentInformation {
   previous: () => void;
   confirmSuccess: ({ paymentType }: { paymentType: string }) => Promise<void>;
 }
-
+export const MethodPayment = {
+  hospital: "Thanh toán tại bệnh viện",
+  card: "Thanh toán bằng VNPAY",
+};
+type MethodKeys = keyof typeof MethodPayment;
 export function PaymentInformation({
   schedule,
   patientProfile,
@@ -37,14 +41,6 @@ export function PaymentInformation({
   checkupInfo,
   confirmSuccess,
 }: IPaymentInformation) {
-  const methodPayment = useMemo(
-    () => ({
-      hospital: "Thanh toán tại bệnh viện",
-      card: "Thanh toán bằng VNPAY",
-    }),
-    []
-  );
-  type MethodKeys = keyof typeof methodPayment;
   const [method, setMothod] = useState<MethodKeys | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
 
@@ -89,7 +85,7 @@ export function PaymentInformation({
               </span>{" "}
               vnđ{" "}
               <span className="font-bold text-blue-500">
-                {method && methodPayment?.[method].split("Thanh toán ")[1]}
+                {method && MethodPayment?.[method].split("Thanh toán ")[1]}
               </span>
             </div>
             <div className="mt-4 px-4 py-2 rounded-md bg-blue-100 text-gray-700 shadow">
@@ -140,13 +136,13 @@ export function PaymentInformation({
                   <div className="flex justify-start flex-col text-base gap-4">
                     <Radio value={"hospital"}>
                       <span className="text-base flex items-center justify-start gap-2">
-                        {methodPayment.hospital}
+                        {MethodPayment.hospital}
                         <FaRegHospital size={26} />
                       </span>
                     </Radio>
                     <Radio className="text-base" value={"card"}>
                       <span className="text-base flex items-center justify-start gap-2">
-                        {methodPayment.card}
+                        {MethodPayment.card}
                         <Image
                           src={vnpay_logo}
                           alt="VNPAY"

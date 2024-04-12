@@ -8,16 +8,18 @@ export interface ColorBoxProps {
 
 export function ColorBox({
   title,
-  titlePosition = "center",
+  titlePosition = "left",
   children,
   className,
 }: ColorBoxProps) {
   return (
     <div
-      className={`${className} text-${titlePosition} bg-white text-base rounded-lg overflow-hidden shadow`}
+      className={`${className} text-${titlePosition} bg-white text-base  rouded_main overflow-hidden shadow-lg`}
     >
       {title && (
-        <h4 className="text-white text-lg py-4 px-6 bg-blue-500">{title}</h4>
+        <h4 className="text-black-main text-lg py-4 px-6 font-medium">
+          {title}
+        </h4>
       )}
       <div className="py-2 px-8 h-full">{children}</div>
     </div>

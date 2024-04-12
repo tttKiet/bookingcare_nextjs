@@ -93,9 +93,7 @@ export default function RootLayout({
         </Header>
         <Content style={{ margin: "0 16px" }}>
           <Breadcrumb style={{ margin: "16px 0" }} items={breadcrumbArray} />
-          <div className="bg-white rounded-lg min-h-[360px] p[24] shadow-md">
-            {children}
-          </div>
+          <div className=" min-h-[200px] p[24]">{children}</div>
         </Content>
         <Footer style={{ textAlign: "center" }}>
           Buikiet Design ©2023 Created by BK

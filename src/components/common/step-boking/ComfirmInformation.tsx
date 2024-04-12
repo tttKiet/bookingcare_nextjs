@@ -14,7 +14,7 @@ import { ResDataPaginations } from "@/types";
 import { Button } from "@nextui-org/button";
 import { Descriptions, DescriptionsProps, Table } from "antd";
 import moment from "moment";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 
 export interface IComfirmInformationProps {
@@ -87,11 +87,21 @@ export function ComfirmInformation({
     },
   ];
 
-  const { address } = useGetAddress({
-    wardCode: patientProfile?.addressCode[0] || "",
-    districtCode: patientProfile?.addressCode[1] || "",
-    provinceCode: patientProfile?.addressCode[2] || "",
-  });
+  const [address, setAddress] = useState<string>("");
+
+  useEffect(() => {
+    useGetAddress({
+      wardCode: patientProfile?.addressCode[0] || "",
+      districtCode: patientProfile?.addressCode[1] || "",
+      provinceCode: patientProfile?.addressCode[2] || "",
+    })
+      .then((ob) => setAddress(ob.address))
+      .catch((e) => "");
+  }, [
+    patientProfile?.addressCode[0],
+    patientProfile?.addressCode[1],
+    patientProfile?.addressCode[2],
+  ]);
 
   const items: DescriptionsProps["items"] = useMemo(
     () => [

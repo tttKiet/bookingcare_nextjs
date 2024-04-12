@@ -14,10 +14,11 @@ export interface InputFieldProps {
   name: string;
   label: string;
   control: Control<any>;
-  type?: string;
+  type?: "text" | "password" | "number" | "date";
   icon?: React.ReactNode;
   placeholder?: string;
   min?: number;
   max?: number;
   width?: number | string;
+  isRequired?: boolean;
 }

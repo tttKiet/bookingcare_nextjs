@@ -1,7 +1,7 @@
 "use client";
 
 import { ColorBox } from "../box";
-import { Button, DatePicker, Form, Input, Radio, Select } from "antd";
+import { DatePicker, Form, Input, Radio, Select } from "antd";
 import { FieldType } from "aws-sdk/clients/iot";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -13,6 +13,7 @@ import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import axiosInstances from "../../axios";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
+import { Button } from "@nextui-org/button";
 export interface AddPatientProfileProps {}
 
 interface SelectProps {
@@ -365,23 +366,40 @@ export function AddPatientProfile({}: AddPatientProfileProps) {
           </Form.Item>
         </div>
 
-        <div className="flex justify-end gap-2 mt-2">
-          <Form.Item>
-            <Button
-              type="default"
-              htmlType="button"
-              onClick={() => {
-                router.back();
-              }}
-            >
-              Trở lại
-            </Button>
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" loading={isLoading}>
-              {patientProfileId ? "Sửa" : "Thêm"}
-            </Button>
-          </Form.Item>
+        <div className="flex justify-end gap-3 my-4 mt-5">
+          <Button
+            color="default"
+            type="button"
+            onClick={() => {
+              router.back();
+            }}
+            className="cursor-pointer"
+            size="md"
+          >
+            Trở lại
+          </Button>
+          <Button
+            color="primary"
+            type="submit"
+            isLoading={isLoading}
+            size="md"
+            className="cursor-pointer"
+          >
+            {patientProfileId ? "Sửa" : "Thêm"}
+          </Button>
+          {/* <Button onClick={previous} size="md">
+            Trở lại
+          </Button>
+          <Button
+            color={"primary"}
+            size="md" 
+            size="md"
+
+            onClick={handleClickConfirm}
+            className="cursor-pointer"
+          >
+            Tiếp tục
+          </Button> */}
         </div>
       </Form>
     </ColorBox>

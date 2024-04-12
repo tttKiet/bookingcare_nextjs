@@ -1,4 +1,3 @@
-import { Dayjs } from "dayjs";
 import {
   AcademicDegree,
   HealthFacility,
@@ -81,7 +80,6 @@ export interface ResAdminHealthExaminationSchedule {
   date: string | Date | Object;
   data: StaffAndSchedule[];
 }
-
 export interface PatientProfile {
   id: string;
   fullName: string;
@@ -95,6 +93,21 @@ export interface PatientProfile {
   addressCode: string[];
   userId: string;
   User: User;
+}
+
+export interface Patient {
+  id: string;
+  fullName: string;
+  phone: string;
+  profession: string;
+  email: string;
+  gender: string;
+  birthDay: string;
+  nation: string;
+  cccd: string;
+  addressCode: string[];
+  healthFacilityId: string;
+  HealthFacility: HealthFacility;
 }
 
 export interface Booking {
@@ -175,4 +188,8 @@ export interface ScheduleFilterDoctor {
 export interface TimeSlot {
   Morning: ScheduleAvailable[];
   Afternoon: ScheduleAvailable[];
+}
+
+export interface BookingForUser extends Booking {
+  workRoom: WorkRoom;
 }

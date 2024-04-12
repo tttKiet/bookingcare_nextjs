@@ -250,12 +250,22 @@ export default function Booking(props: IAboutPageProps) {
       description: "Chưa chọn",
     },
   ]);
+  const [address, setAddress] = useState<string>("");
 
-  const { address } = useGetAddress({
-    wardCode: patientProfile?.addressCode[0] || "",
-    districtCode: patientProfile?.addressCode[1] || "",
-    provinceCode: patientProfile?.addressCode[2] || "",
-  });
+  useEffect(() => {
+    useGetAddress({
+      wardCode: patientProfile?.addressCode[0] || "",
+      districtCode: patientProfile?.addressCode[1] || "",
+      provinceCode: patientProfile?.addressCode[2] || "",
+    })
+      .then((ob) => setAddress(ob.address))
+      .catch((e) => "");
+  }, [
+    patientProfile?.addressCode[0],
+    patientProfile?.addressCode[1],
+    patientProfile?.addressCode[2],
+  ]);
+
   useEffect(() => {
     if (healthFacility) {
       setInfoCheckupItems(() => {

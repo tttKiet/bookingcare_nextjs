@@ -87,7 +87,9 @@ export function MangerHealthExaminationScheduleForDoctor({}: MangerHealthExamina
 
   // Search health facilities state
 
-  const { data: doctor } = useSWR<ResDataPaginations<Working>>(
+  const { data: doctor, isLoading: loadingLoadDoctorWorking } = useSWR<
+    ResDataPaginations<Working>
+  >(
     `${API_ACCOUNT_STAFF_DOCTOR_WORKING}?doctorId=${
       profile?.id?.toString() || ""
     }`,
@@ -95,7 +97,6 @@ export function MangerHealthExaminationScheduleForDoctor({}: MangerHealthExamina
       revalidateOnMount: false,
     }
   );
-  console.log("doctordoctordoctordoctor", doctor);
 
   async function handleSubmitFormSchedule(
     data: Partial<ReqSchedule>
@@ -114,9 +115,9 @@ export function MangerHealthExaminationScheduleForDoctor({}: MangerHealthExamina
     setScheduleViewer(record);
     toggleShowModalDetails();
   };
-  useEffect(() => {
-    if (doctor?.rows?.[0]?.id) setWorkingIdDoctorLogined(doctor?.rows?.[0]?.id);
-  }, [doctor?.rows?.[0]?.id, doctor]);
+  // useEffect(() => {
+  //   if (doctor?.rows?.[0]?.id) setWorkingIdDoctorLogined(doctor?.rows?.[0]?.id);
+  // }, [doctor?.rows?.[0]?.id, doctor]);
   // Table
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -358,9 +359,10 @@ export function MangerHealthExaminationScheduleForDoctor({}: MangerHealthExamina
         footer={false}
         body={
           <BodyModalSchedule
+            loading={loadingLoadDoctorWorking}
             auth="doctor"
             obEditScheduleDoctor={obEditScheduleDoctor}
-            workingId={workingIdDoctorLogined}
+            workingId={doctor?.rows?.[0]?.id}
             clickCancel={toggleShowScheduleCreateOrUpdateModal}
             handleSubmitForm={handleSubmitFormSchedule}
           />

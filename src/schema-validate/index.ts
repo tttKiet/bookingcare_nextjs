@@ -1,3 +1,4 @@
+import { healthFacilitiesApi } from "@/api-services";
 import { Working } from "@/models";
 import * as yup from "yup";
 const FILE_SIZE = 2000000;
@@ -210,4 +211,28 @@ export const schemaHospitalServiceBody = yup.object().shape({
     .required("Vui lòng điền đơn giá")
     .min(0, "Giá không được <= 0 vnđ.")
     .positive("Giá không được <= 0 vnđ."),
+});
+
+export const schemaPatientBody = yup.object().shape({
+  id: yup.string(),
+  fullName: yup.string().required("Vui lòng tên bệnh nhân."),
+  phone: yup
+    .string()
+    .required("Vui lòng điền số điện thoại bệnh nhân.")
+    .test("phone", "Số điện thoại không đúng định dạng.", function (value) {
+      const phoneRegExp = /^\+?[0-9]{10,}$/;
+      return phoneRegExp.test(value);
+    }),
+  profession: yup.string().required("Vui lòng điền nghề nghiệp của bệnh nhân."),
+  email: yup
+    .string()
+    .required("Vui lòng điền email bệnh nhân.")
+    .email("Email không đúng định dạng."),
+  gender: yup.string().required("Vui lòng chọn giới tính bệnh nhân."),
+  birthDay: yup.string().required("Vui lòng điền ngày sinh."),
+  nation: yup.string().required("Vui lòng điền tôn giáo."),
+  cccd: yup.string().required("Vui lòng điền CCCD của bệnh nhân."),
+  province: yup.string().required("Vui lòng điền tỉnh thành."),
+  district: yup.string().required("Vui lòng điền quận, huyện."),
+  ward: yup.string().required("Vui lòng điền xã, phường"),
 });

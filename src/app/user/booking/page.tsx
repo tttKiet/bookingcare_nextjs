@@ -8,6 +8,7 @@ import { useMemo } from "react";
 import useSWR from "swr";
 export interface IHealthRecordPageProps {}
 
+// chua fix
 export default function HealthRecordPage(props: IHealthRecordPageProps) {
   const { data: resHealthRecords, error } = useSWR<HealthRecord[]>(
     `${API_HEALTH_RECORD}`,

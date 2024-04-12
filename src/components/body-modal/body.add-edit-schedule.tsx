@@ -307,7 +307,7 @@ export function BodyModalSchedule({
 
   return (
     <div>
-      {auth === "doctor" && !workingId ? (
+      {auth === "doctor" && !workingId && !loading ? (
         <div className=" pt-4">
           <Chip
             startContent={<NotificationIcon size={18} />}

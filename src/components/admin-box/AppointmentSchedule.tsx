@@ -1,21 +1,19 @@
 "use client";
 
-import {
-  API_ADMIN_HOSPITAL_SERVICE,
-  API_ADMIN_MANAGER_ADMIN_HEALTH,
-  API_DOCTOR_BOOKING,
-} from "@/api-services/constant-api";
-import { Button, Input, InputRef, Modal, Space } from "antd";
-import axios from "../../axios";
-
-import {
-  AcademicDegree,
-  Booking,
-  HospitalService,
-  ResAdminManagerHospitalService,
-} from "@/models";
+import { API_CODE, API_DOCTOR_BOOKING } from "@/api-services/constant-api";
+import { Booking, Code } from "@/models";
 import { ResDataPaginations } from "@/types";
-import { Chip } from "@nextui-org/react";
+import { LocalizationProvider, StaticDatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import {
+  Button,
+  Chip,
+  Modal as ModalNext,
+  Input as InputNext,
+  Select,
+  SelectItem,
+} from "@nextui-org/react";
+import { Input, InputRef, Modal, Space } from "antd";
 import type {
   ColumnType,
   ColumnsType,
@@ -25,17 +23,17 @@ import type {
 import { FilterConfirmProps } from "antd/es/table/interface";
 import get from "lodash.get";
 import isEqual from "lodash.isequal";
-import { useEffect, useMemo, useRef, useState } from "react";
+import moment from "moment";
+import { ChangeEvent, useMemo, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
-import { BodyManagerAdminHealth } from "../body-modal/BodyManagerAdminHealth";
+import axios from "../../axios";
 import { ActionGroup } from "../box";
 import { EyeActionBox } from "../box/EyeActionBox.";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
-import { BodyAdminHospitalService } from "../body-modal/BodyAdminHospitalService";
-import moment from "moment";
+import { getColorChipCheckUp } from "@/untils/common";
 const { confirm } = Modal;
 
 type DataIndex = keyof Booking;
@@ -58,6 +56,13 @@ export function AppointmentSchedule() {
     healthFacilityEmail: "",
     healthFacilityName: "",
   });
+
+  const [valueTimeCode, setValueTimeCode] = useState<string | undefined>();
+  const [valueCheckUp, setValueCheckUp] = useState<string | undefined>();
+  const [date, setDate] = useState<string>(
+    moment(new Date()).format("YYYY[-]MM[-]DD")
+  );
+
   const searchInput = useRef<InputRef>(null);
   const [tableParams, setTableParams] = useState<{
     pagination: TablePaginationConfig;
@@ -92,6 +97,9 @@ export function AppointmentSchedule() {
           ((tableParams.pagination.current || 0) - 1) *
           (tableParams.pagination.pageSize || 0),
         ...queryParams,
+        timeCodeId: valueTimeCode,
+        checkUpCodeId: valueCheckUp,
+        date: date,
       },
     ],
     fetcher,
@@ -161,26 +169,26 @@ export function AppointmentSchedule() {
         />
         <Space>
           <Button
-            type="primary"
+            color="primary"
             onClick={() =>
               handleSearch(selectedKeys as string[], confirm, dataIndex)
             }
-            icon={<BsSearch />}
-            size="small"
+            startContent={<BsSearch />}
+            size="sm"
             style={{ width: 90 }}
           >
             Search
           </Button>
           <Button
             onClick={() => clearFilters && handleReset(clearFilters)}
-            size="small"
+            size="sm"
             style={{ width: 90 }}
           >
             Reset
           </Button>
           <Button
-            type="link"
-            size="small"
+            color="secondary"
+            size="sm"
             onClick={() => {
               confirm({ closeDropdown: false });
               setSearchText((selectedKeys as string[])[0]);
@@ -190,8 +198,8 @@ export function AppointmentSchedule() {
             Filter
           </Button>
           <Button
-            type="link"
-            size="small"
+            color="secondary"
+            size="sm"
             onClick={() => {
               close();
             }}
@@ -227,7 +235,7 @@ export function AppointmentSchedule() {
       );
     },
   });
-  console.log(response);
+  // console.log(response);
   const data = useMemo<Booking[]>(() => {
     return response?.rows?.map((d: Booking) => ({
       ...d,
@@ -248,29 +256,36 @@ export function AppointmentSchedule() {
         ...getColumnSearchProps(["PatientProfile", "fullName"]),
       },
       {
-        title: "Ngày đặt lịch",
-        dataIndex: "createdAt",
-        key: "createdAt",
-        render: (text) => <a>{moment(text).format("LLLL")}</a>,
-        // sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
-        // ...getColumnSearchProps("createdAt"),
+        title: "Ngày khám",
+        dataIndex: ["HealthExaminationSchedule", "date"],
+        key: "HealthExaminationSchedule.date",
+        render: (text) => <a>{text && moment(text).format("LLLL")}</a>,
+      },
+      {
+        title: "Số điện thoại",
+        dataIndex: ["PatientProfile", "phone"],
+        key: "PatientProfile.phone",
+        render: (text) => <a>{text}</a>,
       },
       {
         title: "Trạng thái",
-        dataIndex: ["Code", "value"],
-        key: "Code.value",
-        render: (text: number) => (
-          <a>
-            <Chip
-              className="capitalize"
-              color={"primary"}
-              size="sm"
-              variant="flat"
-            >
-              {text}
-            </Chip>
-          </a>
-        ),
+        dataIndex: ["Code"],
+        key: "Code",
+        render: (code: Code) => {
+          const color = getColorChipCheckUp(code.key);
+          return (
+            <a>
+              <Chip
+                className="capitalize"
+                color={color}
+                size="sm"
+                variant="flat"
+              >
+                {code.value}
+              </Chip>
+            </a>
+          );
+        },
       },
       {
         title: "Hành động",
@@ -278,13 +293,39 @@ export function AppointmentSchedule() {
         render: (_, record) => {
           return (
             <ActionGroup className="justify-start">
-              <EyeActionBox onClick={() => {}} />
+              <EyeActionBox
+                href={`/doctor/check-health/${record.id}`}
+                onClick={() => {}}
+              />
             </ActionGroup>
           );
         },
       },
     ];
   }, [getColumnSearchProps]);
+
+  const { data: resCode } = useSWR<ResDataPaginations<Code>>(API_CODE);
+
+  const optionTime = useMemo<Code[]>(
+    () => resCode?.rows.filter((c: Code) => c.name == "Time") || [],
+    [resCode]
+  );
+
+  const optionCheckUp = useMemo<Code[]>(
+    () => resCode?.rows.filter((c: Code) => c.name == "CheckUp") || [],
+    [resCode]
+  );
+
+  function handleChangeSelectTime(event: ChangeEvent<HTMLSelectElement>) {
+    setValueTimeCode(event.target.value);
+  }
+
+  function handleChangeSelectCheckUp(event: ChangeEvent<HTMLSelectElement>) {
+    setValueCheckUp(event.target.value);
+    console.log("CheckUp", event.target.value);
+  }
+
+  const ref = useRef();
 
   return (
     <div className="mt-2">
@@ -299,6 +340,52 @@ export function AppointmentSchedule() {
         body={<div></div>}
         title="Thông tin các dịch vụ của cơ sở y tế"
       />
+
+      <div className="flex items-center justify-between gap-3 mb-5">
+        <h4 className="gr-title-admin  inline-flex items-center justify-between">
+          Lịch hẹn khám bệnh
+        </h4>
+        <div className="flex items-center gap-4 justify-around flex-shrink-0">
+          <InputNext
+            type="date"
+            className="w-44"
+            label="Ngày khám"
+            placeholder="Ngày khám..."
+            value={date}
+            onClear={() => setDate("")}
+            onChange={(e) => {
+              setDate(e.target.value);
+            }}
+            isClearable={true}
+          />
+          <Select
+            value={valueTimeCode}
+            onChange={handleChangeSelectTime}
+            label="Khung giờ"
+            className="w-44"
+            placeholder="Xem ở khung giờ..."
+          >
+            {optionTime.map((code: Code) => (
+              <SelectItem key={code.key} value={code.value}>
+                {code.value}
+              </SelectItem>
+            ))}
+          </Select>
+          <Select
+            value={valueCheckUp}
+            onChange={handleChangeSelectCheckUp}
+            label="Trạng thái"
+            className="w-44"
+            placeholder="Xem trạng thái"
+          >
+            {optionCheckUp.map((code: Code) => (
+              <SelectItem key={code.key} value={code.value}>
+                {code.value}
+              </SelectItem>
+            ))}
+          </Select>
+        </div>
+      </div>
 
       <TableSortFilter
         options={{

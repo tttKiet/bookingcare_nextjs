@@ -300,11 +300,6 @@ export function ManagerHealthExamSchedule({
     date: string | Object | Date | undefined | null,
     staffId: string
   ) {
-    console.log("handleClickEdit------------", {
-      date,
-      workingId,
-      staffId,
-    });
     setBbEditScheduleDoctor(() => ({
       date,
       workingId,

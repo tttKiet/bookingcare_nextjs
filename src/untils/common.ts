@@ -20,3 +20,24 @@ export function sortTimeSlots(arr: ScheduleAvailable[]) {
   });
   return result;
 }
+
+export function getColorChipCheckUp(
+  key: string
+):
+  | "success"
+  | "warning"
+  | "default"
+  | "primary"
+  | "secondary"
+  | "danger"
+  | undefined {
+  if (key == "CU2") {
+    return "primary";
+  } else if (key == "CU3") {
+    return "success";
+  } else if (key == "CU4") {
+    return "danger";
+  } else {
+    return "default";
+  }
+}

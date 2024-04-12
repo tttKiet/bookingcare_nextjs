@@ -4,12 +4,21 @@ import { ResDataPaginations } from "@/types";
 import { PatientProfile } from "@/models";
 import { API_PATIENT_PROFILE } from "@/api-services/constant-api";
 import { useAuth } from "@/hooks";
-import { PatientProfileItem } from "./patient-profile.item";
+import { PatientProfileItem } from "./PatientProfileItem";
 import { Modal } from "antd";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import { userApi } from "@/api-services";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import Link from "next/link";
+import { Accordion, AccordionItem, Avatar } from "@nextui-org/react";
+import { randomInt } from "crypto";
+import { data } from "autoprefixer";
+import moment from "moment";
+import { BiUserPin } from "react-icons/bi";
+import { BsTelephone } from "react-icons/bs";
+import { HiOutlineMail } from "react-icons/hi";
+import { LiaBirthdayCakeSolid } from "react-icons/lia";
+import { useGetAddress } from "@/hooks/use-get-address-from-code";
 const { confirm } = Modal;
 
 export interface IPartientProfileProps {}
@@ -38,18 +47,47 @@ export function PartientProfile(props: IPartientProfileProps) {
       onCancel() {},
     });
   }
+
   return (
-    <ColorBox title="Danh sách hồ sơ bệnh nhân">
-      <div className="grid grid-cols-12 divide-y">
-        {responsePatientProfile?.rows.map((p: PatientProfile) => (
+    <div>
+      <h4 className="text-black-main text-lg pb-4 font-medium px-2  ">
+        Danh sách hồ sơ bệnh nhân
+      </h4>
+      <div className="">
+        <Accordion variant="splitted">
+          {responsePatientProfile?.rows.map((p: PatientProfile) => (
+            <AccordionItem
+              key={p.id}
+              title={p.fullName}
+              startContent={
+                <Avatar
+                  name={p.fullName}
+                  isBordered
+                  color="default"
+                  radius="lg"
+                  className="mr-2"
+                />
+              }
+              subtitle={`${Math.ceil(Math.random()) * 3} lần khám`}
+            >
+              <PatientProfileItem
+                data={p}
+                onClickDelete={handleDeletePatientProfile}
+              />
+            </AccordionItem>
+          ))}
+        </Accordion>
+
+        {/* {responsePatientProfile?.rows.map((p: PatientProfile) => (
           <div className="col-span-12" key={p.id}>
             <PatientProfileItem
-              data={p}
+              p={p}
               onClickDelete={handleDeletePatientProfile}
             />
           </div>
-        ))}
-        {responsePatientProfile?.rows.length == 0 && (
+        ))} */}
+
+        {/* {responsePatientProfile?.rows.length == 0 && (
           <p className="col-span-12">
             Bạn chưa có hồ sơ nào. Tạo hồ sơ ngay
             <Link
@@ -60,8 +98,8 @@ export function PartientProfile(props: IPartientProfileProps) {
             </Link>
             .
           </p>
-        )}
+        )} */}
       </div>
-    </ColorBox>
+    </div>
   );
 }

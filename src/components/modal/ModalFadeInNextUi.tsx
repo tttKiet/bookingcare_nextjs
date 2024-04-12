@@ -1,12 +1,10 @@
 import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Button,
-  useDisclosure,
-  Switch,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
   ModalProps,
 } from "@nextui-org/react";
 
@@ -35,6 +33,7 @@ export interface ModalFadeInNextUiProps {
     | "4xl"
     | "5xl"
     | undefined;
+  backdrop?: "blur" | "transparent" | "opaque" | undefined;
 }
 
 export function ModalFadeInNextUi({
@@ -51,16 +50,18 @@ export function ModalFadeInNextUi({
   isLoading,
   id,
   size,
+  backdrop,
 }: ModalFadeInNextUiProps) {
   return (
     <>
       <Modal
-        backdrop={"blur"}
+        backdrop={backdrop || "blur"}
         id={id}
         size={size}
         isOpen={show}
         onClose={toggle}
         className="z-50"
+        scrollBehavior="inside"
       >
         <ModalContent>
           {(onClose) => (

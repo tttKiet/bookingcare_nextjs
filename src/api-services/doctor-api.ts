@@ -1,8 +1,9 @@
 import { ResData } from "@/types";
 import axios from "../axios";
-import { AcademicDegree, WorkRoom, Working } from "../models";
+import { AcademicDegree, Patient, WorkRoom, Working } from "../models";
 import {
   API_ACEDEMIC_DEGREE,
+  API_DOCTOR_PATIENT,
   API_WORKING,
   API_WORK_ROOM,
 } from "./constant-api";
@@ -59,4 +60,11 @@ export const doctorApi = {
       data: { id },
     });
   },
+  async createOrUpdatePatient(data: Partial<PatientPost>): Promise<ResData> {
+    return await axios.post(API_DOCTOR_PATIENT, data);
+  },
 };
+
+export interface PatientPost extends Patient {
+  staffId: string;
+}
