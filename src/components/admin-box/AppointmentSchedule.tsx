@@ -1,7 +1,7 @@
 "use client";
 
 import { API_CODE, API_DOCTOR_BOOKING } from "@/api-services/constant-api";
-import { Booking, Code } from "@/models";
+import { Booking, Code, ResBookingAndHealthRecord } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { LocalizationProvider, StaticDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -33,7 +33,7 @@ import { ActionGroup } from "../box";
 import { EyeActionBox } from "../box/EyeActionBox.";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
-import { getColorChipCheckUp } from "@/untils/common";
+import { getColorChipCheckUp, getColorChipHR } from "@/untils/common";
 const { confirm } = Modal;
 
 type DataIndex = keyof Booking;
@@ -72,10 +72,9 @@ export function AppointmentSchedule() {
       pageSize: 6,
     },
   });
-  const fetcher: BareFetcher<ResDataPaginations<Booking>> = async ([
-    url,
-    token,
-  ]) =>
+  const fetcher: BareFetcher<
+    ResDataPaginations<ResBookingAndHealthRecord>
+  > = async ([url, token]) =>
     (
       await axios.get(url, {
         params: {
@@ -88,7 +87,7 @@ export function AppointmentSchedule() {
     mutate: mutate,
     error,
     isLoading,
-  } = useSWR<ResDataPaginations<Booking>>(
+  } = useSWR<ResDataPaginations<ResBookingAndHealthRecord>>(
     [
       API_DOCTOR_BOOKING,
       {
@@ -140,13 +139,9 @@ export function AppointmentSchedule() {
     });
   };
 
-  const handleClickView = (record: Booking) => {
-    toggleShowModalDetails();
-  };
-
   const getColumnSearchProps = (
     dataIndex: DataIndex | any
-  ): ColumnType<Booking> => ({
+  ): ColumnType<ResBookingAndHealthRecord> => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -244,35 +239,57 @@ export function AppointmentSchedule() {
   }, [response]);
 
   // Columns
-  const columns: ColumnsType<Booking> = useMemo(() => {
+  const columns: ColumnsType<ResBookingAndHealthRecord> = useMemo(() => {
     return [
       {
         title: "Tên bệnh nhân",
-        dataIndex: ["PatientProfile", "fullName"],
+        dataIndex: ["booking", "PatientProfile", "fullName"],
         key: "PatientProfile.fullName",
         render: (text) => <a>{text}</a>,
         sorter: (a, b) =>
-          a.PatientProfile.fullName.localeCompare(b.PatientProfile.fullName),
+          a.booking.PatientProfile.fullName.localeCompare(
+            b.booking.PatientProfile.fullName
+          ),
         ...getColumnSearchProps(["PatientProfile", "fullName"]),
       },
       {
         title: "Ngày khám",
-        dataIndex: ["HealthExaminationSchedule", "date"],
+        dataIndex: ["booking", "HealthExaminationSchedule", "date"],
         key: "HealthExaminationSchedule.date",
         render: (text) => <a>{text && moment(text).format("LLLL")}</a>,
       },
       {
         title: "Số điện thoại",
-        dataIndex: ["PatientProfile", "phone"],
+        dataIndex: ["booking", "PatientProfile", "phone"],
         key: "PatientProfile.phone",
         render: (text) => <a>{text}</a>,
       },
       {
-        title: "Trạng thái",
-        dataIndex: ["Code"],
+        title: "Trạng thái hẹn",
+        dataIndex: ["booking", "Code"],
         key: "Code",
         render: (code: Code) => {
           const color = getColorChipCheckUp(code.key);
+          return (
+            <a>
+              <Chip
+                className="capitalize"
+                color={color}
+                size="sm"
+                variant="flat"
+              >
+                {code.value}
+              </Chip>
+            </a>
+          );
+        },
+      },
+      {
+        title: "Trạng thái phiếu khám",
+        dataIndex: ["healthRecord", "status"],
+        key: "status",
+        render: (code: Code) => {
+          const color = getColorChipHR(code.key);
           return (
             <a>
               <Chip
@@ -294,7 +311,7 @@ export function AppointmentSchedule() {
           return (
             <ActionGroup className="justify-start">
               <EyeActionBox
-                href={`/doctor/check-health/${record.id}`}
+                href={`/doctor/check-health/${record.booking.id}`}
                 onClick={() => {}}
               />
             </ActionGroup>
@@ -322,7 +339,6 @@ export function AppointmentSchedule() {
 
   function handleChangeSelectCheckUp(event: ChangeEvent<HTMLSelectElement>) {
     setValueCheckUp(event.target.value);
-    console.log("CheckUp", event.target.value);
   }
 
   const ref = useRef();

@@ -4,10 +4,10 @@
 import { ClinicRoom } from "@/models";
 import { schemaClinicRoomBody } from "@/schema-validate";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Space } from "antd";
 import { useForm } from "react-hook-form";
 import { InputField } from "../form";
 import React from "react";
+import { Button } from "@nextui-org/button";
 
 export interface BodyModalClinicRoomProps {
   handleSubmitForm: (data: Partial<ClinicRoom>) => Promise<boolean>;
@@ -24,7 +24,7 @@ export function BodyModalClinicRoom({
   const {
     control,
     handleSubmit,
-    formState: { isSubmitted, isSubmitting },
+    formState: { isSubmitted, isSubmitting, isValid },
     setValue,
     reset,
   } = useForm({
@@ -78,20 +78,18 @@ export function BodyModalClinicRoom({
       </div>
 
       <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
-        <Button type="default" size="middle" onClick={clickCancel}>
+        <Button color="danger" variant="light" onClick={clickCancel}>
           Hủy
         </Button>
-        <Space wrap>
-          <Button
-            type="primary"
-            size="middle"
-            loading={isSubmitting}
-            // onClick={() => true}
-            htmlType="submit"
-          >
-            {obEditClinicRoom?.roomNumber ? "Lưu" : "Thêm"}
-          </Button>
-        </Space>
+
+        <Button
+          color={isValid ? "primary" : "default"}
+          disabled={!isValid}
+          isLoading={isSubmitting}
+          type="submit"
+        >
+          {obEditClinicRoom?.roomNumber ? "Lưu" : "Thêm"}
+        </Button>
       </div>
     </form>
   );

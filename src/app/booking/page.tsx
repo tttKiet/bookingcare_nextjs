@@ -224,7 +224,6 @@ export default function Booking(props: IAboutPageProps) {
         patientProfileId: patientProfile?.id || "",
         paymentType: paymentType,
       });
-      console.log("res", res);
       if (res.statusCode === 0 || res.statusCode === 200) {
         router.push(res.data?.url!);
       }

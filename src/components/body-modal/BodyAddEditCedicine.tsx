@@ -2,13 +2,11 @@ import { Cedicine } from "@/models";
 import { schemaCedicineBody } from "@/schema-validate";
 
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Space } from "antd";
 import { useForm } from "react-hook-form";
-import { VscSymbolNamespace } from "react-icons/vsc";
 import { InputField } from "../form";
 
+import { Button } from "@nextui-org/button";
 import { useEffect } from "react";
-import { AiOutlinePhone } from "react-icons/ai";
 import { CgRename } from "react-icons/cg";
 import { CiBadgeDollar } from "react-icons/ci";
 
@@ -28,13 +26,13 @@ export function BodyAddEditCedicine({
   const {
     control,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isValid },
     reset,
     setValue,
   } = useForm({
     defaultValues: {
       name: "",
-      price: 1000,
+      desc: "",
     },
     resolver: yupResolver(schemaCedicineBody),
   });
@@ -42,18 +40,21 @@ export function BodyAddEditCedicine({
   useEffect(() => {
     reset({
       name: obEditCedicine?.name || "",
-      price: obEditCedicine?.price || 0,
+      desc: obEditCedicine?.desc || "",
     });
   }, [obEditCedicine?.id, reset]);
 
-  async function handleSubmitLocal({ name, price }: Partial<Cedicine>) {
+  async function handleSubmitLocal({ name, desc }: Partial<Cedicine>) {
     const isOk = await handleSubmitForm({
       id: obEditCedicine?.id || undefined,
       name,
-      price,
+      desc,
     });
     if (isOk) {
-      control._resetDefaultValues();
+      reset({
+        desc: "",
+        name: "",
+      });
       clickCancel();
     }
   }
@@ -68,20 +69,16 @@ export function BodyAddEditCedicine({
           placeholder="Nhập tên thuốc"
           icon={<CgRename />}
         />
-        <div className="">
-          <InputField
-            type="number"
-            width={"200px"}
-            control={control}
-            label="Đơn giá"
-            name="price"
-            icon={<CiBadgeDollar />}
-            placeholder="Nhập đơn giá của thuốc"
-          />
-        </div>
+        <InputField
+          control={control}
+          label="Mô tả"
+          name="desc"
+          icon={<CiBadgeDollar />}
+          placeholder="Nhập mô tả..."
+        />
       </div>
       <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
-        <Button type="default" size="middle" onClick={clickCancel}>
+        {/* <Button type="default" size="middle" onClick={clickCancel}>
           Hủy
         </Button>
         <Space wrap>
@@ -94,7 +91,20 @@ export function BodyAddEditCedicine({
           >
             {obEditCedicine?.id ? "Lưu" : "Thêm"}
           </Button>
-        </Space>
+        </Space> */}
+
+        <Button color="danger" variant="light" onClick={clickCancel}>
+          Hủy
+        </Button>
+
+        <Button
+          color={isValid ? "primary" : "default"}
+          disabled={!isValid}
+          isLoading={isSubmitting}
+          type="submit"
+        >
+          {obEditCedicine?.id ? "Lưu" : "Thêm"}
+        </Button>
       </div>
     </form>
   );

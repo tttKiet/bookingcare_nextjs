@@ -17,6 +17,16 @@ export async function toastMsgFromPromise(api: Promise<ResData>): Promise<any> {
         progress: undefined,
       });
       // toast.success(res.msg || "Thành công");
+    } else if (res.statusCode === 201) {
+      toast.warning(res.msg || "Thành công", {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
     return res;
   } catch (err) {

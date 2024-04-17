@@ -2,13 +2,13 @@ import { Code, Specialist } from "@/models";
 import { schemaCodeBody, schemaSpecialistBody } from "@/schema-validate";
 
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Space } from "antd";
 import { useForm } from "react-hook-form";
 import { VscSymbolNamespace } from "react-icons/vsc";
 import { InputField, InputTextareaField, SelectFieldAddOption } from "../form";
 
 import { AiOutlinePhone } from "react-icons/ai";
 import { RxValue } from "react-icons/rx";
+import { Button } from "@nextui-org/button";
 
 export interface BodyModalCodeProps {
   handleSubmitForm: (data: Code) => Promise<boolean>;
@@ -24,7 +24,7 @@ export function BodyModalCode({
   const {
     control,
     handleSubmit,
-    formState: { isSubmitting, defaultValues },
+    formState: { isSubmitting, defaultValues, isValid },
     reset,
     setValue,
   } = useForm({
@@ -80,20 +80,18 @@ export function BodyModalCode({
         </div>
       </div>
       <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
-        <Button type="default" size="middle" onClick={clickCancel}>
+        <Button color="danger" variant="light" onClick={clickCancel}>
           Hủy
         </Button>
-        <Space wrap>
-          <Button
-            type="primary"
-            size="middle"
-            loading={isSubmitting}
-            // onClick={() => true}
-            htmlType="submit"
-          >
-            Thêm mới mã
-          </Button>
-        </Space>
+
+        <Button
+          color={isValid ? "primary" : "default"}
+          disabled={!isValid}
+          isLoading={isSubmitting}
+          type="submit"
+        >
+          Thêm mới mã
+        </Button>
       </div>
     </form>
   );

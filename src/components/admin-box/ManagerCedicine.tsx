@@ -36,7 +36,8 @@ export function ManagerCedicine() {
     useState<Partial<Cedicine> | null>({
       id: "",
       name: "",
-      price: Number.parseFloat(""),
+
+      // price: Number.parseFloat(""),
     });
   // Table
   const [queryParams, setQueryParams] = useState<Partial<Cedicine>>({});
@@ -257,17 +258,25 @@ export function ManagerCedicine() {
         ...getColumnSearchProps("name"),
       },
       {
-        title: "Đơn giá",
-        dataIndex: "price",
-        key: "price",
-        render: (text: number) => (
-          <Tag className="text-sm" color="blue">
-            {text.toLocaleString()} vnđ
-          </Tag>
-        ),
-        sorter: (a, b) => a.price - b.price,
-        // ...getColumnSearchProps("price"),
+        title: "Mô tả",
+        dataIndex: "desc",
+        key: "desc",
+        render: (text) => <a>{text}</a>,
+        sorter: (a, b) => a.desc.localeCompare(b.desc),
+        ...getColumnSearchProps("desc"),
       },
+      // {
+      //   title: "Đơn giá",
+      //   dataIndex: "price",
+      //   key: "price",
+      //   render: (text: number) => (
+      //     <Tag className="text-sm" color="blue">
+      //       {text.toLocaleString()} vnđ
+      //     </Tag>
+      //   ),
+      //   sorter: (a, b) => a.price - b.price,
+      //   // ...getColumnSearchProps("price"),
+      // },
       {
         title: "Hành động",
         key: "action",

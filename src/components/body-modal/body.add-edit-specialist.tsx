@@ -2,13 +2,13 @@ import { Specialist } from "@/models";
 import { schemaSpecialistBody } from "@/schema-validate";
 
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Space } from "antd";
 import { useForm } from "react-hook-form";
 import { VscSymbolNamespace } from "react-icons/vsc";
 import { InputField, InputTextareaField } from "../form";
 
 import { AiOutlinePhone } from "react-icons/ai";
 import { useEffect } from "react";
+import { Button } from "@nextui-org/button";
 
 export interface BodyModalSpecialistProps {
   handleSubmitForm: (data: Partial<Specialist>) => Promise<boolean>;
@@ -26,7 +26,7 @@ export function BodyModalSpecialist({
   const {
     control,
     handleSubmit,
-    formState: { isSubmitting, defaultValues },
+    formState: { isSubmitting, defaultValues, isValid },
     reset,
     setValue,
   } = useForm({
@@ -97,7 +97,7 @@ export function BodyModalSpecialist({
         </div>
       </div>
       <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
-        <Button type="default" size="middle" onClick={clickCancel}>
+        {/* <Button type="default" size="middle" onClick={clickCancel}>
           Hủy
         </Button>
         <Space wrap>
@@ -110,7 +110,20 @@ export function BodyModalSpecialist({
           >
             {obEditSpecialist?.id ? "Lưu" : "Thêm"}
           </Button>
-        </Space>
+        </Space> */}
+
+        <Button color="danger" variant="light" onClick={clickCancel}>
+          Hủy
+        </Button>
+
+        <Button
+          color={isValid ? "primary" : "default"}
+          disabled={!isValid}
+          isLoading={isSubmitting}
+          type="submit"
+        >
+          {obEditSpecialist?.id ? "Lưu" : "Thêm"}
+        </Button>
       </div>
     </form>
   );

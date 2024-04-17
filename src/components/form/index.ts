@@ -4,7 +4,6 @@ export * from "./input-field";
 export * from "./check-box-field";
 export * from "./input-code-phone-field";
 export * from "./radio-group-field";
-export * from "./select-field";
 export * from "./input-upload-field";
 export * from "./input-field-textarea";
 export * from "./select-field-search";
@@ -21,4 +20,5 @@ export interface InputFieldProps {
   max?: number;
   width?: number | string;
   isRequired?: boolean;
+  noUnit?: boolean;
 }

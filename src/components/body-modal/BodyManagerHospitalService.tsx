@@ -3,7 +3,7 @@ import { schemaHospitalServiceBody } from "@/schema-validate";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { InputField, SelectField } from "../form";
+import { InputField, SelectSearchField } from "../form";
 
 import { API_ADMIN_EXAMINATION_SERVICE } from "@/api-services/constant-api";
 import { ResDataPaginations } from "@/types";
@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { CgRename } from "react-icons/cg";
 import { CiBadgeDollar } from "react-icons/ci";
 import useSWR from "swr";
+import { SelectControl } from "../form/SelectControl";
 
 export interface BodyManagerHospitalServiceProps {
   handleSubmitForm: (data: Partial<HospitalService>) => Promise<boolean>;
@@ -32,11 +33,10 @@ export function BodyManagerHospitalService({
     handleSubmit,
     formState: { isSubmitting },
     reset,
-    setValue,
   } = useForm({
     defaultValues: {
       examinationServiceId: "",
-      price: 0,
+      price: undefined,
     },
     resolver: yupResolver(schemaHospitalServiceBody),
   });
@@ -44,13 +44,6 @@ export function BodyManagerHospitalService({
   const [isAcctiveToggle, setIsAcctiveToggle] = useState<boolean>(() =>
     obEdit === null ? true : !!obEdit.isAcctive
   );
-
-  useEffect(() => {
-    reset({
-      examinationServiceId: obEdit?.examinationServiceId || "",
-      price: obEdit?.price || 0,
-    });
-  }, [obEdit?.healthFacilityId, reset]);
 
   async function handleSubmitLocal({
     examinationServiceId,
@@ -62,7 +55,7 @@ export function BodyManagerHospitalService({
       price,
     });
     if (isOk) {
-      control._resetDefaultValues();
+      reset({ examinationServiceId: undefined, price: undefined });
       clickCancel();
     }
   }
@@ -75,7 +68,7 @@ export function BodyManagerHospitalService({
     error,
     isLoading,
   } = useSWR<ResDataPaginations<ExaminationService>>(
-    `${API_ADMIN_EXAMINATION_SERVICE}?name=${nameServiceSearch}`,
+    `${API_ADMIN_EXAMINATION_SERVICE}?name=${nameServiceSearch}&offset=0&limit=30`,
     {
       revalidateOnMount: true,
       dedupingInterval: 5000,
@@ -90,37 +83,34 @@ export function BodyManagerHospitalService({
   const optionDoctorsWorking =
     responseService?.rows?.map((t: ExaminationService) => ({
       value: t.id,
-      label: (
-        <div>
-          <h3 className="text-sm text-gray-600 font-medium">{t.name}</h3>
-          <span className="text-xs text-black font-normal flex items-center justify-between">
-            <span>{t.description}</span>
-          </span>
-        </div>
-      ),
+      label: t.name,
     })) || [];
 
   function handleChangeToggle(isSelected: boolean) {
     setIsAcctiveToggle(isSelected);
   }
 
+  useEffect(() => {
+    reset({
+      examinationServiceId: obEdit?.examinationServiceId || "",
+      price: obEdit?.price || undefined,
+    });
+  }, [obEdit, obEdit?.healthFacilityId, reset]);
+
   return (
     <form onSubmit={handleSubmit(handleSubmitLocal)} className="pt-4">
       <div className="grid md:grid-cols-1 gap-3 sm:grid-cols-1">
-        <SelectField
-          width={"100%"}
+        <SelectControl
           control={control}
-          options={optionDoctorsWorking}
+          data={optionDoctorsWorking}
           label="Dịch vụ"
           name="examinationServiceId"
           placeholder="Chọn dịch vụ"
-          icon={<CgRename />}
           debounceSeconds={500}
-          onSearchSelect={onSearchSelectService}
+          handleSearchSelect={onSearchSelectService}
         />
         <InputField
           type="number"
-          width={"200px"}
           control={control}
           label="Đơn giá"
           name="price"

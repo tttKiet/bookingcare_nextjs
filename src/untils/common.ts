@@ -22,7 +22,7 @@ export function sortTimeSlots(arr: ScheduleAvailable[]) {
 }
 
 export function getColorChipCheckUp(
-  key: string
+  key: string | undefined
 ):
   | "success"
   | "warning"
@@ -35,6 +35,27 @@ export function getColorChipCheckUp(
     return "primary";
   } else if (key == "CU3") {
     return "success";
+  } else if (key == "CU4") {
+    return "danger";
+  } else {
+    return "default";
+  }
+}
+
+export function getColorChipHR(
+  key: string | undefined
+):
+  | "success"
+  | "warning"
+  | "default"
+  | "primary"
+  | "secondary"
+  | "danger"
+  | undefined {
+  if (key == "HR2") {
+    return "primary";
+  } else if (key == "HR3") {
+    return "warning";
   } else if (key == "CU4") {
     return "danger";
   } else {

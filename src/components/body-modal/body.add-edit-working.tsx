@@ -19,21 +19,25 @@ import {
 import { schemaStaffBody, schemaWorkingBody } from "@/schema-validate";
 import { ResDataPaginations } from "@/types";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Space } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { GoRepoForked } from "react-icons/go";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { TbLockSquareRounded } from "react-icons/tb";
 import useSWR from "swr";
-import {
-  InputField,
-  InputTextareaField,
-  RadioGroupField,
-  SelectField,
-} from "../form";
+import { InputField, InputTextareaField, RadioGroupField } from "../form";
 import { SelectDateCalendarField } from "../form/select-date-field";
 import dayjs from "dayjs";
+import { SelectControl } from "../form/SelectControl";
+import { SelectFieldNext } from "../form/SelectFieldNext";
+import moment from "moment";
+import { Button } from "@nextui-org/button";
+
+interface SelectProps {
+  value: string;
+  label: string;
+  description: string;
+}
 
 export interface BodyModalWorkingProps {
   handleSubmitForm: (data: Partial<Working>) => Promise<boolean>;
@@ -50,31 +54,31 @@ export function BodyModalWorking({
   const {
     control,
     handleSubmit,
-    formState: { isSubmitted, isSubmitting },
+    formState: { isSubmitted, isSubmitting, isValid },
     setValue,
     reset,
   } = useForm({
     defaultValues: {
       staffId: "",
       healthFacilityId: "",
-      startDate: dayjs(new Date()),
-      endDate: null,
+      startDate: moment(new Date()).format("YYYY[-]MM[-]DD"),
+      endDate: undefined,
     },
     resolver: yupResolver(schemaWorkingBody),
   });
 
   const [emailSearch, setEmailSearch] = useState<string>("");
   const [emailHealthFacility, setEmailHealthFacility] = useState<string>("");
-  const { data: doctors } = useSWR(
-    `${API_ACCOUNT_STAFF_DOCTOR}?email=${emailSearch}`,
+  const { data: doctors, mutate: mutateDoctor } = useSWR(
+    `${API_ACCOUNT_STAFF_DOCTOR}?email=${emailSearch}&offset=0&limit=30`,
     {
-      revalidateOnMount: false,
+      revalidateOnMount: true,
     }
   );
-  const { data: healthFacilities } = useSWR(
-    `${API_HEALTH_FACILITIES}?email=${emailHealthFacility}`,
+  const { data: healthFacilities, mutate: mutateHealthFacility } = useSWR(
+    `${API_HEALTH_FACILITIES}?email=${emailHealthFacility}&offset=0&limit=30`,
     {
-      revalidateOnMount: false,
+      revalidateOnMount: true,
     }
   );
   function onSearchSelectDoctors(value: string): void {
@@ -83,57 +87,26 @@ export function BodyModalWorking({
   function onSearchSelectHealthFacility(value: string): void {
     setEmailHealthFacility(value);
   }
-  const [optionDoctors, setOptionDoctors] = useState<
-    Array<{
-      value: string;
-      label: React.ReactNode;
-    }>
-  >([]);
-  const [optionHealthFacilities, setOptionHealthFacilities] = useState<
-    Array<{
-      value: string;
-      label: React.ReactNode;
-    }>
-  >([]);
 
-  useEffect(() => {
-    setOptionDoctors(() => {
-      return (
-        doctors?.rows?.map((t: Staff) => ({
-          value: t.id,
-          label: (
-            <div>
-              <h3 className="text-sm text-gray-600 font-medium">
-                {t.fullName}
-              </h3>
-              <span className="text-xs text-black font-normal flex items-center justify-between">
-                <span>{t.email}</span>
-                <span>{t.AcademicDegree.name}</span>
-              </span>
-            </div>
-          ),
-        })) || []
-      );
-    });
-    setOptionHealthFacilities(() => {
-      return (
-        healthFacilities?.rows?.map((t: HealthFacility) => ({
-          value: t.id,
-          label: (
-            <div>
-              <h3 className="text-sm text-gray-600 font-medium"> {t.name}</h3>
-              <span className="text-xs text-black font-normal flex items-center gap-2 justify-between">
-                <span>{t.email}</span>
-                <span className="overflow-hidden text-ellipsis whitespace-nowrap max-w-[40%]">
-                  {t.address}
-                </span>
-              </span>
-            </div>
-          ),
-        })) || []
-      );
-    });
-  }, [healthFacilities, doctors]);
+  const optionDoctors: SelectProps[] = useMemo(() => {
+    return (
+      doctors?.rows?.map((t: Staff) => ({
+        value: t.id,
+        label: t.email,
+        description: t.fullName,
+      })) || []
+    );
+  }, [doctors]);
+
+  const optionHealthFacilities: SelectProps[] = useMemo(() => {
+    return (
+      healthFacilities?.rows?.map((t: HealthFacility) => ({
+        value: t.id,
+        label: t.email,
+        description: t.name,
+      })) || []
+    );
+  }, [healthFacilities]);
 
   async function handleSubmitLocal({
     healthFacilityId,
@@ -149,60 +122,32 @@ export function BodyModalWorking({
       id: obEditWorking?.id,
     });
     if (isOk) {
-      reset({});
+      reset({
+        staffId: "",
+        healthFacilityId: "",
+        startDate: moment(new Date()).format("YYYY[-]MM[-]DD"),
+        endDate: undefined,
+      });
+      mutateDoctor();
+      mutateHealthFacility();
+      setEmailSearch("");
+      setEmailHealthFacility("");
       clickCancel();
     }
   }
 
   React.useEffect(() => {
-    if (obEditWorking?.staffId) {
-      setOptionDoctors(() => {
-        return [
-          {
-            value: obEditWorking.Staff.id,
-            label: (
-              <div>
-                <h3 className="text-sm text-gray-600 font-medium">
-                  {obEditWorking.Staff.fullName}
-                </h3>
-                <span className="text-xs text-black font-normal flex items-center justify-between gap-2">
-                  <span>{obEditWorking.Staff.email}</span>
-                  <span>{obEditWorking.Staff.fullName}</span>
-                </span>
-              </div>
-            ),
-          },
-        ];
-      });
-    }
+    if (obEditWorking) {
+      setEmailSearch("");
+      setEmailHealthFacility("");
 
-    if (obEditWorking?.healthFacilityId) {
-      setOptionHealthFacilities(() => {
-        return [
-          {
-            value: obEditWorking.HealthFacility.id,
-            label: (
-              <div>
-                <h3 className="text-sm text-gray-600 font-medium">
-                  {" "}
-                  {obEditWorking.HealthFacility.name}
-                </h3>
-                <span className="text-xs text-black font-normal flex items-center justify-between">
-                  <span>{obEditWorking.HealthFacility.email}</span>
-                  <span>{obEditWorking.HealthFacility.address}</span>
-                </span>
-              </div>
-            ),
-          },
-        ];
+      reset({
+        healthFacilityId: obEditWorking?.healthFacilityId || "",
+        staffId: obEditWorking?.staffId || "",
+        startDate: moment(new Date()).format("YYYY[-]MM[-]DD"),
+        endDate: undefined,
       });
     }
-    reset({
-      healthFacilityId: obEditWorking?.healthFacilityId || "",
-      staffId: obEditWorking?.staffId || "",
-      startDate: dayjs(obEditWorking?.startDate) || "",
-      endDate: obEditWorking?.endDate ? dayjs(obEditWorking?.endDate) : null,
-    });
   }, [obEditWorking, reset]);
 
   return (
@@ -212,32 +157,34 @@ export function BodyModalWorking({
     >
       <div>
         <div className="grid md:grid-cols-2 gap-3 sm:grid-cols-1">
-          <SelectField
-            width="100%"
+          <SelectControl
             control={control}
             placeholder="Nhập email bác sỉ..."
             label="Chọn bác sỉ"
             name="staffId"
-            options={optionDoctors}
+            data={optionDoctors}
             debounceSeconds={500}
-            onSearchSelect={onSearchSelectDoctors}
+            handleSearchSelect={onSearchSelectDoctors}
           />
-          <SelectField
-            width="100%"
+
+          <SelectControl
             control={control}
             placeholder="Nhập email cơ sở y tế ..."
             label="Chọn cơ sở y tế"
             name="healthFacilityId"
-            options={optionHealthFacilities}
+            data={optionHealthFacilities}
             debounceSeconds={500}
-            onSearchSelect={onSearchSelectHealthFacility}
+            handleSearchSelect={onSearchSelectHealthFacility}
           />
-          <SelectDateCalendarField
+          <InputField
+            type="date"
             control={control}
             label="Chọn ngày bắt đầu công tác"
             name="startDate"
+            placeholder="Ngày khám..."
           />
-          <SelectDateCalendarField
+          <InputField
+            type="date"
             control={control}
             label="Chọn ngày kết thúc công tác"
             name="endDate"
@@ -246,7 +193,7 @@ export function BodyModalWorking({
       </div>
 
       <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
-        <Button type="default" size="middle" onClick={clickCancel}>
+        {/* <Button type="default" size="middle" onClick={clickCancel}>
           Hủy
         </Button>
         <Space wrap>
@@ -259,7 +206,20 @@ export function BodyModalWorking({
           >
             {obEditWorking?.id ? "Lưu" : "Thêm"}
           </Button>
-        </Space>
+        </Space> */}
+
+        <Button color="danger" variant="light" onClick={clickCancel}>
+          Hủy
+        </Button>
+
+        <Button
+          color={isValid ? "primary" : "default"}
+          disabled={!isValid}
+          isLoading={isSubmitting}
+          type="submit"
+        >
+          {obEditWorking?.id ? "Lưu" : "Thêm"}
+        </Button>
       </div>
     </form>
   );

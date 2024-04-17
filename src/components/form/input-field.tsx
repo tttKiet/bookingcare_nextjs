@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Control, useController } from "react-hook-form";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { InputFieldProps } from ".";
-import { InputNumber } from "antd";
 import { Input } from "@nextui-org/react";
 
 export function InputField({
@@ -16,11 +15,18 @@ export function InputField({
   max,
   width,
   isRequired,
+  noUnit,
 }: InputFieldProps) {
   const [showPass, setShowPass] = useState<boolean>(false);
-  function toggleShowPass(): void {
-    setShowPass((s) => !s);
-  }
+  const formatCurrency = (value: string) => {
+    let result = "";
+    if (value.length > 0) {
+      const reverseValue = value.split("").reverse().join("");
+      const currencyArray = reverseValue.match(/.{1,3}/g);
+      result = currencyArray?.join(".").split("").reverse().join("") || "";
+    }
+    return result;
+  };
 
   const {
     field: { onChange, onBlur, value, ref },
@@ -31,28 +37,70 @@ export function InputField({
     control,
   });
 
+  const [key, setKey] = useState<string>(() => {
+    if (!value) return "";
+    const rawValueString = value.toString();
+    let rawValueNumber = rawValueString.replace(/[^0-9]/g, "");
+    return formatCurrency(rawValueNumber);
+  });
+  function toggleShowPass(): void {
+    setShowPass((s) => !s);
+  }
+
+  useEffect(() => {
+    if (type == "number" && value) {
+      const rawValueString = value?.toString() || "";
+      let cur = formatCurrency(rawValueString);
+      setKey(cur || "");
+    } else {
+      setKey("");
+    }
+  }, [value, type]);
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    let rawValue = e.target.value.replace(/\./g, "");
+    let rawValueNumber = rawValue.replace(/[^0-9]/g, "");
+    const rawValueString = parseInt(rawValueNumber).toString();
+    let value = formatCurrency(rawValueString);
+    setKey(value);
+    onChange(rawValueNumber);
+  };
+
   return (
     <div className="text-base ">
       {type === "number" ? (
         <>
-          <InputNumber
+          <Input
+            size="lg"
             placeholder={
               placeholder || `Nhập ${label?.toLocaleLowerCase()} ...`
             }
-            className="outline-none border-transparent text-base"
-            formatter={(value) =>
-              `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-            }
-            parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
-            onChange={onChange}
-            onBlur={onBlur}
+            // className="outline-none border-transparent text-base"
+            // formatter={(value) =>
+            //   `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            // }
+            endContent={!noUnit && "vnđ"}
+            // parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
+            onChange={handleChange}
             ref={ref}
             spellCheck={false}
             name={name}
-            value={value}
-            min={min}
+            value={key}
+            errorMessage={error?.message}
+            min={min || 0}
             max={max}
             width={width || "auto"}
+            color={
+              error?.message ? "danger" : isSubmitted ? "primary" : "default"
+            }
+            label={
+              <>
+                {label} {isRequired && <span className="text-red-400">*</span>}
+              </>
+            }
+            classNames={{
+              errorMessage: "text-base",
+            }}
           />
         </>
       ) : (

@@ -8,19 +8,14 @@ import { AcademicDegree, Role, Specialist, Staff } from "@/models";
 import { schemaStaffBody, schemaStaffManagerBody } from "@/schema-validate";
 import { ResDataPaginations } from "@/types";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Space } from "antd";
 import React, { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { GoRepoForked } from "react-icons/go";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { TbLockSquareRounded } from "react-icons/tb";
 import useSWR from "swr";
-import {
-  InputField,
-  InputTextareaField,
-  RadioGroupField,
-  SelectField,
-} from "../form";
+import { InputField, InputTextareaField, RadioGroupField } from "../form";
+import { Button } from "@nextui-org/button";
 
 export interface BodyModalAccountManagerProps {
   handleSubmitForm: (data: Partial<Staff>) => Promise<boolean>;
@@ -37,7 +32,7 @@ export function BodyModalAccountManager({
   const {
     control,
     handleSubmit,
-    formState: { isSubmitted, isSubmitting },
+    formState: { isSubmitted, isSubmitting, isValid },
     setValue,
     getValues,
     reset,
@@ -139,7 +134,7 @@ export function BodyModalAccountManager({
       </div>
 
       <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
-        <Button type="default" size="middle" onClick={clickCancel}>
+        {/* <Button type="default" size="middle" onClick={clickCancel}>
           Hủy
         </Button>
         <Space wrap>
@@ -152,7 +147,20 @@ export function BodyModalAccountManager({
           >
             {obEditStaff?.id ? "Lưu" : "Thêm"}
           </Button>
-        </Space>
+        </Space> */}
+
+        <Button color="danger" variant="light" onClick={clickCancel}>
+          Hủy
+        </Button>
+
+        <Button
+          color={isValid ? "primary" : "default"}
+          disabled={!isValid}
+          isLoading={isSubmitting}
+          type="submit"
+        >
+          {obEditStaff?.id ? "Lưu" : "Thêm"}
+        </Button>
       </div>
     </form>
   );

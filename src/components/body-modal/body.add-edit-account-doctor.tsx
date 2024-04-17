@@ -8,7 +8,6 @@ import { AcademicDegree, Role, Specialist, Staff } from "@/models";
 import { schemaStaffBody } from "@/schema-validate";
 import { ResDataPaginations } from "@/types";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Space } from "antd";
 import React, { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { GoRepoForked } from "react-icons/go";
@@ -19,8 +18,10 @@ import {
   InputField,
   InputTextareaField,
   RadioGroupField,
-  SelectField,
+  SelectSearchField,
 } from "../form";
+import { SelectFieldNext } from "../form/SelectFieldNext";
+import { Button } from "@nextui-org/button";
 
 export interface BodyModalAccountDoctorProps {
   handleSubmitForm: (data: Partial<Staff>) => Promise<boolean>;
@@ -37,7 +38,7 @@ export function BodyModalAccountDoctor({
   const {
     control,
     handleSubmit,
-    formState: { isSubmitted, isSubmitting },
+    formState: { isSubmitted, isSubmitting, isValid },
     setValue,
     getValues,
     reset,
@@ -159,26 +160,22 @@ export function BodyModalAccountDoctor({
             icon={<TbLockSquareRounded />}
           />
 
-          <SelectField
+          <SelectFieldNext
             control={control}
             icon={<GoRepoForked />}
             label="Học vị"
+            placeholder="Chọn học vị"
             name="academicDegreeId"
-            options={[
-              { value: "", label: "Chọn học vị" },
-              ...optionAcademicDegree,
-            ]}
+            options={[...optionAcademicDegree]}
           />
-          <SelectField
+          <SelectFieldNext
             control={control}
             icon={<GoRepoForked />}
+            placeholder="Chuyên khoa"
             width={180}
             label="Chuyên khoa"
             name="specialistId"
-            options={[
-              { value: "", label: "Chọn chuyên khoa" },
-              ...optionSpecialists,
-            ]}
+            options={[...optionSpecialists]}
           />
           <InputField
             control={control}
@@ -198,20 +195,18 @@ export function BodyModalAccountDoctor({
       </div>
 
       <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
-        <Button type="default" size="middle" onClick={clickCancel}>
+        <Button color="danger" variant="light" onClick={clickCancel}>
           Hủy
         </Button>
-        <Space wrap>
-          <Button
-            type="primary"
-            size="middle"
-            loading={isSubmitting}
-            // onClick={() => true}
-            htmlType="submit"
-          >
-            {obEditStaff?.id ? "Lưu" : "Thêm"}
-          </Button>
-        </Space>
+
+        <Button
+          color={isValid ? "primary" : "default"}
+          disabled={!isValid}
+          isLoading={isSubmitting}
+          type="submit"
+        >
+          {obEditStaff?.id ? "Lưu" : "Thêm"}
+        </Button>
       </div>
     </form>
   );

@@ -52,8 +52,6 @@ export default function ResultBookingPage(props: ResultBookingPageProps) {
   const { data, error: error } = useSWR<Booking>(
     `${PAYMENT_VNPAY_RETURN}?${signData}`
   );
-  console.log("data", data);
-  console.log("error", error);
 
   return (
     <>

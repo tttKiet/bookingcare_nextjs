@@ -47,7 +47,6 @@ import {
   InputField,
   InputTextareaField,
   RadioGroupField,
-  SelectField,
   SelectSearchField,
 } from "../form";
 import { SelectDateCalendarField } from "../form/select-date-field";
@@ -233,7 +232,6 @@ export function BodyModalSchedule({
   }, [workingId]);
 
   async function handleSubmitLocal(data: Partial<ReqSchedule>) {
-    console.log("data", data);
     const isOk = await handleSubmitForm({
       ...data,
     });

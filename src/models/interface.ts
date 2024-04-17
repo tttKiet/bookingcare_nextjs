@@ -128,19 +128,21 @@ export interface Booking {
 export interface HealthRecord {
   id: string;
   bookingId: string;
-  healthExaminationScheduleId: string;
-  statusCode: string;
-  orderNumber: Number;
+  patientId: string;
+  diagnosis: string;
+  note: string;
   Booking: Booking;
-  HealthExaminationSchedule: HealthExaminationSchedule;
+  Patient: Booking;
+  statusCode: string;
   status: Code;
-  WorkRoom: WorkRoom;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Cedicine {
   id: string;
   name: string;
-  price: number;
+  desc: string;
 }
 
 export interface HospitalManager {
@@ -161,14 +163,15 @@ export interface ExaminationService {
 }
 
 export interface HospitalService {
+  id: string;
   examinationServiceId: string;
   healthFacilityId: string;
   price: number;
   isAcctive: boolean;
-  createdAt: string;
-  updatedAt: string;
   HealthFacility: HealthFacility;
   ExaminationService: ExaminationService;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ScheduleAvailable extends HealthExaminationSchedule {
@@ -192,4 +195,37 @@ export interface TimeSlot {
 
 export interface BookingForUser extends Booking {
   workRoom: WorkRoom;
+}
+
+export interface ServiceDetails {
+  id: string;
+  hospitalServiceId: string;
+  healthRecordId: string;
+  descriptionResult: string;
+  HealthRecord: HealthRecord;
+  HospitalService: HospitalService;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PrescriptionDetail {
+  id: string;
+  cedicineId: string;
+  healthRecordId: string;
+  unit: string;
+  morning: number;
+  noon: number;
+  afterNoon: number;
+  evening: number;
+  quantity: number;
+  usage: string;
+  HealthRecord: HealthRecord;
+  Cedicine: Cedicine;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ResBookingAndHealthRecord {
+  booking: Booking;
+  healthRecord: HealthRecord;
 }

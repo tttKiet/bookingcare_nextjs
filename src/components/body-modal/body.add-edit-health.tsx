@@ -2,10 +2,10 @@ import { API_TYPE_HEALTH_FACILITIES } from "@/api-services/constant-api";
 import { HealthFacility, TypeHealthFacility } from "@/models";
 import { schemaHealthFacilityBody } from "@/schema-validate";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Space, UploadFile } from "antd";
+import { UploadFile } from "antd";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
-import { InputField, InputUploadField, SelectField } from "../form";
+import { InputField, InputUploadField } from "../form";
 
 import { AiOutlinePhone } from "react-icons/ai";
 import { CiLocationOn } from "react-icons/ci";
@@ -14,6 +14,8 @@ import { GoRepoForked } from "react-icons/go";
 import { MdOutlineMail } from "react-icons/md";
 import { HealthFacilityColumns } from "../admin-box";
 import { useEffect } from "react";
+import { Button } from "@nextui-org/button";
+import { SelectFieldNext } from "../form/SelectFieldNext";
 
 export interface BodyModalHealthProps {
   handleSubmitForm: (data: Partial<HealthFacilityClient>) => Promise<boolean>;
@@ -35,7 +37,7 @@ export default function BodyModalHealth({
   const {
     control,
     handleSubmit,
-    formState: { isSubmitting, defaultValues },
+    formState: { isSubmitting, defaultValues, isValid },
     reset,
     setValue,
   } = useForm({
@@ -149,7 +151,7 @@ export default function BodyModalHealth({
           name="email"
           placeholder="Nhập email liên hệ"
         />
-        <SelectField
+        <SelectFieldNext
           control={control}
           icon={<GoRepoForked />}
           width={180}
@@ -167,7 +169,7 @@ export default function BodyModalHealth({
         />
       </div>
       <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
-        <Button type="default" size="middle" onClick={clickCancel}>
+        {/* <Button type="default" size="middle" onClick={clickCancel}>
           Hủy
         </Button>
         <Space wrap>
@@ -180,7 +182,20 @@ export default function BodyModalHealth({
           >
             {obEditHealthFacility?.id ? "Lưu" : "Thêm"}
           </Button>
-        </Space>
+        </Space> */}
+
+        <Button color="danger" variant="light" onClick={clickCancel}>
+          Hủy
+        </Button>
+
+        <Button
+          color={isValid ? "primary" : "default"}
+          disabled={!isValid}
+          isLoading={isSubmitting}
+          type="submit"
+        >
+          {obEditHealthFacility?.id ? "Lưu" : "Thêm"}
+        </Button>
       </div>
     </form>
   );

@@ -332,8 +332,8 @@ export function ManagerExaminationService() {
         <BtnPlus
           title="Thêm dịch vụ"
           onClick={() => {
-            toggleModalAdd();
             setObEdit(null);
+            toggleModalAdd();
           }}
         />
       </h3>

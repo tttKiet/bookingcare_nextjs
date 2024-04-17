@@ -1,4 +1,4 @@
-import { Radio, RadioChangeEvent } from "antd";
+import { Radio, RadioGroup } from "@nextui-org/react";
 import { Control, useController } from "react-hook-form";
 
 export interface RadioGroupFieldProps {
@@ -7,6 +7,7 @@ export interface RadioGroupFieldProps {
   label?: string;
   control: Control<any>;
   icon: React.ReactNode;
+  isRequired?: boolean;
 }
 
 export function RadioGroupField({
@@ -15,46 +16,38 @@ export function RadioGroupField({
   name,
   label,
   icon,
+  isRequired = true,
 }: RadioGroupFieldProps) {
   const {
     field: { onChange, onBlur, value, ref },
     fieldState: { error },
+    formState: { isSubmitted },
   } = useController({
     name,
     control,
   });
   return (
-    <div
-      className={`border rounded-lg border-while py-2 px-3 pt-8 relative ${
-        error?.message && "border-red-400"
-      }`}
+    <RadioGroup
+      color={error?.message ? "danger" : isSubmitted ? "primary" : "default"}
+      ref={ref}
+      onChange={onChange}
+      size="sm"
+      label={
+        <>
+          {label} {isRequired && <span className="text-red-400">*</span>}
+        </>
+      }
+      value={value}
+      name={name}
+      errorMessage={error?.message}
+      orientation="horizontal"
+      classNames={{ errorMessage: "text-base" }}
     >
-      <label
-        className="absolute top-1 text-sm font-medium flex items-center gap-2"
-        htmlFor=""
-      >
-        {label}
-      </label>
-
-      <div className="flex items-center gap-1 relative">
-        <Radio.Group
-          ref={ref}
-          options={options}
-          onChange={onChange}
-          size="small"
-          value={value}
-          optionType="button"
-          buttonStyle="solid"
-        />
-        <span className="flex items-center absolute right-1 text-xl">
-          {icon}
-        </span>
-      </div>
-      {error?.message && (
-        <p className="text-xs text-red-500 font-medium mt-1">
-          {error?.message}
-        </p>
-      )}
-    </div>
+      {options.map((o) => (
+        <Radio value={o.value} key={o.value}>
+          {o.label}
+        </Radio>
+      ))}
+    </RadioGroup>
   );
 }

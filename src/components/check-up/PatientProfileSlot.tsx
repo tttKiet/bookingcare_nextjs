@@ -1,15 +1,22 @@
 import { doctorApi, PatientPost, userApi } from "@/api-services";
 import {
+  API_DOCTOR_BOOKING,
   API_DOCTOR_PATIENT,
   API_PATIENT_PROFILE,
 } from "@/api-services/constant-api";
 import { useAuth } from "@/hooks";
 import { useGetAddress } from "@/hooks/use-get-address-from-code";
-import { Patient, PatientProfile } from "@/models";
+import {
+  Booking,
+  Patient,
+  PatientProfile,
+  ResBookingAndHealthRecord,
+} from "@/models";
 import { ResData, ResDataPaginations } from "@/types";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import {
   Chip,
+  Input,
   Table,
   TableBody,
   TableCell,
@@ -18,7 +25,7 @@ import {
   TableRow,
 } from "@nextui-org/react";
 import moment from "moment";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { PulseLoader } from "react-spinners";
 import useSWR from "swr";
 import { InfoCheckUpContext } from "../admin-box/CheckUpDetails";
@@ -31,8 +38,20 @@ import { ModalFadeInNextUi } from "../modal/ModalFadeInNextUi";
 export interface IPatientProfileProps {}
 
 export default function PatientProfileSlot(props: IPatientProfileProps) {
-  const infoCheckUp = useContext(InfoCheckUpContext);
-  console.log("infoCheckUp", infoCheckUp);
+  const { bookingId } = useContext(InfoCheckUpContext);
+
+  const { data: dataBooking, mutate } = useSWR<
+    ResDataPaginations<ResBookingAndHealthRecord>
+  >(`${API_DOCTOR_BOOKING}?bookingId=${bookingId}`, {
+    revalidateOnMount: true,
+    dedupingInterval: 5000,
+  });
+
+  const infoCheckUp: Booking | undefined = useMemo(
+    () => dataBooking?.rows?.[0]?.booking,
+    [dataBooking]
+  );
+
   const { profile } = useAuth();
   const [obEditPatient, setObEditPatient] = useState<Patient | undefined>();
 
@@ -40,14 +59,13 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
     useSWR<PatientProfile>(
       `${API_PATIENT_PROFILE}?patientProfileId=${infoCheckUp?.PatientProfile?.id}`
     );
-  console.log("dataPatientProfile", dataPatientProfile);
   const { data: dataPatient, mutate: mutatePatient } = useSWR<
     ResDataPaginations<Patient>
   >(`${API_DOCTOR_PATIENT}?cccd=${infoCheckUp?.PatientProfile?.cccd}`);
 
   const boxClass = "md:col-span-4 grid-cols-12 ";
   const labelClass = "w-full text-black font-medium";
-  const descClass = "mt-2 text-gray-600";
+  const descClass = "text-gray-600";
   const footerClass = "mt-4 flex item-center justify-end";
 
   const [address, setAddress] = useState<string>("");
@@ -102,8 +120,8 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
     const isOk = await toastMsgFromPromise(api);
     if (isOk) {
       // mutate();
-      mutatePatient();
     }
+    mutatePatient();
     return isOk;
   }
 
@@ -174,7 +192,7 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
     dataPatientProfile?.addressCode[1],
     dataPatientProfile?.addressCode[2],
   ]);
-  const labelHeading = "gr-title-admin mb-3 flex items-center justify-between ";
+  const labelHeading = "gr-title-admin mb-4 flex items-center justify-between ";
   return (
     <div className="">
       <ModalFadeInNextUi
@@ -217,26 +235,59 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
 
         <div className="grid grid-cols-12 gap-4">
           <div className={boxClass}>
-            <label className={labelClass}>Tên người khám</label>
-            <div className={descClass}>{dataPatientProfile?.fullName}</div>
+            <Input
+              size="lg"
+              isReadOnly
+              label="Tên người khám"
+              className={descClass}
+              value={dataPatientProfile?.fullName}
+            />
           </div>
           <div className={boxClass}>
-            <label className={labelClass}>Số điện thoại</label>
-            <div className={descClass}>{dataPatientProfile?.phone}</div>
+            <Input
+              size="lg"
+              isReadOnly
+              label="CCCD"
+              className={`${descClass} font-medium`}
+              value={dataPatientProfile?.cccd}
+            />
           </div>
           <div className={boxClass}>
-            <label className={labelClass}>Email</label>
-            <div className={descClass}>{dataPatientProfile?.email}</div>
+            <Input
+              size="lg"
+              isReadOnly
+              label="Số điện thoại"
+              className={`${descClass}`}
+              value={dataPatientProfile?.phone}
+            />
           </div>
           <div className={boxClass}>
-            <label className={labelClass}>Địa chỉ</label>
-            <div className={descClass}>
-              {address || <PulseLoader color="gray" size={4} />}
-            </div>
+            <Input
+              size="lg"
+              isReadOnly
+              label="Email"
+              className={`${descClass}`}
+              value={dataPatientProfile?.email}
+            />
           </div>
           <div className={boxClass}>
-            <label className={labelClass}>Tên người khám</label>
-            <div className={descClass}>{dataPatientProfile?.fullName}</div>
+            {/* <PulseLoader color="gray" size={4} /> */}
+            <Input
+              size="lg"
+              isReadOnly
+              label="Địa chỉ"
+              className={`${descClass}`}
+              value={address || "..."}
+            />
+          </div>
+          <div className={boxClass}>
+            <Input
+              size="lg"
+              isReadOnly
+              label="Tên người khám"
+              className={`${descClass}`}
+              value={dataPatientProfile?.fullName}
+            />
           </div>
         </div>
 
@@ -251,7 +302,7 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
         <h3 className={labelHeading}>Chi tiết bệnh nhân</h3>
 
         <div className="mb-8">
-          {dataPatient?.rows.length > 0 ? (
+          {dataPatient?.rows?.[0] ? (
             <Table removeWrapper>
               <TableHeader>
                 <TableColumn>Tên Bệnh nhân</TableColumn>
@@ -264,7 +315,11 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
               <TableBody>
                 <TableRow key="1">
                   <TableCell>{dataPatient?.rows?.[0]?.fullName}</TableCell>
-                  <TableCell>{dataPatient?.rows?.[0]?.cccd}</TableCell>
+                  <TableCell>
+                    <div className="font-medium">
+                      <i>{dataPatient?.rows?.[0]?.cccd}</i>
+                    </div>
+                  </TableCell>
                   <TableCell>
                     {dataPatient?.rows?.[0]?.gender == "male" ? "Nam" : "Nữ"}
                   </TableCell>
@@ -279,7 +334,7 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
                       variant="dot"
                       className="capitalize border-none gap-1 text-default-600 "
                     >
-                      <div className="flex items-center relative top-[-2px]">
+                      <div className="flex items-center relative top-[-2px] gap-2">
                         <span> Đã tạo ngày </span>
                         <span className="">
                           {moment(dataPatient?.rows?.[0]?.createdAt).format(

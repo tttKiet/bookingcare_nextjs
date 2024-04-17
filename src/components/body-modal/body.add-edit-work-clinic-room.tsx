@@ -7,15 +7,16 @@ import {
   schemaWorkClinicRoomBody,
 } from "@/schema-validate";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Space } from "antd";
 import { useForm } from "react-hook-form";
-import { InputField, SelectField } from "../form";
+import { InputField } from "../form";
 import React, { useState } from "react";
 import { SelectDateCalendarField } from "../form/select-date-field";
 import { ResDataPaginations } from "@/types";
 import { API_WORKING } from "@/api-services/constant-api";
 import useSWR from "swr";
 import dayjs from "dayjs";
+import { SelectControl } from "../form/SelectControl";
+import { Button } from "@nextui-org/button";
 
 export interface BodyModalWorkRoomProps {
   handleSubmitForm: (data: Partial<WorkRoom>) => Promise<boolean>;
@@ -34,7 +35,7 @@ export function BodyModalClinicRoomWork({
   const {
     control,
     handleSubmit,
-    formState: { isSubmitted, isSubmitting },
+    formState: { isSubmitted, isSubmitting, isValid },
     setValue,
     reset,
   } = useForm({
@@ -107,15 +108,14 @@ export function BodyModalClinicRoomWork({
     >
       <div>
         <div className="grid md:grid-cols-2 gap-3 sm:grid-cols-1">
-          <SelectField
-            width="100%"
+          <SelectControl
             control={control}
             placeholder="Nhập email bác sỉ..."
             label="Chọn bác sỉ"
             name="workingId"
-            options={optionDoctorsWorking}
+            data={optionDoctorsWorking}
             debounceSeconds={500}
-            onSearchSelect={onSearchSelectDoctors}
+            handleSearchSelect={onSearchSelectDoctors}
             disabled={!!obEdit}
           />
 
@@ -135,7 +135,7 @@ export function BodyModalClinicRoomWork({
       </div>
 
       <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
-        <Button type="default" size="middle" onClick={clickCancel}>
+        {/* <Button type="default" size="middle" onClick={clickCancel}>
           Hủy
         </Button>
         <Space wrap>
@@ -148,7 +148,20 @@ export function BodyModalClinicRoomWork({
           >
             {obEdit?.id ? "Lưu" : "Thêm"}
           </Button>
-        </Space>
+        </Space> */}
+
+        <Button color="danger" variant="light" onClick={clickCancel}>
+          Hủy
+        </Button>
+
+        <Button
+          color={isValid ? "primary" : "default"}
+          disabled={!isValid}
+          isLoading={isSubmitting}
+          type="submit"
+        >
+          {obEdit?.id ? "Lưu" : "Thêm"}
+        </Button>
       </div>
     </form>
   );

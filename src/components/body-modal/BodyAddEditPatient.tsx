@@ -46,7 +46,7 @@ export function BodyAddEditPatient({
   const {
     control,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isValid },
     reset,
     setValue,
   } = useForm({
@@ -421,8 +421,13 @@ export function BodyAddEditPatient({
         >
           Lấy thông tin từ hồ sơ
         </Button>
-        <Button color="primary" isLoading={isSubmitting} type="submit">
-          {true ? "Lưu" : "Thêm"}
+        <Button
+          color="primary"
+          // isDisabled={}
+          isLoading={isSubmitting}
+          type="submit"
+        >
+          {obEditPatient ? "Lưu" : "Thêm"}
         </Button>
       </div>
     </form>

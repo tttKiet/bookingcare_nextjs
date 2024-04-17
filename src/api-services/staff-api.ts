@@ -5,6 +5,8 @@ import {
   Code,
   HealthExaminationSchedule,
   HealthRecord,
+  ServiceDetails,
+  PrescriptionDetail,
 } from "@/models";
 import axios from "../axios";
 import { ResData, ResDataPaginations } from "@/types";
@@ -14,7 +16,9 @@ import {
   API_ADMIN_MANAGER_ADMIN_HEALTH,
   API_CHECK_UP_HEALTH_RECORD,
   API_CODE,
+  API_DOCTOR_PRESCRIPTION_DETAILS,
   API_DOCTOR_SCHEDULE_HEALTH_EXAM,
+  API_DOCTOR_SERVICE_DETAILS,
 } from "./constant-api";
 
 export const staffApi = {
@@ -59,10 +63,15 @@ export const staffApi = {
   },
 
   // Health record
-  async editStatusHealthRecord(data: Partial<HealthRecord>): Promise<ResData> {
+  async craeteHealthRecord(data: Partial<HealthRecord>): Promise<ResData> {
+    return await axios.post(API_CHECK_UP_HEALTH_RECORD, data);
+  },
+
+  async editHealthRecord(data: Partial<HealthRecord>): Promise<ResData> {
     return await axios.patch(API_CHECK_UP_HEALTH_RECORD, {
+      ...data,
       statusId: data.statusCode,
-      healthRecordId: data.id,
+      id: data.id,
     });
   },
 
@@ -77,5 +86,41 @@ export const staffApi = {
     return await axios.get(
       `${API_ACCOUNT_STAFF}?type=${type}&email=${email || ""}`
     );
+  },
+
+  // saervice details
+  async createOrUpdateServiceDetails(
+    data: Partial<ServiceDetails>
+  ): Promise<ResData<ServiceDetails>> {
+    return await axios.post(API_DOCTOR_SERVICE_DETAILS, {
+      ...data,
+    });
+  },
+
+  async deleteServiceDetails(id: string): Promise<ResData<ServiceDetails>> {
+    return await axios.delete(API_DOCTOR_SERVICE_DETAILS, {
+      data: {
+        id,
+      },
+    });
+  },
+
+  // prescription details
+  async createOrUpdatePrescriptionDetail(
+    data: Partial<PrescriptionDetail>
+  ): Promise<ResData<PrescriptionDetail>> {
+    return await axios.post(API_DOCTOR_PRESCRIPTION_DETAILS, {
+      ...data,
+    });
+  },
+
+  async deletePrescriptionDetail(
+    id: string
+  ): Promise<ResData<PrescriptionDetail>> {
+    return await axios.delete(API_DOCTOR_PRESCRIPTION_DETAILS, {
+      data: {
+        id,
+      },
+    });
   },
 };

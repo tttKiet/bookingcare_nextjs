@@ -48,9 +48,7 @@ export function SelectFieldNext({
 
   const defaultInputValue = options.find((o) => o.value === value)?.label;
 
-  useEffect(() => {
-    console.log("defaultInputValue----", defaultInputValue);
-  }, [defaultInputValue]);
+  useEffect(() => {}, [defaultInputValue]);
 
   return (
     <Autocomplete

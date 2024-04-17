@@ -5,7 +5,6 @@ import {
 } from "@/schema-validate";
 
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Space } from "antd";
 import { useForm } from "react-hook-form";
 import { VscSymbolNamespace } from "react-icons/vsc";
 import { InputField, InputTextareaField } from "../form";
@@ -14,6 +13,7 @@ import { useEffect } from "react";
 import { AiOutlinePhone } from "react-icons/ai";
 import { CgRename } from "react-icons/cg";
 import { CiBadgeDollar } from "react-icons/ci";
+import { Button } from "@nextui-org/button";
 
 export interface BodyAddEditExaminationServiceProps {
   handleSubmitForm: (data: Partial<ExaminationService>) => Promise<boolean>;
@@ -31,7 +31,7 @@ export function BodyAddEditExaminationService({
   const {
     control,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isValid },
     reset,
     setValue,
   } = useForm({
@@ -59,7 +59,10 @@ export function BodyAddEditExaminationService({
       description,
     });
     if (isOk) {
-      control._resetDefaultValues();
+      reset({
+        name: "",
+        description: "",
+      });
       clickCancel();
     }
   }
@@ -69,7 +72,7 @@ export function BodyAddEditExaminationService({
       <div className="grid md:grid-cols-1 gap-3 ">
         <InputField
           control={control}
-          label="Tên thuốc"
+          label="Tên dịch vụ"
           name="name"
           placeholder="Nhập tên dịch vụ"
           icon={<CgRename />}
@@ -83,20 +86,18 @@ export function BodyAddEditExaminationService({
         />
       </div>
       <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
-        <Button type="default" size="middle" onClick={clickCancel}>
+        <Button color="danger" variant="light" onClick={clickCancel}>
           Hủy
         </Button>
-        <Space wrap>
-          <Button
-            type="primary"
-            size="middle"
-            loading={isSubmitting}
-            // onClick={() => true}
-            htmlType="submit"
-          >
-            {obEdit?.id ? "Lưu" : "Thêm"}
-          </Button>
-        </Space>
+
+        <Button
+          color={isValid ? "primary" : "default"}
+          disabled={!isValid}
+          isLoading={isSubmitting}
+          type="submit"
+        >
+          {obEdit?.id ? "Lưu" : "Thêm"}
+        </Button>
       </div>
     </form>
   );

@@ -51,10 +51,6 @@ export function BodyAdminHospitalService({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [staffSearch, setStaffSearch] = useState<Staff[] | null>(null);
 
-  const [isAcctiveToggle, setIsAcctiveToggle] = useState<boolean>(
-    !!managerEdit?.isAcctive
-  );
-
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   function handleClickEdit(manager: HospitalService) {
@@ -64,11 +60,11 @@ export function BodyAdminHospitalService({
 
   //
   function handleClickAdd() {
+    // setManagerEdit(null);
     onOpen();
   }
 
   function handleClickDeleteAdmin(record: HospitalService): void {
-    console.log("record", record);
     confirm({
       title: `Bạn có muốn xóa admin ${record.ExaminationService.name}`,
       icon: <ExclamationCircleFilled />,
@@ -90,14 +86,15 @@ export function BodyAdminHospitalService({
   async function handleSubmitAdd(
     data: Partial<HospitalService>
   ): Promise<boolean> {
-    console.log(data);
     setIsLoading(true);
     const api = adminApi.createOrUpdateHospitalService({
       healthFacilityId: viewer?.healthFacility.id,
       ...data,
     });
     const isOk = await toastMsgFromPromise(api);
+
     if (isOk) {
+      setManagerEdit(null);
       refresh();
       onClose();
     }
@@ -110,8 +107,7 @@ export function BodyAdminHospitalService({
       <ModalFadeInNextUi
         id="1"
         isLoading={isLoading}
-        handleSubmit={handleSubmitAdd}
-        size="2xl"
+        size="lg"
         body={
           <BodyManagerHospitalService
             clickCancel={onClose}

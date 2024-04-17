@@ -44,7 +44,13 @@ export const API_ADMIN_HOSPITAL_SERVICE = "/api/v1/admin/hospital-service";
 export const API_DOCTOR_BOOKING = "/api/v1/doctor/booking";
 
 export const API_DOCTOR_PATIENT = "/api/v1/doctor/patient";
+export const API_DOCTOR_HEALTH_RECORD = "/api/v1/doctor/check-up/health-record";
 
+export const API_DOCTOR_SERVICE_DETAILS = "/api/v1/doctor/service-details";
+export const API_DOCTOR_PRESCRIPTION_DETAILS =
+  "/api/v1/doctor/prescription-details";
+
+// payment
 export const PAYMENT_VNPAY_CREATE_UTL =
   "/api/v1/payment/vnpay/create_payment_url";
 

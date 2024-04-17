@@ -2,9 +2,9 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { InputField } from "../form";
-import { Button, Space } from "antd";
 import { TypeHealthFacility } from "@/models";
 import { useEffect } from "react";
+import { Button } from "@nextui-org/button";
 const schemaTypeHealth = yup.object().shape({
   name: yup.string().required("Bạn chưa điền tên loại bệnh viện."),
 });
@@ -30,7 +30,7 @@ export function BodyTypeHealth({
   const {
     control,
     handleSubmit,
-    formState: {},
+    formState: { isValid, isSubmitting },
     reset,
   } = useForm({
     defaultValues: {
@@ -57,20 +57,18 @@ export function BodyTypeHealth({
         placeholder="Nhập tên loại bệnh viện"
       />
       <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
-        <Button type="default" size="middle" onClick={clickCancel}>
+        <Button color="danger" variant="light" onClick={clickCancel}>
           Hủy
         </Button>
-        <Space wrap>
-          <Button
-            type="primary"
-            size="middle"
-            loading={loading}
-            // onClick={() => true}
-            htmlType="submit"
-          >
-            {typeHealthEdit?.id ? "Lưu" : "Thêm"}
-          </Button>
-        </Space>
+
+        <Button
+          color={isValid ? "primary" : "default"}
+          disabled={!isValid}
+          isLoading={isSubmitting}
+          type="submit"
+        >
+          {typeHealthEdit?.id ? "Lưu" : "Thêm"}
+        </Button>
       </div>
     </form>
   );

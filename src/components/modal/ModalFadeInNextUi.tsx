@@ -34,6 +34,7 @@ export interface ModalFadeInNextUiProps {
     | "5xl"
     | undefined;
   backdrop?: "blur" | "transparent" | "opaque" | undefined;
+  disable?: boolean;
 }
 
 export function ModalFadeInNextUi({
@@ -51,6 +52,7 @@ export function ModalFadeInNextUi({
   id,
   size,
   backdrop,
+  disable,
 }: ModalFadeInNextUiProps) {
   return (
     <>
@@ -62,6 +64,7 @@ export function ModalFadeInNextUi({
         onClose={toggle}
         className="z-50"
         scrollBehavior="inside"
+        onSubmit={handleSubmit}
       >
         <ModalContent>
           {(onClose) => (
@@ -74,7 +77,8 @@ export function ModalFadeInNextUi({
                     Hủy
                   </Button>
                   <Button
-                    color="primary"
+                    isDisabled={disable}
+                    color={disable ? "default" : "primary"}
                     onPress={handleSubmit}
                     isLoading={isLoading}
                   >

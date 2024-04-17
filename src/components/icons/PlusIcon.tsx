@@ -7,10 +7,10 @@ export const PlusIcon = ({
     aria-hidden="true"
     fill="none"
     focusable="false"
-    height={height}
     role="presentation"
     viewBox="0 0 24 24"
-    width={width}
+    height={width || "1em"}
+    width={width || "1em"}
     {...props}
   >
     <g

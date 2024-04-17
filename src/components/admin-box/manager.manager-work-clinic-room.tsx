@@ -149,13 +149,13 @@ export function ManagerClinicWork() {
   );
   // Clinic
   const [selectClinicRoomNumber, setSelectClinicRoomNumber] = useState<
-    number | null
-  >(responseClinics?.rows?.[0]?.roomNumber || null);
+    number | undefined
+  >(responseClinics?.rows?.[0]?.roomNumber || undefined);
 
   function handleSearchSelectClinic(value: string): void {}
 
   function handleChangeSelectClinic(value: string): void {
-    setSelectClinicRoomNumber(Number.parseInt(value));
+    setSelectClinicRoomNumber(Number.parseInt(value) || undefined);
   }
 
   useEffect(() => {
