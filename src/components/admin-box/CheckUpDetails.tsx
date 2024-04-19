@@ -28,7 +28,6 @@ export default function CheckUpDetails({ bookingId }: ICheckUpDetailsProps) {
 
   return (
     <div>
-      <h3>Chi tiết lịch hẹn</h3>
       <InfoCheckUpContext.Provider value={{ bookingId }}>
         <InforBookingSlot />
         <PatientProfileSlot />

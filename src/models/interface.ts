@@ -132,7 +132,7 @@ export interface HealthRecord {
   diagnosis: string;
   note: string;
   Booking: Booking;
-  Patient: Booking;
+  Patient: Patient;
   statusCode: string;
   status: Code;
   createdAt: string;

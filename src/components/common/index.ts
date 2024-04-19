@@ -14,5 +14,3 @@ export * from "./TagAddPatientProfile";
 export * from "./TagPatientProfile";
 export * from "./PatientProfileItem";
 export * from "./schudule.box";
-export * from "./box.health-record-details";
-export * from "./box.health-record";

@@ -15,7 +15,7 @@ export function InputField({
   max,
   width,
   isRequired,
-  noUnit,
+  unit,
 }: InputFieldProps) {
   const [showPass, setShowPass] = useState<boolean>(false);
   const formatCurrency = (value: string) => {
@@ -79,7 +79,7 @@ export function InputField({
             // formatter={(value) =>
             //   `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
             // }
-            endContent={!noUnit && "vnđ"}
+            endContent={unit && "vnđ"}
             // parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
             onChange={handleChange}
             ref={ref}

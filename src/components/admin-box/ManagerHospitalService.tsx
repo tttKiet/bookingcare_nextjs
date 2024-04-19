@@ -276,7 +276,7 @@ export function ManagerHospitalService() {
         ),
       },
       {
-        title: "Số dịch vụ đang hoạt đọngo",
+        title: "Số dịch vụ đang hoạt động",
         key: "active",
         render: (d) => {
           const count = d.service.filter(

@@ -217,29 +217,40 @@ export default function Booking(props: IAboutPageProps) {
   }: {
     paymentType: string;
   }): Promise<void> {
-    try {
-      const res = await paymentApi.vnpayCreateUrl({
-        descriptionDisease: descStatusPatient,
-        healthExaminationScheduleId: healthExaminationSchedule?.id || "",
-        patientProfileId: patientProfile?.id || "",
-        paymentType: paymentType,
-      });
-      if (res.statusCode === 0 || res.statusCode === 200) {
-        router.push(res.data?.url!);
-      }
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        if (err.response) {
-          const errorMsg = err.response.data.msg;
-          toast.error(errorMsg);
+    if (paymentType === "card") {
+      try {
+        const res = await paymentApi.vnpayCreateUrl({
+          descriptionDisease: descStatusPatient,
+          healthExaminationScheduleId: healthExaminationSchedule?.id || "",
+          patientProfileId: patientProfile?.id || "",
+          paymentType: paymentType,
+        });
+
+        return router.push(res.data?.url!);
+      } catch (err) {
+        if (axios.isAxiosError(err)) {
+          if (err.response) {
+            const errorMsg = err.response.data.msg;
+            toast.error(errorMsg);
+          } else {
+            toast.error("Lỗi không có phản hồi từ server");
+          }
         } else {
-          toast.error("Lỗi không có phản hồi từ server");
+          const errorWithMsg = err as { msg?: string };
+          const errorMsg = errorWithMsg.msg || "Lỗi không xác định";
+          toast.error(errorMsg);
         }
-      } else {
-        const errorWithMsg = err as { msg?: string };
-        const errorMsg = errorWithMsg.msg || "Lỗi không xác định";
-        toast.error(errorMsg);
       }
+    }
+    const api = paymentApi.vnpayCreateUrl({
+      descriptionDisease: descStatusPatient,
+      healthExaminationScheduleId: healthExaminationSchedule?.id || "",
+      patientProfileId: patientProfile?.id || "",
+      paymentType: paymentType,
+    });
+    const res = await toastMsgFromPromise(api);
+    if (res.statusCode === 200 || res.statusCode === 0) {
+      return router.push("/result/" + res?.data?.id);
     }
   }
 

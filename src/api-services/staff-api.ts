@@ -7,6 +7,7 @@ import {
   HealthRecord,
   ServiceDetails,
   PrescriptionDetail,
+  Booking,
 } from "@/models";
 import axios from "../axios";
 import { ResData, ResDataPaginations } from "@/types";
@@ -16,6 +17,7 @@ import {
   API_ADMIN_MANAGER_ADMIN_HEALTH,
   API_CHECK_UP_HEALTH_RECORD,
   API_CODE,
+  API_DOCTOR_BOOKING,
   API_DOCTOR_PRESCRIPTION_DETAILS,
   API_DOCTOR_SCHEDULE_HEALTH_EXAM,
   API_DOCTOR_SERVICE_DETAILS,
@@ -105,6 +107,13 @@ export const staffApi = {
     });
   },
 
+  async editCodeBooking({ status, id }: Partial<Booking>): Promise<ResData> {
+    return await axios.post(API_DOCTOR_BOOKING, {
+      bookingId: id,
+      statusId: status,
+    });
+  },
+
   // prescription details
   async createOrUpdatePrescriptionDetail(
     data: Partial<PrescriptionDetail>
@@ -121,6 +130,36 @@ export const staffApi = {
       data: {
         id,
       },
+    });
+  },
+
+  // done chekcup
+
+  async editCheckUpDoneAndSendEmail({
+    id,
+    emailDestination,
+    pdfs,
+  }: {
+    id: string;
+    emailDestination: string;
+    pdfs: any[];
+  }): Promise<ResData> {
+    var formData = new FormData();
+    formData.append("id", id);
+    formData.append("emailDestination", emailDestination);
+
+    const files = pdfs.map((f, i) => {
+      const url = URL.createObjectURL(f);
+      const pdfFile = new File([f], `file${i + 1}.pdf`, {
+        type: "application/pdf",
+      });
+      return pdfFile;
+    });
+
+    formData.append("pdf", files[0]);
+    formData.append("pdf", files[1]);
+    return await axios.post(API_CHECK_UP_HEALTH_RECORD + "/done", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
     });
   },
 };

@@ -48,7 +48,7 @@ export default function RootLayout({
       },
       {
         key: "/doctor/check-health",
-        label: <Link href="/doctor/check-health">Quản lý khám bệnh</Link>,
+        label: <Link href="/doctor/check-health">Quản lý lịch hẹn</Link>,
         icon: <BsPlusCircleDotted size={20} />,
       },
       {
@@ -95,9 +95,6 @@ export default function RootLayout({
           <Breadcrumb style={{ margin: "16px 0" }} items={breadcrumbArray} />
           <div className=" min-h-[200px] p[24]">{children}</div>
         </Content>
-        <Footer style={{ textAlign: "center" }}>
-          Buikiet Design ©2023 Created by BK
-        </Footer>
       </Layout>
     </Layout>
   );

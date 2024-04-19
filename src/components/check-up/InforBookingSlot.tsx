@@ -1,27 +1,25 @@
-import { doctorApi, PatientPost, staffApi, userApi } from "@/api-services";
+import { staffApi } from "@/api-services";
 import {
-  API_ADMIN_HOSPITAL_SERVICE,
   API_ADMIN_MANAGER_SERVICE,
+  API_CODE,
   API_DOCTOR_BOOKING,
   API_DOCTOR_HEALTH_RECORD,
   API_DOCTOR_PATIENT,
   API_DOCTOR_PRESCRIPTION_DETAILS,
   API_DOCTOR_SERVICE_DETAILS,
-  API_PATIENT_PROFILE,
 } from "@/api-services/constant-api";
-import { useAuth } from "@/hooks";
-import { useGetAddress } from "@/hooks/use-get-address-from-code";
 import {
   Booking,
+  Code,
   HealthRecord,
   HospitalService,
   Patient,
-  PatientProfile,
   PrescriptionDetail,
   ResBookingAndHealthRecord,
   ServiceDetails,
 } from "@/models";
-import { ResData, ResDataPaginations } from "@/types";
+import { ResDataPaginations } from "@/types";
+import { getColorChipCheckUp } from "@/untils/common";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import {
   Autocomplete,
@@ -29,52 +27,53 @@ import {
   Button,
   Chip,
   Input,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-  Textarea,
-} from "@nextui-org/react";
-import moment from "moment";
-import { useContext, useEffect, useMemo, useState } from "react";
-import { ClipLoader, PulseLoader } from "react-spinners";
-import useSWR from "swr";
-import { InfoCheckUpContext } from "../admin-box/CheckUpDetails";
-import { BodyAddEditPatient } from "../body-modal/BodyAddEditPatient";
-import { BodyAddEditPatientProfile } from "../body-modal/BodyAddEditPatientProfile";
-import { ActionBox, ActionGroup } from "../box";
-import { AddActionBox } from "../box/AddActionBox";
-import { ModalFadeInNextUi } from "../modal/ModalFadeInNextUi";
-import { MethodPayment } from "../common/step-boking/PaymentInformation";
-import { getColorChipCheckUp } from "@/untils/common";
-import { AddNoteIcon } from "../icons/AddNoteIcon";
-import { PlusIcon } from "../icons/PlusIcon";
-import {
   Modal,
-  ModalContent,
-  ModalHeader,
   ModalBody,
+  ModalContent,
   ModalFooter,
+  ModalHeader,
+  Textarea,
   useDisclosure,
 } from "@nextui-org/react";
+import { BlobProvider, PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import { Divider } from "antd";
-import { toast } from "react-toastify";
-import { EyeIcon } from "../icons/EyeIcon";
-import { ModalPositionHere } from "../modal";
-import TableServiceDetails from "./TableServiceDetails";
 import axios from "axios";
+import moment from "moment";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { ClipLoader } from "react-spinners";
+import { toast } from "react-toastify";
+import useSWR from "swr";
+import { InfoCheckUpContext } from "../admin-box/CheckUpDetails";
+import BodyPrescriptionDetails from "../body-modal/BodyPrescriptionDetails";
+import { AddActionBox } from "../box/AddActionBox";
+import { MethodPayment } from "../common/step-boking/PaymentInformation";
+import { EyeIcon } from "../icons/EyeIcon";
+import { PlusIcon } from "../icons/PlusIcon";
+import { PrintIcon } from "../icons/PrintIcon";
+import { ModalFadeInNextUi } from "../modal/ModalFadeInNextUi";
+import ServiceDetailsBillDocument from "../pdf/ServiceDetailsBillDocument";
 import ModalUpdateServiceDetails from "./ModalUpdateServiceDetails";
 import TablePrescriptionDetails from "./TablePrescriptionDetails";
-import BodyPrescriptionDetails from "../body-modal/BodyPrescriptionDetails";
+import TableServiceDetails from "./TableServiceDetails";
+import CedicineDocument from "../pdf/CedicineDocument";
+import { FaRegFilePdf } from "react-icons/fa6";
+import { DownLoadIcon } from "../icons/DownLoadIcon";
+import { TbRuler3 } from "react-icons/tb";
+import { ActionBox } from "../box";
+import { HiMiniXMark } from "react-icons/hi2";
+import { SelectFieldNext } from "../form/SelectFieldNext";
+import { FaCheck } from "react-icons/fa";
+import { FcCheckmark } from "react-icons/fc";
 
 export interface IInforBookingSlotProps {}
 
 export default function InforBookingSlot(props: IInforBookingSlotProps) {
   const data = useContext(InfoCheckUpContext);
   const { bookingId } = useContext(InfoCheckUpContext);
-
+  const [loadingPdf, setLoadingPdf] = useState<boolean>(false);
+  const [editCodeValue, setEditCodeValue] = useState<string>("");
+  // const [pdfCe, setPdfCe] = useState<Blob | null>(null);
+  // const [pdfSer, setPdfSer] = useState<Blob | null>(null);
   const { data: dataBooking, mutate: mutateBooking } = useSWR<
     ResDataPaginations<ResBookingAndHealthRecord>
   >(`${API_DOCTOR_BOOKING}?bookingId=${bookingId}`, {
@@ -98,12 +97,20 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
   const { data: dataHealthRecord, mutate: mutateHealthRecord } = useSWR<
     ResDataPaginations<HealthRecord>
   >(`${API_DOCTOR_HEALTH_RECORD}?booking=${inforBooking?.id}`);
+  const inforHealthRecord: HealthRecord | undefined = useMemo(
+    () => dataHealthRecord?.rows?.[0],
+    [dataHealthRecord]
+  );
 
   const { data: dataHospitalService, mutate: mutateHospitalService } = useSWR<
     ResDataPaginations<HealthRecord>
   >(
     `${API_ADMIN_MANAGER_SERVICE}?healthFacilityId=${inforBooking?.HealthExaminationSchedule?.Working?.healthFacilityId}`
   );
+
+  const { data: codeBooking, mutate: mutateCodeBooking } = useSWR<
+    ResDataPaginations<Code>
+  >(`${API_CODE}?name=CheckUp`);
 
   const { data: dataServiceDetails, mutate: mutateServiceDetails } = useSWR<
     ServiceDetails[]
@@ -128,6 +135,24 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
       );
     }, [dataHospitalService]);
 
+  const optCodeEdit = useMemo<
+    {
+      label: string;
+      value: string;
+    }[]
+  >(() => {
+    return (
+      codeBooking?.rows?.map((c: Code) => ({
+        label: c.value,
+        value: c.key,
+      })) || []
+    );
+  }, [codeBooking]);
+
+  useEffect(() => {
+    if (inforBooking?.Code?.key) setEditCodeValue(inforBooking?.Code?.key);
+  }, [inforBooking?.Code?.key]);
+
   const [diagnosis, setDiagnosis] = useState<string>("");
   const [note, setNote] = useState<string>("");
 
@@ -137,12 +162,19 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
   const footerClass = "mt-4 flex item-center justify-end";
   const labelHeading = "gr-title-admin mb-4 flex items-center gap-2";
   const colorInputStatus = getColorChipCheckUp(inforBooking?.Code?.key);
+  const [BodyPdf, setBodyDdf] = useState<JSX.Element>(<div></div>);
   const [obServiceDetailsEdit, setServiceDetailsEdit] = useState<
     ServiceDetails | undefined
   >();
   const [obPrescriptionEdit, setPrescriptionEdit] = useState<
     PrescriptionDetail | undefined
   >();
+  const [emailSend, setEmailSend] = useState<string>("");
+  useEffect(() => {
+    if (inforHealthRecord?.Patient?.email) {
+      setEmailSend(inforHealthRecord?.Patient?.email);
+    }
+  }, [inforHealthRecord?.Patient?.email]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -150,6 +182,21 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
     onOpen: onOpenService,
     onClose: onCloseService,
   } = useDisclosure({ id: "add-service" });
+  const {
+    isOpen: isOpenEditStatusBooking,
+    onOpen: onOpenEditStatusBooking,
+    onClose: onCloseEditStatusBooking,
+  } = useDisclosure({ id: "add-EditStatusBooking" });
+  const {
+    isOpen: isOpenConfirmEmailDone,
+    onOpen: onOpenConfirmEmailDone,
+    onClose: onCloseConfirmEmailDone,
+  } = useDisclosure({ id: "cf-enail" });
+  const {
+    isOpen: isOpenPdf,
+    onOpen: onOpenPdf,
+    onClose: onClosePdf,
+  } = useDisclosure({ id: "view-pdf" });
   const {
     isOpen: isOpenPrescriptionDetails,
     onOpen: onOpenPrescriptionDetails,
@@ -202,6 +249,17 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
     setValueHospitalService("");
     onCloseConfirm();
   }
+  async function handleEditCode() {
+    const api = staffApi.editCodeBooking({
+      status: editCodeValue,
+      id: inforBooking?.id,
+    });
+    const res = await toastMsgFromPromise(api);
+    if (res.statusCode === 200 || res.statusCode === 0) {
+      mutateBooking();
+      onCloseEditStatusBooking();
+    }
+  }
 
   async function submitConfirm({
     type,
@@ -244,6 +302,40 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
       }
       return false;
     }
+  }
+
+  function clickPdf(type: "service" | "cedicine") {
+    if (type == "service") {
+      const Body = (
+        <PDFViewer
+          // onClick={handlePrintService}
+          className="w-full h-full"
+        >
+          <ServiceDetailsBillDocument
+            dataBooking={inforBooking}
+            dataServiceDetails={dataServiceDetails}
+            healthRecord={inforHealthRecord}
+          />
+        </PDFViewer>
+      );
+      setBodyDdf(Body);
+    } else if (type == "cedicine") {
+      const Body = (
+        <PDFViewer
+          // onClick={handlePrintService}
+          className="w-full h-full"
+        >
+          <CedicineDocument
+            dataBooking={inforBooking}
+            prescriptionDetail={dataPrescriptionDetail}
+            healthRecord={inforHealthRecord}
+          />
+        </PDFViewer>
+      );
+      setBodyDdf(Body);
+    }
+
+    onOpenPdf();
   }
 
   async function handleEditServiceDetails({
@@ -312,17 +404,22 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
     return res;
   }
 
-  async function handleClickWatingService() {
+  async function handleClickChangeSttService(stt: "waiting" | "doing") {
     //
+    let statusCode = "";
+    // waiting service
+    if (stt == "waiting") statusCode = "HR2";
+    else if (stt == "doing") statusCode = "HR3";
     const api = staffApi.editHealthRecord({
       id: dataHealthRecord?.rows?.[0]?.id,
-      // waiting service
-      statusCode: "HR2",
+      statusCode,
     });
     const res = await toastMsgFromPromise(api);
     if (res.statusCode === 200 || res.statusCode === 0) {
       mutateBooking();
-      onClose();
+      if (statusCode == "HR2") {
+        onClose();
+      }
     }
   }
 
@@ -341,6 +438,28 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
     }
   }
 
+  async function handleDoneAndSendEmail({
+    blobSer,
+    blobCe,
+  }: {
+    blobSer: Blob | null;
+    blobCe: Blob | null;
+  }) {
+    setLoadingPdf(true);
+    const api = staffApi.editCheckUpDoneAndSendEmail({
+      id: dataHealthRecord?.rows?.[0]?.id,
+      emailDestination: emailSend,
+      pdfs: [blobSer, blobCe],
+    });
+    const res = await toastMsgFromPromise(api);
+    setLoadingPdf(false);
+    if (res.statusCode === 200 || res.statusCode === 0) {
+      onCloseConfirmEmailDone();
+      onClose();
+      mutateHealthRecord();
+    }
+  }
+
   useEffect(() => {
     setNote(dataBooking?.rows?.[0].healthRecord?.note || "");
     setDiagnosis(dataBooking?.rows?.[0].healthRecord?.diagnosis || "");
@@ -348,6 +467,10 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
     dataBooking?.rows?.[0].healthRecord?.note,
     dataBooking?.rows?.[0].healthRecord?.diagnosis,
   ]);
+
+  const done = useMemo(() => {
+    return !!(diagnosis && (dataPrescriptionDetail?.length || -1) > 0);
+  }, [diagnosis, dataServiceDetails, dataPrescriptionDetail]);
 
   return (
     <div className="mb-6">
@@ -373,7 +496,7 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
               </svg>
             </div>
           </h3>
-          {dataBooking?.rows?.[0]?.healthRecord.statusCode == "HR2" && (
+          {dataBooking?.rows?.[0]?.healthRecord?.statusCode == "HR2" && (
             <div className="mb-4">
               <b>Trạng thái phiếu:</b>{" "}
               <Chip
@@ -384,6 +507,19 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
                 className="ml-1"
               >
                 ...wating
+              </Chip>
+            </div>
+          )}
+          {dataBooking?.rows?.[0]?.healthRecord?.statusCode == "HR4" && (
+            <div className="mb-4">
+              <Chip
+                radius="sm"
+                size="md"
+                color="primary"
+                variant="flat"
+                className="ml-1"
+              >
+                Đã khám
               </Chip>
             </div>
           )}
@@ -462,36 +598,55 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
           </div>
         </div>
 
-        <div className={footerClass}>
-          {dataHealthRecord?.rows?.[0] ? (
-            <Button
-              color="primary"
-              size="md"
-              onClick={onOpen}
-              className="flex items-center"
-              startContent={
-                <span className="flex items-center">
-                  <EyeIcon width={20} color="white" />
+        <div className={"mt-4 flex item-center justify-between"}>
+          <div className="flex items-end justify-start mr-4">
+            <div className="flex items-center gap-2">
+              {inforBooking?.Code?.key !== "CU2" && (
+                <span className="relative top-[1px]">
+                  <HiMiniXMark color="red" size={20} />
                 </span>
-              }
-            >
-              <div className="relative top-[-1px]"> Xem phiếu khám</div>
-            </Button>
-          ) : (
-            <Button
-              color="primary"
-              size="md"
-              onClick={handleClickCreateHealthRecord}
-              className="flex items-center"
-              startContent={
-                <span className="flex items-center">
-                  <PlusIcon width={20} color="white" />
+              )}
+              {inforBooking?.Code?.key === "CU2" && (
+                <span className="relative top-[1px]">
+                  <FcCheckmark size={16} />
                 </span>
-              }
-            >
-              <div className="relative top-[-1px]"> Tạo phiếu khám</div>
-            </Button>
-          )}
+              )}
+              <div>{inforBooking?.Code?.value}</div>
+              <ActionBox type="edit" onClick={onOpenEditStatusBooking} />
+            </div>
+          </div>
+          <div>
+            {dataHealthRecord?.rows?.[0] ? (
+              <Button
+                color="primary"
+                size="md"
+                onClick={onOpen}
+                className="flex items-center"
+                startContent={
+                  <span className="flex items-center">
+                    <EyeIcon width={20} color="white" />
+                  </span>
+                }
+              >
+                <div className="relative top-[-1px]"> Xem phiếu khám</div>
+              </Button>
+            ) : (
+              <Button
+                color="primary"
+                size="md"
+                isDisabled={inforBooking?.Code?.key === "CU1"}
+                onClick={handleClickCreateHealthRecord}
+                className="flex items-center"
+                startContent={
+                  <span className="flex items-center">
+                    <PlusIcon width={20} color="white" />
+                  </span>
+                }
+              >
+                <div className="relative top-[-1px]"> Tạo phiếu khám</div>
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -508,8 +663,20 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
           <ModalContent>
             {(onClose) => (
               <>
-                <ModalHeader className="flex flex-col gap-1">
+                <ModalHeader className="flex items-center gap-1">
                   Phiếu khám bệnh
+                  {dataBooking?.rows?.[0]?.healthRecord?.statusCode ==
+                    "HR2" && (
+                    <Chip
+                      radius="sm"
+                      size="md"
+                      color="warning"
+                      variant="flat"
+                      className="ml-1"
+                    >
+                      ...wating
+                    </Chip>
+                  )}
                 </ModalHeader>
                 <ModalBody>
                   {dataHealthRecord?.rows?.[0] ? (
@@ -525,7 +692,7 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
                               isReadOnly
                               label="Mã phiếu khám"
                               className={`${descClass} `}
-                              value={inforBooking?.id}
+                              value={inforHealthRecord?.id}
                             />
                           </div>
 
@@ -603,7 +770,35 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
                           </div>
                         </div>
                         <h3 className="my-4 mt-6 text-black text-sm font-medium flex items-center justify-between gap-2">
-                          DỊCH VỤ KHÁM BỆNH
+                          <div className="flex items-center gap-4">
+                            DỊCH VỤ KHÁM BỆNH
+                            {(dataServiceDetails?.length || -1) > 0 && (
+                              <span
+                                onClick={() => clickPdf("service")}
+                                className="cursor-pointer hover:opacity-90 transition-all duration-150 hover:text-gray-600"
+                              >
+                                <FaRegFilePdf className="w-5 h-5" />
+                              </span>
+                            )}
+                            {(dataServiceDetails?.length || -1) > 0 && (
+                              <PDFDownloadLink
+                                document={
+                                  <ServiceDetailsBillDocument
+                                    dataBooking={inforBooking}
+                                    dataServiceDetails={dataServiceDetails}
+                                    healthRecord={inforHealthRecord}
+                                  />
+                                }
+                                fileName="service.pdf"
+                                // onClick={handlePrintService}
+                                className="cursor-pointer hover:opacity-90 transition-all duration-150 hover:text-gray-600"
+                              >
+                                {({ blob, url, loading, error }) =>
+                                  loading ? "...PDF" : <DownLoadIcon />
+                                }
+                              </PDFDownloadLink>
+                            )}
+                          </div>
                           <AddActionBox
                             onClick={() => {
                               onOpenService();
@@ -625,11 +820,39 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
                           )}
                         </div>
                         <h3 className="my-4 mt-6 text-black text-sm font-medium flex items-center justify-between gap-2">
-                          <div className="flex-1">
-                            TOA THUỐC
-                            <span className="ml-[4px] text-base text-red-400">
-                              *
-                            </span>
+                          <div className="flex-1 flex  items-center gap-4">
+                            <div className="flex  items-center ">
+                              TOA THUỐC
+                              <span className="mx-[4px] text-base text-red-400">
+                                *
+                              </span>
+                            </div>
+                            {(dataPrescriptionDetail?.length || -1) > 0 && (
+                              <span
+                                onClick={() => clickPdf("cedicine")}
+                                className="cursor-pointer hover:opacity-90 transition-all duration-150 hover:text-gray-600"
+                              >
+                                <FaRegFilePdf className="w-5 h-5" />
+                              </span>
+                            )}
+                            {(dataPrescriptionDetail?.length || -1) > 0 && (
+                              <PDFDownloadLink
+                                document={
+                                  <CedicineDocument
+                                    dataBooking={inforBooking}
+                                    prescriptionDetail={dataPrescriptionDetail}
+                                    healthRecord={inforHealthRecord}
+                                  />
+                                }
+                                fileName="cadi.pdf"
+                                // onClick={handlePrintService}
+                                className="cursor-pointer hover:opacity-90 transition-all duration-150 hover:text-gray-600"
+                              >
+                                {({ blob, url, loading, error }) =>
+                                  loading ? "...PDF" : <DownLoadIcon />
+                                }
+                              </PDFDownloadLink>
+                            )}
                           </div>
                           <AddActionBox
                             onClick={() => {
@@ -665,16 +888,25 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
                 </ModalBody>
                 <ModalFooter>
                   <Button color="danger" variant="light" onPress={onClose}>
-                    Hủy
+                    Thoát
                   </Button>
 
-                  {(dataServiceDetails?.length || -1) > 0 && (
+                  {dataBooking?.rows?.[0]?.healthRecord?.statusCode !==
+                  "HR2" ? (
                     <Button
                       color="warning"
                       variant="solid"
-                      onPress={handleClickWatingService}
+                      onPress={() => handleClickChangeSttService("waiting")}
                     >
                       Chờ kết quả dịch vụ
+                    </Button>
+                  ) : (
+                    <Button
+                      color="warning"
+                      variant="light"
+                      onPress={() => handleClickChangeSttService("doing")}
+                    >
+                      Xóa chờ dịch vụ
                     </Button>
                   )}
                   <Button
@@ -684,6 +916,17 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
                     isDisabled={!dataHealthRecord?.rows?.[0]}
                   >
                     Lưu phiếu
+                  </Button>
+
+                  <Button
+                    color={done ? "primary" : "default"}
+                    onPress={() => {
+                      onOpenConfirmEmailDone();
+                    }}
+                    // disabled={!dataBooking}
+                    isDisabled={!done}
+                  >
+                    Hoàn tất khám
                   </Button>
                 </ModalFooter>
               </>
@@ -729,17 +972,16 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
                     </AutocompleteItem>
                   )}
                 </Autocomplete>
-
                 <Input
                   className="w-[200px]"
                   size="lg"
                   label={"Giá"}
+                  type="text"
                   isReadOnly
-                  value={
-                    dataHospitalService?.rows.find(
-                      (o: HospitalService) => o.id == valueHospitalService
-                    )?.price
-                  }
+                  value={dataHospitalService?.rows
+                    .find((o: HospitalService) => o.id == valueHospitalService)
+                    ?.price?.toLocaleString()}
+                  endContent="vnd"
                 ></Input>
               </div>
             </div>
@@ -807,6 +1049,94 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
             </ModalContent>
           </Modal>
         </>
+
+        {/* conffirm */}
+        <>
+          <Modal
+            size={"xl"}
+            isOpen={isOpenConfirmEmailDone}
+            onClose={onCloseConfirmEmailDone}
+          >
+            <ModalContent>
+              {(onCloseConfirmEmailDone) => (
+                <>
+                  {/* <ModalHeader className="flex flex-col gap-1">
+                    Bạn xác nhận xóa thuốc này ?
+                  </ModalHeader> */}
+                  <ModalBody>
+                    <div className="flex items-center gap-3 mt-3">
+                      <div> Gửi kết quả về email</div>
+                      <Input
+                        value={emailSend}
+                        color="default"
+                        size="lg"
+                        onChange={(e) => setEmailSend(e.target.value)}
+                      />
+                    </div>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button
+                      color="danger"
+                      variant="light"
+                      onPress={onCloseConfirmEmailDone}
+                    >
+                      Trở về
+                    </Button>
+
+                    <BlobProvider
+                      document={
+                        <ServiceDetailsBillDocument
+                          dataBooking={inforBooking}
+                          dataServiceDetails={dataServiceDetails}
+                          healthRecord={inforHealthRecord}
+                        />
+                      }
+                    >
+                      {({ blob: blobSer, url, loading: l1 }) => {
+                        return (
+                          <BlobProvider
+                            document={
+                              <ServiceDetailsBillDocument
+                                dataBooking={inforBooking}
+                                dataServiceDetails={dataServiceDetails}
+                                healthRecord={inforHealthRecord}
+                              />
+                            }
+                          >
+                            {({ blob: blobCe, url, loading: l2 }) => {
+                              return (
+                                <Button
+                                  color={
+                                    l1 || l2 || loadingPdf
+                                      ? "default"
+                                      : "primary"
+                                  }
+                                  onPress={() => {
+                                    handleDoneAndSendEmail({
+                                      blobSer,
+                                      blobCe,
+                                    });
+                                  }}
+                                  // disabled={!dataBooking}
+                                  isLoading={l1 || l2 || loadingPdf}
+                                  isDisabled={!emailSend}
+                                >
+                                  {l1 || l2
+                                    ? "Đang load file"
+                                    : "Xác nhận và gửi email"}
+                                </Button>
+                              );
+                            }}
+                          </BlobProvider>
+                        );
+                      }}
+                    </BlobProvider>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
+        </>
         {/* update result */}
         <ModalUpdateServiceDetails
           handleClickSubmit={handleEditServiceDetails}
@@ -832,7 +1162,92 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
           }
           footer={false}
         />
+
+        {/* edit status booking */}
+        <ModalFadeInNextUi
+          backdrop="opaque"
+          show={isOpenEditStatusBooking}
+          toggle={onCloseEditStatusBooking}
+          id="prescription-detailssss"
+          title="Trạng thái lịch hẹn"
+          size="2xl"
+          body={
+            <div>
+              <Autocomplete
+                selectedKey={editCodeValue}
+                color={"default"}
+                onSelectionChange={(e) => {
+                  const val: string = e?.toString() || "";
+                  setEditCodeValue(val);
+                }}
+                items={optCodeEdit}
+                labelPlacement="inside"
+                isClearable={false}
+                size="lg"
+                onKeyDown={(e: any) => e.continuePropagation()}
+              >
+                {(item) => (
+                  <AutocompleteItem
+                    key={item?.value || ""}
+                    value={item?.value || ""}
+                    textValue={item?.label || ""}
+                  >
+                    {item.label}
+                  </AutocompleteItem>
+                )}
+              </Autocomplete>
+
+              {/* <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Hủy
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={() => submitConfirm({ type: "delete-service" })}
+                >
+                  Xác nhận
+                </Button>
+              </ModalFooter> */}
+            </div>
+          }
+          handleSubmit={handleEditCode}
+          footer={true}
+        />
+        {/* pdf */}
+
+        <Modal
+          size={"full"}
+          isOpen={isOpenPdf}
+          onClose={onClosePdf}
+          // scrollBehavior="outside"
+          // closeButton={false}
+        >
+          <ModalContent>
+            {(onClosePdf) => (
+              <>
+                {/* <ModalHeader className="flex flex-col gap-1">PDF</ModalHeader> */}
+                <ModalBody>
+                  <div className="w-full min-h-screen px-6 py-2">{BodyPdf}</div>
+                </ModalBody>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
       </>
+
+      {/* pdf */}
+      {/* <BlobProvider
+        document={
+          <ServiceDetailsBillDocument
+            dataBooking={inforBooking}
+            dataServiceDetails={dataServiceDetails}
+            healthRecord={inforHealthRecord}
+          />
+        }
+        filename={"service"}
+      >
+        {({ blob, url, loading }) => setPdfSer(blob)}
+      </BlobProvider> */}
     </div>
   );
 }

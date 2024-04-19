@@ -114,9 +114,9 @@ export default function BookingUserDetail({
                 </div>
 
                 <div className="my-6">
-                  <h5 className="my-2 text-sm font-bold">Thông tin đặt khám</h5>
+                  <h5 className="my-2 text-sm font-bold">Thông tin lịch hẹn</h5>
                   <div className={wrapClass}>
-                    <div className={labelClass}>Mã đặt khám</div>
+                    <div className={labelClass}>Mã lịch hẹn</div>
                     <div className={contentClass}>{data?.rows?.[0]?.id}</div>
                   </div>
                   <div className={wrapClass}>

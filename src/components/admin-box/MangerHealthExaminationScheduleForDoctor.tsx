@@ -94,7 +94,7 @@ export function MangerHealthExaminationScheduleForDoctor({}: MangerHealthExamina
       profile?.id?.toString() || ""
     }`,
     {
-      revalidateOnMount: false,
+      revalidateOnMount: true,
     }
   );
 
@@ -400,6 +400,7 @@ export function MangerHealthExaminationScheduleForDoctor({}: MangerHealthExamina
 
           <BtnPlus
             onClick={() => {
+              setBbEditScheduleDoctor(null);
               toggleShowScheduleCreateOrUpdateModal();
             }}
           />

@@ -20,5 +20,5 @@ export interface InputFieldProps {
   max?: number;
   width?: number | string;
   isRequired?: boolean;
-  noUnit?: boolean;
+  unit?: boolean;
 }

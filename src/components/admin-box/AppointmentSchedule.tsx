@@ -34,11 +34,13 @@ import { EyeActionBox } from "../box/EyeActionBox.";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
 import { getColorChipCheckUp, getColorChipHR } from "@/untils/common";
+import { useAuth } from "@/hooks";
 const { confirm } = Modal;
 
 type DataIndex = keyof Booking;
 
 export function AppointmentSchedule() {
+  const { profile } = useAuth();
   // State components
   const [showModalDetails, setShowModalDetails] = useState<boolean>(false);
 
@@ -99,6 +101,7 @@ export function AppointmentSchedule() {
         timeCodeId: valueTimeCode,
         checkUpCodeId: valueCheckUp,
         date: date,
+        staffId: profile?.id,
       },
     ],
     fetcher,
@@ -234,7 +237,7 @@ export function AppointmentSchedule() {
   const data = useMemo<Booking[]>(() => {
     return response?.rows?.map((d: Booking) => ({
       ...d,
-      key: d.id,
+      key: d?.id,
     }));
   }, [response]);
 
@@ -265,11 +268,11 @@ export function AppointmentSchedule() {
         render: (text) => <a>{text}</a>,
       },
       {
-        title: "Trạng thái hẹn",
+        title: "Trạng thái lịch hẹn",
         dataIndex: ["booking", "Code"],
         key: "Code",
         render: (code: Code) => {
-          const color = getColorChipCheckUp(code.key);
+          const color = getColorChipCheckUp(code?.key);
           return (
             <a>
               <Chip
@@ -278,7 +281,7 @@ export function AppointmentSchedule() {
                 size="sm"
                 variant="flat"
               >
-                {code.value}
+                {code?.value}
               </Chip>
             </a>
           );
@@ -289,7 +292,21 @@ export function AppointmentSchedule() {
         dataIndex: ["healthRecord", "status"],
         key: "status",
         render: (code: Code) => {
-          const color = getColorChipHR(code.key);
+          if (!code) {
+            return (
+              <a>
+                <Chip
+                  className="capitalize"
+                  color={"default"}
+                  size="sm"
+                  variant="flat"
+                >
+                  Chưa tạo
+                </Chip>
+              </a>
+            );
+          }
+          const color = getColorChipHR(code?.key);
           return (
             <a>
               <Chip
@@ -298,7 +315,7 @@ export function AppointmentSchedule() {
                 size="sm"
                 variant="flat"
               >
-                {code.value}
+                {code?.value}
               </Chip>
             </a>
           );
@@ -395,7 +412,7 @@ export function AppointmentSchedule() {
             placeholder="Xem trạng thái"
           >
             {optionCheckUp.map((code: Code) => (
-              <SelectItem key={code.key} value={code.value}>
+              <SelectItem key={code?.key} value={code.value}>
                 {code.value}
               </SelectItem>
             ))}

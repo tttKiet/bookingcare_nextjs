@@ -23,7 +23,8 @@ export function RootLayout({ children }: { children: React.ReactNode }) {
   const isAdminLink =
     pathname.includes("/admin") ||
     pathname.includes("/doctor") ||
-    pathname.includes("/hospital-manager");
+    pathname.includes("/hospital-manager") ||
+    pathname.includes("/test");
 
   const excludeLayout = pathname.includes("/result");
 

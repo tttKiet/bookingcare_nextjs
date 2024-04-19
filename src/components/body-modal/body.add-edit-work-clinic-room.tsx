@@ -88,17 +88,8 @@ export function BodyModalClinicRoomWork({
   const optionDoctorsWorking =
     doctorWorking?.rows?.map((t: Working) => ({
       value: t.id,
-      label: (
-        <div>
-          <h3 className="text-sm text-gray-600 font-medium">
-            {t.Staff.fullName}
-          </h3>
-          <span className="text-xs text-black font-normal flex items-center justify-between">
-            <span>{t.Staff.email}</span>
-            <span>{t.Staff.AcademicDegree.name}</span>
-          </span>
-        </div>
-      ),
+      label: t.Staff.email,
+      description: t.Staff.fullName,
     })) || [];
 
   return (

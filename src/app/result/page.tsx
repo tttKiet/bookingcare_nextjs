@@ -57,6 +57,7 @@ export default function ResultBookingPage(props: ResultBookingPageProps) {
     <>
       {!error ? (
         <Result
+          className="h-screen"
           status="success"
           title={"Thanh toán thành công"}
           subTitle={
@@ -71,20 +72,27 @@ export default function ResultBookingPage(props: ResultBookingPageProps) {
             </div>
           }
           extra={[
-            <Button color="primary">Xem lịch đặt</Button>,
-            <Button key="buy">Đặt lịch hẹn khác</Button>,
+            <Link href={"/user/booking/" + data?.id}>
+              <Button color="primary">Xem lịch đặt</Button>
+            </Link>,
+            <Link href={"/health-facility"}>
+              <Button>Đặt lịch hẹn khác</Button>
+            </Link>,
           ]}
         />
       ) : (
         <Result
+          className="h-screen"
           status="error"
           title={error?.msg}
           subTitle="Làm ơn kiểm tra lại thông tin thanh toán."
           extra={[
-            <Link href="/">
+            <Link href={"/"}>
               <Button color="primary">Về trang chủ</Button>
             </Link>,
-            <Button key="buy">Thử mua lại</Button>,
+            <Link href={"/health-facility"}>
+              <Button>Đặt lịch hẹn khác</Button>
+            </Link>,
           ]}
         >
           <div className="desc">
