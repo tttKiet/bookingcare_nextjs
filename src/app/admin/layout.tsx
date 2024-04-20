@@ -1,11 +1,11 @@
 "use client";
 
-import { NotPermission, Profile } from "@/components/common";
+import { BreadcrumbApp, NotPermission, Profile } from "@/components/common";
 import { useAuth } from "@/hooks";
 import { Breadcrumb, Layout, Menu, MenuProps } from "antd";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { ReactNode } from "react";
 import { FiPlusCircle } from "react-icons/fi";
 import { LiaUserNurseSolid } from "react-icons/lia";
 import { LuLayoutDashboard } from "react-icons/lu";
@@ -19,7 +19,12 @@ import { PiFlowerTulipThin } from "react-icons/pi";
 import { FaRankingStar } from "react-icons/fa6";
 import { BsBarChart } from "react-icons/bs";
 import "../globals.css";
+import logo from "../../assets/images/logi_y_te.png";
 import { GiPill } from "react-icons/gi";
+import { Image } from "@nextui-org/image";
+import { Input } from "@nextui-org/react";
+import { SearchIcon } from "@/components/icons/SearchIcon";
+import IconBgGray from "@/components/common/IconBgGray";
 const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
@@ -29,164 +34,365 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const classItemMenu = "font-medium text-base";
+
   const { profile } = useAuth();
   const url = usePathname();
   const breadcrumbArraySplit = url.toString().split("/");
-  const breadcrumbArray = breadcrumbArraySplit.map((path, index, arrayThis) => {
-    return {
-      title:
-        index + 1 === arrayThis.length ? (
-          path
-        ) : (
-          <Link href={url.slice(0, url.indexOf(path)) + path}>{path}</Link>
-        ),
-    };
-  });
+
   const items: MenuItem[] = React.useMemo(
     () => [
       {
         key: "/admin",
-        label: <Link href="/admin">Tổng quan</Link>,
-        icon: <LuLayoutDashboard size={20} />,
+        label: (
+          <Link className={classItemMenu} href="/admin">
+            Tổng quan
+          </Link>
+        ),
+
+        get icon() {
+          return (
+            <IconBgGray active={this.key == url}>
+              <LuLayoutDashboard size={20} />
+            </IconBgGray>
+          );
+        },
       },
       {
         key: "/admin/account",
-        label: <Link href="/admin/account">Tài khoản</Link>,
-        icon: <MdSupervisorAccount size={20} />,
+        label: (
+          <Link className={classItemMenu} href="/admin/account">
+            Tài khoản
+          </Link>
+        ),
+        get icon() {
+          return (
+            <IconBgGray active={this.key == url}>
+              <MdSupervisorAccount size={20} />
+            </IconBgGray>
+          );
+        },
       },
       {
         key: "health",
-        label: "Quản lý thông tin y tế",
+        label: <div className={classItemMenu}>Quản lý thông tin y tế</div>,
         children: [
           {
             key: "/admin/health-facility",
-            label: <Link href="/admin/health-facility">Cơ sở y tế</Link>,
-            icon: <PiFlowerTulipThin size={20} />,
+            label: (
+              <Link
+                className={`${classItemMenu} font-normal`}
+                href="/admin/health-facility"
+              >
+                Cơ sở y tế
+              </Link>
+            ),
+            get icon() {
+              return (
+                <IconBgGray active={this.key == url}>
+                  <PiFlowerTulipThin size={20} />
+                </IconBgGray>
+              );
+            },
           },
           {
             key: "/admin/health-facility/room",
             label: (
-              <Link href="/admin/health-facility/clinic-room">Phòng khám</Link>
+              <Link
+                className={`${classItemMenu} font-normal`}
+                href="/admin/health-facility/clinic-room"
+              >
+                Phòng khám
+              </Link>
             ),
-            icon: <BiBulb size={20} />,
+            get icon() {
+              return (
+                <IconBgGray active={this.key == url}>
+                  <BiBulb size={20} />
+                </IconBgGray>
+              );
+            },
           },
           {
             key: "/admin/type-health-facility",
             label: (
-              <Link href="/admin/type-health-facility">
+              <Link
+                className={`${classItemMenu} font-normal`}
+                href="/admin/type-health-facility"
+              >
                 Quản lý loại bệnh viện
               </Link>
             ),
-            icon: <CiBookmarkMinus size={20} />,
+            get icon() {
+              return (
+                <IconBgGray active={this.key == url}>
+                  <CiBookmarkMinus size={20} />
+                </IconBgGray>
+              );
+            },
           },
           {
             key: "/admin/specialist",
-            label: <Link href="/admin/specialist">Chuyên khoa</Link>,
-            icon: <BiBulb size={20} />,
+            label: (
+              <Link
+                className={`${classItemMenu} font-normal`}
+                href="/admin/specialist"
+              >
+                Chuyên khoa
+              </Link>
+            ),
+            get icon() {
+              return (
+                <IconBgGray active={this.key == url}>
+                  <BiBulb size={20} />
+                </IconBgGray>
+              );
+            },
           },
         ],
-        icon: <FiPlusCircle size={20} />,
+        get icon() {
+          return (
+            <IconBgGray active={this.key == url}>
+              <FiPlusCircle size={20} />
+            </IconBgGray>
+          );
+        },
       },
       {
         key: "/admin/examination-services",
         label: (
-          <Link href="/admin/examination-services">Dịch vụ khám bệnh</Link>
+          <Link className={classItemMenu} href="/admin/examination-services">
+            Dịch vụ khám bệnh
+          </Link>
         ),
-        icon: <BsDpad size={20} />,
+        get icon() {
+          console.log("urlurl", url);
+          return (
+            <IconBgGray active={this.key == url}>
+              <BsDpad size={20} />
+            </IconBgGray>
+          );
+        },
       },
       {
         key: "manager-doctor",
-        label: "Bác sỉ",
-        icon: <LiaUserNurseSolid size={20} />,
+        label: <div className={classItemMenu}>Bác sỉ</div>,
+        get icon() {
+          return (
+            <IconBgGray active={this.key == url}>
+              <LiaUserNurseSolid size={20} />
+            </IconBgGray>
+          );
+        },
         children: [
           {
             key: "/admin/academic-degree",
-            label: <Link href="/admin/academic-degree">Quản lý học vị</Link>,
-            icon: <HiOutlineAcademicCap size={20} />,
+            label: (
+              <Link
+                className={`${classItemMenu} font-normal`}
+                href="/admin/academic-degree"
+              >
+                Quản lý học vị
+              </Link>
+            ),
+            get icon() {
+              return (
+                <IconBgGray active={this.key == url}>
+                  <HiOutlineAcademicCap size={20} />
+                </IconBgGray>
+              );
+            },
           },
           {
             key: "/admin/health-axamination-schedule",
             label: (
-              <Link href="/admin/health-axamination-schedule">
+              <Link
+                className={`${classItemMenu} font-normal`}
+                href="/admin/health-axamination-schedule"
+              >
                 Lịch khám bệnh
               </Link>
             ),
-            icon: <BiCalendarStar size={20} />,
+            get icon() {
+              return (
+                <IconBgGray active={this.key == url}>
+                  <BiCalendarStar size={20} />
+                </IconBgGray>
+              );
+            },
           },
         ],
       },
 
       {
         key: "cedicine",
-        label: <Link href="/admin/cedicine">Quản Lý thuốc</Link>,
-        icon: <GiPill size={20} />,
+        label: (
+          <Link className={classItemMenu} href="/admin/cedicine">
+            Quản Lý thuốc
+          </Link>
+        ),
+        get icon() {
+          return (
+            <IconBgGray active={this.key == url}>
+              <GiPill size={20} />
+            </IconBgGray>
+          );
+        },
       },
       {
         key: "/admin/work",
-        label: <Link href="/admin/work">Công tác </Link>,
-        icon: <BsPersonWorkspace size={20} />,
+        label: (
+          <Link className={classItemMenu} href="/admin/work">
+            Công tác{" "}
+          </Link>
+        ),
+        get icon() {
+          return (
+            <IconBgGray active={this.key == url}>
+              <BsPersonWorkspace size={20} />
+            </IconBgGray>
+          );
+        },
       },
       {
         key: "/admin/code",
-        label: <Link href="/admin/code">Code</Link>,
-        icon: <BsCode size={20} />,
+        label: (
+          <Link className={classItemMenu} href="/admin/code">
+            Code
+          </Link>
+        ),
+        get icon() {
+          return (
+            <IconBgGray active={this.key == url}>
+              <BsCode size={20} />
+            </IconBgGray>
+          );
+        },
       },
       {
         key: "/admin/chart",
-        label: <Link href="/admin/chart">Thống kê</Link>,
-        icon: <BsBarChart size={20} />,
+        label: (
+          <Link className={classItemMenu} href="/admin/chart">
+            Thống kê
+          </Link>
+        ),
+        get icon() {
+          return (
+            <IconBgGray active={this.key == url}>
+              <BsBarChart size={20} />
+            </IconBgGray>
+          );
+        },
       },
       {
         key: "/admin/rank",
-        label: <Link href="/admin/rank">Bảng xếp hạng</Link>,
-        icon: <FaRankingStar size={20} />,
+        label: (
+          <Link className={classItemMenu} href="/admin/rank">
+            Bảng xếp hạng
+          </Link>
+        ),
+        get icon() {
+          return (
+            <IconBgGray active={this.key == url}>
+              <FaRankingStar size={20} />
+            </IconBgGray>
+          );
+        },
       },
     ],
-    []
+    [url]
   );
   const [collapsed, setCollapsed] = React.useState(false);
 
   if (!profile || profile?.Role?.keyType !== "admin") {
     return <NotPermission />;
   }
+
+  const layoutStyle = {
+    borderRadius: 8,
+    overflow: "hidden",
+    minHeight: "100vh",
+  };
+  const headerStyle: React.CSSProperties = {
+    color: "#000",
+    height: 70,
+    paddingInline: 28,
+    lineHeight: "64px",
+    backgroundColor: "#fff",
+  };
+
+  const contentStyle: React.CSSProperties = {
+    textAlign: "center",
+    color: "#000",
+    backgroundColor: "#f5f5f5",
+  };
+
+  const siderStyle: React.CSSProperties = {
+    textAlign: "center",
+    color: "#fff",
+  };
   return (
-    <Layout style={{}}>
-      <Sider
-        width={280}
-        collapsible
-        collapsed={collapsed}
-        onCollapse={(value) => setCollapsed(value)}
-      >
-        {!collapsed ? (
-          <span className="block  h-[32px] m-[16px] whitespace-nowrap overflow-hidden rounded-[6px] text-white">
-            BOOKING CARE
-          </span>
-        ) : (
-          <div className="h-[32px] m-[16px] bg-[rgba(255,255,255,.2)] rounded-[6px]"></div>
-        )}
-        <Menu
-          theme="dark"
-          defaultOpenKeys={[url]}
-          defaultSelectedKeys={[url]}
-          mode="inline"
-          items={items}
-        />
-      </Sider>
-      <Layout style={{ minHeight: "100vh" }}>
-        <Header className="flex justify-end items-center text-white px-[16px] bg-dard">
+    <Layout style={layoutStyle} className="text-black">
+      <Header style={headerStyle} className="shadow flex items-center">
+        <div
+          style={{
+            width: "calc(var(--nav-width-admin) - 28px)",
+          }}
+          className="text-base flex items-center gap-4 whitespace-nowrap overflow-hidden
+         rounded-[6px] text-blue-700 "
+        >
+          <Image
+            width={40}
+            height={40}
+            src={logo.src}
+            alt="LOGO BOOKING CARE"
+          />
+          <strong> BOOKING CARE</strong>
+        </div>
+        <div className="flex items-center justify-between flex-1 pl-5">
+          <Input
+            radius="md"
+            variant="bordered"
+            color="primary"
+            startContent={<SearchIcon width={25} color="gray" />}
+            className="w-[330px] text-black"
+            size="sm"
+            spellCheck={false}
+            placeholder="Tìm kiếm..."
+          ></Input>
           <Profile />
-        </Header>
-        <Content style={{ margin: "0 16px" }}>
-          <Breadcrumb style={{ margin: "16px 0" }} items={breadcrumbArray} />
-          <div
-          //  className="bg-white rounded-lg min-h-screen p[24] shadow-md"
-          >
-            {children}
+        </div>
+      </Header>
+      <Layout className="mt-5 gap-5">
+        <Sider
+          style={siderStyle}
+          className="shadow rounded-tr-3xl min-h-screen bg-white overflow-hidden nav-admin-width"
+          theme="light"
+          trigger={null}
+          collapsible
+          collapsed={collapsed}
+          // width="25%"
+          onCollapse={(value) => setCollapsed(value)}
+        >
+          <h3 className="text-black/70 text-sm text-left font-medium ml-7 my-4 mb-2">
+            Menu
+          </h3>
+          <Menu
+            theme="light"
+            className="min-h-full"
+            rootClassName="text-left py-2"
+            defaultOpenKeys={[url]}
+            defaultSelectedKeys={[url]}
+            mode="inline"
+            items={items}
+          />
+        </Sider>
+        <Content style={contentStyle} className="pr-8">
+          <div className="mb-5">
+            <BreadcrumbApp />
           </div>
+          <div className="p[24]">{children}</div>
         </Content>
-        <Footer style={{ textAlign: "center" }}>
-          Buikiet Design ©2023 Created by BK
-        </Footer>
       </Layout>
     </Layout>
   );

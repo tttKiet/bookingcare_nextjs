@@ -27,7 +27,7 @@ export function SelectControl({
   handleSearchSelect,
   name,
   control,
-  isRequired,
+  isRequired = true,
   onClear,
   label,
   allowClear = true,
@@ -56,19 +56,23 @@ export function SelectControl({
       // defaultInputValue={defaultInputValue}
       ref={ref}
       size="lg"
-      isRequired={isRequired}
       onInputChange={debounce(handleSearch, debounceSeconds || 300)}
       onSelectionChange={(e) => {
         handleChange(e?.toString() || "");
       }}
+      label={
+        <>
+          {label} {isRequired && <span className="text-red-400">*</span>}
+        </>
+      }
       labelPlacement="inside"
-      // defaultInputValue={value}
       isClearable={allowClear}
       selectedKey={value}
-      label={label || "Tìm kiếm"}
+      // label={label || "Tìm kiếm"}
       placeholder={placeholder}
       onKeyDown={(e: any) => e.continuePropagation()}
       className="max-w-2xl w-full"
+      allowsEmptyCollection
     >
       {data?.map(
         (item) =>

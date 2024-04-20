@@ -15,23 +15,18 @@ export default function HealthFacilitiesAdmin(
       label: "Cơ sở y tế",
       children: <HealthFacilitiesBox />,
     },
-    {
-      key: "manager_admin",
-      label: "Quản lý nhân viên",
-      children: <ManagerAdminHealthFacility />,
-    },
+    // {
+    //   key: "manager_admin",
+    //   label: "Quản lý nhân viên",
+    //   children: <ManagerAdminHealthFacility />,
+    // },
   ];
   const onChange = (key: string) => {
     console.log(key);
   };
   return (
     <div className="box-white">
-      <Tabs
-        defaultActiveKey="health"
-        className="px-0"
-        items={items}
-        onChange={onChange}
-      />
+      <HealthFacilitiesBox />
     </div>
   );
 }

@@ -28,6 +28,7 @@ export interface Staff {
   experience: string;
   certificate: string;
   roleId: string;
+  Role: Role;
   academicDegreeId: string;
   specialistId: string;
   createdAt: string;

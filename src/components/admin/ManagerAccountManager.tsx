@@ -28,6 +28,7 @@ import { ActionBox } from "../box/action.box";
 import { BtnPlus } from "../button";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
+import { Chip } from "@nextui-org/react";
 const { confirm } = Modal;
 
 type DataIndex = keyof Staff;
@@ -284,17 +285,6 @@ export function ManagerAccountManager() {
   const columnsStaff: ColumnsType<Staff> = useMemo(() => {
     return [
       {
-        title: "Id",
-        dataIndex: "id",
-        key: "id",
-        render: (text) => (
-          <a className="text-ellipsis overflow-clip whitespace-nowrap pr-1 block">
-            {text}
-          </a>
-        ),
-        width: "120",
-      },
-      {
         title: "Tên",
         dataIndex: "fullName",
         key: "fullName",
@@ -316,6 +306,46 @@ export function ManagerAccountManager() {
         key: "phone",
         render: (text) => <a>{text}</a>,
         sorter: (a, b) => a.email.localeCompare(b.email),
+      },
+      {
+        title: "Role",
+        dataIndex: ["Role"],
+        key: "Role",
+        render: (role: Role) => {
+          if (role.keyType === "doctor") {
+            return (
+              <a>
+                <Chip
+                  color="primary"
+                  variant="flat"
+                  radius="sm"
+                  className="font-medium"
+                  size="sm"
+                >
+                  BÁC SĨ
+                </Chip>
+              </a>
+            );
+          }
+          if (role.keyType === "hospital_manager") {
+            return (
+              <a>
+                <Chip
+                  color="secondary"
+                  variant="flat"
+                  radius="sm"
+                  className="font-medium"
+                  size="sm"
+                >
+                  NHÂN VIÊN
+                </Chip>
+              </a>
+            );
+          }
+
+          return <a>{role.keyType}</a>;
+        },
+        // sorter: (a, b) => a.email.localeCompare(b.email),
       },
       {
         title: "Ngày tạo",
@@ -344,13 +374,13 @@ export function ManagerAccountManager() {
   }, [getColumnSearchProps]);
 
   return (
-    <div className="box-white">
+    <div className="">
       <ModalPositionHere
+        size="4xl"
         show={showAccountCreateOrUpdateModal}
         toggle={() => {
           toggleShowAccountCreateOrUpdateModal();
         }}
-        width={800}
         footer={false}
         body={
           <BodyModalAccountManager

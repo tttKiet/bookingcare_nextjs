@@ -76,7 +76,7 @@ export function BodyModalAccountManager({
   return (
     <form
       onSubmit={handleSubmit(handleSubmitLocal)}
-      className="flex flex-col gap-2 pt-4"
+      className="flex flex-col gap-2 "
     >
       <div>
         <div className="grid md:grid-cols-2 gap-3 sm:grid-cols-1">
@@ -85,6 +85,16 @@ export function BodyModalAccountManager({
             name="fullName"
             label="Họ, tên nhân viên"
             icon={<MdOutlineMailOutline />}
+          />
+          <RadioGroupField
+            icon={<TbLockSquareRounded />}
+            control={control}
+            name="gender"
+            options={[
+              { label: "Nam", value: "male" },
+              { label: "Nữ", value: "female" },
+            ]}
+            label="Giới tính"
           />
           <InputField
             control={control}
@@ -113,52 +123,25 @@ export function BodyModalAccountManager({
             type="password"
             icon={<TbLockSquareRounded />}
           />
-          <RadioGroupField
-            icon={<TbLockSquareRounded />}
-            control={control}
-            name="gender"
-            options={[
-              { label: "Nam", value: "male" },
-              { label: "Nữ", value: "female" },
-            ]}
-            label="Giới tính"
-          />
-          <InputField
-            control={control}
-            name="address"
-            label="Địa chỉ"
-            type="text"
-            icon={<TbLockSquareRounded />}
-          />
+
+          <div className="col-span-2">
+            <InputTextareaField
+              control={control}
+              name="address"
+              label="Địa chỉ"
+              type="text"
+              icon={<TbLockSquareRounded />}
+            />
+          </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
-        {/* <Button type="default" size="middle" onClick={clickCancel}>
-          Hủy
-        </Button>
-        <Space wrap>
-          <Button
-            type="primary"
-            size="middle"
-            loading={isSubmitting}
-            // onClick={() => true}
-            htmlType="submit"
-          >
-            {obEditStaff?.id ? "Lưu" : "Thêm"}
-          </Button>
-        </Space> */}
-
+      <div className="flex items-center gap-2 justify-end mt-2 py-4">
         <Button color="danger" variant="light" onClick={clickCancel}>
           Hủy
         </Button>
 
-        <Button
-          color={isValid ? "primary" : "default"}
-          disabled={!isValid}
-          isLoading={isSubmitting}
-          type="submit"
-        >
+        <Button color="primary" isLoading={isSubmitting} type="submit">
           {obEditStaff?.id ? "Lưu" : "Thêm"}
         </Button>
       </div>

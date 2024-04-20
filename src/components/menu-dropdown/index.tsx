@@ -1,48 +1,62 @@
 "use client";
 
-import { DropDownProps, Dropdown, MenuProps, Space } from "antd";
-import { RiArrowDownSFill } from "react-icons/ri";
-import { SmileOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import {
+  Avatar,
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownSection,
+  DropdownTrigger,
+} from "@nextui-org/react";
 export interface MenuDropdownProps {
   title: string;
   icon?: React.ReactNode;
-  options?: DropDownProps;
   titleType?: string;
-  items: MenuProps["items"];
+  items: any;
+  placement?: string;
 }
 
-export default function MenuDropdown({
-  title,
-  icon,
-  options,
-  titleType,
-  items,
-}: MenuDropdownProps) {
-  const [showIcon, setShowIcon] = useState(false);
-  function changeOpenMenu(e: boolean) {
-    setShowIcon(e);
-  }
-
+export default function MenuDropdown({ title, items }: MenuDropdownProps) {
   return (
-    <Dropdown menu={{ items }} {...options} onOpenChange={changeOpenMenu}>
-      <a onClick={(e) => e.preventDefault()}>
-        <div className="flex items-center gap-2 relative">
-          <span className={titleType}>{title}</span>
-          {!showIcon && (
-            <span
-              className="absolute"
-              style={{
-                top: "50%",
-                transform: "translateY(-50%)",
-                right: "-18px",
-              }}
+    <Dropdown size="md" placement={"bottom-end"}>
+      <DropdownTrigger>
+        <Avatar
+          isBordered
+          size="md"
+          color="primary"
+          src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
+        />
+      </DropdownTrigger>
+      <DropdownMenu variant="flat" className="">
+        {items
+          .filter(
+            (g: any) => g.data.filter((q: any) => q?.show !== false).length > 0
+          )
+          .map((gr: any) => (
+            <DropdownSection
+              title={gr.gr}
+              key={gr.gr}
+              showDivider={gr.gr !== "Hành động"}
             >
-              {icon ? icon : <RiArrowDownSFill />}
-            </span>
-          )}
-        </div>
-      </a>
+              {gr.data
+                .filter((d: any) => d?.show !== false)
+                .map((d: any) => (
+                  <DropdownItem
+                    onPress={d?.onClick}
+                    className={
+                      d.key === "logout" ? "text-danger" : "text-[#000]"
+                    }
+                    key={d.key}
+                    startContent={d?.icon}
+                    color={d.key === "logout" ? "danger" : "default"}
+                  >
+                    {d.label}
+                  </DropdownItem>
+                ))}
+            </DropdownSection>
+          ))}
+      </DropdownMenu>
     </Dropdown>
   );
 }

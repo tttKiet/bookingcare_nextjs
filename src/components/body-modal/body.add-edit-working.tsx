@@ -2,6 +2,7 @@
 
 // import { schemaValidateRegister } from "@/schema-validate";
 import {
+  API_ACCOUNT_STAFF,
   API_ACCOUNT_STAFF_DOCTOR,
   API_ACEDEMIC_DEGREE,
   API_HEALTH_FACILITIES,
@@ -32,6 +33,7 @@ import { SelectControl } from "../form/SelectControl";
 import { SelectFieldNext } from "../form/SelectFieldNext";
 import moment from "moment";
 import { Button } from "@nextui-org/button";
+import { Chip } from "@nextui-org/react";
 
 interface SelectProps {
   value: string;
@@ -61,8 +63,6 @@ export function BodyModalWorking({
     defaultValues: {
       staffId: "",
       healthFacilityId: "",
-      startDate: moment(new Date()).format("YYYY[-]MM[-]DD"),
-      endDate: undefined,
     },
     resolver: yupResolver(schemaWorkingBody),
   });
@@ -70,7 +70,7 @@ export function BodyModalWorking({
   const [emailSearch, setEmailSearch] = useState<string>("");
   const [emailHealthFacility, setEmailHealthFacility] = useState<string>("");
   const { data: doctors, mutate: mutateDoctor } = useSWR(
-    `${API_ACCOUNT_STAFF_DOCTOR}?email=${emailSearch}&offset=0&limit=30`,
+    `${API_ACCOUNT_STAFF}?email=${emailSearch}&offset=0&limit=30`,
     {
       revalidateOnMount: true,
     }
@@ -93,7 +93,38 @@ export function BodyModalWorking({
       doctors?.rows?.map((t: Staff) => ({
         value: t.id,
         label: t.email,
-        description: t.fullName,
+        description: (
+          <div className="flex items-center gap-2">
+            <span>{t.fullName}</span>
+            <span>
+              {t?.Role?.keyType === "doctor" ? (
+                <a>
+                  <Chip
+                    color="primary"
+                    variant="flat"
+                    radius="sm"
+                    className="font-medium"
+                    size="sm"
+                  >
+                    BÁC SĨ
+                  </Chip>
+                </a>
+              ) : (
+                <a>
+                  <Chip
+                    color="secondary"
+                    variant="flat"
+                    radius="sm"
+                    className="font-medium"
+                    size="sm"
+                  >
+                    NHÂN VIÊN
+                  </Chip>
+                </a>
+              )}
+            </span>
+          </div>
+        ),
       })) || []
     );
   }, [doctors]);
@@ -108,25 +139,16 @@ export function BodyModalWorking({
     );
   }, [healthFacilities]);
 
-  async function handleSubmitLocal({
-    healthFacilityId,
-    staffId,
-    startDate,
-    endDate,
-  }: any) {
+  async function handleSubmitLocal({ healthFacilityId, staffId }: any) {
     const isOk = await handleSubmitForm({
       healthFacilityId,
       staffId,
-      startDate: startDate,
-      endDate: endDate,
       id: obEditWorking?.id,
     });
     if (isOk) {
       reset({
         staffId: "",
         healthFacilityId: "",
-        startDate: moment(new Date()).format("YYYY[-]MM[-]DD"),
-        endDate: undefined,
       });
       mutateDoctor();
       mutateHealthFacility();
@@ -144,8 +166,6 @@ export function BodyModalWorking({
       reset({
         healthFacilityId: obEditWorking?.healthFacilityId || "",
         staffId: obEditWorking?.staffId || "",
-        startDate: moment(new Date()).format("YYYY[-]MM[-]DD"),
-        endDate: undefined,
       });
     }
   }, [obEditWorking, reset]);
@@ -153,14 +173,14 @@ export function BodyModalWorking({
   return (
     <form
       onSubmit={handleSubmit(handleSubmitLocal)}
-      className="flex flex-col gap-2 pt-4"
+      className="flex flex-col gap-2 "
     >
       <div>
         <div className="grid md:grid-cols-2 gap-3 sm:grid-cols-1">
           <SelectControl
             control={control}
-            placeholder="Nhập email bác sỉ..."
-            label="Chọn bác sỉ"
+            placeholder="Nhập email nhận viên..."
+            label="Chọn nhân viên"
             name="staffId"
             data={optionDoctors}
             debounceSeconds={500}
@@ -176,7 +196,7 @@ export function BodyModalWorking({
             debounceSeconds={500}
             handleSearchSelect={onSearchSelectHealthFacility}
           />
-          <InputField
+          {/* <InputField
             type="date"
             control={control}
             label="Chọn ngày bắt đầu công tác"
@@ -188,36 +208,16 @@ export function BodyModalWorking({
             control={control}
             label="Chọn ngày kết thúc công tác"
             name="endDate"
-          />
+          /> */}
         </div>
       </div>
 
-      <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
-        {/* <Button type="default" size="middle" onClick={clickCancel}>
-          Hủy
-        </Button>
-        <Space wrap>
-          <Button
-            type="primary"
-            size="middle"
-            loading={isSubmitting}
-            // onClick={() => true}
-            htmlType="submit"
-          >
-            {obEditWorking?.id ? "Lưu" : "Thêm"}
-          </Button>
-        </Space> */}
-
+      <div className="flex items-center gap-2 justify-end mt-2 py-4">
         <Button color="danger" variant="light" onClick={clickCancel}>
           Hủy
         </Button>
 
-        <Button
-          color={isValid ? "primary" : "default"}
-          disabled={!isValid}
-          isLoading={isSubmitting}
-          type="submit"
-        >
+        <Button color="primary" isLoading={isSubmitting} type="submit">
           {obEditWorking?.id ? "Lưu" : "Thêm"}
         </Button>
       </div>

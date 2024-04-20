@@ -48,7 +48,7 @@ export function LoginForm({
   return (
     <form
       onSubmit={handleSubmit(handleLoginSubmit)}
-      className="flex flex-col gap-2 pt-4"
+      className="flex flex-col gap-2 "
     >
       <InputField
         control={control}

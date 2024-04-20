@@ -161,8 +161,6 @@ export const schemaStaffManagerBody = yup.object().shape({
 export const schemaWorkingBody = yup.object().shape({
   staffId: yup.string().required("Vui lòng chọn bác sỉ."),
   healthFacilityId: yup.string().required("Vui lòng chọn cơ sở y tế."),
-  startDate: yup.string().required("Vui lòng chọn ngày bắt đầu."),
-  endDate: yup.string().nullable(),
 });
 
 export const schemaClinicRoomBody = yup.object().shape({

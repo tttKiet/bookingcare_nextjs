@@ -30,15 +30,11 @@ export const doctorApi = {
   async createOrUpdateWorking({
     staffId,
     healthFacilityId,
-    startDate,
-    endDate,
     id,
   }: Partial<Working>): Promise<ResData> {
     return await axios.post(API_WORKING, {
       staffId,
       healthFacilityId,
-      startDate,
-      endDate,
       id,
     });
   },

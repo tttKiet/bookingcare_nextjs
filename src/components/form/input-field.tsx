@@ -14,7 +14,7 @@ export function InputField({
   min,
   max,
   width,
-  isRequired,
+  isRequired = true,
   unit,
 }: InputFieldProps) {
   const [showPass, setShowPass] = useState<boolean>(false);
@@ -75,12 +75,7 @@ export function InputField({
             placeholder={
               placeholder || `Nhập ${label?.toLocaleLowerCase()} ...`
             }
-            // className="outline-none border-transparent text-base"
-            // formatter={(value) =>
-            //   `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-            // }
             endContent={unit && "vnđ"}
-            // parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
             onChange={handleChange}
             ref={ref}
             spellCheck={false}

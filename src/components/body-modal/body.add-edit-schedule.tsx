@@ -318,7 +318,7 @@ export function BodyModalSchedule({
       ) : (
         <form
           onSubmit={handleSubmit(handleSubmitLocal)}
-          className="flex flex-col gap-2 pt-4"
+          className="flex flex-col gap-2 "
         >
           <div>
             <div className="grid grid-cols-1 gap-3">

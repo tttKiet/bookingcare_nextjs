@@ -24,7 +24,7 @@ export function SelectSearchField({
   handleSearchSelect,
   handleChangeSelect,
   value,
-  isRequired,
+  isRequired = true,
   title,
   allowClear = true,
 }: SelectSearchFieldProps) {
@@ -44,29 +44,24 @@ export function SelectSearchField({
 
   return (
     <Autocomplete
-      isRequired={isRequired}
+      allowsEmptyCollection
       value={value ?? ""}
       onInputChange={debounce(handleSearch, debounceSeconds || 300)}
       onSelectionChange={(e) => {
         handleChange(e?.toString() || "");
       }}
+      label={
+        <>
+          {title} {isRequired && <span className="text-red-400">*</span>}
+        </>
+      }
       labelPlacement="inside"
       defaultInputValue={value || ""}
-      // defaultItems={[]}
-      // items={[]}
-      // allowsCustomValue={true}
       isClearable={allowClear}
-      label={title || "Tìm kiếm"}
       placeholder={placeholder}
       onKeyDown={(e: any) => e.continuePropagation()}
       className="max-w-2xl w-full"
     >
-      {/* {(item) => (
-        <AutocompleteItem key={item.value ?? ""} textValue={item?.value ?? ""}>
-          {item.label}
-        </AutocompleteItem>
-      )} */}
-
       {dataResult.map((item) => (
         <AutocompleteItem
           key={item.value || ""}

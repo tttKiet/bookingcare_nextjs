@@ -56,7 +56,7 @@ export function BodyModalClinicRoom({
   return (
     <form
       onSubmit={handleSubmit(handleSubmitLocal)}
-      className="flex flex-col gap-2 pt-4"
+      className="flex flex-col gap-2 "
     >
       <div>
         <div className="grid md:grid-cols-2 gap-3 sm:grid-cols-1">

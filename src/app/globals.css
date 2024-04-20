@@ -4,17 +4,27 @@
 /* @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"); */
 
 :root {
-  --foreground-rgb: 0, 0, 0;
+  --foreground-rgb: #000;
   --background-start-rgb: 214, 219, 220;
   --background-body: #f5f5f5;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: rgba(0, 0, 0, 0.099);
+    --foreground-rgb: #000;
     --background-start-rgb: rgba(0, 0, 0, 0.099);
     --background-end-rgb: rgba(0, 0, 0, 0.099);
+    --color-main: #2884ff;
+    --color-second: #66aaf9;
+    --color-thir: #e6f4ff;
   }
+}
+
+.color-primary {
+  @apply text-[var(--color-main)];
+}
+.color-second {
+  @apply text-[var(--color-second)];
 }
 
 *,
@@ -49,8 +59,10 @@ html * ::-webkit-scrollbar-track {
 }
 body {
   scroll-behavior: smooth !important;
-  color: rgb(var(--foreground-rgb));
+  color: var(--foreground-rgb);
   background: var(--background-body);
+  box-sizing: border-box;
+  box-decoration-break: inherit;
 }
 
 body * {
@@ -96,12 +108,14 @@ input {
     --color-primary: 255 115 179;
     --color-secondary: 111 114 185;
     /* ... */
-    --nav-width-admin: 260px;
+    --nav-width-admin: 300px;
   }
 }
 
 .nav-admin-width {
-  @apply w-[var(--nav-width-admin)];
+  width: var(--nav-width-admin) !important;
+  max-width: var(--nav-width-admin) !important;
+  min-width: var(--nav-width-admin) !important;
 }
 
 .gr-admin {
@@ -135,7 +149,7 @@ input {
 }
 
 .box-white {
-  @apply bg-white rounded-lg p-[24px] shadow-md min-h-[200px];
+  @apply bg-white rounded-lg p-[24px] shadow-md;
 }
 
 .rouded_main {

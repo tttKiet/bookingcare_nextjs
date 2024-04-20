@@ -78,21 +78,6 @@ export function BodyAddEditCedicine({
         />
       </div>
       <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
-        {/* <Button type="default" size="middle" onClick={clickCancel}>
-          Hủy
-        </Button>
-        <Space wrap>
-          <Button
-            type="primary"
-            size="middle"
-            loading={isSubmitting}
-            // onClick={() => true}
-            htmlType="submit"
-          >
-            {obEditCedicine?.id ? "Lưu" : "Thêm"}
-          </Button>
-        </Space> */}
-
         <Button color="danger" variant="light" onClick={clickCancel}>
           Hủy
         </Button>

@@ -8,6 +8,7 @@ export function InputTextareaField({
   name,
   label,
   control,
+  isRequired = true,
   placeholder,
   type = "text",
 }: InputFieldProps) {
@@ -25,12 +26,15 @@ export function InputTextareaField({
       <Textarea
         color={error?.message ? "danger" : isSubmitted ? "primary" : "default"}
         size="lg"
-        label={label}
         classNames={{
           errorMessage: "text-base",
         }}
+        label={
+          <>
+            {label} {isRequired && <span className="text-red-400">*</span>}
+          </>
+        }
         placeholder={placeholder || `Nhập ${label?.toLocaleLowerCase()} ...`}
-        // className="outline-none border-transparent text-base"
         ref={ref}
         name={name}
         spellCheck={false}

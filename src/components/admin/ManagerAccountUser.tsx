@@ -28,6 +28,7 @@ import { TableSortFilter } from "../table";
 import { RegisterForm } from "../auth";
 import toast from "react-hot-toast";
 import { useMemo, useRef, useState } from "react";
+import { Chip } from "@nextui-org/react";
 const { confirm } = Modal;
 
 type DataIndex = keyof User;
@@ -271,18 +272,7 @@ export function ManagerAccountUser() {
   const columnsUser: ColumnsType<User> = useMemo(() => {
     return [
       {
-        title: "Id",
-        dataIndex: "id",
-        key: "id",
-        render: (text) => (
-          <a className="text-ellipsis overflow-clip whitespace-nowrap pr-1 block">
-            {text}
-          </a>
-        ),
-        width: "120px",
-      },
-      {
-        title: "Tên",
+        title: "Tên người dùng",
         dataIndex: "fullName",
         key: "fullName",
         render: (text) => <a>{text}</a>,
@@ -305,12 +295,31 @@ export function ManagerAccountUser() {
         sorter: (a, b) => a.email.localeCompare(b.email),
       },
       {
+        title: "Role",
+        key: "Role",
+        render: (text) => (
+          <a>
+            <Chip
+              color="success"
+              variant="flat"
+              radius="sm"
+              className="font-medium"
+              size="sm"
+            >
+              NGƯỜI DÙNG
+            </Chip>
+          </a>
+        ),
+        sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
+      },
+      {
         title: "Ngày tạo",
         dataIndex: "createdAt",
         key: "createdAt",
         render: (text) => <a>{moment(text).locale("vi").calendar()}</a>,
         sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
       },
+
       {
         title: "Hành động",
         key: "action",
@@ -331,13 +340,13 @@ export function ManagerAccountUser() {
   }, [getColumnSearchProps]);
 
   return (
-    <div className="p-4 px-6">
+    <div className="">
       <ModalPositionHere
         show={showAccountCreateOrUpdateModal}
         toggle={() => {
           toggleShowAccountCreateOrUpdateModal();
         }}
-        width={800}
+        size="3xl"
         footer={false}
         body={
           <RegisterForm
@@ -354,7 +363,7 @@ export function ManagerAccountUser() {
         }
       />
       <h3 className="gr-title-admin flex items-center justify-between  mb-3">
-        Tài khoản người dùng
+        Danh sách tài khoản
         <BtnPlus
           onClick={() => {
             toggleShowAccountCreateOrUpdateModal();

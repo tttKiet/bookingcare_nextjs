@@ -1,87 +1,75 @@
 "use client";
 
 import { useAuth } from "@/hooks";
+import { DropdownProps } from "@nextui-org/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 import { AiOutlinePoweroff } from "react-icons/ai";
 import { PiUserCircleLight } from "react-icons/pi";
+import { RiBillLine } from "react-icons/ri";
+import { toast } from "react-toastify";
 import MenuDropdown from ".";
 import { ModalPositionHere } from "../modal";
-import { DropDownProps } from "antd";
-import { RiBillLine } from "react-icons/ri";
-import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
-import { useMemo, useState } from "react";
 
 export interface MenuNavbarLogoutProps {
-  options?: DropDownProps;
+  options?: DropdownProps;
 }
 
 export default function MenuNavbarLogout({ options }: MenuNavbarLogoutProps) {
   const { profile, logout } = useAuth();
   const router = useRouter();
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
+
   const items = useMemo(() => {
     return [
       {
-        key: "profile",
-        label: (
-          <Link href="/user" className="">
-            Hồ sơ bệnh nhân
-          </Link>
-        ),
-        icon: <PiUserCircleLight size={20} />,
-        className: "w-44 mb-1",
-        show: !(profile?.Role || false),
+        gr: "Chuyến hướng",
+        data: [
+          {
+            key: "profile",
+            label: (
+              <Link href="/user" className="">
+                Hồ sơ bệnh nhân
+              </Link>
+            ),
+            icon: <PiUserCircleLight size={20} />,
+            show: !(profile?.Role || false),
+          },
+          {
+            key: "health-record",
+            label: (
+              <Link href="/user/health-record/" className="">
+                Phiếu khám bệnh
+              </Link>
+            ),
+            icon: (
+              <span className="flex items-center">
+                <RiBillLine size={20} />
+              </span>
+            ),
+            show: !(profile?.Role || false),
+          },
+        ],
       },
       {
-        key: "health-record",
-        label: (
-          <Link href="/user/health-record/" className="">
-            Phiếu khám bệnh
-          </Link>
-        ),
-        icon: (
-          <span className="flex items-center">
-            <RiBillLine size={20} />
-          </span>
-        ),
-        className: "w-44 mb-1 items-center",
-        show: !(profile?.Role || false),
-      },
-      {
-        key: "admin",
-        label: "Admin",
-        icon: <PiUserCircleLight size={20} />,
-        className: "w-44 mb-1",
-        show: !!profile?.Role || false,
-      },
-      {
-        key: "logout",
-        danger: true,
-        label: "Đăng xuất",
-        className: "border-t mb-1 rounded-none",
-        icon: (
-          <span className="flex items-center">
-            <AiOutlinePoweroff size={20} />
-          </span>
-        ),
-        onClick: toggleShowModalConfirm,
+        gr: "Hành động",
+        data: [
+          {
+            key: "logout",
+            danger: true,
+            label: "Đăng xuất",
+            icon: (
+              <span className="flex items-center">
+                <AiOutlinePoweroff size={20} />
+              </span>
+            ),
+            onClick: toggleShowModalConfirm,
+          },
+        ],
       },
     ];
   }, []);
-  const itemsFilter = useMemo(
-    () =>
-      items
-        .filter((s) => !(s.show == false))
-        .map((i) => {
-          const item = { ...i };
-          if (item.hasOwnProperty("show")) delete item.show;
-          return {
-            ...item,
-          };
-        }),
-    [items]
-  );
 
   function toggleShowModalConfirm() {
     setShowConfirm((s) => !s);
@@ -107,8 +95,7 @@ export default function MenuNavbarLogout({ options }: MenuNavbarLogoutProps) {
         toggle={toggleShowModalConfirm}
       />
       <MenuDropdown
-        items={itemsFilter}
-        options={{ placement: "bottom", arrow: true, ...options }}
+        items={items}
         title={profile?.fullName || ""}
         titleType="text-white font-bold ml-1"
       />

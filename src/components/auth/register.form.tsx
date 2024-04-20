@@ -1,15 +1,20 @@
 // import { schemaValidateRegister } from "@/schema-validate";
 import { schemaValidateRegister } from "@/schema-validate";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Space } from "antd";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { TbLockSquareRounded } from "react-icons/tb";
-import { CheckBoxField, InputField, RadioGroupField } from "../form";
+import {
+  CheckBoxField,
+  InputField,
+  InputTextareaField,
+  RadioGroupField,
+} from "../form";
 import { useAuth } from "@/hooks";
 import { useEffect } from "react";
 import { User } from "@/models";
+import { Button } from "@nextui-org/button";
 export interface RegisterFormProps {
   handleRegister: (data: Partial<User>) => Promise<boolean>;
   cancelModal: () => void;
@@ -32,7 +37,7 @@ export function RegisterForm({
   const {
     control,
     handleSubmit,
-    formState: { isSubmitted, isSubmitting },
+    formState: { isSubmitted, isSubmitting, isValid },
     setValue,
     reset,
   } = useForm({
@@ -50,7 +55,6 @@ export function RegisterForm({
   });
 
   const { profile } = useAuth();
-  console.log("profile", profile);
 
   async function handleRegisterSubmit({
     address,
@@ -113,7 +117,7 @@ export function RegisterForm({
   return (
     <form
       onSubmit={handleSubmit(handleRegisterSubmit)}
-      className="flex flex-col gap-2 pt-4"
+      className="flex flex-col gap-2 "
     >
       <div>
         <div className="grid md:grid-cols-2 gap-3 sm:grid-cols-1">
@@ -126,6 +130,16 @@ export function RegisterForm({
                 : "Họ, tên của bạn"
             }
             icon={<MdOutlineMailOutline />}
+          />
+          <RadioGroupField
+            icon={<TbLockSquareRounded />}
+            control={control}
+            name="gender"
+            options={[
+              { label: "Nam", value: "male" },
+              { label: "Nữ", value: "female" },
+            ]}
+            label="Giới tính"
           />
           <InputField
             control={control}
@@ -154,23 +168,15 @@ export function RegisterForm({
             type="password"
             icon={<TbLockSquareRounded />}
           />
-          <RadioGroupField
-            icon={<TbLockSquareRounded />}
-            control={control}
-            name="gender"
-            options={[
-              { label: "Nam", value: "male" },
-              { label: "Nữ", value: "female" },
-            ]}
-            label="Giới tính"
-          />
-          <InputField
-            control={control}
-            name="address"
-            label="Địa chỉ"
-            type="text"
-            icon={<TbLockSquareRounded />}
-          />
+          <div className="col-span-2">
+            <InputTextareaField
+              control={control}
+              name="address"
+              label="Địa chỉ"
+              type="text"
+              icon={<TbLockSquareRounded />}
+            />
+          </div>
         </div>
       </div>
       {profile?.Role?.keyType === "user" && handleClickLogin && (
@@ -203,24 +209,18 @@ export function RegisterForm({
         </>
       )}
 
-      <div className="flex items-center gap-2 justify-end mt-2  border-t pt-[20px]">
-        <Button type="text" size="middle" onClick={cancelModal}>
+      <div className="flex items-center gap-2 justify-end mt-2 py-4">
+        <Button color="danger" variant="light" onClick={cancelModal}>
           {cancelText ? cancelText : "Hủy"}
         </Button>
-        <Space wrap>
-          <Button
-            type="primary"
-            size="middle"
-            loading={isSubmitting}
-            htmlType="submit"
-          >
-            {okText ? (
-              okText
-            ) : (
-              <>{obUserEdit ? "Lưu thay đổi" : "Tạo tài khoản"}</>
-            )}
-          </Button>
-        </Space>
+
+        <Button color={"primary"} isLoading={isSubmitting} type="submit">
+          {okText ? (
+            okText
+          ) : (
+            <>{obUserEdit ? "Lưu thay đổi" : "Tạo tài khoản"}</>
+          )}
+        </Button>
       </div>
     </form>
   );

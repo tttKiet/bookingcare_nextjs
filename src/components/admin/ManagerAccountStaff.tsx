@@ -33,6 +33,7 @@ import { RegisterForm } from "../auth";
 import { BodyModalAccountDoctor } from "../body-modal";
 import toast from "react-hot-toast";
 import { useMemo, useRef, useState } from "react";
+import { Chip } from "@nextui-org/react";
 const { confirm } = Modal;
 
 type DataIndex = keyof Staff;
@@ -147,7 +148,7 @@ export function ManagerAccountStaff() {
     isLoading,
   } = useSWR<ResDataPaginations<Staff>>(
     [
-      API_ACCOUNT_STAFF,
+      `${API_ACCOUNT_STAFF}?type=doctor`,
       {
         ...queryParams,
         limit: tableParams.pagination.pageSize, // 4 page 2 => 3, 4 page 6 => 21
@@ -300,17 +301,6 @@ export function ManagerAccountStaff() {
   const columnsStaff: ColumnsType<Staff> = useMemo(() => {
     return [
       {
-        title: "Id",
-        dataIndex: "id",
-        key: "id",
-        render: (text) => (
-          <a className="text-ellipsis overflow-clip whitespace-nowrap pr-1 block">
-            {text}
-          </a>
-        ),
-        width: "120px",
-      },
-      {
         title: "Tên",
         dataIndex: "fullName",
         key: "fullName",
@@ -337,15 +327,52 @@ export function ManagerAccountStaff() {
         title: "Chuyên khoa",
         dataIndex: ["Specialist", "name"],
         key: "Specialist.name",
-        render: (text) => <a>{text}</a>,
+        render: (text) => (
+          <a>
+            <span className="font-medium">{text}</span>
+          </a>
+        ),
         sorter: (a, b) => a.email.localeCompare(b.email),
       },
       {
-        title: "Học vị",
-        dataIndex: ["AcademicDegree", "name"],
-        key: "AcadamicDegree.name",
-        render: (text) => <a>{text}</a>,
-        sorter: (a, b) => a.email.localeCompare(b.email),
+        title: "Role",
+        dataIndex: ["Role"],
+        key: "Role",
+        render: (role: Role) => {
+          if (role.keyType === "doctor") {
+            return (
+              <a>
+                <Chip
+                  color="primary"
+                  variant="flat"
+                  radius="sm"
+                  className="font-medium"
+                  size="sm"
+                >
+                  BÁC SĨ
+                </Chip>
+              </a>
+            );
+          }
+          if (role.keyType === "hospital_manager") {
+            return (
+              <a>
+                <Chip
+                  color="secondary"
+                  variant="flat"
+                  radius="sm"
+                  className="font-medium"
+                  size="sm"
+                >
+                  NHÂN VIÊN
+                </Chip>
+              </a>
+            );
+          }
+
+          return <a>{role.keyType}</a>;
+        },
+        // sorter: (a, b) => a.email.localeCompare(b.email),
       },
       {
         title: "Ngày tạo",
@@ -374,13 +401,13 @@ export function ManagerAccountStaff() {
   }, [getColumnSearchProps]);
 
   return (
-    <div className="p-4 px-6">
+    <div className="">
       <ModalPositionHere
+        size="4xl"
         show={showAccountCreateOrUpdateModal}
         toggle={() => {
           toggleShowAccountCreateOrUpdateModal();
         }}
-        width={800}
         footer={false}
         body={
           <BodyModalAccountDoctor
@@ -396,7 +423,7 @@ export function ManagerAccountStaff() {
         }
       />
       <h3 className="gr-title-admin flex items-center justify-between  mb-3">
-        Tài khoản bác sỉ
+        Tài khoản nhân viên
         <BtnPlus
           onClick={() => {
             toggleShowAccountCreateOrUpdateModal();

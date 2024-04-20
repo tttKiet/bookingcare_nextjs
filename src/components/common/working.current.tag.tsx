@@ -2,7 +2,7 @@
 
 import { doctorApi } from "@/api-services";
 import { API_WORKING } from "@/api-services/constant-api";
-import { Working } from "@/models";
+import { Role, Working } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import { ExclamationCircleFilled } from "@ant-design/icons";
@@ -27,6 +27,7 @@ import { BtnPlus } from "../button";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
 import { useMemo, useRef, useState } from "react";
+import { Chip } from "@nextui-org/react";
 const { confirm } = Modal;
 
 type DataIndex = keyof Working;
@@ -235,14 +236,6 @@ export function WorkingCurrentTag() {
   const columns: ColumnsType<Working> = useMemo(
     () => [
       {
-        title: "Id",
-        dataIndex: "id",
-        key: "id",
-        render: (text) => <a>{text}</a>,
-        width: "16%",
-        ...getColumnSearchProps("id"),
-      },
-      {
         title: "Tên bác sỉ",
         dataIndex: ["Staff", "fullName"],
         key: "Staff.fullName",
@@ -259,6 +252,59 @@ export function WorkingCurrentTag() {
         ...getColumnSearchProps(["Staff", "email"]),
       },
       {
+        title: "Role",
+        dataIndex: ["Staff", "Role"],
+        key: "Role",
+        render: (role: Role) => {
+          if (role.keyType === "doctor") {
+            return (
+              <a>
+                <Chip
+                  color="primary"
+                  variant="flat"
+                  radius="sm"
+                  className="font-medium"
+                  size="sm"
+                >
+                  BÁC SĨ
+                </Chip>
+              </a>
+            );
+          }
+          if (role.keyType === "hospital_manager") {
+            return (
+              <a>
+                <Chip
+                  color="secondary"
+                  variant="flat"
+                  radius="sm"
+                  className="font-medium"
+                  size="sm"
+                >
+                  NHÂN VIÊN
+                </Chip>
+              </a>
+            );
+          }
+
+          return <a>{role.keyType}</a>;
+        },
+        filters: [
+          {
+            text: "Bác sĩ",
+            value: "doctor",
+          },
+          {
+            text: "Nhân viên",
+            value: "hospital_manager",
+          },
+        ],
+        onFilter: (value: string | number | boolean, record) => {
+          return record.Staff.Role.keyType == value;
+        },
+        // sorter: (a, b) => a.email.localeCompare(b.email),
+      },
+      {
         title: "Cơ sở y tế",
         dataIndex: ["HealthFacility", "name"],
         key: "HealthFacility.name",
@@ -268,29 +314,20 @@ export function WorkingCurrentTag() {
         ...getColumnSearchProps(["HealthFacility", "name"]),
       },
       {
-        title: "Ngày bắt đầu",
-        dataIndex: "startDate",
-        key: "startDate",
+        title: "Ngày tạo",
+        dataIndex: "createdAt",
+        key: "createdAt",
         render: (text) => <a>{moment(text).locale("vi").format("ll")}</a>,
         sorter: (a, b) => a.startDate.localeCompare(b.startDate),
       },
       {
-        title: "Ngày kết thúc",
-        dataIndex: "endDate",
-        key: "endDate",
+        title: "Trạng thái",
+        key: "status",
         render: (text) => (
           <a>
-            {text ? (
-              <span>
-                {moment(text).locale("vi").format("ll")}
-                <span className="inline-block w-[5px] h-[5px] rounded-full bg-red-400 ml-2"></span>
-              </span>
-            ) : (
-              <span>
-                ...đang làm việc
-                <span className="inline-block w-[5px] h-[5px] rounded-full bg-blue-400 ml-2"></span>
-              </span>
-            )}
+            <Chip variant="flat" color="success" size="sm" radius="sm">
+              Hoạt động
+            </Chip>
           </a>
         ),
         sorter: (a, b) => a.endDate.localeCompare(b.endDate),
@@ -358,7 +395,6 @@ export function WorkingCurrentTag() {
             obEditWorking={obEditWorking}
           />
         }
-        width={760}
         show={showModalWorking}
         title={obEditWorking?.id ? "Chỉnh sửa công tác" : "Thêm mới công tác"}
         toggle={toggleShowModalAddWorking}
@@ -366,7 +402,7 @@ export function WorkingCurrentTag() {
         footer={false}
       />
       <h3 className="gr-title-admin mb-3 flex items-center justify-between">
-        Danh sách các bác sỉ đang công tác
+        Danh sách công tác của nhân viên
         <BtnPlus
           title="Thêm lịch công tác"
           onClick={toggleShowModalAddWorking}

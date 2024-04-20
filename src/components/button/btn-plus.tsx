@@ -13,10 +13,15 @@ export function BtnPlus({ title, onClick, disabled }: BtnPlusProps) {
     <Button
       isDisabled={disabled}
       color="primary"
-      className="text-sm"
-      endContent={<PlusIcon width={24} height={24} />}
+      // className="text-"
+      startContent={
+        <PlusIcon
+          // width={24} height={24}
+          fontSize={20}
+        />
+      }
       onClick={onClick}
-      size="sm"
+      // size="lg"
     >
       {title || "Thêm"}
     </Button>
