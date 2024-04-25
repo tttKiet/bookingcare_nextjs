@@ -51,6 +51,21 @@ export default function RootLayout({
         },
       },
       {
+        key: "/doctor/working",
+        label: (
+          <Link className={classItemMenu} href="/doctor/working">
+            Công tác
+          </Link>
+        ),
+        get icon() {
+          return (
+            <IconBgGray active={this.key == url}>
+              <BiCalendarStar size={20} />
+            </IconBgGray>
+          );
+        },
+      },
+      {
         key: "/doctor/health-axamination-schedule",
         label: (
           <Link

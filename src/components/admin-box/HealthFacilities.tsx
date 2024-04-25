@@ -28,6 +28,7 @@ import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
 import { BtnPlus } from "../button";
 import { useMemo, useRef, useState } from "react";
+import AddressFromApi from "../common/AddressFromApi";
 const { confirm } = Modal;
 
 export interface HealthFacilitiesBoxProps {}
@@ -231,6 +232,7 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
     setObEditHealthFacility(null);
   }
   function handleClickEditHealthFacility(record: HealthFacilityColumns) {
+    console.log("recordrecordrecordrecord", record);
     setObEditHealthFacility(() => ({ ...record }));
     toggleShowModalAddHealthFacility();
   }
@@ -274,6 +276,16 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
         key: "address",
         render: (text) => <a>{text}</a>,
         ...getColumnSearchProps("address"),
+      },
+      {
+        title: "Địa chỉ ba cấp",
+        dataIndex: "addressCode",
+        key: "addressCode",
+        render: (text) => (
+          <a>
+            <AddressFromApi code={text} />
+          </a>
+        ),
       },
       {
         title: "Loại",
@@ -323,6 +335,7 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
     if (!healthFacilities?.rows) return [];
     return healthFacilities?.rows.map((row, index) => ({
       key: row.id,
+      ...row,
       id: row.id,
       name: row.name,
       address: row.address,
@@ -346,12 +359,11 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
     });
   }
 
-  async function handleSubmitAddModal(
-    data: Partial<HealthFacilityClient>
-  ): Promise<boolean> {
+  async function handleSubmitAddModal(data: any): Promise<boolean> {
     let isOk = false;
     const idEdit = data.id;
     let cb = null;
+    console.log("data", data);
     if (idEdit) {
       cb = healthFacilitiesApi.updateHealthFacility(data);
     } else {
@@ -365,6 +377,7 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
   return (
     <div className="mt-2">
       <ModalPositionHere
+        size="5xl"
         body={
           <BodyModalHealth
             obEditHealthFacility={obEditHealthFacility}
@@ -372,7 +385,6 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
             handleSubmitForm={handleSubmitAddModal}
           />
         }
-        width={760}
         show={showModalAddHealth}
         title={
           obEditHealthFacility?.id

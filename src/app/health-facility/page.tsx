@@ -4,56 +4,228 @@ import {
   API_HEALTH_FACILITIES,
   API_TYPE_HEALTH_FACILITIES,
 } from "@/api-services/constant-api";
+import { AddressCodeOption } from "@/components/body-modal/BodyAddEditPatient";
 import { ListHealthFacilities, SeachHealthFacility } from "@/components/common";
+import { SelectFieldNext } from "@/components/form/SelectFieldNext";
 import { HealthFacility, TypeHealthFacility } from "@/models";
-import { ResData, ResDataPaginations } from "@/types";
-import { Breadcrumb, Button, Divider, Select } from "antd";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useRef, useState } from "react";
+import { ResDataPaginations } from "@/types";
+import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import axios from "axios";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import useSWR, { BareFetcher } from "swr";
-import axios from "../../axios";
-import { BsFilterCircle } from "react-icons/bs";
-import { useDisPlay } from "@/hooks";
-
+import instance from "../../axios";
+import queryString from "query-string";
+import { filterNonEmptyValues } from "@/untils/common";
 export default function HealthFacilities() {
   const url = usePathname();
-  const { scrollTo } = useDisPlay();
-  const listHealRef = useRef(null);
-  const breadcrumbArraySplit = url.toString().split("/");
-  const breadcrumbArray = breadcrumbArraySplit.map((path, index, arrayThis) => {
-    if (!path) return {};
-    return {
-      title:
-        index + 1 === arrayThis.length ? (
-          path
-        ) : (
-          <Link href={url.slice(0, url.indexOf(path)) + path}>{path}</Link>
-        ),
-    };
-  });
-  breadcrumbArray.unshift({
-    title: <Link href="/">Home</Link>,
-  });
-  const [typeChoices, setTypeChoices] = useState<string[]>([]);
-  const [searchNameHealthValue, setSearchNameHealthValue] =
-    useState<string>("");
-
+  // const { scrollTo } = useDisPlay();
+  const router = useRouter();
   const [pagination, setPagination] = useState<{
     current: number;
     pageSize: number;
   }>({
     current: 1,
-    pageSize: 6,
+    pageSize: 12,
   });
 
+  // filter
+  const [searchNameHealthValue, setSearchNameHealthValue] =
+    useState<string>("");
+  const [type, settype] = useState<string>("");
+
   // GET type
-  const { data: types, mutate: mutateTypeHealth } = useSWR<
+  const { data: typeData, mutate: mutateTypeHealth } = useSWR<
     Array<TypeHealthFacility>
   >(API_TYPE_HEALTH_FACILITIES, {
     revalidateOnMount: true,
     dedupingInterval: 5000,
   });
+
+  // address state
+  const [optionProvinces, setOptionProvinces] = useState<
+    AddressCodeOption[] | undefined
+  >([]);
+  const [optionDistricts, setOptionDistricts] = useState<
+    AddressCodeOption[] | undefined
+  >();
+
+  const [optionWards, setOptionWards] = useState<
+    AddressCodeOption[] | undefined
+  >();
+
+  // state form
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting, isValid },
+    reset,
+    setValue,
+  } = useForm({
+    defaultValues: {
+      ward: "",
+      district: "",
+      province: "",
+    },
+  });
+
+  const [valueAddress, setValueAddress] = useState<{
+    ward: string;
+    district: string;
+    province: string;
+  }>({
+    ward: "",
+    district: "",
+    province: "",
+  });
+
+  function onChangeSelectProvince(value: string) {
+    setValue("ward", "");
+    setValue("district", "");
+    setValueAddress((pr) => {
+      return { province: value, ward: "", district: "" };
+    });
+    setOptionDistricts([
+      {
+        label: "-- Tất cả --",
+        value: "",
+      },
+    ]);
+    setOptionWards([
+      {
+        label: "-- Tất cả --",
+        value: "",
+      },
+    ]);
+
+    if (value) {
+      axios
+        .get(`https://vapi.vnappmob.com/api/province/district/${value}`)
+        .then((data) => {
+          const options = data.data.results.map((e: any) => {
+            return {
+              label: e.district_name.toString(),
+              value: e.district_id.toString(),
+            };
+          });
+          setOptionDistricts([
+            {
+              label: "-- Tất cả --",
+              value: "",
+            },
+            ...options,
+          ]);
+        })
+        .catch((err) => {
+          toast("Lỗi lấy api tỉnh thành. Vui lòng nhấn F5 tải lại!");
+          setValue("district", "");
+          setValue("ward", "");
+
+          setValueAddress((pr) => {
+            return { ...pr, ward: "", district: "" };
+          });
+        });
+    }
+  }
+
+  function onChangeSelectDistrict(value: string): void {
+    setValue("ward", "");
+    setValueAddress((pr) => {
+      return { ...pr, district: value, ward: "" };
+    });
+    // setOptionWards([
+    //   {
+    //     label: "-- Tất cả --",
+    //     value: "",
+    //   },
+    // ]);
+    if (value)
+      axios
+        .get(`https://vapi.vnappmob.com/api/province/ward/${value}`)
+        .then((data) => {
+          setOptionWards([
+            {
+              label: "-- Tất cả --",
+              value: "",
+            },
+            ...data.data.results.map((e: any) => {
+              return {
+                label: e.ward_name.toString(),
+                value: e.ward_id.toString(),
+              };
+            }),
+          ]);
+        })
+        .catch((err) => {
+          toast("Lỗi lấy api tỉnh thành. Vui lòng nhấn F5 tải lại!");
+          setValue("ward", "");
+          setValueAddress((pr) => {
+            return { ...pr, ward: "" };
+          });
+          setOptionWards([
+            {
+              label: "-- Tất cả --",
+              value: "",
+            },
+          ]);
+        });
+  }
+
+  useEffect(() => {
+    axios
+      .get("https://vapi.vnappmob.com/api/province")
+      .then((data) => {
+        const options = data.data.results.map((e: any) => {
+          return {
+            label: e.province_name.toString(),
+            value: e.province_id.toString(),
+          };
+        });
+        setOptionProvinces([
+          {
+            label: "-- Tất cả --",
+            value: "",
+          },
+          ...options,
+        ]);
+      })
+      .catch((err) => {
+        console.log("err", err);
+        toast("Lỗi lấy api tỉnh thành [Tinh]. Vui lòng nhấn F5 tải lại!");
+      });
+  }, []);
+
+  // end
+  const optionTypes: { label: string; value: string }[] = useMemo(() => {
+    const data = [
+      {
+        label: "-- Tất cả --",
+        value: "",
+      },
+    ];
+    const res =
+      typeData?.map((t) => ({
+        label: t.name,
+        value: t.id,
+      })) || [];
+    return [...data, ...res];
+  }, [typeData]);
+
+  const paramsUrl = useMemo(() => {
+    const stringOb = filterNonEmptyValues({
+      name: searchNameHealthValue,
+      typeHealthFacilityId: type,
+      ...valueAddress,
+    });
+
+    const stringified = queryString.stringify(stringOb);
+    router.replace(`${url}?` + stringified, {
+      scroll: false,
+    });
+    return stringOb;
+  }, [type, valueAddress, searchNameHealthValue]);
 
   // GET health facilities
   const fetcher: BareFetcher<ResDataPaginations<HealthFacility>> = async ([
@@ -61,7 +233,7 @@ export default function HealthFacilities() {
     token,
   ]) =>
     (
-      await axios.get(url, {
+      await instance.get(url, {
         params: {
           ...token,
         },
@@ -73,12 +245,13 @@ export default function HealthFacilities() {
     isLoading,
   } = useSWR<ResDataPaginations<HealthFacility>>(
     [
-      API_HEALTH_FACILITIES,
+      `${API_HEALTH_FACILITIES}`,
       {
-        name: searchNameHealthValue,
-        typeHealthFacilityId: [...typeChoices],
+        // name: searchNameHealthValue,
+        // typeHealthFacilityId: type,
         limit: pagination.pageSize, // 4 page 2 => 3, 4 page 6 => 21
         offset: ((pagination.current || 0) - 1) * (pagination.pageSize || 0),
+        ...paramsUrl,
       },
     ],
     fetcher,
@@ -88,32 +261,14 @@ export default function HealthFacilities() {
     }
   );
 
-  function toggleChoiceType(id: string): void {
-    setPagination(() => {
-      return {
-        current: 1,
-        pageSize: 6,
-      };
-    });
-    setTypeChoices((prev) => {
-      const isExited = prev.indexOf(id);
-      if (isExited !== -1) {
-        const newChoices = prev.filter((c) => c !== id);
-        return newChoices;
-      } else {
-        return [...prev, id];
-      }
-    });
-  }
-
   function handleClickSearchHealth(value: string): void {
     setSearchNameHealthValue(value);
-    setTypeChoices([]);
+    settype("");
   }
   function onChangePagination(page: number, pageSize: number): void {
-    scrollTo(listHealRef?.current, {
-      top: 270,
-    });
+    // scrollTo(listHealRef?.current, {
+    //   top: 270,
+    // });
     setPagination(() => {
       return {
         current: page,
@@ -121,8 +276,6 @@ export default function HealthFacilities() {
       };
     });
   }
-
-  const provinceData = ["Loại"];
 
   return (
     <main className="mt-[-80px]">
@@ -156,56 +309,86 @@ export default function HealthFacilities() {
         </div>
         <SeachHealthFacility handleClickSearch={handleClickSearchHealth} />
       </div>
-      <div className="flex justify-center gap-2 flex-col mt-12 ">
-        <h3 className="text-3xl font-semibold text-black text-center">
-          Cơ sở y tế
+      <div className="flex justify-center gap-2 flex-col mt-20 mb-14 ">
+        <h3 className="text-4xl font-bold text-black text-center">
+          CƠ SỞ Y TẾ
         </h3>
 
-        <p className="text-base text-center text-gray-700 my-3">
+        <p className="text-base font-medium text-center text-gray-700 my-3">
           Với những cơ sở Y Tế hàng đầu sẽ giúp trải nghiệm khám, chữa bệnh của
           bạn tốt hơn
         </p>
       </div>
-      <div className="flex justify-center min-h-screen">
+      <div className="flex justify-center ">
         <div className="container my-4">
           {/* <Breadcrumb items={breadcrumbArray} /> */}
-          <div className="my-4 mb-8 flex justify-between items-center gap-6">
-            <Select
-              defaultValue={provinceData[0]}
-              style={{ width: 120 }}
-              options={provinceData.map((province) => ({
-                label: province,
-                value: province,
-              }))}
-            />
-            <div className="flex items-center justify-center gap-2">
-              {types?.map((row: TypeHealthFacility) => (
-                <Button
-                  onClick={() => toggleChoiceType(row.id)}
-                  key={row.id}
-                  className={`flex-shrink-0 cursor-pointer font-semibold  text-sm 
-                     rounded-3xl  transition duration-500 ${
-                       typeChoices.indexOf(row.id) !== -1
-                         ? "shadow  bg-[#f8f7f4]"
-                         : "text-black bg-transparent"
-                     }`}
-                  type="text"
-                >
-                  {row.name}
-                </Button>
-              ))}
+          <div className="my-4 mb-8 grid grid-cols-12 gap-6">
+            <div className="col-span-3">
+              <Autocomplete
+                // onInputChange={debounce(handleSearch, debounceSeconds || 300)}
+                onSelectionChange={(e) => {
+                  settype(e?.toString() || "");
+                }}
+                label="Loại cơ sở"
+                value={"all"}
+                size="lg"
+                selectedKey={type}
+                labelPlacement="inside"
+              >
+                {optionTypes?.map((item) => (
+                  <AutocompleteItem
+                    key={item.value || ""}
+                    value={item?.value || ""}
+                    textValue={item?.label || ""}
+                  >
+                    {item.label}
+                  </AutocompleteItem>
+                ))}
+              </Autocomplete>
             </div>
-            <Button
-              type="dashed"
-              className="rounded-3xl flex items-center gap-2"
-            >
-              <BsFilterCircle />
-              Lọc
-            </Button>
+            <div className="col-span-3">
+              <SelectFieldNext
+                onChangeCustom={onChangeSelectProvince}
+                control={control}
+                name="province"
+                placeholder="Chọn tỉnh"
+                label="Tỉnh"
+                options={optionProvinces || []}
+              />
+            </div>
+            <div className="col-span-3">
+              <SelectFieldNext
+                onChangeCustom={onChangeSelectDistrict}
+                control={control}
+                name="district"
+                placeholder="Chọn quận, huyện"
+                label="Quận, huyện"
+                options={optionDistricts || []}
+              />
+            </div>
+            <div className="col-span-3">
+              <SelectFieldNext
+                control={control}
+                onChangeCustom={(v) =>
+                  setValueAddress((pre) => {
+                    return {
+                      ...pre,
+                      ward: v,
+                    };
+                  })
+                }
+                name="ward"
+                placeholder="Chọn xã, phường"
+                label="Xã, phường"
+                options={optionWards || []}
+              />
+            </div>
           </div>
-          <div ref={listHealRef}></div>
+          {/* <div ref={listHealRef}></div> */}
           <ListHealthFacilities
+            searchNameHealthValue={searchNameHealthValue}
             isLoading={isLoading}
+            pageSize={pagination.pageSize}
             page={pagination.current}
             onChangePagination={onChangePagination}
             data={healthFacilities}

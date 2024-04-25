@@ -8,7 +8,7 @@ export const schemaValidateLoginForm = yup.object().shape({
     .required("Vui lòng điền email.")
     .email("Email không đúng định dạng."),
   password: yup.string().required("Vui lòng điền mật khẩu."),
-  rememberMe: yup.boolean(),
+  // rememberMe: yup.boolean(),
 });
 
 export const schemaValidateRegister = yup.object().shape({
@@ -53,7 +53,9 @@ export const schemaHealthFacilityBody = yup.object().shape({
       const phoneRegExp = /^\+?[0-9]{10,}$/; // Định dạng số điện thoại, ví dụ: +84912345678 hoặc 0912345678
       return phoneRegExp.test(value);
     }),
-
+  province: yup.string().required("Vui lòng điền tỉnh thành."),
+  district: yup.string().required("Vui lòng điền quận, huyện."),
+  ward: yup.string().required("Vui lòng điền xã, phường"),
   name: yup.string().required("Vui lòng nhập tên cơ sở y tế."),
   address: yup.string().required("Vui lòng nhập địa chỉ."),
   typeHealthFacilityId: yup.string().required("Vui lòng chọn loại bệnh viện."),

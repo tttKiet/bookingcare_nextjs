@@ -72,3 +72,13 @@ export function textNomo(str: string | undefined): string {
       .replace(/Đ/g, "D") || ""
   );
 }
+
+export function filterNonEmptyValues(obj: any) {
+  const filteredObject: any = {};
+  Object.keys(obj).forEach((key: any) => {
+    if (obj[key] !== "" && obj[key] !== undefined) {
+      filteredObject[key] = obj[key];
+    }
+  });
+  return filteredObject;
+}

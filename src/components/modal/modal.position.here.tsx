@@ -34,6 +34,7 @@ export interface ModalPositionHereProps {
     | "4xl"
     | "5xl"
     | undefined;
+  scrollBehavior?: "normal" | "inside" | "outside";
 }
 
 export function ModalPositionHere({
@@ -50,11 +51,14 @@ export function ModalPositionHere({
   config,
   backdrop,
   isLoading,
+  scrollBehavior,
   disable,
 }: ModalPositionHereProps) {
   return (
     <div>
       <Modal
+        scrollBehavior={scrollBehavior}
+        {...config}
         backdrop={backdrop || "opaque"}
         isOpen={show}
         size={size}
@@ -63,7 +67,6 @@ export function ModalPositionHere({
         onSubmit={handleSubmit}
         onClose={toggle}
         style={{ width: width }}
-        {...config}
       >
         <ModalContent>
           {(onClose) => (

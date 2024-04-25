@@ -92,7 +92,6 @@ export function InputUploadField({
   };
 
   useEffect(() => {
-    console.log("fileExisted useffe", fileExisted);
     if (!fileExisted || !resetFiles) return setFileList([]);
     const files: UploadFile[] = fileExisted.map((file, index) => {
       return {
@@ -112,18 +111,7 @@ export function InputUploadField({
   }, [value]);
 
   return (
-    <div
-      className={`border  ${col ? `col-span-${col}` : "col-span-2"} 
-      rounded-lg border-while py-2 px-3 pt-8 relative ${
-        error?.message && "border-red-400"
-      }`}
-    >
-      <label
-        className="absolute top-1 text-sm font-medium flex items-center gap-2"
-        htmlFor=""
-      >
-        {label}
-      </label>
+    <div>
       <div className="flex items-center gap-1 relative">
         <Upload
           accept="image/*"
@@ -137,7 +125,11 @@ export function InputUploadField({
           onPreview={handlePreview}
           onChange={handleChange}
         >
-          {fileList.length >= 3 ? null : "Tải ảnh lên"}
+          {fileList.length >= 3 ? null : (
+            <div className={`${error?.message && "text-danger-500"}`}>
+              Tải ảnh lên
+            </div>
+          )}
         </Upload>
         <Modal
           open={previewOpen}
@@ -152,7 +144,7 @@ export function InputUploadField({
         </span>
       </div>
       {error?.message && (
-        <span className="text-xs text-red-500 font-medium">
+        <span className="text-base text-red-400 font-medium">
           {error?.message}
         </span>
       )}

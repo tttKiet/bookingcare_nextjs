@@ -67,7 +67,13 @@ export default function TableServiceDetails({
   }, []);
 
   return (
-    <Table removeWrapper aria-labelledby="services">
+    <Table
+      removeWrapper
+      aria-labelledby="services"
+      classNames={{
+        th: "text-md",
+      }}
+    >
       <TableHeader columns={columns}>
         {(column) => (
           <TableColumn

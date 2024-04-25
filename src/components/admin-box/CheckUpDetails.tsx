@@ -5,8 +5,10 @@ import { Booking, ResBookingAndHealthRecord } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { createContext, useEffect, useState } from "react";
 import useSWR, { KeyedMutator } from "swr";
-import PatientProfileSlot from "../check-up/PatientProfileSlot";
-import InforBookingSlot from "../check-up/InforBookingSlot";
+import { Tab, Tabs } from "@nextui-org/react";
+import DetailsTabCheckUp from "../check-up/DetailsTabCheckUp";
+import dynamic from "next/dynamic";
+import { LoadingPage } from "../spinners";
 
 export const InfoCheckUpContext = createContext<{ bookingId: string }>({
   bookingId: "",
@@ -15,6 +17,17 @@ export const InfoCheckUpContext = createContext<{ bookingId: string }>({
 export interface ICheckUpDetailsProps {
   bookingId: string;
 }
+const InforBookingSlot = dynamic(() => import("../check-up/InforBookingSlot"), {
+  loading: () => <LoadingPage />,
+  ssr: false,
+});
+const PatientProfileSlot = dynamic(
+  () => import("../check-up/PatientProfileSlot"),
+  {
+    loading: () => <LoadingPage />,
+    ssr: false,
+  }
+);
 
 export default function CheckUpDetails({ bookingId }: ICheckUpDetailsProps) {
   const [inforBooking, setInforBooking] = useState<Booking | undefined>();
@@ -27,10 +40,28 @@ export default function CheckUpDetails({ bookingId }: ICheckUpDetailsProps) {
   });
 
   return (
-    <div>
+    <div className="text-left">
       <InfoCheckUpContext.Provider value={{ bookingId }}>
-        <InforBookingSlot />
-        <PatientProfileSlot />
+        {/* <PatientProfileSlot /> */}
+        <Tabs
+          color="primary"
+          aria-label="Tabs colors"
+          radius="sm"
+          className="text-left"
+        >
+          <Tab key="booking" title="Lịch hẹn" children={<InforBookingSlot />} />
+          <Tab
+            key="patient"
+            title="Thông tin bệnh nhân"
+            children={<PatientProfileSlot />}
+          />
+          <Tab key="medical_record" title="Hồ sơ bệnh án" />
+          <Tab
+            key="health"
+            title="Phiếu khám bệnh"
+            children={<DetailsTabCheckUp />}
+          />
+        </Tabs>
       </InfoCheckUpContext.Provider>
     </div>
   );

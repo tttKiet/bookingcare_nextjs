@@ -13,6 +13,11 @@ export async function useGetAddress({
   provinceCode,
 }: AddressCode): Promise<{
   address: string;
+  values: {
+    ward: string;
+    district: string;
+    province: string;
+  };
 }> {
   try {
     const [p, w, d] = await Promise.all([
@@ -22,15 +27,6 @@ export async function useGetAddress({
         `https://vapi.vnappmob.com/api/province/district/${provinceCode}`
       ),
     ]);
-    // .then(([p, w, d]: any) => {
-
-    // })
-    // .catch((error) => {
-    //   console.log("Use get address from code is error!!!");
-    //   console.log(error);
-    //   setAddress("...F5");
-    // });
-
     if (w?.status === 200 && d.status === 200 && p.status === 200) {
       const pFilter = p.data.results.find(
         (province: any) => province.province_id === provinceCode
@@ -44,12 +40,30 @@ export async function useGetAddress({
 
       return {
         address: `${wFilter?.ward_name}, ${dFilter?.district_name}, ${pFilter?.province_name}`,
+        values: {
+          ward: wFilter?.ward_name,
+          district: dFilter?.district_name,
+          province: pFilter?.province_name,
+        },
       };
     } else {
-      return { address: "" };
+      return {
+        address: "",
+        values: {
+          ward: "",
+          district: "",
+          province: "",
+        },
+      };
     }
   } catch (e) {
-    console.log("Error fetching location !!!");
-    return { address: "" };
+    return {
+      address: "",
+      values: {
+        ward: "",
+        district: "",
+        province: "",
+      },
+    };
   }
 }

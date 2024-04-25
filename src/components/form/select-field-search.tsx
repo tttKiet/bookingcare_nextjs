@@ -1,6 +1,10 @@
 "use client";
 
-import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import {
+  Autocomplete,
+  AutocompleteItem,
+  AutocompleteProps,
+} from "@nextui-org/react";
 import type { SelectProps } from "antd";
 import debounce from "lodash.debounce";
 export interface SelectSearchFieldProps {
@@ -14,6 +18,7 @@ export interface SelectSearchFieldProps {
   handleChangeSelect: (value: string) => void;
   allowClear?: boolean;
   isRequired?: boolean;
+  setting?: AutocompleteProps;
 }
 
 export function SelectSearchField({
@@ -27,6 +32,7 @@ export function SelectSearchField({
   isRequired = true,
   title,
   allowClear = true,
+  setting,
 }: SelectSearchFieldProps) {
   const handleSearch = (newValue: string) => {
     if (newValue) handleSearchSelect(newValue);
@@ -61,6 +67,7 @@ export function SelectSearchField({
       placeholder={placeholder}
       onKeyDown={(e: any) => e.continuePropagation()}
       className="max-w-2xl w-full"
+      {...setting}
     >
       {dataResult.map((item) => (
         <AutocompleteItem

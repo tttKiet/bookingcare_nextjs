@@ -358,8 +358,6 @@ export function AppointmentSchedule() {
     setValueCheckUp(event.target.value);
   }
 
-  const ref = useRef();
-
   return (
     <div className="mt-2">
       <ModalPositionHere
@@ -367,7 +365,7 @@ export function AppointmentSchedule() {
         toggle={() => {
           toggleShowModalDetails();
         }}
-        config={{ zIndex: 40 }}
+        // config={{ zIndex: 40 }}
         width={800}
         footer={false}
         body={<div></div>}

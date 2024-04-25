@@ -14,6 +14,7 @@ export function InputField({
   min,
   max,
   width,
+  color,
   isRequired = true,
   unit,
 }: InputFieldProps) {
@@ -86,7 +87,11 @@ export function InputField({
             max={max}
             width={width || "auto"}
             color={
-              error?.message ? "danger" : isSubmitted ? "primary" : "default"
+              color || error?.message
+                ? "danger"
+                : isSubmitted
+                ? "primary"
+                : "default"
             }
             label={
               <>

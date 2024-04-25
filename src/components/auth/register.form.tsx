@@ -1,7 +1,6 @@
 // import { schemaValidateRegister } from "@/schema-validate";
 import { schemaValidateRegister } from "@/schema-validate";
 import { yupResolver } from "@hookform/resolvers/yup";
-import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { TbLockSquareRounded } from "react-icons/tb";
@@ -15,13 +14,15 @@ import { useAuth } from "@/hooks";
 import { useEffect } from "react";
 import { User } from "@/models";
 import { Button } from "@nextui-org/button";
+import { Link } from "@nextui-org/react";
 export interface RegisterFormProps {
   handleRegister: (data: Partial<User>) => Promise<boolean>;
   cancelModal: () => void;
   loading?: boolean;
-  handleClickLogin: () => void;
+  handleClickLogin: (key: string) => void;
   cancelText?: string;
   okText?: string;
+
   obUserEdit?: User | null;
 }
 
@@ -119,7 +120,7 @@ export function RegisterForm({
       onSubmit={handleSubmit(handleRegisterSubmit)}
       className="flex flex-col gap-2 "
     >
-      <div>
+      <div className="">
         <div className="grid md:grid-cols-2 gap-3 sm:grid-cols-1">
           <InputField
             control={control}
@@ -179,7 +180,7 @@ export function RegisterForm({
           </div>
         </div>
       </div>
-      {profile?.Role?.keyType === "user" && handleClickLogin && (
+      {profile?.Role?.keyType !== "admin" && handleClickLogin && (
         <>
           <div className="grid grid-cols-1 mt-4">
             <CheckBoxField
@@ -196,32 +197,50 @@ export function RegisterForm({
               }
             />
           </div>
-          <div className="flex items-center ">
-            <h4>Bạn đã có tài khoản?</h4>
-            <button
-              className="text-blue-600 ml-2"
-              onClick={handleClickLogin}
-              type="button"
-            >
-              Đăng nhập ngay.
-            </button>
+          <div className=" ">
+            <p className="text-center text-small">
+              Bạn đã có tài khoản?{" "}
+              <Link size="sm" onPress={() => handleClickLogin("login")}>
+                Đăng nhập
+              </Link>
+            </p>
           </div>
         </>
       )}
 
-      <div className="flex items-center gap-2 justify-end mt-2 py-4">
-        <Button color="danger" variant="light" onClick={cancelModal}>
-          {cancelText ? cancelText : "Hủy"}
-        </Button>
+      <>
+        {profile?.Role?.keyType !== "admin" ? (
+          <div className="w-full flex mt-2 py-4">
+            <Button
+              color={"primary"}
+              className="flex-1"
+              isLoading={loading}
+              isDisabled={loading}
+              type="submit"
+            >
+              {okText ? (
+                okText
+              ) : (
+                <>{obUserEdit ? "Lưu thay đổi" : "Tạo tài khoản"}</>
+              )}
+            </Button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 justify-end mt-2 py-4">
+            <Button color="danger" variant="light" onClick={cancelModal}>
+              {cancelText ? cancelText : "Hủy"}
+            </Button>
 
-        <Button color={"primary"} isLoading={isSubmitting} type="submit">
-          {okText ? (
-            okText
-          ) : (
-            <>{obUserEdit ? "Lưu thay đổi" : "Tạo tài khoản"}</>
-          )}
-        </Button>
-      </div>
+            <Button color={"primary"} isLoading={isSubmitting} type="submit">
+              {okText ? (
+                okText
+              ) : (
+                <>{obUserEdit ? "Lưu thay đổi" : "Tạo tài khoản"}</>
+              )}
+            </Button>
+          </div>
+        )}
+      </>
     </form>
   );
 }

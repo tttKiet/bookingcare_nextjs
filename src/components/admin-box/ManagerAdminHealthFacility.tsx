@@ -139,7 +139,6 @@ export function ManagerAdminHealthFacility() {
   };
 
   const handleClickView = (record: ResManagerAdmin) => {
-    console.log(record);
     setHospitalManagerViewer(record);
     toggleShowModalDetails();
   };
@@ -340,7 +339,6 @@ export function ManagerAdminHealthFacility() {
         toggle={() => {
           toggleShowModalDetails();
         }}
-        config={{ zIndex: 40 }}
         width={800}
         footer={false}
         body={

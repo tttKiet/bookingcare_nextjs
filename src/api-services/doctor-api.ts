@@ -59,6 +59,12 @@ export const doctorApi = {
   async createOrUpdatePatient(data: Partial<PatientPost>): Promise<ResData> {
     return await axios.post(API_DOCTOR_PATIENT, data);
   },
+
+  async deletePatient(id: string): Promise<ResData> {
+    return await axios.delete(API_DOCTOR_PATIENT, {
+      data: { id },
+    });
+  },
 };
 
 export interface PatientPost extends Patient {

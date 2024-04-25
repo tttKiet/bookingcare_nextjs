@@ -1,0 +1,129 @@
+"use client";
+
+import { Profile } from "@/components/common";
+import { useAuth } from "@/hooks";
+import { Image } from "@nextui-org/image";
+import { Button, Divider, useDisclosure } from "@nextui-org/react";
+import { Layout, Menu } from "antd";
+import { Content, Header } from "antd/es/layout/layout";
+import Link from "next/link";
+import { ReactNode, useMemo } from "react";
+import logo from "../assets/images/logi_y_te.png";
+import { usePathname } from "next/navigation";
+import Footer from "@/components/footer";
+
+export interface IUserLayout {
+  children: React.ReactNode;
+}
+
+export default function UserLayout({ children }: IUserLayout) {
+  const { profile, login } = useAuth();
+  const {
+    isOpen: isOpenLogin,
+    onOpen: onOpenLogin,
+    onClose: onCloseLogin,
+  } = useDisclosure({ id: "login" });
+  const classItemMenu = "font-medium text-base";
+  const url = usePathname();
+  const items: {
+    key: string;
+    label: ReactNode;
+    icon?: ReactNode;
+  }[] = useMemo(
+    () => [
+      {
+        key: "/",
+        label: (
+          <Link className={classItemMenu} href="/">
+            Trang chủ
+          </Link>
+        ),
+      },
+      {
+        key: "/health-facility",
+        label: (
+          <Link className={classItemMenu} href="/health-facility">
+            Cơ sở y tế
+          </Link>
+        ),
+      },
+      {
+        key: "/booking",
+        label: (
+          <Link className={classItemMenu} href="/booking">
+            Đặt lịch
+          </Link>
+        ),
+      },
+    ],
+    []
+  );
+
+  return (
+    <>
+      <Layout className="bg-white">
+        <Header
+          style={{
+            position: "sticky",
+            top: 0,
+            zIndex: 30,
+            height: 80,
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+          }}
+          className="bg-white "
+        >
+          <div className="container mx-auto">
+            <div className="flex items-center justify-between ">
+              <div className="flex items-center  space-x-4">
+                <Link
+                  href={"/"}
+                  className="text-base flex items-center gap-4 whitespace-nowrap overflow-hidden
+                       rounded-[6px] text-blue-700  cursor-pointer"
+                >
+                  <Image
+                    width={40}
+                    height={40}
+                    src={logo.src}
+                    alt="LOGO BOOKING CARE"
+                  />
+                  <strong> BOOKING CARE</strong>
+                </Link>
+                <Divider orientation="vertical" className="h-5 mx-2" />
+                <div>
+                  <Menu
+                    theme="light"
+                    mode="horizontal"
+                    items={items}
+                    defaultOpenKeys={[url]}
+                    defaultSelectedKeys={[url]}
+                  />
+                </div>
+              </div>
+
+              {!profile?.email ? (
+                <div className="flex items-center gap-4  justify-center py-1">
+                  <Link href={"/login"}>
+                    <Button
+                      onClick={onOpenLogin}
+                      color="primary"
+                      variant="flat"
+                    >
+                      Đăng nhập
+                    </Button>
+                  </Link>
+                </div>
+              ) : (
+                <Profile />
+              )}
+            </div>
+          </div>
+        </Header>
+
+        <Content>{children}</Content>
+        <Footer></Footer>
+      </Layout>
+    </>
+  );
+}

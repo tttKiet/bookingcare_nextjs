@@ -21,4 +21,12 @@ export interface InputFieldProps {
   width?: number | string;
   isRequired?: boolean;
   unit?: boolean;
+  color?:
+    | "default"
+    | "secondary"
+    | "primary"
+    | "success"
+    | "warning"
+    | "danger"
+    | undefined;
 }

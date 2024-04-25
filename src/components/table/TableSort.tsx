@@ -16,7 +16,12 @@ export function TableSortFilter({
 }: TableSortFilterProps) {
   return (
     <div>
-      <Table {...options} columns={columns} dataSource={data} />
+      <Table
+        {...options}
+        // scroll={{ x: "100vw" }}
+        columns={columns}
+        dataSource={data}
+      />
     </div>
   );
 }

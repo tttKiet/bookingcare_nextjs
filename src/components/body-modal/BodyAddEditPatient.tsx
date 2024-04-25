@@ -22,8 +22,9 @@ import { schemaCedicineBody, schemaPatientBody } from "@/schema-validate";
 import { RadioGroupNextUi } from "../form/RadioGroupNextUi";
 import { SelectFieldNext } from "../form/SelectFieldNext";
 import moment from "moment";
+import { useSearchParams } from "next/navigation";
 
-interface AddressCodeOption {
+export interface AddressCodeOption {
   label: string;
   value: string;
 }
@@ -32,8 +33,9 @@ export interface BodyAddEditPatientProps {
   handleSubmitForm: (data: Partial<Patient>) => Promise<boolean>;
   clickCancel: () => void;
   loading?: boolean;
+  patientProfileId?: string;
   obEditPatient: Partial<Patient> | undefined;
-  getInfoFromProfile: () => PatientProfile | undefined;
+  getInfoFromProfile?: () => PatientProfile | undefined;
 }
 
 export function BodyAddEditPatient({
@@ -86,7 +88,6 @@ export function BodyAddEditPatient({
   >();
 
   function onChangeSelectProvince(value: string) {
-    console.log("valuevalue", value);
     setValue("ward", "");
     setValue("district", "");
     setOptionDistricts([]);
@@ -133,65 +134,7 @@ export function BodyAddEditPatient({
       });
   }
 
-  function handleGetInfoFromProfile() {
-    const patientProfile = getInfoFromProfile();
-    axios
-      .get(
-        `https://vapi.vnappmob.com/api/province/district/${patientProfile?.addressCode[2]}`
-      )
-      .then((data) => {
-        const options = data.data.results.map((e: any) => {
-          return {
-            label: e.district_name.toString(),
-            value: e.district_id.toString(),
-          };
-        });
-        setOptionDistricts(options);
-      })
-      .catch((err) => {
-        toast("Lỗi lấy api tỉnh thành. Vui lòng nhấn F5 tải lại!");
-        setValue("district", "");
-        setValue("ward", "");
-      });
-    axios
-      .get(
-        `https://vapi.vnappmob.com/api/province/ward/${patientProfile?.addressCode[1]}`
-      )
-      .then((data) => {
-        setOptionWards(
-          data.data.results.map((e: any) => {
-            return { label: e.ward_name, value: e.ward_id };
-          })
-        );
-        // setValue("ward", res.data.addressCode[0]);
-      })
-      .catch((err) => {
-        console.log("err", err);
-        toast("Lỗi lấy api tỉnh thành. Vui lòng nhấn F5 tải lại!");
-        setValue("ward", "");
-      });
-    setValue("province", patientProfile?.addressCode[2] || "");
-    reset({
-      fullName: patientProfile?.fullName || "",
-      phone: patientProfile?.phone || "",
-      profession: patientProfile?.profession || "",
-      email: patientProfile?.email || "",
-      gender: patientProfile?.gender || "",
-      birthDay: patientProfile?.birthDay
-        ? moment(new Date(patientProfile?.birthDay?.toString() || "")).format(
-            "yyyy-MM-Do"
-          )
-        : "",
-      nation: patientProfile?.nation || "",
-      cccd: patientProfile?.cccd || "",
-      district: patientProfile?.addressCode?.[1],
-      ward: patientProfile?.addressCode?.[0],
-      province: patientProfile?.addressCode?.[2],
-    });
-  }
-
   useEffect(() => {
-    console.log("obEditPatient", obEditPatient);
     if (obEditPatient) {
       axios
         .get(
@@ -289,8 +232,8 @@ export function BodyAddEditPatient({
   const headingClass = "text-black font-bold";
 
   return (
-    <form onSubmit={handleSubmit(handleSubmitLocal)} className="pt-4">
-      <div>
+    <form onSubmit={handleSubmit(handleSubmitLocal)} className="">
+      <div className="overflow-y-auto max-h-[500px] px-1">
         <div>
           <h3 className={`mb-4 ${headingClass}`}>Cá nhân</h3>
           <div className="grid md:grid-cols-3 gap-4 sm:grid-cols-1">
@@ -414,20 +357,14 @@ export function BodyAddEditPatient({
         <Button color="danger" variant="light" onClick={clickCancel}>
           Hủy
         </Button>
-        <Button
-          color="secondary"
-          type="button"
-          onClick={handleGetInfoFromProfile}
-        >
-          Lấy thông tin từ hồ sơ
-        </Button>
+
         <Button
           color="primary"
           // isDisabled={}
           isLoading={isSubmitting}
           type="submit"
         >
-          {obEditPatient ? "Lưu" : "Thêm"}
+          {obEditPatient?.id ? "Lưu" : "Thêm"}
         </Button>
       </div>
     </form>

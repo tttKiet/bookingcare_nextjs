@@ -15,6 +15,7 @@ export interface HealthFacility {
   phone: string;
   email: string;
   typeHealthFacilityId: string;
+  addressCode: string[];
   images: string[];
   createdAt: string;
   updatedAt: string;

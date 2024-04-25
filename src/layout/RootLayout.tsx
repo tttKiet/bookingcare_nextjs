@@ -16,6 +16,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { SWRConfig } from "swr";
 import axios from "../axios";
 import theme from "../theme/themeConfig";
+import UserLayout from "./UserLayout";
 moment.locale("vi");
 
 export function RootLayout({ children }: { children: React.ReactNode }) {
@@ -23,7 +24,9 @@ export function RootLayout({ children }: { children: React.ReactNode }) {
   const isAdminLink =
     pathname.includes("/admin") ||
     pathname.includes("/doctor") ||
-    pathname.includes("/hospital-manager") ||
+    pathname.includes("/staff") ||
+    pathname.includes("/login") ||
+    pathname.includes("/register") ||
     pathname.includes("/test");
 
   const excludeLayout = pathname.includes("/result");
@@ -61,11 +64,11 @@ export function RootLayout({ children }: { children: React.ReactNode }) {
               </div>
               <NextUIProvider>
                 {showUserHeader ? (
-                  <>
-                    <Header />
+                  <UserLayout>
+                    {/* <Header /> */}
                     {children}
-                    <Footer />
-                  </>
+                    {/* <Footer /> */}
+                  </UserLayout>
                 ) : (
                   <>{children}</>
                 )}

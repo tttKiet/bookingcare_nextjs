@@ -333,6 +333,7 @@ export function WorkingCurrentTag() {
         sorter: (a, b) => a.endDate.localeCompare(b.endDate),
       },
       {
+        fixed: "right",
         title: "Hành động",
         key: "action",
         render: (_, record) => {

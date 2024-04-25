@@ -8,6 +8,7 @@ import {
   API_DOCTOR_PRESCRIPTION_DETAILS,
   API_DOCTOR_SERVICE_DETAILS,
 } from "@/api-services/constant-api";
+import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import {
   Booking,
   Code,
@@ -32,8 +33,12 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Textarea,
   useDisclosure,
+  User,
 } from "@nextui-org/react";
 import { BlobProvider, PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import { Divider } from "antd";
@@ -58,12 +63,15 @@ import TableServiceDetails from "./TableServiceDetails";
 import CedicineDocument from "../pdf/CedicineDocument";
 import { FaRegFilePdf } from "react-icons/fa6";
 import { DownLoadIcon } from "../icons/DownLoadIcon";
-import { TbRuler3 } from "react-icons/tb";
+import { TbClockHour2, TbRuler3 } from "react-icons/tb";
 import { ActionBox } from "../box";
 import { HiMiniXMark } from "react-icons/hi2";
 import { SelectFieldNext } from "../form/SelectFieldNext";
-import { FaCheck } from "react-icons/fa";
+import { FaCheck, FaCode, FaUserMd } from "react-icons/fa";
 import { FcCheckmark } from "react-icons/fc";
+import { PiSealCheckThin, PiSealWarningLight } from "react-icons/pi";
+import { CiCalendarDate } from "react-icons/ci";
+import { BiClinic } from "react-icons/bi";
 
 export interface IInforBookingSlotProps {}
 
@@ -158,7 +166,7 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
 
   const boxClass = "md:col-span-3 grid-cols-12 ";
   const labelClass = "w-full text-black font-medium";
-  const descClass = "text-gray-600";
+  const descClass = "text-gray-600 font-medium";
   const footerClass = "mt-4 flex item-center justify-end";
   const labelHeading = "gr-title-admin mb-4 flex items-center gap-2";
   const colorInputStatus = getColorChipCheckUp(inforBooking?.Code?.key);
@@ -478,7 +486,7 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
         <div className="flex justify-between gap-2 items-center">
           <h3 className={labelHeading}>
             Thông tin lịch hẹn
-            <div>
+            {/* <div>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -494,86 +502,166 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
                   d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"
                 />
               </svg>
-            </div>
+            </div> */}
           </h3>
-          {dataBooking?.rows?.[0]?.healthRecord?.statusCode == "HR2" && (
-            <div className="mb-4">
-              <b>Trạng thái phiếu:</b>{" "}
-              <Chip
-                radius="sm"
-                size="md"
-                color="warning"
-                variant="flat"
-                className="ml-1"
-              >
-                ...wating
-              </Chip>
-            </div>
-          )}
-          {dataBooking?.rows?.[0]?.healthRecord?.statusCode == "HR4" && (
-            <div className="mb-4">
-              <Chip
-                radius="sm"
-                size="md"
-                color="primary"
-                variant="flat"
-                className="ml-1"
-              >
-                Đã khám
-              </Chip>
-            </div>
-          )}
         </div>
-        <div className="grid grid-cols-12 gap-4">
-          <div className={`md:col-span-4 grid-cols-12 `}>
-            <Input
-              size="lg"
-              isReadOnly
-              label="Mã lịch hẹn"
-              className={`${descClass} `}
-              value={inforBooking?.id}
-            />
+        <div className="grid grid-cols-12 gap-5">
+          <div className={"col-span-5 row-span-3 font-medium"}>
+            <div className="p-5 border-2 border-blue-700  rounded-2xl">
+              <div className="flex items-center justify-between gap-2 mb-2 ">
+                <h4 className="text-gray-500">Tài khoản đặt lịch:</h4>
+                <User
+                  name={inforBooking?.PatientProfile?.User?.fullName}
+                  description={inforBooking?.PatientProfile?.User?.email}
+                />
+              </div>
+              <div className="flex items-center justify-between gap-2 mb-2 ">
+                <h4 className="text-gray-500">Ngày tạo:</h4>
+                <div>{moment(inforBooking?.createdAt).format("L")}</div>
+              </div>
+              <div className="flex items-center justify-between gap-2 mb-2 ">
+                <h4 className="text-gray-500">Giá khám:</h4>
+                <div>{inforBooking?.doctorPrice.toLocaleString()} vnđ</div>
+              </div>
+              <div className="flex items-center justify-between gap-2 mb-2 ">
+                <h4 className="text-gray-500">Phương thức thanh toán:</h4>
+                <div>
+                  {
+                    MethodPayment[
+                      inforBooking?.paymentType as keyof typeof MethodPayment
+                    ]
+                  }
+                </div>
+              </div>
+              <div className="flex items-center justify-between gap-2 mb-2 ">
+                <h4 className="text-gray-500">Trạng thái:</h4>
+                <div className="flex items-center gap-1">
+                  {inforBooking?.Code?.key == "CU1" && (
+                    <Popover placement="top" color="warning">
+                      <PopoverTrigger>
+                        <span className="p-1 cursor-pointer hover:opacity-95 transition-all">
+                          <PiSealWarningLight size={22} color="#C4841D" />
+                        </span>
+                      </PopoverTrigger>
+
+                      <PopoverContent>
+                        <div>
+                          Người dùng cần thanh toán trước khi khám bệnh 3 ngày
+                          nếu không lịch khám sẽ bị hủy!
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  )}
+                  {inforBooking?.Code?.key == "CU2" && (
+                    <Popover placement="top" color="primary">
+                      <PopoverTrigger>
+                        <span className="p-1 cursor-pointer hover:opacity-95 transition-all">
+                          <PiSealCheckThin size={22} color="blue" />
+                        </span>
+                      </PopoverTrigger>
+
+                      <PopoverContent>
+                        <div>Thanh toán đã xác nhận</div>
+                      </PopoverContent>
+                    </Popover>
+                  )}
+                  <div>{inforBooking?.Code?.value}</div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className={boxClass}>
-            <Input
-              size="lg"
-              isReadOnly
-              label="Ngày khám"
-              className={`${descClass} font-medium`}
-              value={moment(
-                inforBooking?.HealthExaminationSchedule?.date
-              ).format("L")}
-            />
+          <div className="col-span-7 grid grid-cols-12 gap-5">
+            <div className={"col-span-6 font-medium"}>
+              <Input
+                size="lg"
+                isReadOnly
+                label={
+                  <div className="flex items-center gap-1">
+                    <FaCode />
+                    Mã lịch hẹn
+                  </div>
+                }
+                className={`${descClass} `}
+                value={inforBooking?.id}
+              />
+            </div>
+            <div className={"col-span-3 font-medium"}>
+              <Input
+                size="lg"
+                isReadOnly
+                label={
+                  <div className="flex items-center gap-1">
+                    <CiCalendarDate />
+                    Ngày khám
+                  </div>
+                }
+                className={`${descClass} `}
+                value={moment(
+                  inforBooking?.HealthExaminationSchedule?.date
+                ).format("L")}
+              />
+            </div>
+            <div className={"col-span-3 font-medium"}>
+              <Input
+                label={
+                  <div className="flex items-center gap-1">
+                    <TbClockHour2 />
+                    Khung giờ
+                  </div>
+                }
+                size="lg"
+                isReadOnly
+                className={`${descClass}`}
+                value={inforBooking?.HealthExaminationSchedule?.TimeCode?.value}
+              />
+            </div>
+            <div className={"col-span-3 font-medium"}>
+              <Input
+                size="lg"
+                isReadOnly
+                className={`${descClass}`}
+                label={
+                  <div className="flex items-center gap-1">
+                    <FaUserMd />
+                    Bác sỉ
+                  </div>
+                }
+                value={
+                  inforBooking?.HealthExaminationSchedule?.Working?.Staff
+                    ?.fullName
+                }
+              />
+            </div>
+            <div className={"col-span-6 font-medium"}>
+              <Input
+                size="lg"
+                isReadOnly
+                label={
+                  <div className="flex items-center gap-1">
+                    <BiClinic />
+                    Cở sở y tế
+                  </div>
+                }
+                className={`${descClass}`}
+                value={
+                  inforBooking?.HealthExaminationSchedule?.Working
+                    ?.HealthFacility?.name
+                }
+              />
+            </div>
+            {/* <div className={"col-span-3 font-medium"}>
+              <Input
+                size="lg"
+                isReadOnly
+                label="Phòng khám"
+                className={`${descClass}`}
+                value={
+                  inforBooking?.w
+                }
+              />
+            </div> */}
           </div>
-          <div className={boxClass}>
-            <Input
-              size="lg"
-              isReadOnly
-              label="Khung giờ - bắt đầu từ"
-              className={`${descClass}`}
-              value={inforBooking?.HealthExaminationSchedule?.TimeCode?.value}
-            />
-          </div>
-          <div className={boxClass}>
-            <Input
-              size="lg"
-              isReadOnly
-              label="Dịch vụ"
-              className={`${descClass}`}
-              value={"Đặt khám theo bác sỉ"}
-            />
-          </div>
-          <div className={boxClass}>
-            {/* <PulseLoader color="gray" size={4} /> */}
-            <Input
-              size="lg"
-              isReadOnly
-              label="Ngày tạo lịch"
-              className={`${descClass}`}
-              value={moment(inforBooking?.createdAt).format("L")}
-            />
-          </div>
-          <div className={boxClass}>
+          {/* <div className={boxClass}>
             <Input
               size="lg"
               isReadOnly
@@ -585,8 +673,8 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
                 ]
               }
             />
-          </div>
-          <div className={boxClass}>
+          </div> */}
+          {/* <div className={boxClass}>
             <Input
               size="lg"
               color={colorInputStatus}
@@ -595,659 +683,9 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
               className={`${descClass}`}
               value={inforBooking?.Code?.value}
             />
-          </div>
-        </div>
-
-        <div className={"mt-4 flex item-center justify-between"}>
-          <div className="flex items-end justify-start mr-4">
-            <div className="flex items-center gap-2">
-              {inforBooking?.Code?.key !== "CU2" && (
-                <span className="relative top-[1px]">
-                  <HiMiniXMark color="red" size={20} />
-                </span>
-              )}
-              {inforBooking?.Code?.key === "CU2" && (
-                <span className="relative top-[1px]">
-                  <FcCheckmark size={16} />
-                </span>
-              )}
-              <div>{inforBooking?.Code?.value}</div>
-              <ActionBox type="edit" onClick={onOpenEditStatusBooking} />
-            </div>
-          </div>
-          <div>
-            {dataHealthRecord?.rows?.[0] ? (
-              <Button
-                color="primary"
-                size="md"
-                onClick={onOpen}
-                className="flex items-center"
-                startContent={
-                  <span className="flex items-center">
-                    <EyeIcon width={20} color="white" />
-                  </span>
-                }
-              >
-                <div className="relative top-[-1px]"> Xem phiếu khám</div>
-              </Button>
-            ) : (
-              <Button
-                color="primary"
-                size="md"
-                isDisabled={inforBooking?.Code?.key === "CU1"}
-                onClick={handleClickCreateHealthRecord}
-                className="flex items-center"
-                startContent={
-                  <span className="flex items-center">
-                    <PlusIcon width={20} color="white" />
-                  </span>
-                }
-              >
-                <div className="relative top-[-1px]"> Tạo phiếu khám</div>
-              </Button>
-            )}
-          </div>
+          </div> */}
         </div>
       </div>
-
-      {/* modal */}
-      <>
-        <div className="flex flex-wrap gap-3"></div>
-        <Modal
-          size={"5xl"}
-          isOpen={isOpen}
-          onClose={onClose}
-          isDismissable={false}
-          scrollBehavior="inside"
-        >
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader className="flex items-center gap-1">
-                  Phiếu khám bệnh
-                  {dataBooking?.rows?.[0]?.healthRecord?.statusCode ==
-                    "HR2" && (
-                    <Chip
-                      radius="sm"
-                      size="md"
-                      color="warning"
-                      variant="flat"
-                      className="ml-1"
-                    >
-                      ...wating
-                    </Chip>
-                  )}
-                </ModalHeader>
-                <ModalBody>
-                  {dataHealthRecord?.rows?.[0] ? (
-                    <div>
-                      <div>
-                        <h3 className="my-2 mb-4 text-black text-sm font-medium">
-                          THÔNG TIN PHIẾU{" "}
-                        </h3>
-                        <div className="grid grid-cols-12 gap-4">
-                          <div className={`md:col-span-6 grid-cols-12 `}>
-                            <Input
-                              size="lg"
-                              isReadOnly
-                              label="Mã phiếu khám"
-                              className={`${descClass} `}
-                              value={inforHealthRecord?.id}
-                            />
-                          </div>
-
-                          <div className="md:col-span-3 grid-cols-12 ">
-                            <Input
-                              size="lg"
-                              isReadOnly
-                              label="Ngày khám"
-                              className={`${descClass} font-medium`}
-                              value={moment(
-                                inforBooking?.HealthExaminationSchedule?.date
-                              ).format("L")}
-                            />
-                          </div>
-                          <div className={"md:col-span-3 grid-cols-12 "}>
-                            <Input
-                              size="lg"
-                              isReadOnly
-                              label="Khung giờ - bắt đầu từ"
-                              className={`${descClass}`}
-                              value={
-                                inforBooking?.HealthExaminationSchedule
-                                  ?.TimeCode?.value
-                              }
-                            />
-                          </div>
-                          <div className={"md:col-span-3 grid-cols-12 "}>
-                            <Input
-                              size="lg"
-                              isReadOnly
-                              label="Bệnh nhân"
-                              className={`${descClass} font-medium`}
-                              value={dataPatient?.rows?.[0]?.fullName}
-                            />
-                          </div>
-                          <div className="md:col-span-9 grid-cols-12 ">
-                            <Textarea
-                              size="lg"
-                              isReadOnly
-                              label="Tình trạng bệnh nhân"
-                              className={`${descClass}`}
-                              value={inforBooking?.descriptionDisease}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <Divider />
-                      <div>
-                        <h3 className="my-2 mb-4 text-black text-sm font-medium">
-                          KHÁM BỆNH{" "}
-                          <span className="ml-[2px] text-base text-red-400">
-                            *
-                          </span>
-                        </h3>
-                        <div className="grid grid-cols-12 gap-4">
-                          <div className="md:col-span-7 grid-cols-12 ">
-                            <Textarea
-                              size="lg"
-                              placeholder="Chuẩn đoán tình trạng bệnh nhân"
-                              label="Chuẩn đoán bệnh"
-                              className={`${descClass}`}
-                              onChange={(e) => setDiagnosis(e.target.value)}
-                              value={diagnosis}
-                            />
-                          </div>
-                          <div className="md:col-span-5 grid-cols-12 ">
-                            <Textarea
-                              size="lg"
-                              placeholder="Nhập ghi chú"
-                              label="Ghi chú"
-                              className={`${descClass}`}
-                              onChange={(e) => setNote(e.target.value)}
-                              value={note}
-                            />
-                          </div>
-                        </div>
-                        <h3 className="my-4 mt-6 text-black text-sm font-medium flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-4">
-                            DỊCH VỤ KHÁM BỆNH
-                            {(dataServiceDetails?.length || -1) > 0 && (
-                              <span
-                                onClick={() => clickPdf("service")}
-                                className="cursor-pointer hover:opacity-90 transition-all duration-150 hover:text-gray-600"
-                              >
-                                <FaRegFilePdf className="w-5 h-5" />
-                              </span>
-                            )}
-                            {(dataServiceDetails?.length || -1) > 0 && (
-                              <PDFDownloadLink
-                                document={
-                                  <ServiceDetailsBillDocument
-                                    dataBooking={inforBooking}
-                                    dataServiceDetails={dataServiceDetails}
-                                    healthRecord={inforHealthRecord}
-                                  />
-                                }
-                                fileName="service.pdf"
-                                // onClick={handlePrintService}
-                                className="cursor-pointer hover:opacity-90 transition-all duration-150 hover:text-gray-600"
-                              >
-                                {({ blob, url, loading, error }) =>
-                                  loading ? "...PDF" : <DownLoadIcon />
-                                }
-                              </PDFDownloadLink>
-                            )}
-                          </div>
-                          <AddActionBox
-                            onClick={() => {
-                              onOpenService();
-                              setServiceDetailsEdit(undefined);
-                            }}
-                            content="thêm dịch vụ"
-                          />
-                        </h3>
-                        <div className="grid col-span-12 gap-4">
-                          {dataServiceDetails &&
-                          dataServiceDetails?.length > 0 ? (
-                            <TableServiceDetails
-                              handleClickDelete={handleClickDelete}
-                              handleClickEdit={handleClickEdit}
-                              data={dataServiceDetails}
-                            />
-                          ) : (
-                            <div>./</div>
-                          )}
-                        </div>
-                        <h3 className="my-4 mt-6 text-black text-sm font-medium flex items-center justify-between gap-2">
-                          <div className="flex-1 flex  items-center gap-4">
-                            <div className="flex  items-center ">
-                              TOA THUỐC
-                              <span className="mx-[4px] text-base text-red-400">
-                                *
-                              </span>
-                            </div>
-                            {(dataPrescriptionDetail?.length || -1) > 0 && (
-                              <span
-                                onClick={() => clickPdf("cedicine")}
-                                className="cursor-pointer hover:opacity-90 transition-all duration-150 hover:text-gray-600"
-                              >
-                                <FaRegFilePdf className="w-5 h-5" />
-                              </span>
-                            )}
-                            {(dataPrescriptionDetail?.length || -1) > 0 && (
-                              <PDFDownloadLink
-                                document={
-                                  <CedicineDocument
-                                    dataBooking={inforBooking}
-                                    prescriptionDetail={dataPrescriptionDetail}
-                                    healthRecord={inforHealthRecord}
-                                  />
-                                }
-                                fileName="cadi.pdf"
-                                // onClick={handlePrintService}
-                                className="cursor-pointer hover:opacity-90 transition-all duration-150 hover:text-gray-600"
-                              >
-                                {({ blob, url, loading, error }) =>
-                                  loading ? "...PDF" : <DownLoadIcon />
-                                }
-                              </PDFDownloadLink>
-                            )}
-                          </div>
-                          <AddActionBox
-                            onClick={() => {
-                              onOpenPrescriptionDetails();
-                              setPrescriptionEdit(undefined);
-                            }}
-                            content="ghi thuốc"
-                          />
-                        </h3>
-                        <div className="grid col-span-12 gap-4">
-                          {dataPrescriptionDetail &&
-                          dataPrescriptionDetail?.length > 0 ? (
-                            <TablePrescriptionDetails
-                              handleClickDelete={
-                                handleClickDeletePrescriptionDetails
-                              }
-                              handleClickEdit={
-                                handleClickEditPrescriptionDetails
-                              }
-                              data={dataPrescriptionDetail}
-                            />
-                          ) : (
-                            <div>./</div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center h-60">
-                      <ClipLoader color="blue" />
-                    </div>
-                  )}
-                </ModalBody>
-                <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
-                    Thoát
-                  </Button>
-
-                  {dataBooking?.rows?.[0]?.healthRecord?.statusCode !==
-                  "HR2" ? (
-                    <Button
-                      color="warning"
-                      variant="solid"
-                      onPress={() => handleClickChangeSttService("waiting")}
-                    >
-                      Chờ kết quả dịch vụ
-                    </Button>
-                  ) : (
-                    <Button
-                      color="warning"
-                      variant="light"
-                      onPress={() => handleClickChangeSttService("doing")}
-                    >
-                      Xóa chờ dịch vụ
-                    </Button>
-                  )}
-                  <Button
-                    color={"primary"}
-                    onPress={handleSave}
-                    // disabled={!dataBooking}
-                    isDisabled={!dataHealthRecord?.rows?.[0]}
-                  >
-                    Lưu phiếu
-                  </Button>
-
-                  <Button
-                    color={done ? "primary" : "default"}
-                    onPress={() => {
-                      onOpenConfirmEmailDone();
-                    }}
-                    // disabled={!dataBooking}
-                    isDisabled={!done}
-                  >
-                    Hoàn tất khám
-                  </Button>
-                </ModalFooter>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-
-        <ModalFadeInNextUi
-          size="3xl"
-          id="service"
-          backdrop="opaque"
-          show={isOpenService}
-          disable={!valueHospitalService}
-          body={
-            <div>
-              <div className="flex items-center justify-between gap-4">
-                <Autocomplete
-                  label={"Dịch vụ"}
-                  className="flex-1 min-w-[300px]"
-                  selectedKey={valueHospitalService}
-                  // defaultInputValue={defaultInputValue}
-                  // onChange={(e) => setValueHospitalService(e.target.value)}
-                  onSelectionChange={(e) =>
-                    setValueHospitalService(e?.toString())
-                  }
-                  color={"primary"}
-                  // value={value}
-                  defaultItems={optionHospitalServices}
-                  labelPlacement="inside"
-                  isClearable={false}
-                  size="lg"
-                  placeholder={"Chọn dịch vụ"}
-                  onKeyDown={(e: any) => e.continuePropagation()}
-                  classNames={{}}
-                >
-                  {(optionHospitalService) => (
-                    <AutocompleteItem
-                      key={optionHospitalService?.value || ""}
-                      value={optionHospitalService?.value || ""}
-                      textValue={optionHospitalService?.label || ""}
-                    >
-                      {optionHospitalService.label}
-                    </AutocompleteItem>
-                  )}
-                </Autocomplete>
-                <Input
-                  className="w-[200px]"
-                  size="lg"
-                  label={"Giá"}
-                  type="text"
-                  isReadOnly
-                  value={dataHospitalService?.rows
-                    .find((o: HospitalService) => o.id == valueHospitalService)
-                    ?.price?.toLocaleString()}
-                  endContent="vnd"
-                ></Input>
-              </div>
-            </div>
-          }
-          title="Thêm dịch vụ"
-          toggle={onCloseService}
-          handleSubmit={handleSubmitService}
-        />
-
-        {/* confirm */}
-        <>
-          <Modal size={"sm"} isOpen={isOpenConfirm} onClose={onCloseConfirm}>
-            <ModalContent>
-              {(onClose) => (
-                <>
-                  <ModalHeader className="flex flex-col gap-1">
-                    Bạn xác nhận xóa dịch vụ này ?
-                  </ModalHeader>
-                  <ModalBody>Thao tác này sẽ không thể khôi phục!</ModalBody>
-                  <ModalFooter>
-                    <Button color="danger" variant="light" onPress={onClose}>
-                      Hủy
-                    </Button>
-                    <Button
-                      color="primary"
-                      onPress={() => submitConfirm({ type: "delete-service" })}
-                    >
-                      Xác nhận
-                    </Button>
-                  </ModalFooter>
-                </>
-              )}
-            </ModalContent>
-          </Modal>
-        </>
-        {/*  prescription details */}
-        <>
-          <Modal
-            size={"sm"}
-            isOpen={isOpenConfirmPre}
-            onClose={onCloseConfirmPre}
-          >
-            <ModalContent>
-              {(onClose) => (
-                <>
-                  <ModalHeader className="flex flex-col gap-1">
-                    Bạn xác nhận xóa thuốc này ?
-                  </ModalHeader>
-                  <ModalBody>Thao tác này sẽ không thể khôi phục!</ModalBody>
-                  <ModalFooter>
-                    <Button color="danger" variant="light" onPress={onClose}>
-                      Hủy
-                    </Button>
-                    <Button
-                      color="primary"
-                      onPress={() =>
-                        submitConfirm({ type: "delete-prescription" })
-                      }
-                    >
-                      Xác nhận
-                    </Button>
-                  </ModalFooter>
-                </>
-              )}
-            </ModalContent>
-          </Modal>
-        </>
-
-        {/* conffirm */}
-        <>
-          <Modal
-            size={"xl"}
-            isOpen={isOpenConfirmEmailDone}
-            onClose={onCloseConfirmEmailDone}
-          >
-            <ModalContent>
-              {(onCloseConfirmEmailDone) => (
-                <>
-                  {/* <ModalHeader className="flex flex-col gap-1">
-                    Bạn xác nhận xóa thuốc này ?
-                  </ModalHeader> */}
-                  <ModalBody>
-                    <div className="flex items-center gap-3 mt-3">
-                      <div> Gửi kết quả về email</div>
-                      <Input
-                        value={emailSend}
-                        color="default"
-                        size="lg"
-                        onChange={(e) => setEmailSend(e.target.value)}
-                      />
-                    </div>
-                  </ModalBody>
-                  <ModalFooter>
-                    <Button
-                      color="danger"
-                      variant="light"
-                      onPress={onCloseConfirmEmailDone}
-                    >
-                      Trở về
-                    </Button>
-
-                    <BlobProvider
-                      document={
-                        <ServiceDetailsBillDocument
-                          dataBooking={inforBooking}
-                          dataServiceDetails={dataServiceDetails}
-                          healthRecord={inforHealthRecord}
-                        />
-                      }
-                    >
-                      {({ blob: blobSer, url, loading: l1 }) => {
-                        return (
-                          <BlobProvider
-                            document={
-                              <ServiceDetailsBillDocument
-                                dataBooking={inforBooking}
-                                dataServiceDetails={dataServiceDetails}
-                                healthRecord={inforHealthRecord}
-                              />
-                            }
-                          >
-                            {({ blob: blobCe, url, loading: l2 }) => {
-                              return (
-                                <Button
-                                  color={
-                                    l1 || l2 || loadingPdf
-                                      ? "default"
-                                      : "primary"
-                                  }
-                                  onPress={() => {
-                                    handleDoneAndSendEmail({
-                                      blobSer,
-                                      blobCe,
-                                    });
-                                  }}
-                                  // disabled={!dataBooking}
-                                  isLoading={l1 || l2 || loadingPdf}
-                                  isDisabled={!emailSend}
-                                >
-                                  {l1 || l2
-                                    ? "Đang load file"
-                                    : "Xác nhận và gửi email"}
-                                </Button>
-                              );
-                            }}
-                          </BlobProvider>
-                        );
-                      }}
-                    </BlobProvider>
-                  </ModalFooter>
-                </>
-              )}
-            </ModalContent>
-          </Modal>
-        </>
-        {/* update result */}
-        <ModalUpdateServiceDetails
-          handleClickSubmit={handleEditServiceDetails}
-          isOpen={isOpenUpdateResult}
-          objectEdit={obServiceDetailsEdit}
-          onClose={onCloseUpdateResult}
-        />
-
-        {/*  prescription details */}
-        <ModalFadeInNextUi
-          backdrop="opaque"
-          show={isOpenPrescriptionDetails}
-          toggle={onClosePrescriptionDetails}
-          id="prescription-details"
-          title="Thêm thuốc"
-          size="2xl"
-          body={
-            <BodyPrescriptionDetails
-              clickCancel={onClosePrescriptionDetails}
-              handleSubmitForm={handleSubmitPrescriptionDetail}
-              obEdit={obPrescriptionEdit}
-            />
-          }
-          footer={false}
-        />
-
-        {/* edit status booking */}
-        <ModalFadeInNextUi
-          backdrop="opaque"
-          show={isOpenEditStatusBooking}
-          toggle={onCloseEditStatusBooking}
-          id="prescription-detailssss"
-          title="Trạng thái lịch hẹn"
-          size="2xl"
-          body={
-            <div>
-              <Autocomplete
-                selectedKey={editCodeValue}
-                color={"default"}
-                onSelectionChange={(e) => {
-                  const val: string = e?.toString() || "";
-                  setEditCodeValue(val);
-                }}
-                items={optCodeEdit}
-                labelPlacement="inside"
-                isClearable={false}
-                size="lg"
-                onKeyDown={(e: any) => e.continuePropagation()}
-              >
-                {(item) => (
-                  <AutocompleteItem
-                    key={item?.value || ""}
-                    value={item?.value || ""}
-                    textValue={item?.label || ""}
-                  >
-                    {item.label}
-                  </AutocompleteItem>
-                )}
-              </Autocomplete>
-
-              {/* <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Hủy
-                </Button>
-                <Button
-                  color="primary"
-                  onPress={() => submitConfirm({ type: "delete-service" })}
-                >
-                  Xác nhận
-                </Button>
-              </ModalFooter> */}
-            </div>
-          }
-          handleSubmit={handleEditCode}
-          footer={true}
-        />
-        {/* pdf */}
-
-        <Modal
-          size={"full"}
-          isOpen={isOpenPdf}
-          onClose={onClosePdf}
-          // scrollBehavior="outside"
-          // closeButton={false}
-        >
-          <ModalContent>
-            {(onClosePdf) => (
-              <>
-                {/* <ModalHeader className="flex flex-col gap-1">PDF</ModalHeader> */}
-                <ModalBody>
-                  <div className="w-full min-h-screen px-6 py-2">{BodyPdf}</div>
-                </ModalBody>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      </>
-
-      {/* pdf */}
-      {/* <BlobProvider
-        document={
-          <ServiceDetailsBillDocument
-            dataBooking={inforBooking}
-            dataServiceDetails={dataServiceDetails}
-            healthRecord={inforHealthRecord}
-          />
-        }
-        filename={"service"}
-      >
-        {({ blob, url, loading }) => setPdfSer(blob)}
-      </BlobProvider> */}
     </div>
   );
 }

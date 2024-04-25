@@ -52,12 +52,11 @@ export const healthFacilitiesApi = {
       },
     });
   },
-  async createHealthFacility(
-    data: Partial<HealthFacilityClient>
-  ): Promise<ResData> {
+  async createHealthFacility(data: any): Promise<ResData> {
     const bodyFormData = new FormData();
     if (
       !(
+        data.addressCode &&
         data.name &&
         data.address &&
         data.email &&
@@ -74,7 +73,9 @@ export const healthFacilitiesApi = {
     bodyFormData.append("name", data.name);
     bodyFormData.append("address", data.address);
     bodyFormData.append("email", data.email);
-    data.files.forEach((f) => {
+    bodyFormData.append("addressCode", JSON.stringify(data.addressCode));
+
+    data.files.forEach((f: any) => {
       if (f && f?.originFileObj) bodyFormData.append("images", f.originFileObj);
     });
     bodyFormData.append("phone", data.phone);
@@ -84,9 +85,7 @@ export const healthFacilitiesApi = {
     });
   },
 
-  async updateHealthFacility(
-    data: Partial<HealthFacilityClient>
-  ): Promise<ResData<HealthFacility>> {
+  async updateHealthFacility(data: any): Promise<ResData<HealthFacility>> {
     const bodyFormData = new FormData();
     if (
       !(
@@ -107,7 +106,9 @@ export const healthFacilitiesApi = {
     bodyFormData.append("name", data.name);
     bodyFormData.append("address", data.address);
     bodyFormData.append("email", data.email);
-    data.files.forEach((f) => {
+    bodyFormData.append("addressCode", JSON.stringify(data.addressCode));
+
+    data.files.forEach((f: any) => {
       if (f && f?.originFileObj) bodyFormData.append("images", f.originFileObj);
       else if (f && f?.uid && !f.originFileObj)
         bodyFormData.append("imageOlds", f.uid);
