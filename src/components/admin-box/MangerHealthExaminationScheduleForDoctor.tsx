@@ -372,10 +372,10 @@ export function MangerHealthExaminationScheduleForDoctor({}: MangerHealthExamina
 
       <ModalPositionHere
         show={showModalDetails}
+        backdrop="blur"
         toggle={() => {
           toggleShowModalDetails();
         }}
-        config={{ zIndex: 40 }}
         width={800}
         footer={false}
         body={

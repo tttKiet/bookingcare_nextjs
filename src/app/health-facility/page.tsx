@@ -19,9 +19,11 @@ import useSWR, { BareFetcher } from "swr";
 import instance from "../../axios";
 import queryString from "query-string";
 import { filterNonEmptyValues } from "@/untils/common";
+import { useDisPlay } from "@/hooks";
 export default function HealthFacilities() {
   const url = usePathname();
-  // const { scrollTo } = useDisPlay();
+  const { scrollTo } = useDisPlay();
+  const boxListRef = useRef(null);
   const router = useRouter();
   const [pagination, setPagination] = useState<{
     current: number;
@@ -262,6 +264,7 @@ export default function HealthFacilities() {
   );
 
   function handleClickSearchHealth(value: string): void {
+    scrollTo(boxListRef.current);
     setSearchNameHealthValue(value);
     settype("");
   }
@@ -348,6 +351,7 @@ export default function HealthFacilities() {
             </div>
             <div className="col-span-3">
               <SelectFieldNext
+                isClearable={true}
                 onChangeCustom={onChangeSelectProvince}
                 control={control}
                 name="province"
@@ -358,6 +362,7 @@ export default function HealthFacilities() {
             </div>
             <div className="col-span-3">
               <SelectFieldNext
+                isClearable={true}
                 onChangeCustom={onChangeSelectDistrict}
                 control={control}
                 name="district"
@@ -368,6 +373,7 @@ export default function HealthFacilities() {
             </div>
             <div className="col-span-3">
               <SelectFieldNext
+                isClearable={true}
                 control={control}
                 onChangeCustom={(v) =>
                   setValueAddress((pre) => {
@@ -384,7 +390,7 @@ export default function HealthFacilities() {
               />
             </div>
           </div>
-          {/* <div ref={listHealRef}></div> */}
+          <div ref={boxListRef}></div>
           <ListHealthFacilities
             searchNameHealthValue={searchNameHealthValue}
             isLoading={isLoading}

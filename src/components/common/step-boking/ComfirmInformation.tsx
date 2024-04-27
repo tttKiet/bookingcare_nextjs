@@ -15,6 +15,8 @@ import { Button } from "@nextui-org/button";
 import { Descriptions, DescriptionsProps, Table } from "antd";
 import moment from "moment";
 import { useEffect, useMemo, useState } from "react";
+import { HiOutlineInformationCircle } from "react-icons/hi";
+import { MdOutlineMedicalInformation } from "react-icons/md";
 import useSWR from "swr";
 
 export interface IComfirmInformationProps {
@@ -150,7 +152,12 @@ export function ComfirmInformation({
   );
   return (
     <>
-      <ColorBox title="Xác nhận thông tin khám" className="">
+      {/* <ColorBox title="Xác nhận thông tin khám" className=""></ColorBox> */}
+      <div className="mb-8">
+        <h3 className="mb-5 font-bold flex items-center gap-2 text-[#1b3c74] text-base">
+          <MdOutlineMedicalInformation size={18} />
+          Xác nhận thông tin khám
+        </h3>
         <Table
           bordered={false}
           rootClassName="bg-transparent"
@@ -159,8 +166,13 @@ export function ComfirmInformation({
           columns={columns}
           pagination={false}
         />
-      </ColorBox>
-      <ColorBox title="Thông tin bệnh nhân" className="mt-8">
+      </div>
+
+      <div className="mb-4">
+        <h3 className="mb-5 font-bold flex items-center gap-2 text-[#1b3c74] text-base">
+          <HiOutlineInformationCircle size={18} />
+          Thông tin bệnh nhân
+        </h3>
         <Descriptions className="pt-3" size={"middle"} items={items} />
         <hr />
         <Descriptions className="pt-3" size={"middle"}>
@@ -168,14 +180,9 @@ export function ComfirmInformation({
             {descStatusPatient}
           </Descriptions.Item>
         </Descriptions>
-      </ColorBox>
+      </div>
+      {/* <ColorBox title="Thông tin bệnh nhân" className="mt-8"></ColorBox> */}
       <div className="flex justify-end gap-4 py-5">
-        {/* <Button type="dashed" onClick={previous}>
-          Trở lại
-        </Button>
-        <Button type={"primary"} onClick={handleClickConfirm}>
-          Xác nhận
-        </Button> */}
         <Button onClick={previous} size="md">
           Trở lại
         </Button>
@@ -185,7 +192,7 @@ export function ComfirmInformation({
           onClick={handleClickConfirm}
           className="cursor-pointer"
         >
-          Tiếp tục
+          Xác nhận và thanh toán
         </Button>
       </div>
     </>

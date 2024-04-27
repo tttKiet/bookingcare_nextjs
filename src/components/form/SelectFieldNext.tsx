@@ -19,6 +19,7 @@ export interface SelectFieldNextProps {
   disabled?: boolean;
   onChangeCustom?: (value: string) => void;
   isRequired?: boolean;
+  isClearable?: boolean;
 }
 
 export function SelectFieldNext({
@@ -35,6 +36,7 @@ export function SelectFieldNext({
   debounceSeconds,
   onSearchSelect,
   onChangeCustom,
+  isClearable,
   disabled = false,
 }: SelectFieldNextProps) {
   const {
@@ -72,7 +74,7 @@ export function SelectFieldNext({
       // defaultItems={options}
       // items={[]}
 
-      isClearable={false}
+      isClearable={isClearable || false}
       label={
         <>
           {label} {isRequired && <span className="text-red-400">*</span>}

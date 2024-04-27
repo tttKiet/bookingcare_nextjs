@@ -225,3 +225,7 @@ input {
 .slick-slide > div {
   padding: 0 10px !important;
 }
+
+.scroll-x-sm::-webkit-scrollbar {
+  height: 3px;
+}

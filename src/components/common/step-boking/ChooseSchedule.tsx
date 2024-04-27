@@ -7,15 +7,15 @@ import {
 } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { sortTimeSlots } from "@/untils/common";
-import { Button, Checkbox, RadioGroup } from "@nextui-org/react";
+import { Button, Checkbox, Chip, Divider, RadioGroup } from "@nextui-org/react";
 import { Tabs, TabsProps } from "antd";
-import { Variants } from "framer-motion";
 import moment from "moment";
 import { useState } from "react";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css";
 import { CiSun, CiCloudSun } from "react-icons/ci";
 import useSWR from "swr";
+import { AnimatePresence, motion, Variants } from "framer-motion";
 
 export interface IChooseScheduleProps {
   staffId: string;
@@ -82,131 +82,133 @@ export function ChooseSchedule({
               children: (
                 <div className="text-left">
                   {/* <h2 className="mb-6 mt-4 font-bold">Ngày và giờ khám</h2> */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <h2 className="mb-6 mt-4 font-bold text-base text-center flex items-center justify-center gap-2">
-                        <div>
-                          <CiSun size={24} color="#FFD700" />
-                        </div>{" "}
-                        Sáng
-                      </h2>
-                      <ul className="grid sm:grid-cols-2 grid-cols-1 gap-3">
+                  <div className=" mt-8">
+                    <div className="flex items-start gap-2 ">
+                      <div className="flex-shrink-0 whitespace-nowrap text-right">
+                        <h2
+                          className="
+                        gap-2  font-medium text-base text-right"
+                        >
+                          Buổi sáng
+                        </h2>
+                        <span>{moment(sfd.date).format("LL")}</span>
+                      </div>
+                      <Divider className="h-14 mx-5" orientation="vertical" />
+                      <ul className="flex items-center flex-wrap gap-2 ">
                         {sortTimeSlots(
                           sfd?.data?.[0]?.schedules || []
                         ).Morning.map((sch, index) => (
-                          <Button
-                            isDisabled={!sch.isAvailableBooking}
-                            color={
-                              healthExaminationSchedule?.timeCode ==
-                              sch.timeCode
-                                ? "primary"
-                                : "default"
-                            }
-                            variant="bordered"
-                            size="sm"
-                            onClick={() => {
-                              setHealthExaminationSchedule((h) =>
-                                h?.timeCode !== sch.timeCode ? sch : null
-                              );
+                          <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            key={sch.id}
+                            transition={{
+                              delay: 0.2,
                             }}
-                            className="text-left"
+                            exit={{ opacity: 0, x: 20 }}
                           >
-                            <Checkbox
-                              size="sm"
-                              isSelected={
+                            <Chip
+                              size="md"
+                              color="primary"
+                              radius="sm"
+                              isDisabled={!sch.isAvailableBooking}
+                              variant={
                                 healthExaminationSchedule?.timeCode ==
                                 sch.timeCode
+                                  ? "solid"
+                                  : "flat"
                               }
-                              onChange={(e) => {
-                                setHealthExaminationSchedule(() =>
-                                  e.target.checked ? sch : null
+                              onClick={() => {
+                                setHealthExaminationSchedule(
+                                  (ch: ScheduleAvailable | null) => {
+                                    if (
+                                      ch &&
+                                      healthExaminationSchedule?.timeCode ==
+                                        sch.timeCode
+                                    )
+                                      return null;
+                                    else return sch;
+                                  }
                                 );
                               }}
-                              className="text-left"
+                              className={`cursor-pointer hover:opacity-90 
+                              hover:bg-primary-200 transition-all 
+                                    ${
+                                      healthExaminationSchedule?.timeCode ==
+                                        sch.timeCode && ""
+                                    }
+                                `}
                             >
-                              <div className="w-full flex justify-between gap-2 font-bold text-md">
-                                {sch.TimeCode.value}
-                              </div>
-                            </Checkbox>
-                          </Button>
+                              {sch.TimeCode.value}
+                            </Chip>
+                          </motion.div>
                         ))}
                       </ul>
                     </div>
-                    <div>
-                      <h2 className="mb-6 mt-4 font-bold text-base text-center flex items-center justify-center gap-2">
-                        <div>
-                          <CiCloudSun size={24} color="#6495ED" />
-                        </div>{" "}
-                        Chiều
-                      </h2>
-                      <ul className="grid sm:grid-cols-2 grid-cols-1 gap-3">
+                    <div className="flex items-start gap-2 mt-8">
+                      <div className="flex-shrink-0 whitespace-nowrap text-right">
+                        <h2
+                          className="
+                        gap-2  font-medium text-base text-right"
+                        >
+                          Buổi Chiều
+                        </h2>
+                        <span>{moment(sfd.date).format("LL")}</span>
+                      </div>
+                      <Divider className="h-14 mx-5" orientation="vertical" />
+                      <ul className="flex items-center flex-wrap gap-2 ">
                         {sortTimeSlots(
                           sfd?.data?.[0]?.schedules || []
                         ).Afternoon.map((sch, index) => (
-                          <Button
-                            color={
-                              healthExaminationSchedule?.timeCode ==
-                              sch.timeCode
-                                ? "primary"
-                                : "default"
-                            }
-                            variant="bordered"
-                            isDisabled={!sch.isAvailableBooking}
-                            size="sm"
-                            onClick={() => {
-                              setHealthExaminationSchedule((h) =>
-                                h?.timeCode !== sch.timeCode ? sch : null
-                              );
+                          <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            key={sch.id}
+                            transition={{
+                              delay: 0.3,
                             }}
+                            exit={{ opacity: 0, x: 20 }}
                           >
-                            <Checkbox
-                              size="sm"
-                              isSelected={
+                            <Chip
+                              isDisabled={!sch.isAvailableBooking}
+                              size="md"
+                              color="primary"
+                              radius="sm"
+                              variant={
                                 healthExaminationSchedule?.timeCode ==
                                 sch.timeCode
+                                  ? "solid"
+                                  : "flat"
                               }
-                              onChange={(e) => {
-                                setHealthExaminationSchedule(() =>
-                                  e.target.checked ? sch : null
+                              onClick={() => {
+                                setHealthExaminationSchedule(
+                                  (ch: ScheduleAvailable | null) => {
+                                    if (
+                                      ch &&
+                                      healthExaminationSchedule?.timeCode ==
+                                        sch.timeCode
+                                    )
+                                      return null;
+                                    else return sch;
+                                  }
                                 );
                               }}
+                              className={`cursor-pointer hover:opacity-90 
+                              hover:bg-primary-200 transition-all 
+                                    ${
+                                      healthExaminationSchedule?.timeCode ==
+                                        sch.timeCode && ""
+                                    }
+                                `}
                             >
-                              <div className="w-full flex justify-between gap-2 font-bold">
-                                {sch.TimeCode.value}
-                              </div>
-                            </Checkbox>
-                          </Button>
+                              {sch.TimeCode.value}
+                            </Chip>
+                          </motion.div>
                         ))}
                       </ul>
                     </div>
-
-                    {/* {sfd.data?.[0].schedules.map((sch) => (
-                      <Button
-                        color={
-                          selectedTimeCode == sch.timeCode
-                            ? "primary"
-                            : "default"
-                        }
-                        variant="bordered"
-                        size="sm"
-                      >
-                        <Checkbox
-                          size="sm"
-                          isSelected={
-                            healthExaminationSchedule?.timeCode == sch.timeCode
-                          }
-                          onChange={(e) => {
-                            setHealthExaminationSchedule(() =>
-                              e.target.checked ? sch : null
-                            );
-                          }}
-                        >
-                          <div className="w-full flex justify-between gap-2 font-bold">
-                            {sch.TimeCode.value}
-                          </div>
-                        </Checkbox>
-                      </Button>
-                    ))} */}
                   </div>
                 </div>
               ),

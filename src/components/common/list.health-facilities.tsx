@@ -26,10 +26,6 @@ export function ListHealthFacilities({
   searchNameHealthValue,
   pageSize,
 }: IListHealthFacilitiesProps) {
-  console.log(
-    "Math.round((data?.count || 1) / 12)",
-    Math.round((data?.count || 1) / pageSize)
-  );
   return (
     <div>
       <div className="col-span-12 mt-0 ">

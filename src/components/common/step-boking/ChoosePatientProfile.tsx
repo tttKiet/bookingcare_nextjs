@@ -14,12 +14,14 @@ import { BiPlus } from "react-icons/bi";
 import { BsTrash } from "react-icons/bs";
 import useSWR from "swr";
 // const { TextArea } = Input;
-import { motion, Variants } from "framer-motion";
+import { AnimatePresence, motion, Variants } from "framer-motion";
 import { useMemo, useState } from "react";
 import { Button } from "@nextui-org/button";
 import { Input, ScrollShadow, Textarea, User } from "@nextui-org/react";
 import debounce from "lodash.debounce";
 import { SearchIcon } from "@/components/icons/SearchIcon";
+import Search from "../filter/Search";
+import ProfileItem from "./ProfileItem";
 
 export interface ChooseScheduleProps {
   next: (step: number, value: any) => void;
@@ -97,79 +99,57 @@ export function ChoosePatientProfile({ next, previous }: ChooseScheduleProps) {
     <div className=" flex flex-col justify-between min-h-[300px]">
       <div>
         <div className="">
-          <Input
+          <Search
+            size="lg"
             label="Tìm kiếm hồ sơ"
-            radius="sm"
-            isClearable={false}
             onChange={debounce(function (e) {
               handleSearchName(e.target.value);
             }, 300)}
-            classNames={{
-              label: "text-black/50 text-base",
-              innerWrapper: "bg-transparent ",
-              // base: "border border-slate-400 rounded-sm",
-            }}
-            className="border border-slate-400/20 rounded-md"
             placeholder="Nhập tên người khám..."
-            startContent={
-              <SearchIcon className="text-black/50 mb-0.5 text-slate-400 pointer-events-none flex-shrink-0" />
-            }
-          />
+            color="primary"
+          ></Search>
 
-          <ScrollShadow className="h-[400px] my-4 pr-[4px]">
-            {responsePatientProfile?.rows.map(
-              (profile: PatientProfile, index: any) => (
-                <Card
-                  key={profile.id}
-                  onClick={() => handleClickCard(profile)}
-                  title={
-                    <div className="text-left my-3 flex items-center">
-                      <User
-                        avatarProps={{ radius: "md" }}
-                        description={`${profile.cccd}`}
-                        name={`${profile.fullName}`}
-                        className="text-left font-bold"
-                      >
-                        {profile.fullName}
-                      </User>
-                      {/* <h5 className="text-blue-500 text-left ">
-                        {profile.fullName}
-                      </h5> */}
-                    </div>
-                  }
-                  className={`${
-                    profile.id === patientProfile?.id
-                      ? " border-blue-600"
-                      : "border-gray-200"
-                  } cursor-pointer border hover:border-blue-500 transition-all duration-250 my-4 px-4`}
-                  bordered={false}
-                >
-                  <div className="flex flex-col gap-1 items-start">
-                    <div>
-                      <span className="font-bold mr-1">Email: </span>
-                      <span>{profile.email}</span>
-                    </div>
-                    <div>
-                      <span className="font-bold mr-1">CCCD: </span>
-                      <span>{profile.cccd}</span>
-                    </div>
-                    <div>
-                      <span className="font-bold mr-1">Số điện thoại: </span>
-                      <span>{profile.phone}</span>
-                    </div>
-                    <div>
-                      <span className="font-bold mr-1">Dân tộc: </span>
-                      <span>{profile.nation}</span>
-                    </div>
-                    <div>
-                      <span className="font-bold mr-1">Nghề nghiệp: </span>
-                      <span>{profile.profession}</span>
-                    </div>
-                  </div>
-                </Card>
-              )
+          <div className="max-h-[400px] overflow-y-scroll overflow-x-hidden min-h-[180px] my-4 pr-[4px]">
+            {responsePatientProfile?.rows.length == 0 && (
+              <motion.div
+                initial={{ opacity: 0, x: 60 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{
+                  delay: 0.6,
+                }}
+                exit={{ opacity: 0, x: 60 }}
+              >
+                <div className="flex items-center gap-2 justify-center mt-20">
+                  Không tìm thấy hồ sơ, vui lòng tạo hồ sơ khám!!
+                </div>
+              </motion.div>
             )}
-          </ScrollShadow>
+            <AnimatePresence mode="popLayout">
+              {responsePatientProfile?.rows.map(
+                (profile: PatientProfile, i: any) => (
+                  <motion.div
+                    initial={{ opacity: 0, x: 60 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    key={i.id}
+                    transition={{
+                      delay: 0.2 * i,
+                    }}
+                    exit={{ opacity: 0, x: 60 }}
+                  >
+                    <ProfileItem
+                      key={i.id}
+                      active={profile.id === patientProfile?.id}
+                      patientProfile={profile}
+                      handleClickCard={handleClickCard}
+                      index={i}
+                    />
+                  </motion.div>
+                )
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
         <div className="pt-5 text-left">

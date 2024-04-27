@@ -1,11 +1,9 @@
 "use client";
 
-import { Input } from "@nextui-org/react";
-import { Select } from "antd";
-import axios, { AxiosResponse } from "axios";
-import { ChangeEvent, KeyboardEvent, useMemo, useState } from "react";
-import { CiLocationOn, CiSearch } from "react-icons/ci";
-import useSWR, { BareFetcher } from "swr";
+import { Divider, Input } from "@nextui-org/react";
+import { ChangeEvent, KeyboardEvent, useState } from "react";
+import { CiSearch } from "react-icons/ci";
+import { FaXmark } from "react-icons/fa6";
 
 export interface SeachHealthFacilityProps {
   handleClickSearch: (value: string) => void;
@@ -23,17 +21,10 @@ export interface Province {
 export function SeachHealthFacility({
   handleClickSearch,
 }: SeachHealthFacilityProps) {
-  const [valueSelectLocation, setValueSelectLocation] = useState<string | null>(
-    null
-  );
   const [searchHealthValue, setSearchHealthValue] = useState<string>("");
 
   function handleChangeSearch(e: ChangeEvent<HTMLInputElement>): void {
     setSearchHealthValue(e.target.value);
-  }
-
-  function onChangeSelectLocation(value: string): void {
-    setValueSelectLocation(value);
   }
 
   function handleClickEnter(e: KeyboardEvent<HTMLInputElement>) {
@@ -54,23 +45,38 @@ export function SeachHealthFacility({
           input: "px-8 pt-0",
           inputWrapper: "py-0",
           innerWrapper: "py-0",
-          // base: "bg-white",
-          // mainWrapper: "bg-white",
-          // base: 'bg-white'
-          // helperWrapper: "bg-white",
         }}
-        // className="h-[38px] border border-transparent outline-none min-w-[100px]  w-full text-base
-        //         placeholder:italic placeholder:font-light leading-[38px]
-        //
-        // className="bg-white "
+        // isClearable={true}
+        // onClear={() => {
+        //   setSearchHealthValue("");
+        //   handleClickSearch("");
+        // }}
         placeholder="Tìm kiếm cơ sở y tế ..."
         spellCheck="false"
         value={searchHealthValue}
         onChange={handleChangeSearch}
         onKeyDown={handleClickEnter}
         endContent={
-          <div className="w-5 h-5 flex items-center justify-center mr-8">
-            <CiSearch size={22} />
+          <div className="flex items-center space-x-3 justify-center mr-4">
+            {searchHealthValue && (
+              <div
+                onClick={() => {
+                  setSearchHealthValue("");
+                  handleClickSearch("");
+                }}
+                className="w-10 h-10 text-danger-500 flex items-center justify-center cursor-pointer 
+              hover:opacity-80 hover:text-danger-400 transition-all"
+              >
+                <FaXmark size={14} />
+              </div>
+            )}
+            <Divider orientation="vertical" className="h-5" />
+            <div
+              onClick={() => handleClickSearch(searchHealthValue)}
+              className="w-10 h-10 flex items-center justify-center cursor-pointer hover:opacity-80 hover:text-blue-500 transition-all"
+            >
+              <CiSearch size={22} />
+            </div>
           </div>
         }
       />

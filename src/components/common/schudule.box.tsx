@@ -1,4 +1,5 @@
 import { HealthExaminationSchedule } from "@/models";
+import { Chip } from "@nextui-org/react";
 import { Button, Tag } from "antd";
 import moment from "moment";
 
@@ -8,11 +9,17 @@ export interface IScheduleBoxProps {
 
 export function ScheduleBox({ schedules }: IScheduleBoxProps) {
   return (
-    <div className="flex gap-2 justify-end flex-wrap">
+    <div className="inline-flex  gap-2 items-center flex-wrap">
       {schedules.map((schedule) => (
-        <span key={schedule} className="box-dashed">
+        <Chip
+          key={schedule}
+          color="primary"
+          size="sm"
+          radius="sm"
+          variant="flat"
+        >
           {moment(schedule).format("dddd")}
-        </span>
+        </Chip>
       ))}
     </div>
   );

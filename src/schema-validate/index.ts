@@ -188,7 +188,7 @@ export const schemaCodeScheduleHealth = yup.object().shape({
   maxNumber: yup
     .number()
     .required("Vui điền số lượng tối đã khám trong một thời gian."),
-  date: yup.object().required("Vui lòng chọn ngày khám."),
+  date: yup.string().required("Vui lòng chọn ngày khám."),
 });
 
 export const schemaCedicineBody = yup.object().shape({

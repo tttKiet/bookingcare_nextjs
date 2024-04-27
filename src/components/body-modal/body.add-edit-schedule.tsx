@@ -57,7 +57,7 @@ import axios from "../../axios";
 import { CheckboxValueType } from "antd/es/checkbox/Group";
 import Link from "next/link";
 import moment from "moment";
-import { Button, CheckboxGroup, Chip, User } from "@nextui-org/react";
+import { Button, CheckboxGroup, Chip, Input, User } from "@nextui-org/react";
 import CheckBoxSchedule from "../common/CheckBoxSchedule";
 import { CheckIcon } from "../icons/CheckIcon";
 import { AiOutlineClose } from "react-icons/ai";
@@ -88,7 +88,6 @@ export function BodyModalSchedule({
   obEditScheduleDoctor,
   auth,
 }: BodyModalScheduleProps) {
-  console.log("workingId", workingId);
   const {
     control,
     handleSubmit,
@@ -100,7 +99,6 @@ export function BodyModalSchedule({
   } = useForm({
     defaultValues: {
       workingId: workingId && workingId !== true ? workingId : "",
-      date: dayjs(new Date()),
       maxNumber: 3,
       timeCodeArray: [],
     },
@@ -130,7 +128,6 @@ export function BodyModalSchedule({
     name: "workingId",
     control,
   });
-  console.log("workingIdValue", workingIdValue);
   const [emailSearch, setEmailSearch] = useState<string>("");
 
   const { data: doctors } = useSWR<ResDataPaginations<Working>>(
@@ -142,10 +139,10 @@ export function BodyModalSchedule({
     }
   );
 
-  const [dateSelect, setDateSelect] = React.useState<Dayjs | null>(
-    dayjs(new Date())
+  const [dateSelect, setDateSelect] = React.useState<string>(
+    new Date().toString()
   );
-  const onChangeDate = async (date: Dayjs | null) => {
+  const onChangeDate = async (date: string) => {
     setDateSelect(date);
     if (date) {
       setValue("date", date);
@@ -209,7 +206,7 @@ export function BodyModalSchedule({
       onChangeWorkingId(obEditScheduleDoctor.workingId);
       if (obEditScheduleDoctor.date) {
         const datePassProps = dayjs(new Date(obEditScheduleDoctor.date));
-        onChangeDate(datePassProps);
+        // onChangeDate(datePassProps);
       }
     }
   }, [obEditScheduleDoctor?.workingId, obEditScheduleDoctor?.date]);
@@ -379,13 +376,17 @@ export function BodyModalSchedule({
                   Ngày khám
                 </label>
                 <div>
-                  <DatePicker
-                    allowClear={false}
-                    bordered={true}
+                  <InputField
+                    control={control}
+                    name="date"
+                    type="date"
+                    label="date"
+                  ></InputField>
+                  {/* <Input
+                    type="date"
                     value={dateSelect}
-                    onChange={onChangeDate}
-                    placement="bottomLeft"
-                  />
+                    onChange={(e) => onChangeDate(e.target.value)}
+                  /> */}
                 </div>
               </div>
               <div className="flex flex-col">

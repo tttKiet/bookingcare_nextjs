@@ -396,13 +396,11 @@ export function ManagerHealthExamSchedule({
         }
         title={"Chỉnh sửa lịch"}
       />
-
       <ModalPositionHere
         show={showModalDetails}
         toggle={() => {
           toggleShowModalDetails();
         }}
-        config={{ zIndex: 40 }}
         width={800}
         footer={false}
         body={

@@ -22,9 +22,8 @@ import {
 } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
-import { StepProps, Steps, Tabs } from "antd";
+import { StepProps, Tabs } from "antd";
 import axios from "axios";
-import { scroll, useInView } from "framer-motion";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -35,7 +34,7 @@ import { HiOutlineLocationMarker } from "react-icons/hi";
 import { toast } from "react-toastify";
 import useSWR from "swr";
 export interface IAboutPageProps {}
-const { Step } = Steps;
+
 export default function Booking(props: IAboutPageProps) {
   const refContent = useRef(null);
   const searchParams = useSearchParams();
@@ -43,7 +42,7 @@ export default function Booking(props: IAboutPageProps) {
   const healthFacilityId = searchParams.get("healthFacilityId");
   const router = useRouter();
   const { profile } = useAuth();
-  const stepsContainerRef = useRef<HTMLDivElement | null>(null);
+
   // Data booking
   const [doctorChoose, setDoctorChoose] = useState<WorkRoom | null>(null);
   const [descStatusPatient, setDescStatusPatient] = useState<string>("");
@@ -57,13 +56,6 @@ export default function Booking(props: IAboutPageProps) {
     scrollTo(refContent?.current, {
       top: 168,
     });
-
-    // scroll(
-    //   () => {
-    //     console.log("refSteprefSteprefStep");
-    //   },
-    //   { source: refStep?.current || undefined }
-    // );
 
     if (step == 1) {
       setDoctorChoose(value);
@@ -160,68 +152,36 @@ export default function Booking(props: IAboutPageProps) {
   }
 
   // Check effect of health facility
-
   const { data: healthFacility } = useSWR<ResDataPaginations<HealthFacility>>(
     `${API_HEALTH_FACILITIES}?id=${healthFacilityId}`,
     {
       dedupingInterval: 6000,
     }
   );
-
-  useEffect(() => {
-    // Tự động cuộn tới bước hiện tại
-    if (stepsContainerRef.current) {
-      const stepWidth = stepsContainerRef.current?.scrollWidth / 5; // Giả sử có 8 bước, và mỗi bước có độ rộng bằng nhau
-      stepsContainerRef.current.scroll({
-        left: stepWidth * current,
-        behavior: "smooth",
-      });
-    }
-  }, [current]);
-  useEffect(() => {
-    if (healthFacility) {
-      setInfoCheckupItems(() => {
-        return [
-          {
-            key: "0",
-            title: "Cơ sở y tế",
-            description: (
-              <div>
-                <h5>{healthFacility.rows?.[0].name}</h5>
-                <span>
-                  <span className="inline-flex items-center">
-                    <HiOutlineLocationMarker className="inline-block" />
-                  </span>
-
-                  <span> {healthFacility.rows?.[0].address}</span>
-                </span>
-              </div>
-            ),
-          },
-        ];
-      });
-    }
-  }, [healthFacility]);
   // const { data: doctorInfo } = useSWR<Staff>(
   //   `${API_ACCOUNT_STAFF_DOCTOR_BY_ID}?id=${doctorChoose?.staffId || ""}`,
   //   {
   //     dedupingInterval: 36000,
   //   }
   // );
-  const titleClass = "font-medium text-base text-[#3c4253] ";
-  const titleClassActive = "font-bold text-base text-[#1b3c74]";
 
   const tabItems: any[] = useMemo(() => {
     return [
       {
-        title: (
-          <span className={current == 0 ? titleClassActive : titleClass}>
-            Bước 1
-          </span>
+        label: `Cơ sở y tế`,
+        key: "0",
+        children: (
+          <div className="flex items-center justify-center ">
+            <Link className="text-blue-600" href="/health-facility">
+              Vui lòng chọn cơ sở khám bệnh
+            </Link>
+          </div>
         ),
-        description: "Chọn bác sỉ",
-        key: 0,
-        content: (
+      },
+      {
+        label: `Chọn bác sỉ`,
+        key: "1",
+        children: (
           <ChooseDoctor
             next={stepNext}
             healthFacilityId={healthFacilityId || ""}
@@ -229,14 +189,9 @@ export default function Booking(props: IAboutPageProps) {
         ),
       },
       {
-        title: (
-          <span className={current == 1 ? titleClassActive : titleClass}>
-            Bước 2
-          </span>
-        ),
-        description: `Chọn thời gian khám`,
-        key: 1,
-        content: (
+        label: `Chọn thời gian khám`,
+        key: "2",
+        children: (
           <ChooseSchedule
             next={stepNext}
             previous={stepPrev}
@@ -245,57 +200,12 @@ export default function Booking(props: IAboutPageProps) {
         ),
       },
       {
-        title: (
-          <span className={current == 2 ? titleClassActive : titleClass}>
-            Bước 3
-          </span>
-        ),
-        description: `Chọn hồ sơ bệnh nhân`,
-        key: 2,
-        content: <ChoosePatientProfile next={stepNext} previous={stepPrev} />,
-      },
-      {
-        title: (
-          <span
-            // ref={refStep}
-            className={current == 3 ? titleClassActive : titleClass}
-          >
-            Bước 4
-          </span>
-        ),
-        description: `Xác nhận thông tin`,
-        key: 3,
-        content: (
-          <ComfirmInformation
-            previous={stepPrev}
-            checkupInfo={doctorChoose}
-            next={stepNext}
-            schedule={healthExaminationSchedule}
-            patientProfile={patientProfile}
-            descStatusPatient={descStatusPatient}
-          />
-        ),
-      },
-      {
-        title: (
-          <span className={current == 4 ? titleClassActive : titleClass}>
-            Bước 5
-          </span>
-        ),
-        description: `Thanh toán & hoàn thành`,
-        key: 4,
-        content: (
-          <PaymentInformation
-            previous={stepPrev}
-            checkupInfo={doctorChoose}
-            schedule={healthExaminationSchedule}
-            patientProfile={patientProfile}
-            confirmSuccess={handleConfirmSuccess}
-          />
-        ),
+        label: `Chọn hồ sơ bệnh nhân`,
+        key: "3",
+        children: <ChoosePatientProfile next={stepNext} previous={stepPrev} />,
       },
     ];
-  }, [doctorChoose?.Working.staffId, current]);
+  }, [doctorChoose?.Working.staffId]);
 
   // function onChangeSteps(value: number) {
   //   console.log(value);
@@ -351,6 +261,7 @@ export default function Booking(props: IAboutPageProps) {
     },
   ]);
   const [address, setAddress] = useState<string>("");
+
   useEffect(() => {
     useGetAddress({
       wardCode: patientProfile?.addressCode[0] || "",
@@ -365,6 +276,30 @@ export default function Booking(props: IAboutPageProps) {
     patientProfile?.addressCode[2],
   ]);
 
+  useEffect(() => {
+    if (healthFacility) {
+      setInfoCheckupItems(() => {
+        return [
+          {
+            key: "0",
+            title: "Cơ sở y tế",
+            description: (
+              <div>
+                <h5>{healthFacility.rows?.[0].name}</h5>
+                <span>
+                  <span className="inline-flex items-center">
+                    <HiOutlineLocationMarker className="inline-block" />
+                  </span>
+
+                  <span> {healthFacility.rows?.[0].address}</span>
+                </span>
+              </div>
+            ),
+          },
+        ];
+      });
+    }
+  }, [healthFacility]);
   if (!profile?.id) {
     return (
       <div className="h-screen flex items-center justify-center">
@@ -414,41 +349,17 @@ export default function Booking(props: IAboutPageProps) {
             {/* {current < 3 && ( */}
             <ColorBox
               title={false}
-              className={`${current >= 5 ? "w-0 h-0" : ""}`}
+              className={`${current >= 3 ? "w-0 h-0" : ""}`}
             >
-              <div className="flex flex-col gap-3 flex-1 mt-4">
-                <div
-                  className="overflow-x-scroll scroll-x-sm whitespace-nowrap"
-                  ref={stepsContainerRef}
-                >
-                  <div className=" w-[1200px]">
-                    <Steps
-                      direction="horizontal"
-                      current={current}
-                      // items={tabItems}
-                      className="h-full  "
-                    >
-                      {tabItems.map((s, index) => {
-                        return (
-                          <Step
-                            key={s.key}
-                            active={current == s.key}
-                            description={s.description}
-                            title={s.title}
-                          />
-                        );
-                      })}
-                    </Steps>
-                  </div>
-                </div>
-                <div className="mt-3">
-                  {current >= 5 ? <div></div> : tabItems?.[current]?.content}
-                </div>
-              </div>
+              <Tabs
+                activeKey={(current + 1).toString()}
+                items={tabItems}
+                className="h-full"
+              />
             </ColorBox>
             {/* )} */}
 
-            {/* {current == 3 && (
+            {current == 3 && (
               <ComfirmInformation
                 previous={stepPrev}
                 checkupInfo={doctorChoose}
@@ -457,9 +368,9 @@ export default function Booking(props: IAboutPageProps) {
                 patientProfile={patientProfile}
                 descStatusPatient={descStatusPatient}
               />
-            )} */}
+            )}
 
-            {/* {current == 4 && (
+            {current == 4 && (
               <PaymentInformation
                 previous={stepPrev}
                 checkupInfo={doctorChoose}
@@ -467,7 +378,7 @@ export default function Booking(props: IAboutPageProps) {
                 patientProfile={patientProfile}
                 confirmSuccess={handleConfirmSuccess}
               />
-            )} */}
+            )}
           </div>
         </div>
       </div>

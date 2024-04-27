@@ -11,16 +11,17 @@ import {
   WorkRoom,
 } from "@/models";
 import { Button } from "@nextui-org/button";
-import { Divider, Form, Radio, RadioChangeEvent } from "antd";
-import { useMemo, useState } from "react";
+import { Divider, Form, RadioChangeEvent } from "antd";
+import { ChangeEvent, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { BsCreditCard2Back } from "react-icons/bs";
+import { BsCreditCard2Back, BsCursor } from "react-icons/bs";
 import { IoBagAddOutline } from "react-icons/io5";
 import { LiaWalletSolid } from "react-icons/lia";
 import { RiServiceLine } from "react-icons/ri";
 import vnpay_logo from "../../../assets/images/logo-vi-vnpay.png";
 import Image from "next/image";
 import { FaRegHospital } from "react-icons/fa";
+import { Radio, RadioGroup } from "@nextui-org/react";
 
 export interface IPaymentInformation {
   schedule: Partial<HealthExaminationSchedule> | null;
@@ -41,7 +42,7 @@ export function PaymentInformation({
   checkupInfo,
   confirmSuccess,
 }: IPaymentInformation) {
-  const [method, setMothod] = useState<MethodKeys | null>(null);
+  const [method, setMothod] = useState<MethodKeys | undefined>(undefined);
   const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
 
   function toggleShowPaymentModal() {
@@ -50,8 +51,9 @@ export function PaymentInformation({
 
   const [form] = Form.useForm();
 
-  function onChangeMethod(e: RadioChangeEvent): void {
-    setMothod(e.target.value);
+  function onChangeMethod(e: ChangeEvent<HTMLInputElement>): void {
+    const key = e.target.value as MethodKeys;
+    setMothod(key);
   }
   const [isLoading, setIsloading] = useState<boolean>(false);
   async function handleClickAgreePayment() {
@@ -73,6 +75,9 @@ export function PaymentInformation({
     console.log(value);
     setShowPaymentModal(true);
   }
+
+  console.log("schedule?.Working?.Staffschedule?.Working?.Staff", schedule);
+  console.log("schedule?.Working?.checkupInfo?.Working?.Staff", checkupInfo);
   return (
     <>
       <ModalPositionHere
@@ -93,7 +98,7 @@ export function PaymentInformation({
               Trường hợp không nhận được phiếu khám bệnh, vui lòng liên hệ
               19002115.
             </div>
-            <div className="flex justify-end gap-4 pt-6">
+            <div className="flex justify-end gap-4 pt-6 mb-4">
               <Button color="danger" onClick={toggleShowPaymentModal}>
                 Hủy
               </Button>
@@ -107,130 +112,131 @@ export function PaymentInformation({
             </div>
           </div>
         }
-        config={{
-          centered: true,
-        }}
         title="Xác nhận thanh toán"
         toggle={toggleShowPaymentModal}
         footer={false}
         show={showPaymentModal}
       />
-      <ColorBox title="Chọn phương thức thanh toán" className="">
-        <Form form={form} onFinish={submitForm}>
-          <div className="grid grid-cols-12 pt-3">
-            <div className="col-span-12 md:col-span-6 text-left">
-              <Form.Item
-                name="pay_method"
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng chọn phương thức thanh toán.",
-                  },
-                ]}
-              >
-                <Radio.Group
-                  onChange={onChangeMethod}
-                  value={method}
-                  size="large"
-                >
-                  <div className="flex justify-start flex-col text-base gap-4">
-                    <Radio value={"hospital"}>
-                      <span className="text-base flex items-center justify-start gap-2">
-                        {MethodPayment.hospital}
-                        <FaRegHospital size={26} />
-                      </span>
-                    </Radio>
-                    <Radio className="text-base" value={"card"}>
-                      <span className="text-base flex items-center justify-start gap-2">
-                        {MethodPayment.card}
-                        <Image
-                          src={vnpay_logo}
-                          alt="VNPAY"
-                          width={60}
-                          height={60}
-                        />
-                      </span>
-                    </Radio>
-                  </div>
-                </Radio.Group>
-              </Form.Item>
-            </div>
-            <div className="col-span-12 md:col-span-6">
-              <div>
-                <h6 className="flex items-center gap-2 text-lg text-blue-600 pb-3">
-                  <BsCreditCard2Back />
-                  Thông tin thanh toán
-                </h6>
-                <div className="rounded-md border shadow px-6 py-4">
-                  <div className="flex items-center justify-between text-base">
-                    <div className="flex items-center gap-2 font-medium text-base text-gray-700">
-                      <IoBagAddOutline />
-                      <span className="text-gray-800 ">Chuyên khoa:</span>
-                    </div>
 
-                    <span>{schedule?.Working?.Staff.Specialist.name}</span>
-                  </div>
-                  <Divider className="my-3" dashed />
-
-                  <div className="flex items-center justify-between  text-base">
-                    <div className="flex items-center gap-2 font-medium text-base text-gray-700">
-                      <RiServiceLine />
-                      <span>Dịch vụ:</span>
-                    </div>
-
-                    <span>Khám dịch vụ</span>
-                  </div>
-
-                  <Divider className="my-3" dashed />
-
-                  <div className="flex items-center justify-between  text-base">
-                    <div className="flex items-center gap-2 font-medium text-base text-gray-700">
-                      <LiaWalletSolid />
-                      <span>Tiền khám:</span>
-                    </div>
-
-                    <span className="text-black font-medium">
-                      {checkupInfo?.checkUpPrice.toLocaleString()} vnđ
+      <Form form={form} onFinish={submitForm}>
+        <div className="grid grid-cols-12 ">
+          <div className="col-span-12 md:col-span-6 text-left">
+            <h2 className="mb-5 font-bold flex items-center gap-2 text-[#1b3c74] text-base">
+              <BsCursor size={18} />
+              Chọn phương thức thanh toán
+            </h2>
+            <Form.Item
+              name="pay_method"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng chọn phương thức thanh toán.",
+                },
+              ]}
+            >
+              <RadioGroup onChange={onChangeMethod} value={method} size="sm">
+                <div className="flex justify-start flex-col text-base gap-4">
+                  <Radio value={"hospital"}>
+                    <span className="text-base flex items-center justify-start ml-1 gap-2">
+                      {MethodPayment.hospital}
+                      <FaRegHospital size={26} />
                     </span>
-                  </div>
+                  </Radio>
+                  <Radio className="text-base" value={"card"}>
+                    <span className="text-base flex items-center justify-start ml-1 gap-2">
+                      {MethodPayment.card}
+                      <Image
+                        src={vnpay_logo}
+                        alt="VNPAY"
+                        width={60}
+                        height={60}
+                      />
+                    </span>
+                  </Radio>
                 </div>
-                <Divider className="my-6 mb-5" />
-                <div>
-                  <div className="flex items-center justify-between text-base ">
-                    <span className="text-gray-800 ">Tổng tiền khám:</span>
+              </RadioGroup>
+            </Form.Item>
+          </div>
+          <div className="col-span-12 md:col-span-6">
+            <div>
+              <h6 className="mb-5 font-bold flex items-center gap-2 text-[#1b3c74] text-base">
+                <BsCreditCard2Back size={18} />
+                Thông tin thanh toán
+              </h6>
+              <div className="rounded-md border shadow px-6 py-4">
+                <div className="flex items-center justify-between text-base">
+                  <div className="flex items-center gap-2 font-medium text-base text-[#1b3c74]">
+                    <IoBagAddOutline />
+                    <span className="text-[#1b3c74] ">Chuyên khoa:</span>
+                  </div>
+
+                  <span className="text-[rgb(60,66,83)] ">
+                    {checkupInfo?.Working?.Staff?.Specialist?.name}
+                  </span>
+                </div>
+                <Divider className="my-3" dashed />
+
+                <div className="flex items-center justify-between  text-base">
+                  <div className="flex items-center gap-2 font-medium text-base text-[#1b3c74]">
+                    <RiServiceLine />
+                    <span>Dịch vụ:</span>
+                  </div>
+
+                  <span className="text-[rgb(60,66,83)] ">Khám dịch vụ</span>
+                </div>
+
+                <Divider className="my-3" dashed />
+
+                <div className="flex items-center justify-between  text-base">
+                  <div className="flex items-center gap-2 font-medium text-base text-[#1b3c74]">
+                    <LiaWalletSolid />
+                    <span>Tiền khám:</span>
+                  </div>
+
+                  <span className="text-[rgb(60,66,83)]  font-medium">
                     {checkupInfo?.checkUpPrice.toLocaleString()} vnđ
-                  </div>
-                  <div className="flex items-center justify-between text-base mt-2">
-                    <span className="text-gray-800 ">Phí tiện ích:</span>0 vnđ
-                  </div>
-                  <div className="flex items-center justify-between text-base mt-2">
-                    <span className="text-gray-800 font-medium">
-                      Tổng cộng:
-                    </span>
+                  </span>
+                </div>
+              </div>
+              <Divider className="my-6 mb-5" />
+              <div>
+                <div className="flex items-center justify-between text-base ">
+                  <span className="text-gray-800 ">Tổng tiền khám:</span>
+                  <span className="text-[rgb(60,66,83)] ">
+                    {" "}
                     {checkupInfo?.checkUpPrice.toLocaleString()} vnđ
-                  </div>
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-base mt-2">
+                  <span className="text-gray-800 ">Phí tiện ích:</span>0 vnđ
+                </div>
+                <div className="flex items-center justify-between text-base mt-2">
+                  <span className="text-gray-800 font-medium">Tổng cộng:</span>
+                  <span className="text-[rgb(60,66,83)] font-medium">
+                    {checkupInfo?.checkUpPrice.toLocaleString()} vnđ
+                  </span>
                 </div>
               </div>
             </div>
-            <div className="col-span-12 mt-6 flex justify-end gap-4 py-5">
-              <Button onClick={previous} size="md" color="default">
-                Trở lại
-              </Button>
-              <Button
-                color={method ? "primary" : "default"}
-                onClick={submitForm}
-                size="md"
-                isDisabled={!method}
-                className={
-                  method ? "cursor-pointer" : "cursor-default select-none"
-                }
-              >
-                Thanh toán
-              </Button>
-            </div>
           </div>
-        </Form>
-      </ColorBox>
+          <div className="col-span-12 mt-6 flex justify-end gap-4 py-5">
+            <Button onClick={previous} size="md" color="default">
+              Trở lại
+            </Button>
+            <Button
+              color={method ? "primary" : "default"}
+              onClick={submitForm}
+              size="md"
+              isDisabled={!method}
+              className={
+                method ? "cursor-pointer" : "cursor-default select-none"
+              }
+            >
+              Thanh toán
+            </Button>
+          </div>
+        </div>
+      </Form>
     </>
   );
 }

@@ -10,9 +10,14 @@ export default function Search(props: InputProps) {
       variant="bordered"
       classNames={{
         input: "px-2 text-base",
+        label: "px-2",
       }}
       {...props}
-      endContent={<SearchIcon />}
+      endContent={
+        <div className="flex items-center justify-center h-full cursor-pointer mr-2">
+          <SearchIcon />
+        </div>
+      }
     ></Input>
   );
 }

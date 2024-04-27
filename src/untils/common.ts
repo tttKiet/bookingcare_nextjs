@@ -3,6 +3,7 @@ import {
   ScheduleAvailable,
   TimeSlot,
 } from "@/models";
+import moment from "moment";
 
 export function sortTimeSlots(arr: ScheduleAvailable[]) {
   const result: TimeSlot = {
@@ -81,4 +82,10 @@ export function filterNonEmptyValues(obj: any) {
     }
   });
   return filteredObject;
+}
+
+export function calculateAge(birthdate: string | Date) {
+  const birthDate = moment(birthdate);
+  const now = moment();
+  return now.diff(birthDate, "years");
 }
