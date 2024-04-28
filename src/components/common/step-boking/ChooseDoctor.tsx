@@ -70,13 +70,6 @@ const ChooseDoctor = forwardRef(
           },
         })
       ).data;
-    // const { data: doctorWorkings } = useSWR<
-    //   ResDataPaginations<WorkRoomAndSchedule>
-    // >(
-    //   `${API_WORK_ROOM_GET_FULL_LIST_DOCTOR_WORKING}?healthFacilityId=${
-    //     healthFacilityId || ""
-    //   }&doctorName=${searchName}`
-    // );
 
     const {
       data: doctorWorkings,

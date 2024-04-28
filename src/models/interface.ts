@@ -29,6 +29,8 @@ export interface Staff {
   certificate: string;
   roleId: string;
   Role: Role;
+  markdownHtml: string;
+  markdownContent: string;
   academicDegreeId: string;
   specialistId: string;
   createdAt: string;
@@ -124,6 +126,18 @@ export interface Booking {
   HealthExaminationSchedule: HealthExaminationSchedule;
   PatientProfile: PatientProfile;
   Code: Code;
+}
+
+export interface Review {
+  id: string;
+  staffId: string;
+  userId: string;
+  description: string;
+  starNumber: number;
+  createdAt: string;
+  updatedAt: string;
+  Staff: Staff;
+  User: User;
 }
 
 export interface HealthRecord {
@@ -229,4 +243,16 @@ export interface PrescriptionDetail {
 export interface ResBookingAndHealthRecord {
   booking: Booking;
   healthRecord: HealthRecord;
+}
+
+export interface ReviewDoctorIndex {
+  countReview: number;
+  avg: number;
+  star: {
+    star5: number;
+    star4: number;
+    star3: number;
+    star2: number;
+    star1: number;
+  };
 }

@@ -186,6 +186,24 @@ export default function RootLayout({
         },
         children: [
           {
+            key: "/admin/doctor/page",
+            label: (
+              <Link
+                className={`${classItemMenu} font-normal`}
+                href="/admin/doctor/page"
+              >
+                Chi tiết trang
+              </Link>
+            ),
+            get icon() {
+              return (
+                <IconBgGray active={this.key == url}>
+                  <HiOutlineAcademicCap size={20} />
+                </IconBgGray>
+              );
+            },
+          },
+          {
             key: "/admin/academic-degree",
             label: (
               <Link

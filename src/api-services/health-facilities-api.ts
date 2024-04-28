@@ -10,6 +10,7 @@ import {
   API_HEALTH_FACILITY_ROOM,
   API_SPECIALIST,
   API_TYPE_HEALTH_FACILITIES,
+  MARKDOWN_HEALTH,
 } from "./constant-api";
 
 import { Specialist } from "../models";
@@ -172,6 +173,18 @@ export const healthFacilitiesApi = {
         roomNumber,
         healthFacilityId,
       },
+    });
+  },
+
+  async updateHealthMarkdown(data: {
+    html: string;
+    text: string;
+    healthFacilityId: string;
+  }): Promise<ResData<Room>> {
+    return await axios.post(MARKDOWN_HEALTH, {
+      html: data.html,
+      healthFacilityId: data.healthFacilityId,
+      content: data.text,
     });
   },
 };

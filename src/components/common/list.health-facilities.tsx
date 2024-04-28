@@ -1,12 +1,9 @@
 import { HealthFacility } from "@/models";
 import { ResDataPaginations } from "@/types";
-import Image from "next/image";
 import { ItemHealthFacility } from "./item.health-facility";
-import { BoxHealthFacility } from "./box.health-facility";
 // import { Pagination } from "antd";
-import { AnimatePresence, motion, Variants } from "framer-motion";
-import { Delay } from "./motion/Delay";
 import { Chip, Divider, Pagination } from "@nextui-org/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { NotificationIcon } from "../icons/NotificationIcon";
 
 export interface IListHealthFacilitiesProps {

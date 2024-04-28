@@ -7,7 +7,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./globals.css";
 import "antd/lib";
-
+import "react-markdown-editor-lite/lib/index.css";
 const settingFont = Roboto({
   weight: "400",
   subsets: ["latin"],

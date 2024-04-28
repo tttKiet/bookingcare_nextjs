@@ -30,9 +30,11 @@ export function InputTextareaField({
           errorMessage: "text-base",
         }}
         label={
-          <>
-            {label} {isRequired && <span className="text-red-400">*</span>}
-          </>
+          label && (
+            <>
+              {label} {isRequired && <span className="text-red-400">*</span>}
+            </>
+          )
         }
         placeholder={placeholder || `Nhập ${label?.toLocaleLowerCase()} ...`}
         ref={ref}

@@ -11,7 +11,7 @@ export * from "./select-field-add-option";
 
 export interface InputFieldProps {
   name: string;
-  label: string;
+  label?: string;
   control: Control<any>;
   type?: "text" | "password" | "number" | "date";
   icon?: React.ReactNode;

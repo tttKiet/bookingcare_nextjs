@@ -21,6 +21,7 @@ import {
   API_DOCTOR_PRESCRIPTION_DETAILS,
   API_DOCTOR_SCHEDULE_HEALTH_EXAM,
   API_DOCTOR_SERVICE_DETAILS,
+  MARKDOWN_DOCTOR,
 } from "./constant-api";
 
 export const staffApi = {
@@ -160,6 +161,18 @@ export const staffApi = {
     formData.append("pdf", files[1]);
     return await axios.post(API_CHECK_UP_HEALTH_RECORD + "/done", formData, {
       headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+
+  async updateMarkdown(data: {
+    html: string;
+    text: string;
+    doctorId: string;
+  }): Promise<ResData> {
+    return await axios.post(MARKDOWN_DOCTOR, {
+      html: data.html,
+      doctorId: data.doctorId,
+      content: data.text,
     });
   },
 };

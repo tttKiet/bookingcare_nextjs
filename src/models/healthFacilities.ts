@@ -17,8 +17,11 @@ export interface HealthFacility {
   typeHealthFacilityId: string;
   addressCode: string[];
   images: string[];
+  markdownHtml: string;
+  markdownContent: string;
   createdAt: string;
   updatedAt: string;
+
   TypeHealthFacility: TypeHealthFacility;
 }
 

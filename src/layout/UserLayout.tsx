@@ -7,16 +7,24 @@ import { Button, Divider, useDisclosure } from "@nextui-org/react";
 import { Layout, Menu } from "antd";
 import { Content, Header } from "antd/es/layout/layout";
 import Link from "next/link";
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import logo from "../assets/images/logi_y_te.png";
 import { usePathname } from "next/navigation";
 import Footer from "@/components/footer";
+import { useScroll, useSpring, motion } from "framer-motion";
 
 export interface IUserLayout {
   children: React.ReactNode;
 }
 
 export default function UserLayout({ children }: IUserLayout) {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
+
   const { profile, login } = useAuth();
   const {
     isOpen: isOpenLogin,
@@ -59,20 +67,58 @@ export default function UserLayout({ children }: IUserLayout) {
     []
   );
 
+  const pathname = usePathname();
+  const isAdminLink =
+    pathname.includes("/admin") ||
+    pathname.includes("/doctor") ||
+    pathname.includes("/staff") ||
+    pathname.includes("/login") ||
+    pathname.includes("/register") ||
+    pathname.includes("/test");
+
+  const isDetails =
+    pathname.includes("/profile-doctor") ||
+    pathname.includes("/health-facility/");
+  // bg-[#fafff9]
+  const bgClass = isDetails ? "bg-[#fafff9]" : "bg-white";
+
+  const showShadow = pathname.includes("/health-facility");
+
+  const [isShowShadow, setIsShowShadow] = useState<boolean>(
+    !!showShadow || false
+  );
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY >= 120) {
+        setIsShowShadow(true);
+      } else if (window.scrollY < 120) {
+        setIsShowShadow(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <>
+      <motion.div className="progress-bar" style={{ scaleX }} />
       <Layout className="bg-white">
         <Header
           style={{
             position: "sticky",
             top: 0,
-            zIndex: 30,
+            zIndex: 50,
             height: 80,
             width: "100%",
             display: "flex",
             alignItems: "center",
           }}
-          className="bg-white "
+          className={`${bgClass}  ${isShowShadow ? "shadow" : ""}`}
         >
           <div className="container mx-auto">
             <div className="flex items-center justify-between ">
@@ -94,6 +140,7 @@ export default function UserLayout({ children }: IUserLayout) {
                 <div>
                   <Menu
                     theme="light"
+                    className={`${bgClass}`}
                     mode="horizontal"
                     items={items}
                     defaultOpenKeys={[url]}

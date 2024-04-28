@@ -58,13 +58,6 @@ export default function Booking(props: IAboutPageProps) {
       top: 168,
     });
 
-    // scroll(
-    //   () => {
-    //     console.log("refSteprefSteprefStep");
-    //   },
-    //   { source: refStep?.current || undefined }
-    // );
-
     if (step == 1) {
       setDoctorChoose(value);
       setCurrent(1);
@@ -296,11 +289,6 @@ export default function Booking(props: IAboutPageProps) {
       },
     ];
   }, [doctorChoose?.Working.staffId, current]);
-
-  // function onChangeSteps(value: number) {
-  //   console.log(value);
-  //   setCurrent(value);
-  // }
 
   async function handleConfirmSuccess({
     paymentType,

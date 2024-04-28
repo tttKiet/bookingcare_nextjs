@@ -196,6 +196,12 @@ export const schemaCedicineBody = yup.object().shape({
   desc: yup.string(),
 });
 
+export const schemaReview = yup.object().shape({
+  starNumber: yup.number().required("Chọn số sao."),
+  description: yup.string().required("Hãy viết mô tả."),
+  check: yup.boolean().oneOf([true], "Bạn chưa đồng ý."),
+});
+
 export const schemaExaminationServiceBody = yup.object().shape({
   name: yup.string().required("Vui lòng tên dịch vụ khám bệnh."),
   description: yup.string().required("Vui lòng điền mô tả cho dịch vụ."),

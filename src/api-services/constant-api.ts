@@ -21,8 +21,10 @@ export const API_WORK_ROOM_GET_FULL_LIST_DOCTOR_WORKING =
 export const API_CODE = "/api/v1/admin/code";
 export const API_DOCTOR_SCHEDULE_HEALTH_EXAM =
   "/api/v1/doctor/health-exam-schedule";
+export const API_DOCTOR_LAST_CHECK_UP = "/api/v1/user/check-up-last-of-doctor";
 
 export const API_PATIENT_PROFILE = "/api/v1/user/patient-profile";
+export const API_REVIEW_DOCTOR = "/api/v1/user/review";
 export const API_BOOKING = "/api/v1/user/booking";
 export const API_HEALTH_RECORD = "/api/v1/user/health-record";
 export const API_CHECK_UP_HEALTH_RECORD =
@@ -55,3 +57,7 @@ export const PAYMENT_VNPAY_CREATE_UTL =
   "/api/v1/payment/vnpay/create_payment_url";
 
 export const PAYMENT_VNPAY_RETURN = "/api/v1/payment/vnpay/vnpay_return";
+
+// markDown
+export const MARKDOWN_HEALTH = "/api/v1/admin/page-mark-down/health-facilities";
+export const MARKDOWN_DOCTOR = "/api/v1/admin/page-mark-down/doctor";

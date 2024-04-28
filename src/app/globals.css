@@ -229,3 +229,22 @@ input {
 .scroll-x-sm::-webkit-scrollbar {
   height: 3px;
 }
+
+.progress-bar {
+  z-index: 100;
+  position: fixed;
+  top: 0px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: red;
+  background-color: #4158d0;
+  background-image: linear-gradient(
+    to right,
+    #4158d0 0%,
+    #c850c0 46%,
+    #ffcc70 100%
+  );
+
+  transform-origin: 0%;
+}

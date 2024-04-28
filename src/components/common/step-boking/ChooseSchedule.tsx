@@ -1,21 +1,19 @@
 "use client";
 import { API_DOCTOR_SCHEDULE_HEALTH_EXAM } from "@/api-services/constant-api";
 import {
-  HealthExaminationSchedule,
   ScheduleAvailable,
-  ScheduleFilterDoctor,
+  ScheduleFilterDoctor
 } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { sortTimeSlots } from "@/untils/common";
-import { Button, Checkbox, Chip, Divider, RadioGroup } from "@nextui-org/react";
-import { Tabs, TabsProps } from "antd";
+import { Button, Chip, Divider } from "@nextui-org/react";
+import { Tabs } from "antd";
+import { motion } from "framer-motion";
 import moment from "moment";
 import { useState } from "react";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css";
-import { CiSun, CiCloudSun } from "react-icons/ci";
 import useSWR from "swr";
-import { AnimatePresence, motion, Variants } from "framer-motion";
 
 export interface IChooseScheduleProps {
   staffId: string;
@@ -31,12 +29,6 @@ export function ChooseSchedule({
   if (!staffId) {
     return "Loi";
   }
-  // const tomorrow = useMemo(() => {
-  //   const nextDate = new Date();
-  //   nextDate.setDate(new Date().getDate() + 1);
-  //   return nextDate;
-  // }, []);
-  // const [date, setDate] = useState(tomorrow);
   const [healthExaminationSchedule, setHealthExaminationSchedule] =
     useState<ScheduleAvailable | null>(null);
   const [selectedTimeCode, setSelectedTimeCode] = useState<

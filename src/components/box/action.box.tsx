@@ -9,9 +9,10 @@ export interface ActionBoxProps {
   onClick: () => void;
   type: "delete" | "edit";
   href?: string;
+  content?: string;
 }
 
-export function ActionBox({ onClick, type, href }: ActionBoxProps) {
+export function ActionBox({ onClick, type, href, content }: ActionBoxProps) {
   const classAction = `p-2 rounded-lg cursor-pointer  ${
     type === "edit"
       ? "text-lg text-default-400 cursor-pointer active:opacity-50"
@@ -22,8 +23,8 @@ export function ActionBox({ onClick, type, href }: ActionBoxProps) {
   return (
     <Tooltip
       {...(type === "edit"
-        ? { content: "sửa" }
-        : { color: "danger", content: "xóa" })}
+        ? { content: content || "sửa" }
+        : { color: "danger", content: content || "xóa" })}
     >
       {href ? (
         <Link href={href} onClick={onClick} className={classAction}>

@@ -356,7 +356,7 @@ const ServiceDetailsBillDocument = ({
                   <Text style={{ ...s.title_base }}>
                     ...,{" "}
                     {textNomo(
-                      moment(dataServiceDetails?.[0].createdAt)
+                      moment(dataServiceDetails?.[0]?.createdAt)
                         .locale("vi")
                         .format("LL")
                     )}
