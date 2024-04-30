@@ -328,11 +328,11 @@ export function BodyModalSchedule({
                           className="top-1 text-base font-medium mb-2 block"
                           htmlFor=""
                         >
-                          Lịch của bác sỉ
+                          Lịch của Bác sĩ
                         </label>
                         <div>
                           <SelectSearchField
-                            placeholder="Email bác sỉ..."
+                            placeholder="Email Bác sĩ..."
                             data={optionDoctors}
                             handleSearchSelect={debounce(
                               onSearchSelectDoctors,
@@ -447,7 +447,7 @@ export function BodyModalSchedule({
                   <h3 className="text-base text-gray-900">Lưu ý:</h3>
                   <ul className="mt-">
                     <li className="text-gray-400">
-                      Chỉ hiển thị các bác sỉ đang công tác. Xem công tác ở
+                      Chỉ hiển thị các Bác sĩ đang công tác. Xem công tác ở
                       <Link
                         href="/admin/work"
                         className="pl-1 text-blue-500 underline"

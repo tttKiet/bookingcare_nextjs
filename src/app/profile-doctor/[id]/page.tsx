@@ -184,7 +184,7 @@ export default function DoctorDetailPage({
                       </div>
                     }
                   />
-                  <TabReact key="3" title="Bác sỉ" />
+                  <TabReact key="3" title="Bác sĩ" />
                 </TabsReact>
               </div>
               <div className=" mb-6 ">
@@ -534,8 +534,6 @@ export default function DoctorDetailPage({
           </div>
         </div>
       </div>
-
-      <div className="min-h-screen"></div>
     </div>
   );
 }

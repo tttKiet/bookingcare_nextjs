@@ -3,7 +3,7 @@
 import { Profile } from "@/components/common";
 import { useAuth } from "@/hooks";
 import { Image } from "@nextui-org/image";
-import { Button, Divider, useDisclosure } from "@nextui-org/react";
+import { Divider, useDisclosure } from "@nextui-org/react";
 import { Layout, Menu } from "antd";
 import { Content, Header } from "antd/es/layout/layout";
 import Link from "next/link";
@@ -12,6 +12,7 @@ import logo from "../assets/images/logi_y_te.png";
 import { usePathname } from "next/navigation";
 import Footer from "@/components/footer";
 import { useScroll, useSpring, motion } from "framer-motion";
+import { Button } from "@nextui-org/button";
 
 export interface IUserLayout {
   children: React.ReactNode;

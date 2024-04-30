@@ -207,7 +207,7 @@ export function BodyModalAccountDoctor({
           </div>
         </div>
         <div className="mt-6">
-          <h3 className={`mb-4 ${headingClass}`}>Thông tin bác sỉ</h3>
+          <h3 className={`mb-4 ${headingClass}`}>Thông tin Bác sĩ</h3>
           <div className="grid md:grid-cols-2 gap-3 sm:grid-cols-1">
             <SelectFieldNext
               control={control}

@@ -145,7 +145,7 @@ export default function AboutPage() {
                     <strong className="font-semibold text-gray-900">
                       Chứng chỉ quốc tế.
                     </strong>{" "}
-                    Các bác sỉ có nhiều kinh nghiệm bên cạnh đó cũng có nhiều
+                    Các Bác sĩ có nhiều kinh nghiệm bên cạnh đó cũng có nhiều
                     bằng cấp đặc biệt là chứng chỉ quố tế.
                   </span>
                 </li>

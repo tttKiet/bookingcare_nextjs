@@ -35,6 +35,9 @@ export const API_DOCTOR_CHART_REVENUE = "/api/v1/doctor/chart/revenue";
 export const API_ADMIN_CHART = "/api/v1/admin/chart";
 
 export const API_ADMIN_CEDICINE = "/api/v1/admin/cedicine";
+export const API_DOCTOR_SCHEDULE_ALL =
+  "/api/v1/doctor/health-exam-schedule/all";
+
 export const API_ADMIN_MANAGER_ADMIN_HEALTH =
   "/api/v1/admin/manager-admin-health-facility";
 
@@ -61,3 +64,9 @@ export const PAYMENT_VNPAY_RETURN = "/api/v1/payment/vnpay/vnpay_return";
 // markDown
 export const MARKDOWN_HEALTH = "/api/v1/admin/page-mark-down/health-facilities";
 export const MARKDOWN_DOCTOR = "/api/v1/admin/page-mark-down/doctor";
+
+// medical record
+export const API_USER_MEDICAL_RECORD = "/api/v1/user/medical-record";
+
+// schedule
+export const API_DOCTOR_REGISTER_SCHEDULE = "/api/v1/doctor/register-schedule";

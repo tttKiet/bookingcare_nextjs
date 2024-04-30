@@ -2,31 +2,22 @@
 
 import { staffApi } from "@/api-services";
 import {
-  API_ACCOUNT_STAFF_DOCTOR,
   API_ACCOUNT_STAFF_DOCTOR_WORKING,
   API_DOCTOR_SCHEDULE_HEALTH_EXAM,
 } from "@/api-services/constant-api";
-import { ExclamationCircleFilled } from "@ant-design/icons";
-import {
-  Button,
-  DatePicker,
-  Input,
-  InputRef,
-  Modal,
-  SelectProps,
-  Space,
-} from "antd";
+import { Button, DatePicker, Input, InputRef, Modal, Space } from "antd";
 import axios from "../../axios";
 
+import { useAuth } from "@/hooks";
 import {
   HealthExaminationSchedule,
   ResAdminHealthExaminationSchedule,
-  Staff,
   StaffAndSchedule,
   Working,
 } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
+import { Chip } from "@nextui-org/react";
 import type {
   ColumnType,
   ColumnsType,
@@ -35,23 +26,17 @@ import type {
 } from "antd/es/table";
 import { FilterConfirmProps } from "antd/es/table/interface";
 import { Dayjs } from "dayjs";
-import moment from "moment";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
-import { RxAvatar } from "react-icons/rx";
 import useSWR, { BareFetcher } from "swr";
 import { BodyModalSchedule, ReqSchedule } from "../body-modal";
+import BodyViewSchedule from "../body-modal/BodyViewSchedule";
 import { ActionGroup } from "../box";
-import { ActionBox } from "../box/action.box";
+import { EyeActionBox } from "../box/EyeActionBox.";
 import { BtnPlus } from "../button";
-import { SelectSearchField } from "../form";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
-import { useAuth, userRandomBgLinearGradient } from "@/hooks";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Chip } from "@nextui-org/react";
-import { EyeActionBox } from "../box/EyeActionBox.";
-import BodyViewSchedule from "../body-modal/BodyViewSchedule";
 const { confirm } = Modal;
 
 type DataIndex = keyof HealthExaminationSchedule;
@@ -330,7 +315,7 @@ export function ManagerHealthExamSchedule({
           width: "16%",
         },
         {
-          title: "Tổng bác sỉ tạo lịch",
+          title: "Tổng Bác sĩ tạo lịch",
           dataIndex: "data",
           key: "data",
           render: (text) => (
@@ -418,7 +403,7 @@ export function ManagerHealthExamSchedule({
             Quản lý lịch khám bệnh
             {/* <div className="flex-shrink-0">
               <SelectSearchField
-                placeholder="Tìm kiếm: nhập email bác sỉ ..."
+                placeholder="Tìm kiếm: nhập email Bác sĩ ..."
                 data={dataSearch}
                 handleSearchSelect={handleSearchSelect}
                 handleChangeSelect={handleChangeSelect}

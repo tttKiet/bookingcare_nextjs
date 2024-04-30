@@ -101,8 +101,8 @@ export function BodyModalClinicRoomWork({
         <div className="grid md:grid-cols-2 gap-3 sm:grid-cols-1">
           <SelectControl
             control={control}
-            placeholder="Nhập email bác sỉ..."
-            label="Chọn bác sỉ"
+            placeholder="Nhập email Bác sĩ..."
+            label="Chọn Bác sĩ"
             name="workingId"
             data={optionDoctorsWorking}
             debounceSeconds={500}

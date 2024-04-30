@@ -560,7 +560,7 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
               isReadOnly
               label="Dịch vụ"
               className={`${descClass}`}
-              value={"Đặt khám theo bác sỉ"}
+              value={"Đặt khám theo Bác sĩ"}
             />
           </div>
           <div className={boxClass}>

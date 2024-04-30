@@ -113,6 +113,7 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
           <div className={boxClass}>
             <Input
               size="lg"
+              variant="bordered"
               isReadOnly
               label={
                 <div className="flex items-center gap-1">
@@ -127,6 +128,7 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
           <div className={boxClass}>
             <Input
               size="lg"
+              variant="bordered"
               isReadOnly
               label={
                 <div className="flex items-center gap-1">
@@ -141,6 +143,7 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
           <div className={boxClass}>
             <Input
               size="lg"
+              variant="bordered"
               isReadOnly
               label={
                 <div className="flex items-center gap-1">
@@ -155,6 +158,7 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
           <div className={boxClass}>
             <Input
               size="lg"
+              variant="bordered"
               isReadOnly
               label={
                 <div className="flex items-center gap-1">
@@ -170,6 +174,7 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
             {/* <PulseLoader color="gray" size={4} /> */}
             <Input
               size="lg"
+              variant="bordered"
               isReadOnly
               label={
                 <div className="flex items-center gap-1">
@@ -219,6 +224,7 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
               <Input
                 color="primary"
                 size="lg"
+                variant="bordered"
                 isReadOnly
                 label={
                   <div className="flex items-center gap-1">
@@ -234,6 +240,7 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
               <Input
                 color="primary"
                 size="lg"
+                variant="bordered"
                 isReadOnly
                 label={
                   <div className="flex items-center gap-1">
@@ -249,6 +256,7 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
               <Input
                 color="primary"
                 size="lg"
+                variant="bordered"
                 isReadOnly
                 label={
                   <div className="flex items-center gap-1">
@@ -265,6 +273,7 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
               <Input
                 color="primary"
                 size="lg"
+                variant="bordered"
                 isReadOnly
                 label={
                   <div className="flex items-center gap-1">
@@ -281,6 +290,7 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
               <Input
                 color="primary"
                 size="lg"
+                variant="bordered"
                 isReadOnly
                 label={
                   <div className="flex items-center gap-1">
@@ -296,6 +306,7 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
               <Input
                 color="primary"
                 size="lg"
+                variant="bordered"
                 isReadOnly
                 label={
                   <div className="flex items-center gap-1">
@@ -311,6 +322,7 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
               <Input
                 color="primary"
                 size="lg"
+                variant="bordered"
                 isReadOnly
                 label={
                   <div className="flex items-center gap-1">
@@ -326,6 +338,7 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
               <Input
                 color="primary"
                 size="lg"
+                variant="bordered"
                 isReadOnly
                 label={
                   <div className="flex items-center gap-1">
@@ -341,6 +354,7 @@ export default function PatientProfileSlot(props: IPatientProfileProps) {
               <Input
                 color="primary"
                 size="lg"
+                variant="bordered"
                 isReadOnly
                 label={
                   <div className="flex items-center gap-1">

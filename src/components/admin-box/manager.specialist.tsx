@@ -356,7 +356,7 @@ export function ManagerSpecialist() {
                 </div>
                 <div>
                   <h4 className="text-black mb-3 font-medium">
-                    Mô tả bác sỉ chửa bệnh
+                    Mô tả Bác sĩ chửa bệnh
                   </h4>
                   <p className="mx-[-30px] p-[30px] p-y-[20px] rounded bg-white rounded-r-lg">
                     {record.descriptionDoctor}

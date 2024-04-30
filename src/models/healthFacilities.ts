@@ -1,5 +1,12 @@
 import { Dayjs } from "dayjs";
-import { HospitalManager, HospitalService, Working } from "./interface";
+import {
+  HealthRecord,
+  HospitalManager,
+  HospitalService,
+  Staff,
+  Working,
+} from "./interface";
+import { ResDataPaginations } from "@/types";
 
 export interface TypeHealthFacility {
   id: string;
@@ -71,4 +78,12 @@ export interface ResAdminManagerHospitalService {
   healthFacility: HealthFacility;
   service: HospitalService[];
   serviceCount: number;
+}
+
+export interface ResPaginationMedicalRecord
+  extends ResDataPaginations<HealthRecord> {
+  optionFilter: {
+    doctorList: Staff[];
+    healthFacilityList: HealthFacility[];
+  };
 }

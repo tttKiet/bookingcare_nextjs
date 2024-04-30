@@ -17,6 +17,9 @@ export function InputField({
   color,
   isRequired = true,
   unit,
+  variant,
+  classCustom,
+  labelPlacement,
 }: InputFieldProps) {
   const [showPass, setShowPass] = useState<boolean>(false);
   const formatCurrency = (value: string) => {
@@ -62,9 +65,18 @@ export function InputField({
     let rawValue = e.target.value.replace(/\./g, "");
     let rawValueNumber = rawValue.replace(/[^0-9]/g, "");
     const rawValueString = parseInt(rawValueNumber).toString();
+    console.log(parseInt(rawValueNumber));
     let value = formatCurrency(rawValueString);
-    setKey(value);
-    onChange(rawValueNumber);
+    if (
+      rawValueNumber != "0" &&
+      (!parseInt(rawValueNumber) || parseInt(rawValueNumber) < 0)
+    ) {
+      setKey("0");
+      onChange(e.target.value || 0);
+    } else {
+      setKey(value);
+      onChange(e.target.value || 0);
+    }
   };
 
   return (
@@ -72,9 +84,15 @@ export function InputField({
       {type === "number" ? (
         <>
           <Input
+            labelPlacement={labelPlacement}
             size="lg"
+            defaultValue={value}
+            variant={variant}
             placeholder={
-              placeholder || `Nhập ${label?.toLocaleLowerCase()} ...`
+              placeholder ||
+              `Nhập ${
+                typeof label !== "string" ? label : label?.toLocaleLowerCase()
+              } ...`
             }
             endContent={unit && "vnđ"}
             onChange={handleChange}
@@ -94,12 +112,15 @@ export function InputField({
                 : "default"
             }
             label={
-              <>
+              <div className="flex items-center gap-2 ">
                 {label} {isRequired && <span className="text-red-400">*</span>}
-              </>
+              </div>
             }
+            className={classCustom}
             classNames={{
               errorMessage: "text-base",
+              input: `${type == "number" ? "w-[40px]" : ""}`,
+              label: "text-base",
             }}
           />
         </>
@@ -113,16 +134,19 @@ export function InputField({
               size="lg"
               type="date"
               placeholder={
-                placeholder || `Nhập ${label?.toLocaleLowerCase()} ...`
+                placeholder ||
+                `Nhập ${
+                  typeof label !== "string" ? label : label?.toLocaleLowerCase()
+                } ...`
               }
               classNames={{
-                errorMessage: "text-base",
+                errorMessage: "text-sm",
               }}
               label={
-                <>
+                <div className="flex items-center gap-2 text-sm font-medium">
                   {label}{" "}
                   {isRequired && <span className="text-red-400">*</span>}
-                </>
+                </div>
               }
               ref={ref}
               spellCheck={false}
@@ -134,21 +158,25 @@ export function InputField({
             />
           ) : (
             <Input
+              className={classCustom}
               color={
                 error?.message ? "danger" : isSubmitted ? "primary" : "default"
               }
               size="lg"
               type={type == "password" && !showPass ? "password" : "text"}
               placeholder={
-                placeholder || `Nhập ${label?.toLocaleLowerCase()} ...`
+                placeholder ||
+                `Nhập ${
+                  typeof label !== "string" ? label : label?.toLocaleLowerCase()
+                }...`
               }
               // className="px outline-none border-transparent text-base"
               onChange={onChange}
               label={
-                <>
+                <div className="flex items-center gap-2 text-sm font-medium">
                   {label}{" "}
                   {isRequired && <span className="text-red-400">*</span>}
-                </>
+                </div>
               }
               onBlur={onBlur}
               classNames={{

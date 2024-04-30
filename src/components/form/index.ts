@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { Control } from "react-hook-form";
 
 export * from "./input-field";
@@ -11,7 +12,7 @@ export * from "./select-field-add-option";
 
 export interface InputFieldProps {
   name: string;
-  label?: string;
+  label?: string | ReactNode;
   control: Control<any>;
   type?: "text" | "password" | "number" | "date";
   icon?: React.ReactNode;
@@ -21,6 +22,7 @@ export interface InputFieldProps {
   width?: number | string;
   isRequired?: boolean;
   unit?: boolean;
+  labelPlacement?: "inside" | "outside" | "outside-left" | undefined;
   color?:
     | "default"
     | "secondary"
@@ -29,4 +31,6 @@ export interface InputFieldProps {
     | "warning"
     | "danger"
     | undefined;
+  variant?: "flat" | "faded" | "bordered" | "underlined" | undefined;
+  classCustom?: string;
 }

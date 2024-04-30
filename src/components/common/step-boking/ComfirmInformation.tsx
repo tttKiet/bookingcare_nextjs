@@ -73,7 +73,7 @@ export function ComfirmInformation({
       key: "specialist",
     },
     {
-      title: "Bác sỉ",
+      title: "Bác sĩ",
       dataIndex: "doctor",
       key: "doctor",
     },

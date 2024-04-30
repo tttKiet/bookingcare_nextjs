@@ -158,10 +158,10 @@ export default function BookingUserDetail({
                   </div>
                 </div>
                 <div className="my-6">
-                  <h5 className="my-2 text-sm font-bold">Bác sỉ khám bệnh</h5>
+                  <h5 className="my-2 text-sm font-bold">Bác sĩ khám bệnh</h5>
 
                   <div className={wrapClass}>
-                    <div className={labelClass}>Bác sỉ</div>
+                    <div className={labelClass}>Bác sĩ</div>
                     <div className={contentClass}>
                       {
                         data?.rows?.[0]?.HealthExaminationSchedule.Working.Staff

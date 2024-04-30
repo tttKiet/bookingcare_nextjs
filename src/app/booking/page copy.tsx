@@ -66,7 +66,7 @@ export default function Booking(props: IAboutPageProps) {
         const newArray = [...prev];
         const item = {
           key: "1",
-          title: "Bác sỉ",
+          title: "Bác sĩ",
           description: (
             <div>
               <h5>{value.Working.Staff.fullName}</h5>
@@ -179,7 +179,7 @@ export default function Booking(props: IAboutPageProps) {
         ),
       },
       {
-        label: `Chọn bác sỉ`,
+        label: `Chọn Bác sĩ`,
         key: "1",
         children: (
           <ChooseDoctor

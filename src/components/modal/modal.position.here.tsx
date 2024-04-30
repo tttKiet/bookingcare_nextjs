@@ -1,5 +1,5 @@
+import { Button } from "@nextui-org/button";
 import {
-  Button,
   Modal,
   ModalBody,
   ModalContent,

@@ -22,7 +22,7 @@ export function ManagerAccount() {
     },
     {
       key: "doctor",
-      label: "Bác sỉ",
+      label: "Bác sĩ",
       children: <ManagerAccountStaff />,
     },
     {

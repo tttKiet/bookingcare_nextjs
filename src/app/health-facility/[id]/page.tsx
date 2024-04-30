@@ -212,7 +212,7 @@ export default function HealthFacilityDetailPage({
                   key="3"
                   title={
                     <div onClick={() => scrollTo(h3Ref.current, { top: 90 })}>
-                      Danh sách bác sỉ
+                      Danh sách Bác sĩ
                     </div>
                   }
                 />
@@ -241,7 +241,7 @@ export default function HealthFacilityDetailPage({
               </h4>
               <p className="mt-3 text-base font-medium  text-[rgb(60,66,83)]/90">
                 Cơ sở y tế <span>{healthFacility?.name}</span> nằm ở {tp} với
-                hơn 100 bác sỉ và 300 phòng khám bệnh.
+                hơn 100 Bác sĩ và 300 phòng khám bệnh.
               </p>
             </div>
             <div className="mb-6 ">

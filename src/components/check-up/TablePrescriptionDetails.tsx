@@ -19,8 +19,9 @@ import { ActionBox, ActionGroup } from "../box";
 
 export interface TablePrescriptionDetailsProps {
   data: PrescriptionDetail[] | [];
-  handleClickEdit: (data: PrescriptionDetail) => void;
-  handleClickDelete: (data: PrescriptionDetail) => void;
+  isReadOnly?: boolean;
+  handleClickEdit?: (data: PrescriptionDetail) => void;
+  handleClickDelete?: (data: PrescriptionDetail) => void;
 }
 interface PrescriptionDetailIndex extends PrescriptionDetail {
   index: number;
@@ -29,6 +30,7 @@ export default function TablePrescriptionDetails({
   data,
   handleClickEdit,
   handleClickDelete,
+  isReadOnly,
 }: TablePrescriptionDetailsProps) {
   const dataTable = data.map((d, i) => ({ ...d, index: i + 1 }));
   const columns = [
@@ -40,8 +42,11 @@ export default function TablePrescriptionDetails({
     { name: "Chiều", uid: "afternoon" },
     { name: "Tối", uid: "evening" },
     { name: "Cách dùng", uid: "usage" },
-    { name: "Hành động", uid: "actions" },
+    {
+      ...(isReadOnly ? { uid: "test" } : { name: "Hành động", uid: "actions" }),
+    },
   ];
+
   const renderCell = useCallback(
     (data: PrescriptionDetailIndex, columnKey: any) => {
       switch (columnKey) {
@@ -124,24 +129,14 @@ export default function TablePrescriptionDetails({
           return <div>{data?.usage}</div>;
         case "actions":
           return (
-            //   <div className="relative flex items-center gap-2">
-            //     <Tooltip content="Edit user">
-            //       <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-            //         <EditIcon />
-            //       </span>
-            //     </Tooltip>
-            //     <Tooltip color="danger" content="Delete user">
-            //       <span className="text-lg text-danger cursor-pointer active:opacity-50">
-            //         <DeleteIcon />
-            //       </span>
-            //     </Tooltip>
-            //   </div>
-
             <ActionGroup className="justify-start">
-              <ActionBox type="edit" onClick={() => handleClickEdit(data)} />
+              <ActionBox
+                type="edit"
+                onClick={() => handleClickEdit && handleClickEdit(data)}
+              />
               <ActionBox
                 type="delete"
-                onClick={() => handleClickDelete(data)}
+                onClick={() => handleClickDelete && handleClickDelete(data)}
               />
             </ActionGroup>
           );

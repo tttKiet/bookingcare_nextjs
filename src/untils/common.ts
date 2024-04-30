@@ -1,4 +1,5 @@
 import {
+  Code,
   HealthExaminationSchedule,
   ScheduleAvailable,
   TimeSlot,
@@ -13,6 +14,26 @@ export function sortTimeSlots(arr: ScheduleAvailable[]) {
 
   arr.forEach((h: ScheduleAvailable) => {
     const time = parseInt(h.TimeCode.value.split("h")[0]);
+    if (time >= 7 && time < 12) {
+      result["Morning"].push(h);
+    } else if ((time >= 12 && time <= 17) || (time >= 1 && time <= 5)) {
+      result["Afternoon"].push(h);
+    }
+  });
+  return result;
+}
+export interface TimeSlotCode {
+  Morning: Code[];
+  Afternoon: Code[];
+}
+export function sortTimeSlotsCode(arr: Code[]) {
+  const result: TimeSlotCode = {
+    Morning: [],
+    Afternoon: [],
+  };
+
+  arr.forEach((h: Code) => {
+    const time = parseInt(h.value.split("h")[0]);
     if (time >= 7 && time < 12) {
       result["Morning"].push(h);
     } else if ((time >= 12 && time <= 17) || (time >= 1 && time <= 5)) {

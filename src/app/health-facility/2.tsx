@@ -153,7 +153,7 @@ export default function HealthFacilities() {
             <BreadcrumbItem>
               <Link href={"/"}>Home</Link>
             </BreadcrumbItem>
-            <BreadcrumbItem>Tìm kiếm bác sỉ</BreadcrumbItem>
+            <BreadcrumbItem>Tìm kiếm Bác sĩ</BreadcrumbItem>
           </Breadcrumbs>
         </div>
         {/* <div className="relative  h-[200px] pt-[80px]  ">

@@ -64,6 +64,12 @@ export interface Code {
   value: string;
 }
 
+export interface HealthExaminationScheduleResAll {
+  date: string | Date | Object;
+  working: Working;
+  schedule: HealthExaminationSchedule[];
+}
+
 export interface HealthExaminationSchedule {
   id: string;
   date: string | Date | Object;

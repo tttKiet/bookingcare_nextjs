@@ -1,43 +1,23 @@
 "use client";
 
-import { AudioOutlined } from "@ant-design/icons";
-import { Avatar, List } from "antd";
-import { SearchProps } from "antd/es/input";
-import { CiSearch } from "react-icons/ci";
-import { ResDataPaginations } from "@/types";
 import {
-  AcademicDegree,
-  HealthExaminationSchedule,
-  Specialist,
-  Staff,
-  WorkRoom,
-  Working,
-} from "@/models";
-import {
-  API_ACCOUNT_STAFF_DOCTOR_WORKING,
   API_ACEDEMIC_DEGREE,
   API_SPECIALIST,
-  API_WORK_ROOM,
   API_WORK_ROOM_GET_FULL_LIST_DOCTOR_WORKING,
 } from "@/api-services/constant-api";
-import useSWR, { BareFetcher } from "swr";
-import { ScheduleBox } from "../schudule.box";
-import { useRouter } from "next/navigation";
-import DoctorItem from "./DoctorItem";
-import { LegacyRef, forwardRef, useMemo, useRef, useState } from "react";
-import { Button } from "@nextui-org/button";
-import {
-  Autocomplete,
-  AutocompleteItem,
-  Input,
-  ScrollShadow,
-} from "@nextui-org/react";
-import debounce from "lodash.debounce";
-import { SearchIcon } from "@/components/icons/SearchIcon";
-import Search from "../filter/Search";
 import instances from "@/axios";
+import { AcademicDegree, Specialist, WorkRoom } from "@/models";
+import { ResDataPaginations } from "@/types";
+import { Button } from "@nextui-org/button";
+import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import debounce from "lodash.debounce";
+import { useRouter } from "next/navigation";
+import { LegacyRef, forwardRef, useMemo, useRef, useState } from "react";
+import useSWR, { BareFetcher } from "swr";
+import Search from "../filter/Search";
+import DoctorItem from "./DoctorItem";
 
-import { AnimatePresence, motion, Variants } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 export interface IChooseDoctorProps {
   healthFacilityId: string;
@@ -170,11 +150,11 @@ const ChooseDoctor = forwardRef(
           <div>
             <Search
               size="lg"
-              label="Tìm nhanh bác sỉ"
+              label="Tìm nhanh Bác sĩ"
               onChange={debounce(function (e) {
                 handleSearchName(e.target.value);
               }, 300)}
-              placeholder="Nhập tên bác sỉ..."
+              placeholder="Nhập tên Bác sĩ..."
               color="primary"
             ></Search>
             <div className="grid grid-cols-4 gap-3 mt-4">

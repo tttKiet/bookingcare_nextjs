@@ -228,7 +228,7 @@ export default function HomeWhy(props: IHomeWhyProps) {
           <h3 className="text-lg text-[#1b3c74] font-bold ">
             Các bác sĩ có sẵn
           </h3>
-          <h3 className="text-base text-[#3c4253] mb-2">Chọn bác sỉ</h3>
+          <h3 className="text-base text-[#3c4253] mb-2">Chọn Bác sĩ</h3>
           <div className="flex flex-col items-start gap-5">
             <User
               name={"Michael Johnsonsss"}

@@ -1,4 +1,10 @@
-import { Cedicine, ExaminationService, HospitalService } from "@/models";
+import {
+  Cedicine,
+  Code,
+  ExaminationService,
+  HealthExaminationSchedule,
+  HospitalService,
+} from "@/models";
 import { ResData } from "@/types";
 import axios from "../axios";
 import {
@@ -7,6 +13,8 @@ import {
   API_ADMIN_HOSPITAL_SERVICE,
   API_ADMIN_MANAGER_ADMIN_HEALTH,
   API_ADMIN_MANAGER_SERVICE,
+  API_DOCTOR_REGISTER_SCHEDULE,
+  API_REVIEW_DOCTOR,
 } from "./constant-api";
 
 export const adminApi = {
@@ -77,6 +85,30 @@ export const adminApi = {
       data: {
         healthFacilityId,
         examinationServiceId,
+      },
+    });
+  },
+
+  async deleteReview(id: string): Promise<ResData> {
+    return await axios.delete(API_REVIEW_DOCTOR, {
+      data: { id },
+    });
+  },
+
+  async createSchedule(data: any): Promise<ResData> {
+    return await axios.post(API_DOCTOR_REGISTER_SCHEDULE, data);
+  },
+
+  async deleteSchedule({
+    schedule,
+  }: {
+    // workingId: string;
+    schedule: HealthExaminationSchedule[];
+    // date: string;
+  }): Promise<ResData> {
+    return await axios.delete(API_DOCTOR_REGISTER_SCHEDULE, {
+      data: {
+        schedule: schedule.map((s) => s.id),
       },
     });
   },

@@ -14,6 +14,7 @@ import { PaymentInformation } from "@/components/common/step-boking/PaymentInfor
 import StepBookings from "@/components/steps/steps-booking,";
 import { useAuth, useDisPlay } from "@/hooks";
 import { useGetAddress } from "@/hooks/use-get-address-from-code";
+
 import {
   HealthExaminationSchedule,
   HealthFacility,
@@ -67,7 +68,7 @@ export default function Booking(props: IAboutPageProps) {
         const newArray = [...prev];
         const item = {
           key: "1",
-          title: "Bác sỉ",
+          title: "Bác sĩ",
           description: (
             <div>
               <h5>{value.Working.Staff.fullName}</h5>
@@ -212,7 +213,7 @@ export default function Booking(props: IAboutPageProps) {
             Bước 1
           </span>
         ),
-        description: "Chọn bác sỉ",
+        description: "Chọn Bác sĩ",
         key: 0,
         content: (
           <ChooseDoctor

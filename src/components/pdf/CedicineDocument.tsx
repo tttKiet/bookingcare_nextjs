@@ -19,21 +19,28 @@ import {
   PrescriptionDetail,
   ServiceDetails,
 } from "@/models";
-import { textNomo } from "@/untils/common";
+import {} from "@/untils/common";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useGetAddress } from "@/hooks/use-get-address-from-code";
 
 Font.register({
-  family: "Poppins",
-  src: "http://fonts.gstatic.com/s/poppins/v1/TDTjCH39JjVycIF24TlO-Q.ttf",
+  family: "Roboto",
+  src: "https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-light-webfont.ttf",
 });
+
 const s = StyleSheet.create({
   page: {
-    fontFamily: "Poppins",
+    fontFamily: "Roboto",
     padding: "16px 24px",
     flexDirection: "row",
     backgroundColor: "#E4E4E4",
+  },
+  itemStart: {
+    alignItems: "flex-start",
+  },
+  maxw60: {
+    maxWidth: "140px",
   },
   header_top: {
     display: "flex",
@@ -198,6 +205,30 @@ const CedicineDocument = ({
     healthRecord?.Patient?.addressCode[2],
   ]);
 
+  const [addressH, setAddressH] = useState<string>("");
+  useEffect(() => {
+    useGetAddress({
+      wardCode:
+        dataBooking?.HealthExaminationSchedule?.Working?.HealthFacility
+          ?.addressCode?.[0] || "",
+      districtCode:
+        dataBooking?.HealthExaminationSchedule?.Working?.HealthFacility
+          ?.addressCode?.[1] || "",
+      provinceCode:
+        dataBooking?.HealthExaminationSchedule?.Working?.HealthFacility
+          ?.addressCode?.[2] || "",
+    })
+      .then((ob) => setAddressH(ob.address))
+      .catch((e) => "");
+  }, [
+    dataBooking?.HealthExaminationSchedule?.Working?.HealthFacility
+      ?.addressCode?.[0],
+    dataBooking?.HealthExaminationSchedule?.Working?.HealthFacility
+      ?.addressCode?.[1],
+    dataBooking?.HealthExaminationSchedule?.Working?.HealthFacility
+      ?.addressCode?.[2],
+  ]);
+
   return (
     <Document>
       <Page size="A4" style={s.page}>
@@ -218,36 +249,33 @@ const CedicineDocument = ({
                 {/* info */}
                 <View>
                   <Text style={s.title_base}>
-                    {textNomo(
+                    {
                       dataBooking?.HealthExaminationSchedule?.Working
                         ?.HealthFacility?.name
-                    )}
+                    }
                   </Text>
-                  <View style={s.flex}>
-                    <Text style={s.title_base_gray}>Dia Chi: </Text>
-                    <Text style={s.title_base}>
-                      {textNomo(
-                        dataBooking?.HealthExaminationSchedule?.Working
-                          ?.HealthFacility?.address
-                      )}
+                  <View style={{ ...s.flex, ...s.itemStart }}>
+                    <Text style={s.title_base_gray}>Địa chỉ: </Text>
+                    <Text style={{ ...s.title_base, ...s.maxw60 }}>
+                      {addressH}
                     </Text>
                   </View>
                   <View style={s.flex}>
-                    <Text style={s.title_base_gray}>Dien thoai: </Text>
+                    <Text style={s.title_base_gray}>Điện thoại: </Text>
                     <Text style={s.title_base}>
-                      {textNomo(
+                      {
                         dataBooking?.HealthExaminationSchedule?.Working
                           ?.HealthFacility?.phone
-                      )}
+                      }
                     </Text>
                   </View>
                   <View style={s.flex}>
                     <Text style={s.title_base_gray}>Email: </Text>
                     <Text style={s.title_base}>
-                      {textNomo(
+                      {
                         dataBooking?.HealthExaminationSchedule?.Working
                           ?.HealthFacility?.email
-                      )}
+                      }
                     </Text>
                   </View>
                 </View>
@@ -266,82 +294,76 @@ const CedicineDocument = ({
           </View>
           <View style={{ ...s.my_8 }}>
             <View style={{ ...s.flex_row_center }}>
-              <Text style={{ ...s.text_16 }}>TOA THUOC</Text>
+              <Text style={{ ...s.text_16 }}>TOA THUỐC</Text>
             </View>
             <View style={{ ...s.my_8 }}>
               <View style={{ ...s.flex, ...s.gap_16 }}>
                 <View style={s.flex}>
-                  <Text style={s.title_base_gray}>TEN BENH NHAN: </Text>
+                  <Text style={s.title_base_gray}>Tên bệnh nhân: </Text>
                   <Text style={s.title_base}>
-                    {textNomo(healthRecord?.Patient?.fullName)}
+                    {healthRecord?.Patient?.fullName}
                   </Text>
                 </View>
                 <View style={s.flex}>
-                  <Text style={s.title_base_gray}>Gioi tinh: </Text>
+                  <Text style={s.title_base_gray}>Giới tính: </Text>
                   <Text style={s.title_base}>
                     {healthRecord?.Patient?.gender == "male" ? "Nam" : "Nu"}
                   </Text>
                 </View>
                 <View style={s.flex}>
-                  <Text style={s.title_base_gray}>NGAY SINH: </Text>
+                  <Text style={s.title_base_gray}>Ngày sinh: </Text>
                   <Text style={s.title_base}>
                     {moment(healthRecord?.Patient?.birthDay).format("L")}
                   </Text>
                 </View>
               </View>
               <View style={s.flex}>
-                <Text style={s.title_base_gray}>Doi tuong: </Text>
-                <Text style={s.title_base}>Dich vu</Text>
+                <Text style={s.title_base_gray}>Đối tượng: </Text>
+                <Text style={s.title_base}>Dịch vụ</Text>
               </View>
               <View style={s.flex}>
-                <Text style={s.title_base_gray}>Dia chi: </Text>
-                <Text style={s.title_base}>{textNomo(address)}</Text>
+                <Text style={s.title_base_gray}>Địa chỉ: </Text>
+                <Text style={s.title_base}>{address}</Text>
               </View>
               <View style={s.flex}>
-                <Text style={s.title_base_gray}>Chuan doan: </Text>
-                <Text style={s.title_base}>
-                  {textNomo(healthRecord?.diagnosis)}
-                </Text>
+                <Text style={s.title_base_gray}>Chuẩn đoán: </Text>
+                <Text style={s.title_base}>{healthRecord?.diagnosis}</Text>
               </View>
             </View>
-            <Text style={s.title_table}>Chi dinh dung thuoc:</Text>
+            <Text style={s.title_table}>Chỉ định dùng thuốc:</Text>
 
             {/* row*/}
             {prescriptionDetail?.map((d, i) => (
               <View style={s.data} key={d.id} wrap={false}>
                 <View style={{ ...s.flex, ...s.mb_8, ...s.between }}>
                   <Text style={s.bold}>
-                    {i + 1}. {textNomo(d?.Cedicine.name)}
+                    {i + 1}. {d?.Cedicine.name}
                   </Text>
                   <Text>
-                    {textNomo(
-                      d?.quantity.toString() +
-                        (d?.unit == "v" ? " vien" : " hop")
-                    )}
+                    {d?.quantity.toString() +
+                      (d?.unit == "v" ? " viên" : " hộp")}
                   </Text>
                 </View>
                 <View style={{ ...s.flex, ...s.mb_8 }}>
                   <View style={{ ...s.flex, ...s.mr_16 }}>
-                    <Text style={{ ...s.i, ...s.mr_8 }}>Sang:</Text>
-                    <Text> {textNomo(d?.morning.toString())}</Text>
+                    <Text style={{ ...s.i, ...s.mr_8 }}>Sáng:</Text>
+                    <Text> {d?.morning.toString()}</Text>
                   </View>
                   <View style={{ ...s.flex, ...s.mr_16 }}>
-                    <Text style={{ ...s.i, ...s.mr_8 }}>Trua:</Text>
-                    <Text> {textNomo(d?.noon.toString())}</Text>
+                    <Text style={{ ...s.i, ...s.mr_8 }}>Trưa:</Text>
+                    <Text> {d?.noon.toString()}</Text>
                   </View>
                   <View style={{ ...s.flex, ...s.mr_16 }}>
-                    <Text style={{ ...s.i, ...s.mr_8 }}>Chieu:</Text>
-                    <Text> {textNomo(d?.afterNoon.toString())}</Text>
+                    <Text style={{ ...s.i, ...s.mr_8 }}>Chiều:</Text>
+                    <Text> {d?.afterNoon.toString()}</Text>
                   </View>
                   <View style={{ ...s.flex }}>
-                    <Text style={{ ...s.i, ...s.mr_8 }}>Toi:</Text>
-                    <Text> {textNomo(d?.evening.toString())}</Text>
+                    <Text style={{ ...s.i, ...s.mr_8 }}>Tối:</Text>
+                    <Text> {d?.evening.toString()}</Text>
                   </View>
                 </View>
 
-                <View style={{ ...s.title_base }}>
-                  Cach dung: {textNomo(d?.usage.toString())}
-                </View>
+                <Text style={{ ...s.title_base }}>Cách dùng: {d?.usage}</Text>
               </View>
             ))}
 
@@ -349,9 +371,9 @@ const CedicineDocument = ({
             <View style={{ ...s.flex_align_start, ...s.between, ...s.my_12 }}>
               {/* 60 */}
               <View style={{ ...s.max_35_percent }}>
-                <Text style={s.title_base_gray}>Ghi chu: </Text>
+                <Text style={s.title_base_gray}>Ghi Chú: </Text>
                 <Text style={{ ...s.title_base }}>
-                  - Vui long kiem tra thong tin to thuoc.
+                  - Vui lòng kiểm tra thông tin toa thuốc
                 </Text>
               </View>
               {/* 40 */}
@@ -359,18 +381,16 @@ const CedicineDocument = ({
                 <View style={{ ...s.flex_col, ...s.gap_10 }}>
                   <Text style={{ ...s.title_base }}>
                     ...,{" "}
-                    {textNomo(
-                      moment(prescriptionDetail?.[0].createdAt)
-                        .locale("vi")
-                        .format("LL")
-                    )}
+                    {moment(prescriptionDetail?.[0].createdAt)
+                      .locale("vi")
+                      .format("LL")}
                   </Text>
-                  <Text style={{ ...s.title_base }}>BAC SI KHAM BENH</Text>
+                  <Text style={{ ...s.title_base }}>Bác sĩ khám bệnh</Text>
                   <Text style={{ ...s.title_base }}>
-                    {textNomo(
+                    {
                       dataBooking?.HealthExaminationSchedule?.Working?.Staff
                         ?.fullName
-                    )}
+                    }
                   </Text>
                 </View>
               </View>

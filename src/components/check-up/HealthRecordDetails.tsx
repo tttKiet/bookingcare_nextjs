@@ -216,26 +216,6 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
     }
   }
 
-  // async function handleClickCreateHealthRecord() {
-  //   if (!inforBooking?.id) {
-  //     return toast.warning("Id lịch hẹn không tìm thấy, vui lòng thử lại");
-  //   } else if (!dataPatient?.rows?.[0]?.id) {
-  //     return toast.warning(
-  //       "Bệnh nhân chưa được thêm vào cơ sở dữ liệu, hãy tạo bệnh nhân."
-  //     );
-  //   }
-  //   onOpen();
-  //   const api = staffApi.craeteHealthRecord({
-  //     bookingId: inforBooking?.id,
-  //     patientId: dataPatient?.rows?.[0]?.id,
-  //   });
-  //   const res = await toastMsgFromPromise(api);
-
-  //   if (res.statusCode === 0 || res.statusCode === 200) {
-  //     mutateHealthRecord();
-  //   }
-  // }
-
   async function handleDeleteServiceDetails() {
     const api = staffApi.deleteServiceDetails(valueServiceDetailsEdit);
     const res = await toastMsgFromPromise(api);
@@ -497,6 +477,7 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
                   <div className={`md:col-span-6 grid-cols-12 `}>
                     <Input
                       size="lg"
+                      variant="bordered"
                       isReadOnly
                       label={
                         <div className="flex items-center gap-1">
@@ -512,6 +493,7 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
                   <div className="md:col-span-3 grid-cols-12 ">
                     <Input
                       size="lg"
+                      variant="bordered"
                       isReadOnly
                       label={
                         <div className="flex items-center gap-1">
@@ -528,6 +510,7 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
                   <div className={"md:col-span-3 grid-cols-12 "}>
                     <Input
                       size="lg"
+                      variant="bordered"
                       isReadOnly
                       label={
                         <div className="flex items-center gap-1">
@@ -544,6 +527,7 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
                   <div className={"md:col-span-3 grid-cols-12 "}>
                     <Input
                       size="lg"
+                      variant="bordered"
                       isReadOnly
                       label={
                         <div className="flex items-center gap-1">
@@ -558,6 +542,7 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
                   <div className="md:col-span-9 grid-cols-12 ">
                     <Textarea
                       size="lg"
+                      variant="bordered"
                       isReadOnly
                       classNames={{
                         label: "text-base",
@@ -800,6 +785,7 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
                       size="lg"
                       label={"Giá"}
                       type="text"
+                      variant="bordered"
                       isReadOnly
                       value={dataHospitalService?.rows
                         .find(

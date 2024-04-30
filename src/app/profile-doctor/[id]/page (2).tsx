@@ -84,7 +84,7 @@ export default function DoctorDetailPage({
                 <Tab key="0" title="Tổng quan" />
                 <Tab key="1" title="Giới thiệu" />
                 <Tab key="2" title="Vị trí" />
-                <Tab key="3" title="Bác sỉ" />
+                <Tab key="3" title="Bác sĩ" />
                 <Tab key="4" title="Đánh giá" />
                 <Tab key="5" title="Liên hệ" />
               </Tabs>

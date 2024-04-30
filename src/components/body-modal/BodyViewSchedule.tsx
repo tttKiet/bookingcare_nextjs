@@ -36,7 +36,7 @@ interface Columns {
 }
 
 const columns: Columns[] = [
-  { name: "BÁC SỈ", uid: "staff" },
+  { name: "Bác sĩ", uid: "staff" },
   { name: "CƠ SỞ", uid: "healthFacility" },
   { name: "KHUNG GIỜ", uid: "schedule" },
   { name: "ACTIONS", uid: "actions" },

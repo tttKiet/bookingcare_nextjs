@@ -25,7 +25,7 @@ export default function ListDoctorHomePage() {
       <TitleText
         title="Bác sĩ nổi bật"
         bgTitle="Excellent doctor"
-        desc="Các bác sỉ có nhiều thành tích trong năm 2023 - Giàu kinh nghiệm"
+        desc="Các Bác sĩ có nhiều thành tích trong năm 2023 - Giàu kinh nghiệm"
       />
       <ul
         role="list"

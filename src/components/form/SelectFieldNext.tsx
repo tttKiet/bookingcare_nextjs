@@ -58,6 +58,7 @@ export function SelectFieldNext({
       selectedKey={value}
       // defaultInputValue={value}
       // inputValue={value}
+
       defaultInputValue={defaultInputValue}
       color={error?.message ? "danger" : isSubmitted ? "primary" : "default"}
       value={value}

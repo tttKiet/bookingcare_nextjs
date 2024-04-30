@@ -89,7 +89,7 @@ export function BodyModalSpecialist({
         <div className="col-span-2">
           <InputTextareaField
             control={control}
-            label="Mô tả bác sỉ chửa bệnh"
+            label="Mô tả Bác sĩ chửa bệnh"
             name="descriptionDoctor"
             icon={<AiOutlinePhone />}
             placeholder="Nhập mô tả..."

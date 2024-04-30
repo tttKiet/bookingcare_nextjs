@@ -546,8 +546,8 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
 
                       <PopoverContent>
                         <div>
-                          Người dùng cần thanh toán trước khi khám bệnh 3 ngày
-                          nếu không lịch khám sẽ bị hủy!
+                          Người dùng cần đến quầy thanh toán trước khi khám bệnh
+                          !
                         </div>
                       </PopoverContent>
                     </Popover>
@@ -574,6 +574,7 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
             <div className={"col-span-6 font-medium"}>
               <Input
                 size="lg"
+                variant="bordered"
                 isReadOnly
                 label={
                   <div className="flex items-center gap-1">
@@ -588,6 +589,7 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
             <div className={"col-span-3 font-medium"}>
               <Input
                 size="lg"
+                variant="bordered"
                 isReadOnly
                 label={
                   <div className="flex items-center gap-1">
@@ -610,6 +612,7 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
                   </div>
                 }
                 size="lg"
+                variant="bordered"
                 isReadOnly
                 className={`${descClass}`}
                 value={inforBooking?.HealthExaminationSchedule?.TimeCode?.value}
@@ -618,12 +621,13 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
             <div className={"col-span-3 font-medium"}>
               <Input
                 size="lg"
+                variant="bordered"
                 isReadOnly
                 className={`${descClass}`}
                 label={
                   <div className="flex items-center gap-1">
                     <FaUserMd />
-                    Bác sỉ
+                    Bác sĩ
                   </div>
                 }
                 value={
@@ -635,6 +639,7 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
             <div className={"col-span-6 font-medium"}>
               <Input
                 size="lg"
+                variant="bordered"
                 isReadOnly
                 label={
                   <div className="flex items-center gap-1">
@@ -652,7 +657,8 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
             {/* <div className={"col-span-3 font-medium"}>
               <Input
                 size="lg"
-                isReadOnly
+                 variant="bordered"
+              isReadOnly
                 label="Phòng khám"
                 className={`${descClass}`}
                 value={
@@ -664,6 +670,7 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
           {/* <div className={boxClass}>
             <Input
               size="lg"
+               variant="bordered"
               isReadOnly
               label="Phương thức thanh toán"
               className={`${descClass}`}
@@ -678,6 +685,7 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
             <Input
               size="lg"
               color={colorInputStatus}
+               variant="bordered"
               isReadOnly
               label="Trạng thái"
               className={`${descClass}`}

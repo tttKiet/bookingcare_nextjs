@@ -35,6 +35,7 @@ export interface ModalFadeInNextUiProps {
     | undefined;
   backdrop?: "blur" | "transparent" | "opaque" | undefined;
   disable?: boolean;
+  showBtnCancel?: boolean;
 }
 
 export function ModalFadeInNextUi({
@@ -53,6 +54,7 @@ export function ModalFadeInNextUi({
   size,
   backdrop,
   disable,
+  showBtnCancel = true,
 }: ModalFadeInNextUiProps) {
   return (
     <>
@@ -73,9 +75,11 @@ export function ModalFadeInNextUi({
               <ModalBody>{body}</ModalBody>
               {footer !== false && (
                 <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
-                    Hủy
-                  </Button>
+                  {showBtnCancel && (
+                    <Button color="danger" variant="light" onPress={onClose}>
+                      Hủy
+                    </Button>
+                  )}
                   <Button
                     isDisabled={disable}
                     color={disable ? "default" : "primary"}

@@ -1,4 +1,5 @@
 import { User, AcademicDegree, Specialist, Role, Staff } from "@/models";
+import { ISchema } from "yup";
 
 export {};
 
@@ -32,3 +33,9 @@ export interface StaffAccountRes extends Staff {
   Specialist: typeof Specialist;
   Role: typeof Role;
 }
+
+export type ConditionConfig<T extends ISchema<any>> = {
+  is: any | ((...values: any[]) => boolean);
+  then?: (schema: T) => ISchema<any>;
+  otherwise?: (schema: T) => ISchema<any>;
+};

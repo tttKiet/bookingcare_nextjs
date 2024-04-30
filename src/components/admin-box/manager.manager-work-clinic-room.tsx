@@ -340,7 +340,7 @@ export function ManagerClinicWork() {
   const columns: ColumnsType<WorkRoom> = useMemo(() => {
     return [
       {
-        title: "Bác sỉ",
+        title: "Bác sĩ",
         dataIndex: ["Working", "Staff", "fullName"],
         key: "Working.Staff.fullName",
         render: (text) => <a>{text}</a>,
@@ -509,7 +509,7 @@ export function ManagerClinicWork() {
                 showZero={true}
               >
                 <h3 className="mb-2 px-6 py-2 outline-dashed outline-1 outline-blue-500 rounded-md">
-                  Số bác sỉ hiện tại
+                  Số Bác sĩ hiện tại
                 </h3>
               </Badge>
             </div>

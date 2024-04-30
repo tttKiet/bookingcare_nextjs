@@ -9,7 +9,7 @@ import React, { ReactNode } from "react";
 import { FiPlusCircle } from "react-icons/fi";
 import { LiaUserNurseSolid } from "react-icons/lia";
 import { LuLayoutDashboard } from "react-icons/lu";
-import { MdSupervisorAccount } from "react-icons/md";
+import { MdOutlineFeedback, MdSupervisorAccount } from "react-icons/md";
 import { BsCode, BsDpad, BsPersonWorkspace } from "react-icons/bs";
 import { CiBookmarkMinus } from "react-icons/ci";
 import { AiOutlineSlack } from "react-icons/ai";
@@ -176,7 +176,7 @@ export default function RootLayout({
       },
       {
         key: "manager-doctor",
-        label: <div className={classItemMenu}>Bác sỉ</div>,
+        label: <div className={classItemMenu}>Bác sĩ</div>,
         get icon() {
           return (
             <IconBgGray active={this.key == url}>
@@ -268,6 +268,21 @@ export default function RootLayout({
           return (
             <IconBgGray active={this.key == url}>
               <BsPersonWorkspace size={20} />
+            </IconBgGray>
+          );
+        },
+      },
+      {
+        key: "/admin/review",
+        label: (
+          <Link className={classItemMenu} href="/admin/review">
+            Đánh giá
+          </Link>
+        ),
+        get icon() {
+          return (
+            <IconBgGray active={this.key == url}>
+              <MdOutlineFeedback size={20} />
             </IconBgGray>
           );
         },

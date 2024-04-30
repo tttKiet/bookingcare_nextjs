@@ -31,7 +31,7 @@ export function NavAdminPc(props: NavAdminPcProps) {
       },
 
       {
-        title: "Bác sỉ",
+        title: "Bác sĩ",
         href: "/admin/doctor",
         icon: <LiaUserNurseSolid size={20} />,
       },

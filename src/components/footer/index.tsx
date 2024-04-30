@@ -7,7 +7,7 @@ const links = [
 const stats = [
   { name: "Bệnh viện", value: "50+" },
   { name: "Giờ khám", value: "300h+" },
-  { name: "Bác sỉ", value: "50+" },
+  { name: "Bác sĩ", value: "50+" },
   { name: "Đánh giá", value: "1B+" },
 ];
 

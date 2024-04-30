@@ -236,7 +236,7 @@ export function WorkingCurrentTag() {
   const columns: ColumnsType<Working> = useMemo(
     () => [
       {
-        title: "Tên bác sỉ",
+        title: "Tên Bác sĩ",
         dataIndex: ["Staff", "fullName"],
         key: "Staff.fullName",
         render: (text) => <a>{text}</a>,

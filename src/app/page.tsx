@@ -216,7 +216,7 @@ export default function Home() {
                   >
                     <div className="p-4 w-[220px] h-[170px]  bg-white rounded-md shadow">
                       <h3 className="text-[#1b3c74] font-medium text-base">
-                        Gặp gở các bác sỉ
+                        Gặp gở các Bác sĩ
                       </h3>
                       <Image
                         src={ListDoctorImg.src}
@@ -347,7 +347,7 @@ export default function Home() {
                 <Statistic
                   title={
                     <div className="font-medium text-white text-base mb-3">
-                      Bác sỉ
+                      Bác sĩ
                     </div>
                   }
                   value={460}

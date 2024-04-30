@@ -9,6 +9,7 @@ import { Tab, Tabs } from "@nextui-org/react";
 import DetailsTabCheckUp from "../check-up/DetailsTabCheckUp";
 import dynamic from "next/dynamic";
 import { LoadingPage } from "../spinners";
+import MedicalRecord from "../check-up/MedicalRecord";
 
 export const InfoCheckUpContext = createContext<{ bookingId: string }>({
   bookingId: "",
@@ -55,7 +56,11 @@ export default function CheckUpDetails({ bookingId }: ICheckUpDetailsProps) {
             title="Thông tin bệnh nhân"
             children={<PatientProfileSlot />}
           />
-          <Tab key="medical_record" title="Hồ sơ bệnh án" />
+          <Tab
+            key="medical_record"
+            title="Hồ sơ bệnh án"
+            children={<MedicalRecord />}
+          />
           <Tab
             key="health"
             title="Phiếu khám bệnh"

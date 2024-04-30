@@ -52,6 +52,7 @@ const config: Config = {
   // corePlugins: {
   //   preflight: false,
   // },
-  plugins: [nextui()],
+  darkMode: "class",
+ plugins: [nextui()],
 };
 export default config;

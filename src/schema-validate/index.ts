@@ -1,7 +1,14 @@
 import { healthFacilitiesApi } from "@/api-services";
 import { Working } from "@/models";
+import moment from "moment";
 import * as yup from "yup";
 const FILE_SIZE = 2000000;
+
+interface optionsType {
+  id: string;
+  label: string;
+  value: string;
+}
 export const schemaValidateLoginForm = yup.object().shape({
   email: yup
     .string()
@@ -98,11 +105,11 @@ export const schemaSpecialistBody = yup.object().shape({
   name: yup.string().required("Vui lòng tên chuyên khoa."),
   descriptionDisease: yup
     .string()
-    .required("Vui lòng điền mô tả của bác sỉ.")
+    .required("Vui lòng điền mô tả của Bác sĩ.")
     .max(1000, "Chỉ được điền từ đến 1000 kí tự tối đa."),
   descriptionDoctor: yup
     .string()
-    .required("Vui lòng điền mô tả của bác sỉ.")
+    .required("Vui lòng điền mô tả của Bác sĩ.")
     .max(1000, "Chỉ được điền từ đến 1000 kí tự tối đa."),
 });
 
@@ -161,7 +168,7 @@ export const schemaStaffManagerBody = yup.object().shape({
 });
 
 export const schemaWorkingBody = yup.object().shape({
-  staffId: yup.string().required("Vui lòng chọn bác sỉ."),
+  staffId: yup.string().required("Vui lòng chọn Bác sĩ."),
   healthFacilityId: yup.string().required("Vui lòng chọn cơ sở y tế."),
 });
 
@@ -172,7 +179,7 @@ export const schemaClinicRoomBody = yup.object().shape({
 
 export const schemaWorkClinicRoomBody = yup.object().shape({
   checkUpPrice: yup.number().required("Vui lòng điền số tiền khám."),
-  workingId: yup.string().required("Vui lòng chọn bác sỉ cần thêm."),
+  workingId: yup.string().required("Vui lòng chọn Bác sĩ cần thêm."),
   applyDate: yup.object().required("Vui lòng chọn ngày áp dụng."),
 });
 
@@ -238,4 +245,43 @@ export const schemaPatientBody = yup.object().shape({
   province: yup.string().required("Vui lòng điền tỉnh thành."),
   district: yup.string().required("Vui lòng điền quận, huyện."),
   ward: yup.string().required("Vui lòng điền xã, phường"),
+});
+
+export const schemaScheduleBody = yup.object().shape({
+  workingId: yup.string().required("Vui lòng chọn bác sỉ cần thêm lịch."),
+  unit: yup.string().required("Vui lòng điền đơn vị"),
+  optionTimeCode: yup.string().required("Chọn khung thời gian"),
+  // startDate: yup.date().when("unit", {
+  //   is: "date",
+  //   then: yup.date().required("Chọn ngày bắt đầu"),
+  // }),
+  startDate: yup.date().required("Chọn ngày kết thúc"),
+  endDate: yup.date().when("unit", {
+    is: "date",
+    then: (schema) =>
+      schema
+        .required("Chọn ngày bắt đầu")
+        .test(
+          "match",
+          "Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu.",
+          function (value) {
+            return moment(value).isSameOrAfter(moment(this.parent.startDate));
+          }
+        ),
+  }),
+  maxNumber: yup
+    .number()
+    .required("Vui lòng chọn số lượng bệnh nhân / khung giờ.")
+    .min(0, "Vui lòng chọn số lớn hơn 0"),
+  timeCodeArray: yup.array().when("optionTimeCode", {
+    is: "custom",
+    then: (schema) =>
+      schema.min(1, "Chọn khung thời gian").required("Chọn khung thời gian"),
+  }),
+  quantity: yup.number().when("unit", {
+    is: "date",
+    then: (schema) => schema,
+    otherwise: (schema) =>
+      schema.required("Chọn số lượng").min(0, "Vui lòng chọn số lớn hơn 0"),
+  }),
 });
