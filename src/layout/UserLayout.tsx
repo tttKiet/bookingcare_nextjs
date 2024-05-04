@@ -83,7 +83,8 @@ export default function UserLayout({ children }: IUserLayout) {
   // bg-[#fafff9]
   const bgClass = isDetails ? "bg-[#fafff9]" : "bg-white";
 
-  const showShadow = pathname.includes("/health-facility");
+  const showShadow =
+    pathname.includes("/health-facility") || pathname.includes("/user");
 
   const [isShowShadow, setIsShowShadow] = useState<boolean>(
     !!showShadow || false
@@ -91,9 +92,9 @@ export default function UserLayout({ children }: IUserLayout) {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY >= 120) {
+      if (window.scrollY >= 120 && !showShadow) {
         setIsShowShadow(true);
-      } else if (window.scrollY < 120) {
+      } else if (window.scrollY < 120 && !showShadow) {
         setIsShowShadow(false);
       }
     };
@@ -122,49 +123,48 @@ export default function UserLayout({ children }: IUserLayout) {
           className={`${bgClass}  ${isShowShadow ? "shadow" : ""}`}
         >
           <div className="container mx-auto">
-            <div className="flex items-center justify-between ">
-              <div className="flex items-center  space-x-4">
-                <Link
-                  href={"/"}
-                  className="text-base flex items-center gap-4 whitespace-nowrap overflow-hidden
-                       rounded-[6px] text-blue-700  cursor-pointer"
-                >
-                  <Image
-                    width={40}
-                    height={40}
-                    src={logo.src}
-                    alt="LOGO BOOKING CARE"
-                  />
-                  <strong> BOOKING CARE</strong>
-                </Link>
-                <Divider orientation="vertical" className="h-5 mx-2" />
-                <div>
-                  <Menu
-                    theme="light"
-                    className={`${bgClass}`}
-                    mode="horizontal"
-                    items={items}
-                    defaultOpenKeys={[url]}
-                    defaultSelectedKeys={[url]}
-                  />
-                </div>
+            <div className="flex items-center justify-around ">
+              <Link
+                href={"/"}
+                className="text-base flex items-center gap-4 whitespace-nowrap overflow-hidden
+                       rounded-[6px] text-blue-700  cursor-pointer flex-1"
+              >
+                <Image
+                  width={40}
+                  height={40}
+                  src={logo.src}
+                  alt="LOGO BOOKING CARE"
+                />
+                <strong> BOOKING CARE</strong>
+              </Link>
+              <div className="flex-1 flex items-center justify-center">
+                <Menu
+                  theme="light"
+                  className={`${bgClass}`}
+                  mode="horizontal"
+                  items={items}
+                  defaultOpenKeys={[url]}
+                  defaultSelectedKeys={[url]}
+                />
               </div>
 
-              {!profile?.email ? (
-                <div className="flex items-center gap-4  justify-center py-1">
-                  <Link href={"/login"}>
-                    <Button
-                      onClick={onOpenLogin}
-                      color="primary"
-                      variant="flat"
-                    >
-                      Đăng nhập
-                    </Button>
-                  </Link>
-                </div>
-              ) : (
-                <Profile />
-              )}
+              <div className=" flex-1 flex items-center gap-2 justify-end">
+                {!profile?.email ? (
+                  <div className="flex items-center gap-4  justify-center py-1">
+                    <Link href={"/login"}>
+                      <Button
+                        onClick={onOpenLogin}
+                        color="primary"
+                        variant="flat"
+                      >
+                        Đăng nhập
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <Profile />
+                )}
+              </div>
             </div>
           </div>
         </Header>

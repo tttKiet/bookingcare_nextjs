@@ -1,9 +1,11 @@
-import { Modal, UploadFile } from "antd";
+import { Image } from "@nextui-org/image";
+import { UploadFile } from "antd";
 import type { UploadProps } from "antd/es/upload";
 import Upload, { RcFile } from "antd/es/upload";
 import React, { useEffect, useState } from "react";
 import { Control, useController } from "react-hook-form";
 import toast from "react-hot-toast";
+import { ModalFadeInNextUi } from "../modal/ModalFadeInNextUi";
 
 export interface InputUploadFieldProps {
   name: string;
@@ -12,7 +14,7 @@ export interface InputUploadFieldProps {
   type?: string;
   icon?: React.ReactNode;
   placeholder?: string;
-  col: number;
+  col?: number;
   fileExisted?: Array<string> | null;
   resetFiles?: (arr: Array<any>) => void;
 }
@@ -125,20 +127,23 @@ export function InputUploadField({
           onPreview={handlePreview}
           onChange={handleChange}
         >
-          {fileList.length >= 3 ? null : (
+          {fileList.length >= 5 ? null : (
             <div className={`${error?.message && "text-danger-500"}`}>
               Tải ảnh lên
             </div>
           )}
         </Upload>
-        <Modal
-          open={previewOpen}
+        <ModalFadeInNextUi
+          show={previewOpen}
           title={previewTitle}
-          footer={null}
-          onCancel={handleCancel}
-        >
-          <img alt="example" style={{ width: "100%" }} src={previewImage} />
-        </Modal>
+          backdrop="opaque"
+          footer={false}
+          id="show"
+          toggle={handleCancel}
+          body={
+            <Image alt="example" style={{ width: "100%" }} src={previewImage} />
+          }
+        ></ModalFadeInNextUi>
         <span className="flex items-center absolute right-1 text-xl">
           {icon}
         </span>

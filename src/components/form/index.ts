@@ -22,6 +22,7 @@ export interface InputFieldProps {
   width?: number | string;
   isRequired?: boolean;
   unit?: boolean;
+  inputW?: number;
   labelPlacement?: "inside" | "outside" | "outside-left" | undefined;
   color?:
     | "default"

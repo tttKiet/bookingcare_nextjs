@@ -2,7 +2,7 @@ import { healthFacilitiesApi } from "@/api-services";
 import { Working } from "@/models";
 import moment from "moment";
 import * as yup from "yup";
-const FILE_SIZE = 2000000;
+const FILE_SIZE = 4000000;
 
 interface optionsType {
   id: string;
@@ -16,6 +16,17 @@ export const schemaValidateLoginForm = yup.object().shape({
     .email("Email không đúng định dạng."),
   password: yup.string().required("Vui lòng điền mật khẩu."),
   // rememberMe: yup.boolean(),
+});
+
+export const schemaChangePass = yup.object().shape({
+  password_old: yup.string().required("Vui lòng điền mật khẩu."),
+  password: yup.string().required("Vui lòng điền mật khẩu mới."),
+  rePassword: yup
+    .string()
+    .required("Vui lòng nhập lại mật khẩu.")
+    .test("match", "Mật khẩu nhập lại không đúng.", function (value) {
+      return value === this.parent.password;
+    }),
 });
 
 export const schemaValidateRegister = yup.object().shape({
@@ -69,7 +80,7 @@ export const schemaHealthFacilityBody = yup.object().shape({
   files: yup
     .array()
     .min(1, "Vui lòng tải lên ảnh")
-    .max(3, "Tối đa 3 ảnh")
+    .max(5, "Tối đa 5 ảnh")
     .test("fileType", "Định dạng không được hổ trợ", function (value) {
       if (!value || value.length === 0) return true; // Bỏ qua nếu không có tệp ảnh
       const isValid = value.every((file) => {
@@ -79,7 +90,7 @@ export const schemaHealthFacilityBody = yup.object().shape({
     })
     .test(
       "fileSize",
-      "Vui lòng tải hình với kích thước < 2mb",
+      "Vui lòng tải hình với kích thước < 4mb",
       function (value) {
         if (!value || value.length === 0) return true; // Bỏ qua nếu không có tệp ảnh
         const isValid = value.every((file) => {
@@ -190,12 +201,15 @@ export const schemaCodeBody = yup.object().shape({
 });
 
 export const schemaCodeScheduleHealth = yup.object().shape({
-  workingId: yup.string().required("Vui lòng chọn nhân viên."),
   timeCodeArray: yup.array(),
   maxNumber: yup
     .number()
     .required("Vui điền số lượng tối đã khám trong một thời gian."),
-  date: yup.string().required("Vui lòng chọn ngày khám."),
+  date: yup.lazy((value) =>
+    typeof value === "object"
+      ? yup.object().required('Vui lòng chọn ngày khám.")')
+      : yup.date().required("Vui lòng chọn ngày khám.")
+  ),
 });
 
 export const schemaCedicineBody = yup.object().shape({
@@ -225,6 +239,31 @@ export const schemaHospitalServiceBody = yup.object().shape({
 
 export const schemaPatientBody = yup.object().shape({
   id: yup.string(),
+  fullName: yup.string().required("Vui lòng tên bệnh nhân."),
+  phone: yup
+    .string()
+    .required("Vui lòng điền số điện thoại bệnh nhân.")
+    .test("phone", "Số điện thoại không đúng định dạng.", function (value) {
+      const phoneRegExp = /^\+?[0-9]{10,}$/;
+      return phoneRegExp.test(value);
+    }),
+  profession: yup.string().required("Vui lòng điền nghề nghiệp của bệnh nhân."),
+  email: yup
+    .string()
+    .required("Vui lòng điền email bệnh nhân.")
+    .email("Email không đúng định dạng."),
+  gender: yup.string().required("Vui lòng chọn giới tính bệnh nhân."),
+  birthDay: yup.string().required("Vui lòng điền ngày sinh."),
+  nation: yup.string().required("Vui lòng điền tôn giáo."),
+  cccd: yup.string().required("Vui lòng điền CCCD của bệnh nhân."),
+  province: yup.string().required("Vui lòng điền tỉnh thành."),
+  district: yup.string().required("Vui lòng điền quận, huyện."),
+  ward: yup.string().required("Vui lòng điền xã, phường"),
+});
+
+export const schemaPatientAdminBody = yup.object().shape({
+  id: yup.string(),
+  healthFacilityId: yup.string().required("Vui lòng chọn cơ sở y tế."),
   fullName: yup.string().required("Vui lòng tên bệnh nhân."),
   phone: yup
     .string()

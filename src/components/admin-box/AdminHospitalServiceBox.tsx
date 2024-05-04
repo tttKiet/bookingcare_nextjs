@@ -70,7 +70,7 @@ export default function AdminHospitalServiceBox({
                   size="sm"
                   variant="flat"
                 >
-                  Đã dừng
+                  Tạm dừng
                 </Chip>
               )}
             </>
@@ -122,6 +122,12 @@ export default function AdminHospitalServiceBox({
           )}
         </TableBody>
       </Table>
+
+      {manager?.length == 0 && (
+        <div className="pt-6 text-warning-500 text-center">
+          Chưa thêm dịch vụ nào
+        </div>
+      )}
     </div>
   );
 }

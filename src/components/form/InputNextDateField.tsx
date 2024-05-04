@@ -4,8 +4,11 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Input } from "@nextui-org/react";
 import { InputFieldProps } from ".";
 import { DatePicker } from "@nextui-org/date-picker";
+import { CalendarDate } from "@nextui-org/calendar";
 
-export interface InputNextDateFieldProps extends InputFieldProps {}
+export interface InputNextDateFieldProps extends InputFieldProps {
+  defaultDate?: string | CalendarDate;
+}
 
 export function InputNextDateField({
   name,
@@ -22,6 +25,7 @@ export function InputNextDateField({
   unit,
   variant,
   labelPlacement,
+  defaultDate,
 }: InputNextDateFieldProps) {
   const {
     field: { onChange, onBlur, value, ref },
@@ -35,6 +39,7 @@ export function InputNextDateField({
   return (
     <div className="text-base ">
       <DatePicker
+        defaultValue={defaultDate}
         color={error?.message ? "danger" : isSubmitted ? "primary" : "default"}
         label={
           label && (

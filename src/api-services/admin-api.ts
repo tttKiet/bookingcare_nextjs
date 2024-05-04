@@ -15,6 +15,7 @@ import {
   API_ADMIN_MANAGER_SERVICE,
   API_DOCTOR_REGISTER_SCHEDULE,
   API_REVIEW_DOCTOR,
+  API_USER_BAN,
 } from "./constant-api";
 
 export const adminApi = {
@@ -110,6 +111,19 @@ export const adminApi = {
       data: {
         schedule: schedule.map((s) => s.id),
       },
+    });
+  },
+
+  async deleteBand({
+    userId,
+  }: {
+    // workingId: string;
+    userId: string;
+    // date: string;
+  }): Promise<ResData> {
+    return await axios.post(API_USER_BAN, {
+      userId,
+      isBanded: false,
     });
   },
 };

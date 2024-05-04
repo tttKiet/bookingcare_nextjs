@@ -372,12 +372,13 @@ export function ManagerHealthExamSchedule({
         }}
         footer={false}
         body={
-          <BodyModalSchedule
-            obEditScheduleDoctor={obEditScheduleDoctor}
-            workingId={(isDoctor && workingIdDoctorLogined) || false}
-            clickCancel={toggleShowScheduleCreateOrUpdateModal}
-            handleSubmitForm={handleSubmitFormSchedule}
-          />
+          // <BodyModalSchedule
+          //   obEditScheduleDoctor={obEditScheduleDoctor}
+          //   workingId={(isDoctor && workingIdDoctorLogined) || false}
+          //   clickCancel={toggleShowScheduleCreateOrUpdateModal}
+          //   handleSubmitForm={handleSubmitFormSchedule}
+          // />
+          <div></div>
         }
         title={"Chỉnh sửa lịch"}
       />

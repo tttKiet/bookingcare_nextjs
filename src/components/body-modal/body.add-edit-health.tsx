@@ -199,26 +199,6 @@ export default function BodyModalHealth({
     }
   }, [obEditHealthFacility?.id, obEditHealthFacility]);
 
-  // useEffect(() => {
-  //   reset({
-  //     name: obEditHealthFacility?.name || "",
-  //     address: obEditHealthFacility?.address || "",
-  //     phone: obEditHealthFacility?.phone || "",
-  //     email: obEditHealthFacility?.email || "",
-  //     typeHealthFacilityId: obEditHealthFacility?.typeHealthFacilityId || "",
-  //     files:
-  //       obEditHealthFacility?.images.map((file, index) => {
-  //         return {
-  //           uid: `${file.split("/").pop()?.toString()}`,
-  //           name: "image.png",
-  //           status: "done",
-  //           url: file,
-  //           type: "image/jpeg",
-  //         };
-  //       }) || [],
-  //   });
-  // }, [obEditHealthFacility?.id, obEditHealthFacility]);
-
   async function handleSubmitLocal({
     name,
     email,
@@ -371,11 +351,11 @@ export default function BodyModalHealth({
         <div>
           <h3 className={`mb-4 ${headingClass}`}>Hình ảnh</h3>
 
-          <div className="grid md:grid-cols-3 gap-3 sm:grid-cols-1">
+          <div className="">
             <InputUploadField
               resetFiles={handleResetFiles}
               fileExisted={obEditHealthFacility?.images || null}
-              col={2}
+              // col={2}
               control={control}
               label="Ảnh"
               name="files"

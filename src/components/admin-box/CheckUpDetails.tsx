@@ -10,7 +10,7 @@ import DetailsTabCheckUp from "../check-up/DetailsTabCheckUp";
 import dynamic from "next/dynamic";
 import { LoadingPage } from "../spinners";
 import MedicalRecord from "../check-up/MedicalRecord";
-
+import PatientProfileSlot from "../check-up/PatientProfileSlot";
 export const InfoCheckUpContext = createContext<{ bookingId: string }>({
   bookingId: "",
 });
@@ -22,13 +22,13 @@ const InforBookingSlot = dynamic(() => import("../check-up/InforBookingSlot"), {
   loading: () => <LoadingPage />,
   ssr: false,
 });
-const PatientProfileSlot = dynamic(
-  () => import("../check-up/PatientProfileSlot"),
-  {
-    loading: () => <LoadingPage />,
-    ssr: false,
-  }
-);
+// const PatientProfileSlot = dynamic(
+//   () => import("../check-up/PatientProfileSlot"),
+//   {
+//     loading: () => <LoadingPage />,
+//     ssr: false,
+//   }
+// );
 
 export default function CheckUpDetails({ bookingId }: ICheckUpDetailsProps) {
   const [inforBooking, setInforBooking] = useState<Booking | undefined>();

@@ -77,7 +77,7 @@ export function BodyModalClinicRoom({
         </div>
       </div>
 
-      <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
+      <div className="flex items-center gap-2 justify-end mt-2 pb-4 pt-[20px]">
         <Button color="danger" variant="light" onClick={clickCancel}>
           Hủy
         </Button>

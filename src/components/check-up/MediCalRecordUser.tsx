@@ -34,7 +34,7 @@ import {
 import { ActionBox } from "../box";
 import { EyeActionBox } from "../box/EyeActionBox.";
 import { ModalFadeInNextUi } from "../modal/ModalFadeInNextUi";
-import { FaCode, FaRegFilePdf } from "react-icons/fa";
+import { FaCode, FaRegFilePdf } from "react-icons/fa6";
 import { CiCalendarDate, CiUser } from "react-icons/ci";
 import { TbClockHour2 } from "react-icons/tb";
 import { MdOutlineDescription } from "react-icons/md";
@@ -98,10 +98,6 @@ export default function MediCalRecordUser(props: IMediCalRecordUserProps) {
 
   const [BodyPdf, setBodyDdf] = useState<JSX.Element>(<div></div>);
   function clickPdf(type: "service" | "cedicine") {
-    console.log(
-      "dataPrescriptionDetail  -- - -dataPrescriptionDetail",
-      dataPrescriptionDetail
-    );
     if (type == "service") {
       const Body = (
         <PDFViewer
@@ -137,18 +133,26 @@ export default function MediCalRecordUser(props: IMediCalRecordUserProps) {
 
   // class
   const boxClass = "md:col-span-3 grid-cols-12 ";
-  const labelClass = "w-full text-black font-medium";
+  const labelClass =
+    "my-2 mb-4 text-black text-sm font-bold flex items-center gap-2 justify-between";
   const descClass = "text-gray-600 font-medium";
   const footerClass = "mt-4 flex item-center justify-end";
   const labelHeading = "gr-title-admin mb-4 flex items-center gap-2";
   return (
     <div className="box-white">
+      {responseMedicalRecord?.rows.length === 0 && (
+        <div className="my-6 text-center text-gray-600 text-lg font-medium">
+          Bệnh nhân đi khám lần đầu!
+        </div>
+      )}
       <ModalFadeInNextUi
         backdrop="opaque"
         id="view"
         size="5xl"
         show={isOpen}
-        title="Xem bệnh án ngày"
+        title={`Xem bệnh án ngày ${moment(
+          healthRecordView?.Booking?.HealthExaminationSchedule?.date
+        ).format("L")}`}
         toggle={onClose}
         showBtnCancel={false}
         contentBtnSubmit="Thoát"
@@ -156,9 +160,7 @@ export default function MediCalRecordUser(props: IMediCalRecordUserProps) {
         body={
           <div>
             <div>
-              <h3 className="my-2 mb-4 text-black text-sm font-medium flex items-center gap-2 justify-between">
-                THÔNG TIN Bác sĩ VÀ NƠI KHÁM
-              </h3>
+              <h3 className={labelClass}>THÔNG TIN BÁC SĨ VÀ NƠI KHÁM BỆNH</h3>
               <div className="grid grid-cols-12 gap-4">
                 <div className={`md:col-span-4 grid-cols-12 `}>
                   <Input
@@ -271,9 +273,9 @@ export default function MediCalRecordUser(props: IMediCalRecordUserProps) {
               </div>
             </div>
             <Divider className="my-12" />
-            <div>
+            <div className="mb-12">
               <h3
-                className="my-2 mb-4 text-black text-sm font-medium
+                className="my-2 mb-4 text-black text-sm font-bold
                flex items-center gap-2"
               >
                 CÁC DỊCH VỤ ĐÃ DÙNG
@@ -282,7 +284,7 @@ export default function MediCalRecordUser(props: IMediCalRecordUserProps) {
                     onClick={() => clickPdf("service")}
                     className="cursor-pointer hover:opacity-90 transition-all duration-150 hover:text-gray-600"
                   >
-                    <FaRegFilePdf className="w-5 h-5" />
+                    <FaRegFilePdf className="w-5 h-5" color="#d86d0f" />
                   </span>
                 )}
               </h3>
@@ -299,7 +301,7 @@ export default function MediCalRecordUser(props: IMediCalRecordUserProps) {
             </div>
             <div>
               <h3
-                className="my-2 mb-4 text-black text-sm font-medium
+                className="my-2 mb-4 text-black text-sm font-bold
                flex items-center gap-2"
               >
                 TOA THUỐC
@@ -308,7 +310,7 @@ export default function MediCalRecordUser(props: IMediCalRecordUserProps) {
                     onClick={() => clickPdf("cedicine")}
                     className="cursor-pointer hover:opacity-90 transition-all duration-150 hover:text-gray-600"
                   >
-                    <FaRegFilePdf className="w-5 h-5" />
+                    <FaRegFilePdf className="w-5 h-5" color="#d86d0f" />
                   </span>
                 )}
               </h3>
@@ -362,7 +364,7 @@ export default function MediCalRecordUser(props: IMediCalRecordUserProps) {
                 </div>
 
                 <div className="text-[rgb(60,66,83)]/90">
-                  Chuân đoán: {r?.diagnosis}
+                  Chuẩn đoán: {r?.diagnosis}
                 </div>
                 <div className="text-[rgb(60,66,83)]/90">
                   Bác sĩ khám:{" "}

@@ -1,12 +1,10 @@
 "use client";
 import { API_DOCTOR_SCHEDULE_HEALTH_EXAM } from "@/api-services/constant-api";
-import {
-  ScheduleAvailable,
-  ScheduleFilterDoctor
-} from "@/models";
+import { ScheduleAvailable, ScheduleFilterDoctor } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { sortTimeSlots } from "@/untils/common";
-import { Button, Chip, Divider } from "@nextui-org/react";
+import { Button } from "@nextui-org/button";
+import { Chip, Divider } from "@nextui-org/react";
 import { Tabs } from "antd";
 import { motion } from "framer-motion";
 import moment from "moment";
@@ -40,7 +38,7 @@ export function ChooseSchedule({
   }
   const { data: schedulesFilterDoctor } = useSWR<
     ResDataPaginations<ScheduleFilterDoctor>
-  >(`${API_DOCTOR_SCHEDULE_HEALTH_EXAM}?staffId=${staffId}`, {
+  >(`${API_DOCTOR_SCHEDULE_HEALTH_EXAM}?staffId=${staffId}&type=current`, {
     dedupingInterval: 30000,
   });
 
@@ -62,7 +60,7 @@ export function ChooseSchedule({
               label: (
                 <div className="flex items-center justify-center gap-2 flex-col mb-3">
                   <span className="font-bold text-sm">
-                    {moment(sfd.date).format("dddd, DD/do")}
+                    {moment(sfd.date).format("dddd, Do/Mo")}
                   </span>
                   <span className="text-sm text-green-500">
                     +{sfd.data?.[0].schedules.length} khung giờ
@@ -137,6 +135,12 @@ export function ChooseSchedule({
                           </motion.div>
                         ))}
                       </ul>
+                      {sortTimeSlots(sfd?.data?.[0]?.schedules || []).Morning
+                        .length == 0 && (
+                        <div className="text-gray-600 font-medium">
+                          Lịch trống
+                        </div>
+                      )}
                     </div>
                     <div className="flex items-start gap-2 mt-8">
                       <div className="flex-shrink-0 whitespace-nowrap text-right">
@@ -200,6 +204,12 @@ export function ChooseSchedule({
                           </motion.div>
                         ))}
                       </ul>
+                      {sortTimeSlots(sfd?.data?.[0]?.schedules || []).Afternoon
+                        .length == 0 && (
+                        <div className="text-gray-600 font-medium">
+                          Lịch trống
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

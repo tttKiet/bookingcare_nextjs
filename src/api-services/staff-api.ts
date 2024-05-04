@@ -140,14 +140,21 @@ export const staffApi = {
     id,
     emailDestination,
     pdfs,
+    diagnosis,
+    note,
   }: {
     id: string;
     emailDestination: string;
     pdfs: any[];
+    diagnosis: string;
+    note: string;
   }): Promise<ResData> {
     var formData = new FormData();
     formData.append("id", id);
     formData.append("emailDestination", emailDestination);
+
+    formData.append("diagnosis", diagnosis);
+    formData.append("note", note);
 
     const files = pdfs.map((f, i) => {
       const url = URL.createObjectURL(f);

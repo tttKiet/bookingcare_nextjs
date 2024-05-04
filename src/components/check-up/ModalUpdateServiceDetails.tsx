@@ -1,6 +1,6 @@
 import { ServiceDetails } from "@/models";
+import { Button } from "@nextui-org/button";
 import {
-  Button,
   Modal,
   ModalBody,
   ModalContent,
@@ -40,7 +40,7 @@ export default function ModalUpdateServiceDetails({
               <ModalBody>
                 <Textarea
                   size="lg"
-                  label="Nhập kết quả..."
+                  label={<div className="text-base">Nhập kết quả...</div>}
                   value={value}
                   onChange={(e) => setValue(e.target.value)}
                 />

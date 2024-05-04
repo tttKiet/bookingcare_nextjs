@@ -103,7 +103,7 @@ export function BodyAdminHospitalService({
   }
 
   return (
-    <div className="pt-4 text-black">
+    <div className="py-6 pt-2 text-black">
       <ModalFadeInNextUi
         id="1"
         isLoading={isLoading}
@@ -132,9 +132,9 @@ export function BodyAdminHospitalService({
               <Image
                 isZoomed
                 alt="Album cover"
-                className="object-cover"
-                height={200}
+                height={190}
                 shadow="md"
+                className={"w-[190px] h-[190px] object-cover"}
                 src={viewer?.healthFacility?.images[0] || ""}
                 width="100%"
               />

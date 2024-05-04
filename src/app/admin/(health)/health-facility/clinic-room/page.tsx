@@ -13,15 +13,10 @@ export default function Room(props: IRoomProps) {
   const searchParams = useSearchParams();
   const tag = searchParams.get("tag");
   const tags = useMemo(
-    () => ["clinic-rooms", "manager-clinic-rooms", "manager-work-clinic-room"],
+    () => ["manager-clinic-rooms", "manager-work-clinic-room"],
     []
   );
   const items: TabsProps["items"] = [
-    {
-      key: "clinic-rooms",
-      label: <Link href="/admin/health-facility/clinic-room"> Phòng khám</Link>,
-      children: <ManagerClinicRoom />,
-    },
     {
       key: "manager-clinic-rooms",
       label: (
@@ -45,8 +40,8 @@ export default function Room(props: IRoomProps) {
   return (
     <div className="box-white">
       <Tabs
-        defaultActiveKey="clinic-rooms"
-        activeKey={tag && tags.includes(tag) ? tag : "clinic-rooms"}
+        defaultActiveKey="manager-clinic-rooms"
+        activeKey={tag && tags.includes(tag) ? tag : "manager-clinic-rooms"}
         items={items}
         onChange={onChange}
       />

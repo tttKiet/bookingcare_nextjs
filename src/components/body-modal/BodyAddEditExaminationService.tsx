@@ -85,17 +85,12 @@ export function BodyAddEditExaminationService({
           placeholder="Nhập mô tả cho dịch vụ"
         />
       </div>
-      <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
+      <div className="flex items-center gap-2 justify-end mt-2 pt-[20px] mb-4">
         <Button color="danger" variant="light" onClick={clickCancel}>
           Hủy
         </Button>
 
-        <Button
-          color={isValid ? "primary" : "default"}
-          disabled={!isValid}
-          isLoading={isSubmitting}
-          type="submit"
-        >
+        <Button color={"primary"} isLoading={isSubmitting} type="submit">
           {obEdit?.id ? "Lưu" : "Thêm"}
         </Button>
       </div>

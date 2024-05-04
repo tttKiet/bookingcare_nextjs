@@ -35,6 +35,7 @@ import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
 import { getColorChipCheckUp, getColorChipHR } from "@/untils/common";
 import { useAuth } from "@/hooks";
+import { IoCheckmarkDoneOutline } from "react-icons/io5";
 const { confirm } = Modal;
 
 type DataIndex = keyof Booking;
@@ -278,6 +279,7 @@ export function AppointmentSchedule() {
               <Chip
                 className="capitalize"
                 color={color}
+                radius="sm"
                 size="sm"
                 variant="flat"
               >
@@ -307,11 +309,21 @@ export function AppointmentSchedule() {
             );
           }
           const color = getColorChipHR(code?.key);
+          let StartContent;
+          if (color == "success") {
+            StartContent = (
+              <span className="mx-1">
+                <IoCheckmarkDoneOutline size={18} />
+              </span>
+            );
+          }
           return (
             <a>
               <Chip
                 className="capitalize"
                 color={color}
+                startContent={StartContent}
+                radius="sm"
                 size="sm"
                 variant="flat"
               >

@@ -25,10 +25,12 @@ export function useAuth(options?: Partial<SWRConfiguration>) {
     // revalidateOnMount: false,
     fallbackData: profileSlector,
     onSuccess(data, key, config) {
+      console.log("datadata", data);
       distpatch(
         loginStore({
           email: data.email,
           fullname: data.fullName,
+          phone: data?.phone,
           Role: data?.Role || null,
           address: data.address,
           gender: data.gender,

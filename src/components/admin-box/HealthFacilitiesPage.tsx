@@ -338,15 +338,15 @@ export function HealthFacilitiesPage(props: HealthFacilitiesBoxProps) {
         show={showModalAddHealth}
         title={
           obEditHealthFacility?.id
-            ? "Chỉnh sửa trang cơ sở y tế"
-            : "Taoj trang cơ sở y tế"
+            ? "Chỉnh sửa lời giới thiệu cơ sở y tế"
+            : "Tạo lời giới thiệu cơ sở y tế"
         }
         toggle={toggleShowModalAddHealthFacility}
         contentBtnSubmit="Thêm"
         footer={false}
       />
       <h3 className="gr-title-admin mb-3 flex items-center justify-between">
-        Trang chi tiết cơ sở y tế
+        Chi tiết lời giới thiệu cơ sở y tế
       </h3>
       <TableSortFilter
         options={{

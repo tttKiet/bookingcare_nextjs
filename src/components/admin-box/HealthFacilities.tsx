@@ -363,7 +363,6 @@ export function HealthFacilitiesBox(props: HealthFacilitiesBoxProps) {
     let isOk = false;
     const idEdit = data.id;
     let cb = null;
-    console.log("data", data);
     if (idEdit) {
       cb = healthFacilitiesApi.updateHealthFacility(data);
     } else {

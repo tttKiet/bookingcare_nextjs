@@ -38,13 +38,14 @@ import { ExclamationCircleFilled } from "@ant-design/icons";
 import { ActionGroup } from "../box";
 import { ActionBox } from "../box/action.box";
 import { BtnPlus } from "../button";
-import { SelectSearchField } from "../form";
+import { SelecSearchOptionProps, SelectSearchField } from "../form";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
 import { doctorApi, staffApi } from "@/api-services";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { TbNumber } from "react-icons/tb";
 const { confirm } = Modal;
 
 type DataIndex = keyof WorkRoom;
@@ -106,20 +107,15 @@ export function ManagerClinicWork() {
   const [selectHealthValue, setSelectHealthValue] = useState<string | null>(
     null
   );
-  const [searchHealthSelect, setSearchHealthSelect] = useState<string | null>(
-    ""
-  );
+  const [searchHealthSelect, setSearchHealthSelect] = useState<string>("");
 
   function handleSearchSelect(value: string): void {
     setSearchHealthSelect(value);
   }
 
   function handleChangeSelect(value: string): void {
-    const filter =
-      responseHealthFacilities?.rows.find(
-        (r: HealthFacility) => r.email == value
-      )?.id || "";
-    setSelectHealthValue(filter);
+    setSelectHealthValue(value);
+    mutateClinics();
   }
   const [maxMember, setMaxMember] = useState<number>(0);
   const fetcher: BareFetcher<ResDataPaginations<any>> = async ([url, token]) =>
@@ -157,6 +153,12 @@ export function ManagerClinicWork() {
   function handleChangeSelectClinic(value: string): void {
     setSelectClinicRoomNumber(Number.parseInt(value) || undefined);
   }
+
+  useEffect(() => {
+    setSelectClinicRoomNumber(
+      responseClinics?.rows?.[0]?.roomNumber || undefined
+    );
+  }, [responseClinics]);
 
   useEffect(() => {
     mutateClinics();
@@ -387,7 +389,7 @@ export function ManagerClinicWork() {
       [
         API_HEALTH_FACILITIES,
         {
-          searchNameOrEmail: searchHealthSelect,
+          name: searchHealthSelect,
         },
       ],
       fetcher,
@@ -397,28 +399,31 @@ export function ManagerClinicWork() {
       }
     );
 
-  const dataSearchClinic: SelectProps["options"] = responseClinics?.rows.map(
+  const dataSearchClinic: SelecSearchOptionProps[] = responseClinics?.rows.map(
     (clinic: ClinicRoom) => ({
       value: clinic.roomNumber.toString(),
-      label: <h3 className="text-cyan-600">{clinic.roomNumber}</h3>,
+      label: clinic.roomNumber,
+      description: (
+        <div className="text-gray-500">sức chứa: {clinic.capacity}</div>
+      ),
     })
   );
 
-  const dataSearch: SelectProps["options"] = responseHealthFacilities?.rows.map(
-    (healh: HealthFacility) => ({
-      value: healh.email,
-      label: (
+  const dataSearch: SelecSearchOptionProps[] =
+    responseHealthFacilities?.rows.map((healh: HealthFacility) => ({
+      value: healh.id,
+      startContent: (
+        <Image
+          className="rounded-full border-spacing-8 border  border-blue-400  object-cover w-[44px] h-[42px]"
+          alt="Health Facility"
+          width={44}
+          height={44}
+          src={healh?.images?.[0] || ""}
+        />
+      ),
+      description: (
         <div className="flex align-top gap-2">
-          <Image
-            className="rounded-full border-spacing-8 border  border-blue-400  object-cover w-[44px] h-[42px]"
-            alt="Health Facility"
-            width={44}
-            height={44}
-            src={healh?.images?.[0] || ""}
-          />
-
           <div className="flex-1">
-            <h4 className="text-sm p-y-[1px]  text-black">{healh.name}</h4>
             <div className="flex items-center justify-between gap-x-4">
               <span className="text-xs font-normal text-blue-600">
                 {healh.email}
@@ -430,8 +435,8 @@ export function ManagerClinicWork() {
           </div>
         </div>
       ),
-    })
-  );
+      label: healh.name,
+    }));
 
   useEffect(() => {
     handleChangeSelectClinic(responseClinics?.rows?.[0]?.roomNumber);
@@ -467,7 +472,7 @@ export function ManagerClinicWork() {
               <SelectSearchField
                 title="Tìm kiếm cơ sở y tế"
                 style={{ minWidth: 200, width: "100%" }}
-                placeholder="Nhập email cơ sơ y tế"
+                placeholder="Nhập tên cơ sơ y tế"
                 data={dataSearch}
                 handleSearchSelect={handleSearchSelect}
                 handleChangeSelect={handleChangeSelect}
@@ -477,13 +482,15 @@ export function ManagerClinicWork() {
             </div>
           </div>
           {selectHealthValue && selectClinicRoomNumber && (
-            <div className="col-span-12 xl:col-span-6">
+            <div className="col-span-12 xl:col-span-3">
               <div className="flex items-end gap-2 ">
                 <SelectSearchField
+                  allowsEmptyCollection={false}
                   style={{ minWidth: 200, width: "100%" }}
                   allowClear={false}
                   placeholder="Phòng khám"
                   title="Phòng khám"
+                  classLabel="text-blue-500 font-medium"
                   data={dataSearchClinic}
                   handleSearchSelect={handleSearchSelectClinic}
                   handleChangeSelect={handleChangeSelectClinic}
@@ -494,7 +501,7 @@ export function ManagerClinicWork() {
           )}
         </div>
         {selectHealthValue && selectClinicRoomNumber && (
-          <div className="mt-4">
+          <div className="mt-8 flex items-center gap-6">
             <div className="">
               <Badge count={maxMember}>
                 <h3 className="mb-2 px-6 py-2 outline-dashed outline-1 outline-blue-500 rounded-md">
@@ -502,7 +509,7 @@ export function ManagerClinicWork() {
                 </h3>
               </Badge>
             </div>
-            <div className="mt-2">
+            <div className="">
               <Badge
                 color="blue"
                 count={responseWorkRooms?.currentParticipate?.toString() || "0"}

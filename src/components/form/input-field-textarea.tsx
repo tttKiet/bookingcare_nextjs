@@ -36,7 +36,7 @@ export function InputTextareaField({
             </>
           )
         }
-        placeholder={placeholder || `Nhập ${label?.toLocaleLowerCase()} ...`}
+        placeholder={placeholder || `Nhập ...`}
         ref={ref}
         name={name}
         spellCheck={false}

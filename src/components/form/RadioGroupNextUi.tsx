@@ -31,6 +31,7 @@ export function RadioGroupNextUi({
       <RadioGroup
         color={error?.message ? "danger" : isSubmitted ? "primary" : "default"}
         ref={ref}
+        defaultValue={value}
         onChange={onChange}
         size="md"
         label={

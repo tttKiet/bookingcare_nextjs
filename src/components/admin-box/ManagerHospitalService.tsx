@@ -260,20 +260,26 @@ export function ManagerHospitalService() {
       },
       {
         title: "Số dịch vụ đang tạm ngưng",
-        dataIndex: "serviceCount",
         key: "serviceCount",
-        render: (text: number) => (
-          <a>
-            <Chip
-              className="capitalize"
-              color={"primary"}
-              size="sm"
-              variant="flat"
-            >
-              {text} dịch vụ
-            </Chip>
-          </a>
-        ),
+        render: (text) => {
+          const count = text.service.filter(
+            (m: HospitalService) => !m.isAcctive
+          ).length;
+
+          return (
+            <a>
+              <Chip
+                className="capitalize"
+                color={"danger"}
+                size="sm"
+                variant="flat"
+                radius="sm"
+              >
+                {count} dịch vụ
+              </Chip>
+            </a>
+          );
+        },
       },
       {
         title: "Số dịch vụ đang hoạt động",
@@ -286,10 +292,11 @@ export function ManagerHospitalService() {
           return (
             <a>
               <Chip
+                radius="sm"
                 className="capitalize"
-                color={"success"}
-                size="sm"
+                color={"primary"}
                 variant="flat"
+                size="sm"
               >
                 {count} dịch vụ
               </Chip>
@@ -334,7 +341,6 @@ export function ManagerHospitalService() {
         toggle={() => {
           toggleShowModalDetails();
         }}
-        config={{ zIndex: 40 }}
         width={800}
         footer={false}
         body={<BodyAdminHospitalService refresh={refresh} viewer={viewer} />}

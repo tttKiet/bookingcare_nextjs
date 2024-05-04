@@ -25,6 +25,7 @@ import { Image } from "@nextui-org/image";
 import { Input } from "@nextui-org/react";
 import { SearchIcon } from "@/components/icons/SearchIcon";
 import IconBgGray from "@/components/common/IconBgGray";
+import { GrUserAdd } from "react-icons/gr";
 const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
@@ -241,7 +242,21 @@ export default function RootLayout({
           },
         ],
       },
-
+      {
+        key: "/admin/patient",
+        label: (
+          <Link className={classItemMenu} href="/admin/patient">
+            Bệnh nhân
+          </Link>
+        ),
+        get icon() {
+          return (
+            <IconBgGray active={this.key == url}>
+              <GrUserAdd size={20} />
+            </IconBgGray>
+          );
+        },
+      },
       {
         key: "cedicine",
         label: (

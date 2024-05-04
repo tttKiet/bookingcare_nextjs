@@ -1,32 +1,23 @@
 "use client";
 
-import { staffApi } from "@/api-services";
 import {
-  API_ACCOUNT_STAFF_DOCTOR,
   API_ACCOUNT_STAFF_DOCTOR_WORKING,
-  API_DOCTOR_SCHEDULE_HEALTH_EXAM,
+  API_DOCTOR_SCHEDULE_ALL,
 } from "@/api-services/constant-api";
 import { ExclamationCircleFilled } from "@ant-design/icons";
-import {
-  Button,
-  DatePicker,
-  Input,
-  InputRef,
-  Modal,
-  SelectProps,
-  Space,
-} from "antd";
+import { Button, Input, InputRef, Modal, Space } from "antd";
 import axios from "../../axios";
 
+import { adminApi, staffApi } from "@/api-services";
 import {
+  Code,
   HealthExaminationSchedule,
-  ResAdminHealthExaminationSchedule,
-  Staff,
-  StaffAndSchedule,
+  HealthExaminationScheduleResAll,
   Working,
 } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
+import { Chip, useDisclosure } from "@nextui-org/react";
 import type {
   ColumnType,
   ColumnsType,
@@ -34,58 +25,73 @@ import type {
   TableProps,
 } from "antd/es/table";
 import { FilterConfirmProps } from "antd/es/table/interface";
-import { Dayjs } from "dayjs";
+import get from "lodash.get";
+import isequal from "lodash.isequal";
 import moment from "moment";
+import { useMemo, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
-import { RxAvatar } from "react-icons/rx";
 import useSWR, { BareFetcher } from "swr";
-import { BodyModalSchedule, ReqSchedule } from "../body-modal";
-import { ActionGroup } from "../box";
-import { ActionBox } from "../box/action.box";
+import { ActionBox, ActionGroup } from "../box";
 import { BtnPlus } from "../button";
-import { SelectSearchField } from "../form";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
-import { useAuth, userRandomBgLinearGradient } from "@/hooks";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Chip } from "@nextui-org/react";
-import { EyeActionBox } from "../box/EyeActionBox.";
-import BodyViewSchedule from "../body-modal/BodyViewSchedule";
+import ListDotDotDotTimeCode from "./ListDotDotDotTimeCode";
+import { BodyAddEditSchedule } from "../body-modal/BodyAddEditSchedule";
+import { BodyModalSchedule, ReqSchedule } from "../body-modal";
+import { DatePicker } from "@nextui-org/date-picker";
+import { DateValue } from "@nextui-org/calendar";
+import { now, getLocalTimeZone, parseDate } from "@internationalized/date";
+import { XCircleIcon } from "@heroicons/react/24/outline";
+import { HiX } from "react-icons/hi";
+import { useAuth } from "@/hooks";
 const { confirm } = Modal;
 
-type DataIndex = keyof HealthExaminationSchedule;
-interface MangerHealthExaminationScheduleForDoctorProps {}
+type DataIndex = keyof HealthExaminationScheduleResAll;
 
-export function MangerHealthExaminationScheduleForDoctor({}: MangerHealthExaminationScheduleForDoctorProps) {
-  // State components
-  const [showModalDetails, setShowModalDetails] = useState<boolean>(false);
-  const [scheduleViewer, setScheduleViewer] =
-    useState<ResAdminHealthExaminationSchedule | null>(null);
-  const [workingIdDoctorLogined, setWorkingIdDoctorLogined] =
-    useState<string>("");
-
+export function MangerHealthExaminationScheduleForDoctor() {
   const { profile } = useAuth();
+  // state
+  let [date, setDate] = useState<DateValue | undefined>();
+  const {
+    isOpen: isOpentAdd,
+    onClose: onCloseAdd,
+    onOpen: onOpenAdd,
+  } = useDisclosure();
 
-  const [showScheduleCreateOrUpdateModal, setShowScheduleCreateOrUpdateModal] =
-    useState(false);
-  const toggleShowScheduleCreateOrUpdateModal = () => {
-    setShowScheduleCreateOrUpdateModal((s) => {
-      return !s;
-    });
-  };
-  const [dateSelect, setDateSelect] = useState<Dayjs | null>(null);
-  const onChangeDate = (date: Dayjs | null) => {
-    setDateSelect(date);
-  };
+  const {
+    isOpen: isOpentEdit,
+    onClose: onCloseEdit,
+    onOpen: onOpenEdit,
+  } = useDisclosure();
 
-  const toggleShowModalDetails = () => {
-    setShowModalDetails((s) => {
-      return !s;
-    });
-  };
+  const [obEdit, setObEdit] = useState<
+    HealthExaminationScheduleResAll | undefined
+  >();
+  // Table
+  const [queryParams, setQueryParams] = useState<
+    Partial<HealthExaminationScheduleResAll>
+  >({});
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
+  const [tableParams, setTableParams] = useState<{
+    pagination: TablePaginationConfig;
+  }>({
+    pagination: {
+      current: 1,
+      pageSize: 6,
+    },
+  });
 
-  // Search health facilities state
+  const fetcher: BareFetcher<ResDataPaginations<any>> = async ([url, token]) =>
+    (
+      await axios.get(url, {
+        params: {
+          ...token,
+        },
+      })
+    ).data;
 
   const { data: doctor, isLoading: loadingLoadDoctorWorking } = useSWR<
     ResDataPaginations<Working>
@@ -98,59 +104,24 @@ export function MangerHealthExaminationScheduleForDoctor({}: MangerHealthExamina
     }
   );
 
-  async function handleSubmitFormSchedule(
-    data: Partial<ReqSchedule>
-  ): Promise<boolean> {
-    const api = staffApi.createOrUpdateSchedule({
-      ...data,
-      timeCode: data.timeCodeArray,
-    });
-    const isOk = await toastMsgFromPromise(api);
-    if (isOk) {
-      mutateSchedules();
-    }
-    return isOk;
-  }
-  const handleClickView = (record: ResAdminHealthExaminationSchedule) => {
-    setScheduleViewer(record);
-    toggleShowModalDetails();
-  };
-  // useEffect(() => {
-  //   if (doctor?.rows?.[0]?.id) setWorkingIdDoctorLogined(doctor?.rows?.[0]?.id);
-  // }, [doctor?.rows?.[0]?.id, doctor]);
-  // Table
-  const [searchText, setSearchText] = useState("");
-  const [searchedColumn, setSearchedColumn] = useState("");
-  const searchInput = useRef<InputRef>(null);
-  const [tableParams, setTableParams] = useState<{
-    pagination: TablePaginationConfig;
-  }>({
-    pagination: {
-      current: 1,
-      pageSize: 6,
-    },
-  });
-  const fetcher: BareFetcher<
-    ResDataPaginations<ResAdminHealthExaminationSchedule>
-  > = async ([url, token]) =>
-    (
-      await axios.get(url, {
-        params: {
-          ...token,
-        },
-      })
-    ).data;
+  const workingDoctor: Working | undefined = useMemo(() => {
+    return doctor?.rows?.[0];
+  }, [doctor]);
+
   const {
-    data: responseSchedules,
-    mutate: mutateSchedules,
+    mutate: mutateSchedule,
+    data: responseSchedule,
     error,
-    isLoading,
-  } = useSWR<ResDataPaginations<ResAdminHealthExaminationSchedule>>(
+    isLoading: isLoadingFetching,
+  } = useSWR<ResDataPaginations<HealthExaminationScheduleResAll>>(
     [
-      API_DOCTOR_SCHEDULE_HEALTH_EXAM,
+      API_DOCTOR_SCHEDULE_ALL,
       {
-        staffId: profile?.id,
-        date: dateSelect,
+        ...queryParams,
+        workingId: workingDoctor?.id,
+        date:
+          moment(new Date(date?.toString() || "")).format("MM[/]DD[/]YYYY") ||
+          "",
         limit: tableParams.pagination.pageSize, // 4 page 2 => 3, 4 page 6 => 21
         offset:
           ((tableParams.pagination.current || 0) - 1) *
@@ -163,6 +134,20 @@ export function MangerHealthExaminationScheduleForDoctor({}: MangerHealthExamina
       dedupingInterval: 5000,
     }
   );
+
+  function handleClickEditCedicine(e: HealthExaminationScheduleResAll): void {
+    setObEdit(e);
+    onOpenEdit();
+  }
+
+  async function handleSubmitForm(data: any): Promise<boolean> {
+    const api = adminApi.createSchedule(data);
+    const isOk = await toastMsgFromPromise(api);
+    if (isOk) {
+      mutateSchedule();
+    }
+    return isOk;
+  }
 
   const handleReset = (clearFilters: () => void) => {
     clearFilters();
@@ -178,16 +163,58 @@ export function MangerHealthExaminationScheduleForDoctor({}: MangerHealthExamina
     confirm();
   };
 
-  const handleTableChange: TableProps<ResAdminHealthExaminationSchedule>["onChange"] =
+  const handleTableChange: TableProps<HealthExaminationScheduleResAll>["onChange"] =
     (pagination, filters) => {
       setTableParams({
         pagination,
       });
+      setQueryParams((prev) => ({
+        ...prev,
+        ...filters,
+      }));
     };
+  function handleClickDeleteCedicine(
+    record: HealthExaminationScheduleResAll
+  ): void {
+    confirm({
+      title: `Bạn có muốn xóa lịch ngày: "${record?.date}" của bạn ?`,
+      icon: <ExclamationCircleFilled />,
+      content: `Thao tác này sẽ xóa tất cả dữ liệu về lịch này và không thể khôi phục`,
+      async onOk() {
+        // const api = adminApi.deleteSchedule({
+        //   workingId: record?.working?.id || "",
+        //   schedule: record?.schedule || [],
+        //   date: record?.date.toString() || "",
+        // });
+        const api = adminApi.deleteSchedule({
+          schedule: record?.schedule || [],
+        });
+        const isOk = await toastMsgFromPromise(api);
+        mutateSchedule();
+        return isOk;
+      },
+      onCancel() {},
+    });
+  }
+
+  // edit
+  async function handleSubmitFormScheduleEdit(
+    data: Partial<ReqSchedule>
+  ): Promise<boolean> {
+    const api = staffApi.createOrUpdateSchedule({
+      ...data,
+      timeCode: data.timeCodeArray,
+    });
+    const isOk = await toastMsgFromPromise(api);
+    if (isOk) {
+      mutateSchedule();
+    }
+    return isOk;
+  }
 
   const getColumnSearchProps = (
-    dataIndex: DataIndex
-  ): ColumnType<ResAdminHealthExaminationSchedule | any> => ({
+    dataIndex: DataIndex | any
+  ): ColumnType<HealthExaminationScheduleResAll> => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -254,17 +281,17 @@ export function MangerHealthExaminationScheduleForDoctor({}: MangerHealthExamina
       <BsSearch style={{ color: filtered ? "#1677ff" : undefined }} />
     ),
     onFilter: (value, record) =>
-      record[dataIndex]
+      get(record, dataIndex)
         .toString()
         .toLowerCase()
-        .includes((value as string).toLowerCase()),
+        .includes(value.toString().toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100);
       }
     },
     render: (text) => {
-      return searchedColumn === dataIndex ? (
+      return isequal(searchedColumn, dataIndex) ? (
         <Highlighter
           highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
           searchWords={[searchText]}
@@ -276,141 +303,144 @@ export function MangerHealthExaminationScheduleForDoctor({}: MangerHealthExamina
       );
     },
   });
-
-  const [obEditScheduleDoctor, setBbEditScheduleDoctor] = useState<{
-    workingId: string;
-    staffId: string;
-    date: string | Object | Date | undefined | null;
-  } | null>(null);
-
-  function handleClickEditScheduleDoctor(
-    workingId: string,
-    date: string | Object | Date | undefined | null,
-    staffId: string
-  ) {
-    setBbEditScheduleDoctor(() => ({
-      date,
-      workingId,
-      staffId,
-    }));
-    toggleShowModalDetails();
-    toggleShowScheduleCreateOrUpdateModal();
-  }
-
-  const data = useMemo<Partial<ResAdminHealthExaminationSchedule>[]>(() => {
-    return responseSchedules?.rows.map(
-      (schedule: ResAdminHealthExaminationSchedule) => ({
-        ...schedule,
-        key: schedule.date,
+  const data = useMemo<HealthExaminationScheduleResAll[]>(() => {
+    return responseSchedule?.rows.map(
+      (data: HealthExaminationScheduleResAll) => ({
+        ...data,
+        key: data?.working?.createdAt + data?.date,
       })
     );
-  }, [responseSchedules]);
+  }, [responseSchedule]);
 
-  // Columns
-  const columns: ColumnsType<ResAdminHealthExaminationSchedule> =
-    useMemo(() => {
-      return [
-        {
-          title: "Ngày",
-          dataIndex: "date",
-          key: "date",
-          render: (text) => <a className="font-bold">{text}</a>,
-          width: "16%",
+  const columns: ColumnsType<HealthExaminationScheduleResAll> = useMemo(() => {
+    return [
+      {
+        title: "Bác sĩ",
+        dataIndex: ["working", "Staff", "fullName"],
+        key: "Staff",
+        render: (text) => <a>{text}</a>,
+      },
+      {
+        title: "Cơ sở y tế",
+        dataIndex: ["working", "HealthFacility", "name"],
+        key: "HealthFacility",
+        render: (text) => <a>{text}</a>,
+      },
+      {
+        title: "Ngày khám",
+        dataIndex: "date",
+        key: "date",
+        render: (text) => <a>{moment(text).format("DD MMMM YYYY")} </a>,
+        // sorter: (a, b) => (moment(a.date).isAfter(moment(b.date)) ? 1 : -1),
+      },
+      {
+        title: "Số khung giờ",
+        dataIndex: "schedule",
+        key: "schedule",
+        render: (h: HealthExaminationSchedule[]) => (
+          <a>
+            <ListDotDotDotTimeCode timeCodeArray={h} />
+          </a>
+        ),
+      },
+      {
+        title: "Hành động",
+        key: "action",
+        render: (_, record) => {
+          return (
+            <ActionGroup className="justify-start">
+              <ActionBox
+                type="edit"
+                onClick={() => handleClickEditCedicine(record)}
+              />
+              <ActionBox
+                type="delete"
+                onClick={() => handleClickDeleteCedicine(record)}
+              />
+            </ActionGroup>
+          );
         },
-        {
-          title: "Tổng số khung giờ khám",
-          dataIndex: "data",
-          key: "data",
-          render: (text: StaffAndSchedule[]) => (
-            <a>
-              <Chip color="primary" variant="flat">
-                +{text.reduce((init, t) => t.schedules.length + init, 0)} khung
-                giờ
-              </Chip>
-            </a>
-          ),
-        },
-        {
-          title: "Hành động",
-          key: "action",
-          render: (_, record) => {
-            return (
-              <ActionGroup className="justify-start">
-                <EyeActionBox
-                  onClick={() => {
-                    handleClickView(record);
-                  }}
-                />
-              </ActionGroup>
-            );
-          },
-        },
-      ];
-    }, [getColumnSearchProps]);
+        width: "150px",
+      },
+    ];
+  }, [getColumnSearchProps]);
 
   return (
     <div className="">
       <ModalPositionHere
         width={620}
-        show={showScheduleCreateOrUpdateModal}
-        toggle={() => {
-          toggleShowScheduleCreateOrUpdateModal();
-        }}
+        show={isOpentEdit}
+        toggle={onCloseEdit}
         footer={false}
         body={
           <BodyModalSchedule
-            loading={loadingLoadDoctorWorking}
-            auth="doctor"
-            obEditScheduleDoctor={obEditScheduleDoctor}
-            workingId={doctor?.rows?.[0]?.id}
-            clickCancel={toggleShowScheduleCreateOrUpdateModal}
-            handleSubmitForm={handleSubmitFormSchedule}
+            obEdit={obEdit}
+            clickCancel={onCloseEdit}
+            handleSubmitForm={handleSubmitFormScheduleEdit}
           />
         }
         title={"Chỉnh sửa lịch"}
       />
-
       <ModalPositionHere
-        show={showModalDetails}
-        backdrop="blur"
-        toggle={() => {
-          toggleShowModalDetails();
-        }}
-        width={800}
+        show={isOpentAdd}
+        toggle={onCloseAdd}
+        size="2xl"
         footer={false}
         body={
-          <BodyViewSchedule
-            date={scheduleViewer?.date || null}
-            viewData={scheduleViewer}
-            handleClickEdit={handleClickEditScheduleDoctor}
+          <BodyAddEditSchedule
+            working={workingDoctor}
+            clickCancel={onCloseAdd}
+            handleSubmitForm={handleSubmitForm}
           />
         }
-        title={`Lịch khám bệnh ngày ${scheduleViewer?.date}`}
+        title={"Tạo lịch hẹn"}
       />
-      <h3 className="gr-title-admin flex items-center justify-between  mb-3">
-        <div>Lịch khám bệnh - {profile?.fullName}</div>
-
-        <div className="flex items-center justify-end gap-3">
+      <h3 className="gr-title-admin flex items-start justify-between  mb-4">
+        Danh sách lịch hẹn
+        <div className="flex items-center gap-3 flex-shrink-0">
           <DatePicker
-            bordered={true}
-            value={dateSelect}
-            onChange={onChangeDate}
-            placement="bottomLeft"
+            labelPlacement="outside-left"
+            label="Tìm kiếm ngày khám"
+            size="md"
+            value={date || null}
+            startContent={
+              date && (
+                <span
+                  className="p-2 cursor-pointer hover:opacity-90"
+                  onClick={() => setDate(undefined)}
+                >
+                  <HiX size={18} />
+                </span>
+              )
+            }
+            variant="bordered"
+            onChange={(e) => {
+              setTableParams((v) => {
+                return {
+                  pagination: {
+                    current: 1,
+                    pageSize: 6,
+                  },
+                };
+              });
+              setDate(e);
+            }}
+            classNames={{ label: "text-left" }}
           />
-
           <BtnPlus
+            title="Tạo lịch hẹn"
             onClick={() => {
-              setBbEditScheduleDoctor(null);
-              toggleShowScheduleCreateOrUpdateModal();
+              onOpenAdd();
             }}
           />
         </div>
       </h3>
+
       <TableSortFilter
         options={{
-          loading: isLoading,
+          loading: isLoadingFetching,
           pagination: {
-            total: responseSchedules?.count,
+            total: responseSchedule?.count,
             pageSize: tableParams.pagination.pageSize,
             showSizeChanger: true,
             pageSizeOptions: ["3", "6", "12", "24", "50"],

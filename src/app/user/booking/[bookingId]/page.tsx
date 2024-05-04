@@ -1,13 +1,16 @@
 "use client";
 
+import { staffApi } from "@/api-services";
 import { API_BOOKING } from "@/api-services/constant-api";
 import { MethodPayment } from "@/components/common/step-boking/PaymentInformation";
+import { ModalFadeInNextUi } from "@/components/modal/ModalFadeInNextUi";
 import { useGetAddress } from "@/hooks/use-get-address-from-code";
 import { BookingForUser } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { getColorChipCheckUp } from "@/untils/common";
-import { Chip, Divider, User } from "@nextui-org/react";
-import { Button } from "antd";
+import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
+import { Button } from "@nextui-org/button";
+import { Chip, Divider, useDisclosure, User } from "@nextui-org/react";
 import moment from "moment";
 import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
@@ -18,6 +21,10 @@ export default function BookingUserDetail({
 }: {
   params: { bookingId: string };
 }) {
+  // state
+  const { isOpen, onClose, onOpen } = useDisclosure();
+
+  // fetch
   const { data: data, mutate } = useSWR<ResDataPaginations<BookingForUser>>(
     `${API_BOOKING}?bookingId=${params.bookingId}`,
     {
@@ -26,6 +33,18 @@ export default function BookingUserDetail({
     }
   );
   const [address, setAddress] = useState<string>("");
+
+  async function onCancelSchedule() {
+    const api = staffApi.editCodeBooking({
+      status: "CU4",
+      id: params.bookingId,
+    });
+    const res = await toastMsgFromPromise(api);
+    if (res.statusCode === 200 || res.statusCode === 0) {
+      mutate();
+      onClose();
+    }
+  }
 
   useEffect(() => {
     useGetAddress({
@@ -51,10 +70,12 @@ export default function BookingUserDetail({
   const contentClass = "text-black font-medium";
 
   return (
-    <div className="min-h-screen flex justify-center py-8  ">
+    <div className="min-h-screen flex justify-center py-8  bg-[#f5f5f5]">
       <div className="container">
-        <div className="box-white">
-          <h5 className="text-xl mb-6">THÔNG TIN LỊCH HẸN</h5>
+        <div className="box-white shadow-lg border">
+          <h5 className="text-xl mb-6 font-medium bg-blue-300/20 backdrop-blur-sm p-3 text-center rounded-md">
+            THÔNG TIN LỊCH HẸN
+          </h5>
           <div className="grid grid-cols-12 gap-8">
             <div className="col-span-12 md:col-span-5 flex justify-between items-start gap-8">
               <div className="my-6">
@@ -87,6 +108,19 @@ export default function BookingUserDetail({
                 <div className={wrapClass}>
                   <div className={labelClass}>Địa chỉ liên hệ</div>
                   <div className={contentClass}>{address}</div>
+                </div>
+
+                <h5 className="my-2 text-sm font-bold">Hành động</h5>
+
+                <div className={wrapClass}>
+                  <Button
+                    size="sm"
+                    variant="flat"
+                    color="danger"
+                    onPress={onOpen}
+                  >
+                    Hủy lịch
+                  </Button>
                 </div>
               </div>
               <Divider orientation="vertical" className="h-[200px]" />
@@ -122,7 +156,7 @@ export default function BookingUserDetail({
                   <div className={wrapClass}>
                     <div className={labelClass}>Ngày khám</div>
                     <div className={contentClass}>
-                      <Chip color="secondary" variant="flat">
+                      <Chip color="warning" variant="flat" radius="sm">
                         {
                           data?.rows?.[0]?.HealthExaminationSchedule.TimeCode
                             .value
@@ -204,9 +238,9 @@ export default function BookingUserDetail({
                 <Divider />
                 <div className="my-6">
                   <div className={wrapClass}>
-                    <div className={labelClass}>Trạng thái</div>
+                    <div className={`${labelClass} font-bold`}>Trạng thái</div>
                     <div className={contentClass}>
-                      <Chip color={colorSelected} variant="flat">
+                      <Chip color={colorSelected} variant="flat" radius="sm">
                         {data?.rows?.[0]?.Code.value}
                       </Chip>
                     </div>
@@ -217,6 +251,23 @@ export default function BookingUserDetail({
           </div>
         </div>
       </div>
+
+      <>
+        <ModalFadeInNextUi
+          show={isOpen}
+          toggle={onClose}
+          body={
+            <div>
+              Nếu hủy lịch quá nhiều lần bạn có thể sẽ bị khóa tài khoản?
+            </div>
+          }
+          id=""
+          handleSubmit={onCancelSchedule}
+          contentBtnCancel="Trở lại"
+          contentBtnSubmit="Đồng ý"
+          title="Bạn chắc chắn hủy cuộn hẹn này?"
+        />
+      </>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/hooks";
 import {
   Avatar,
   Button,
@@ -9,6 +10,10 @@ import {
   DropdownSection,
   DropdownTrigger,
 } from "@nextui-org/react";
+import { useMemo } from "react";
+import UserAvatar from "../../assets/images/user/user-avatar.jpg";
+import StaffAvatar from "../../assets/images/staff/staff.jpg";
+import DoctorAvatar from "../../assets/images/doctor/doctor_avatar.jpg";
 export interface MenuDropdownProps {
   title: string;
   icon?: React.ReactNode;
@@ -18,16 +23,36 @@ export interface MenuDropdownProps {
 }
 
 export default function MenuDropdown({ title, items }: MenuDropdownProps) {
+  const { profile, logout } = useAuth();
+  const ImageProfile = useMemo(() => {
+    switch (profile?.Role?.keyType) {
+      case "doctor": {
+        return (
+          <Avatar isBordered size="md" color="primary" src={DoctorAvatar.src} />
+        );
+      }
+      case "hospital_manager": {
+        return (
+          <Avatar isBordered size="md" color="primary" src={StaffAvatar.src} />
+        );
+      }
+      case "admin": {
+        return (
+          <Avatar isBordered size="md" color="primary" src={StaffAvatar.src} />
+        );
+      }
+
+      default: {
+        return (
+          <Avatar isBordered size="md" color="primary" src={UserAvatar.src} />
+        );
+      }
+    }
+  }, [profile, profile?.Role?.keyType]);
+
   return (
     <Dropdown size="md" placement={"bottom-end"}>
-      <DropdownTrigger>
-        <Avatar
-          isBordered
-          size="md"
-          color="primary"
-          src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
-        />
-      </DropdownTrigger>
+      <DropdownTrigger>{ImageProfile}</DropdownTrigger>
       <DropdownMenu variant="flat" className="">
         {items
           .filter(

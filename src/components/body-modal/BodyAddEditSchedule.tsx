@@ -10,7 +10,7 @@ import { ResDataPaginations } from "@/types";
 import { CalendarDate, parseDate } from "@internationalized/date";
 import { Button } from "@nextui-org/button";
 import debounce from "lodash.debounce";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
 import { SelectControl } from "../form/SelectControl";
@@ -29,10 +29,11 @@ export interface AddressCodeOption {
 }
 
 export interface BodyAddEditScheduleProps {
-  handleSubmitForm: (data: Partial<Patient>) => Promise<boolean>;
+  handleSubmitForm: (data: any) => Promise<boolean>;
   clickCancel: () => void;
   loading?: boolean;
-  obEdit?: Partial<Patient> | undefined;
+  obEdit?: any | undefined;
+  working?: Working;
 }
 
 export function BodyAddEditSchedule({
@@ -40,9 +41,31 @@ export function BodyAddEditSchedule({
   handleSubmitForm,
   loading,
   obEdit,
+  working,
 }: BodyAddEditScheduleProps) {
   // state
   const [optionTimeCode, setOptionTimeCode] = useState<"all" | "custom">("all");
+
+  const optionUnits = useMemo(() => {
+    return [
+      {
+        label: "Ngày",
+        value: "date",
+        desciption: "Tạo lịch theo ngày",
+      },
+      {
+        label: "Tuần",
+        value: "week",
+        desciption: "Tạo lịch theo tuần",
+      },
+      {
+        label: "Tháng",
+        value: "month",
+        desciption: "Tạo lịch theo tháng",
+      },
+    ];
+  }, []);
+
   const [optionUnit, setOptionUnit] = useState<"date" | "week" | "month">(
     "date"
   );
@@ -92,26 +115,6 @@ export function BodyAddEditSchedule({
     }));
   }, [doctors]);
 
-  const optionUnits = useMemo(() => {
-    return [
-      {
-        label: "Ngày",
-        value: "date",
-        desciption: "Tạo lịch theo ngày",
-      },
-      {
-        label: "Tuần",
-        value: "week",
-        desciption: "Tạo lịch theo tuần",
-      },
-      {
-        label: "Tháng",
-        value: "month",
-        desciption: "Tạo lịch theo tháng",
-      },
-    ];
-  }, []);
-
   async function handleSubmitLocal(data: any) {
     const isOk = await handleSubmitForm({
       id: obEdit?.id || undefined,
@@ -148,33 +151,41 @@ export function BodyAddEditSchedule({
   function err(data: any) {
     console.log("data", data);
   }
+
+  useEffect(() => {
+    setValue("workingId", working?.id || "");
+  }, [working]);
   return (
     <form onSubmit={handleSubmit(handleSubmitLocal, err)} className="">
       <div className="overflow-y-auto max-h-[500px] px-2 pr-4 mr-[-16px]">
         <div className="grid md:grid-cols-12 gap-6 sm:grid-cols-1">
-          <div className="col-span-12">
-            <h3 className={`mb-4 ${headingClass}`}>Bác sĩ tạo lịch</h3>
-            <div className="grid md:grid-cols-12  gap-6">
+          {!working && (
+            <>
               <div className="col-span-12">
-                <SelectControl
-                  variant="bordered"
-                  data={optionDoctors || []}
-                  handleSearchSelect={debounce(onSearchNameDoctor)}
-                  labelPlacement="outside"
-                  control={control}
-                  name="workingId"
-                  placeholder="Tìm kiếm tên bác sĩ..."
-                  label="Chọn bác sĩ"
-                  isRequired
-                  allowClear={false}
-                />
+                <h3 className={`mb-4 ${headingClass}`}>Bác sĩ tạo lịch</h3>
+                <div className="grid md:grid-cols-12  gap-6">
+                  <div className="col-span-12">
+                    <SelectControl
+                      variant="bordered"
+                      data={optionDoctors || []}
+                      handleSearchSelect={debounce(onSearchNameDoctor)}
+                      labelPlacement="outside"
+                      control={control}
+                      name="workingId"
+                      placeholder="Tìm kiếm tên bác sĩ..."
+                      label="Chọn bác sĩ"
+                      isRequired
+                      allowClear={false}
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+              <Divider className="my-3 col-span-12" />
+            </>
+          )}
 
-          <Divider className="my-4 col-span-12" />
           <div className="col-span-12 ">
-            <h3 className={`mb-4 ${headingClass}`}>Khoảng các ngày tạo</h3>
+            <h3 className={`mb-4 ${headingClass}`}>Các ngày thêm lịch</h3>
 
             <div className="grid md:grid-cols-12 grid-cols-1  gap-6">
               <div className="col-span-12">
@@ -182,7 +193,15 @@ export function BodyAddEditSchedule({
                   onChangeParent={(e) => setOptionUnit(e as any)}
                   labelPlacement="outside"
                   variant="bordered"
-                  data={optionUnits || []}
+                  data={
+                    optionUnits || [
+                      {
+                        label: "Ngày",
+                        value: "date",
+                        desciption: "Tạo lịch theo ngày",
+                      },
+                    ]
+                  }
                   control={control}
                   name="unit"
                   placeholder="Chọn đơn vị"
@@ -247,7 +266,7 @@ export function BodyAddEditSchedule({
               )}
             </div>
           </div>
-          <Divider className="my-4 col-span-12" />
+          <Divider className="my-3 col-span-12" />
 
           <div className="col-span-12 ">
             <h3 className={`mb-4 ${headingClass}`}>Khung giờ và số lượng </h3>

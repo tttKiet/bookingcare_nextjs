@@ -6,6 +6,7 @@ import {
   API_BOOKING,
   API_PATIENT_PROFILE,
   API_REVIEW_DOCTOR,
+  API_USER_CHANGE_PASS,
 } from "./constant-api";
 
 export const userApi = {
@@ -63,5 +64,9 @@ export const userApi = {
         id,
       },
     });
+  },
+
+  async changePass(data: any): Promise<ResData> {
+    return await axios.post(API_USER_CHANGE_PASS, data);
   },
 };

@@ -239,7 +239,7 @@ const ChooseDoctor = forwardRef(
               </div>
             </motion.div>
           )}
-          <div className="max-h-[400px] min-h-[240px]  my-4 pr-[4px]">
+          <div className="max-h-[400px] min-h-[240px] overflow-y-auto overflow-x-hidden my-4 pr-[8px]">
             <AnimatePresence mode="popLayout">
               {doctorWorkings?.rows.map(
                 (i: WorkRoomAndSchedule, index: number) => (
@@ -248,6 +248,7 @@ const ChooseDoctor = forwardRef(
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     key={i.id}
+                    className="my-5"
                     transition={{
                       delay: 0.3,
                     }}

@@ -3,15 +3,17 @@
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import type { SelectProps } from "antd";
 import debounce from "lodash.debounce";
-import { ReactNode } from "react";
+import { ReactNode, useCallback } from "react";
 import { Control, useController } from "react-hook-form";
+import { HiX } from "react-icons/hi";
+import { SelecSearchOptionProps } from "./select-field-search";
 export interface SelectControlProps {
   name: string;
   label: string | ReactNode;
   placeholder: string;
   style?: React.CSSProperties;
   debounceSeconds?: number;
-  data: { label: string; value: string; description?: string }[];
+  data: SelecSearchOptionProps[];
   handleSearchSelect?: (value: string) => void;
   control: Control<any>;
   allowClear?: boolean;
@@ -22,6 +24,8 @@ export interface SelectControlProps {
   variant?: "flat" | "faded" | "bordered" | "underlined" | undefined;
   onChangeParent?: (value: string) => void;
   endContent?: ReactNode;
+  classLabel?: string;
+  allowsEmptyCollection?: boolean;
   color?:
     | "default"
     | "secondary"
@@ -42,6 +46,7 @@ export function SelectControl({
   control,
   isRequired = true,
   onClear,
+  allowsEmptyCollection,
   label,
   allowClear = true,
   disabled,
@@ -49,6 +54,7 @@ export function SelectControl({
   onChangeParent,
   variant,
   endContent,
+  classLabel,
   color,
 }: SelectControlProps) {
   const {
@@ -61,7 +67,9 @@ export function SelectControl({
   });
 
   const handleSearch = (newValue: string) => {
-    if (newValue && handleSearchSelect) handleSearchSelect(newValue);
+    if (typeof newValue == "string" && handleSearchSelect) {
+      handleSearchSelect(newValue);
+    }
   };
 
   const handleChange = (e: string) => {
@@ -71,13 +79,40 @@ export function SelectControl({
     onChange(e);
   };
 
+  const myFilter = (textValue: string, inputValue: string) => {
+    if (inputValue.length === 0) {
+      return true;
+    }
+
+    // normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    textValue = textValue
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/đ/g, "d")
+      .toLocaleLowerCase();
+
+    const wordsToSearch = inputValue
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/đ/g, "d")
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(Boolean);
+
+    const wordConditions = wordsToSearch.every((word) =>
+      textValue.includes(word)
+    );
+    return wordConditions;
+  };
+
   return (
     <div>
       <Autocomplete
         isDisabled={disabled}
+        defaultFilter={myFilter}
         endContent={endContent}
         variant={variant}
-        // defaultInputValue={defaultInputValue}
+        // defaultInputValue={value || ""}
         ref={ref}
         size="lg"
         onInputChange={debounce(handleSearch, debounceSeconds || 300)}
@@ -96,15 +131,16 @@ export function SelectControl({
             {label} {isRequired && <span className="text-red-400">*</span>}
           </span>
         }
-        defaultSelectedKey={value}
+        // value={value}
+
+        defaultSelectedKey={value || ""}
+        selectedKey={value}
         labelPlacement={labelPlacement || "inside"}
         isClearable={allowClear}
-        selectedKey={value}
-        // label={label || "Tìm kiếm"}
         placeholder={placeholder}
         onKeyDown={(e: any) => e.continuePropagation()}
         className="max-w-2xl w-full"
-        allowsEmptyCollection
+        allowsEmptyCollection={allowsEmptyCollection}
       >
         {data?.map(
           (item) =>
@@ -113,8 +149,9 @@ export function SelectControl({
                 key={item.value || ""}
                 value={item?.value || ""}
                 textValue={item?.label?.toString() || ""}
+                startContent={item?.startContent}
               >
-                {item.label}
+                <div className={classLabel}> {item.label}</div>
                 {item?.description && (
                   <div className="mt-1 text-sm text-gray-800">
                     {item?.description}

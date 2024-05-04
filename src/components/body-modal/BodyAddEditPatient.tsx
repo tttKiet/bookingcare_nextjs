@@ -221,11 +221,7 @@ export function BodyAddEditPatient({
     },
     {
       label: "Nữ",
-      value: "famale",
-    },
-    {
-      label: "Khác",
-      value: "order",
+      value: "female",
     },
   ];
 

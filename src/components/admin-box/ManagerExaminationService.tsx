@@ -33,6 +33,7 @@ import { ModalPositionHere } from "../modal";
 import { BodyModalCode } from "../body-modal";
 import { useMemo, useRef, useState } from "react";
 import { BodyAddEditExaminationService } from "../body-modal/BodyAddEditExaminationService";
+import { Tooltip } from "@nextui-org/react";
 const { confirm } = Modal;
 
 type DataIndex = keyof ExaminationService;
@@ -288,9 +289,17 @@ export function ManagerExaminationService() {
         title: "Mô tả",
         dataIndex: "description",
         key: "description",
-        render: (text) => <a>{text}</a>,
-        sorter: (a, b) => a.description.localeCompare(b.description),
-        ...getColumnSearchProps("description"),
+        render: (text) => (
+          <div className="">
+            <Tooltip
+              color={"danger"}
+              content={<div className="block max-w-[400px]">{text}</div>}
+              className="capitalize"
+            >
+              <div className="line-clamp-2 font-semibold">{text}</div>
+            </Tooltip>
+          </div>
+        ),
       },
       {
         title: "Hành động",

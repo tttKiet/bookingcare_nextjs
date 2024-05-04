@@ -11,7 +11,6 @@ import { ResDataPaginations } from "@/types";
 import { LocalizationProvider, StaticDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
-  Button,
   Chip,
   Modal as ModalNext,
   Input as InputNext,
@@ -46,6 +45,8 @@ import { XCircleIcon } from "@heroicons/react/24/outline";
 import { staffApi } from "@/api-services";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import BodyPatientProfile from "../check-up/BodyPatientProfile";
+import { Button } from "@nextui-org/button";
+import { IoCheckmarkDoneOutline } from "react-icons/io5";
 const { confirm } = Modal;
 
 type DataIndex = keyof Booking;
@@ -298,6 +299,7 @@ export function StaffManagerBooking() {
                 className="capitalize"
                 color={color}
                 size="sm"
+                radius="sm"
                 variant="flat"
               >
                 {code?.value}
@@ -327,11 +329,21 @@ export function StaffManagerBooking() {
             );
           }
           const color = getColorChipHR(code?.key);
+          let StartContent;
+          if (color == "success") {
+            StartContent = (
+              <span className="mx-1">
+                <IoCheckmarkDoneOutline size={18} />
+              </span>
+            );
+          }
           return (
             <a>
               <Chip
+                startContent={StartContent}
                 className="capitalize"
                 color={color}
+                radius="sm"
                 size="sm"
                 variant="flat"
               >
@@ -351,7 +363,7 @@ export function StaffManagerBooking() {
             <a>
               <Button
                 size="sm"
-                color="secondary"
+                color="default"
                 variant="bordered"
                 onPress={() => {
                   setViewPatientProfile(profile);

@@ -30,10 +30,12 @@ import React, { ReactNode, useEffect, useMemo, useState } from "react";
 import { AiOutlineProfile } from "react-icons/ai";
 import { BsCalendar2Plus } from "react-icons/bs";
 import { GrSchedules } from "react-icons/gr";
+import TagUserAccount from "@/components/common/TagUserAccount";
 const TagNames = {
   ONE: "patient-profile",
   TWO: "add-patient-profile",
   FOUR: "booking",
+  FIVE: "account",
 };
 
 interface ItemMenuUser {
@@ -59,6 +61,18 @@ export default function UserPage() {
   const iconClassesActive =
     "text-xl text-black pointer-events-none flex-shrink-0";
   const items: ItemMenuActionUser[] = [
+    {
+      action: "Tôi",
+      data: [
+        {
+          key: TagNames.FIVE,
+          label: (
+            <Link href={`/user?tag=${TagNames.FIVE}`}>Tài khoản của bạn</Link>
+          ),
+          icon: <AiOutlineProfile />,
+        },
+      ],
+    },
     {
       action: "Người khám",
       data: [
@@ -101,6 +115,10 @@ export default function UserPage() {
       key: TagNames.FOUR,
       component: <TagUserBooking />,
     },
+    {
+      key: TagNames.FIVE,
+      component: <TagUserAccount />,
+    },
   ];
 
   useEffect(() => {
@@ -110,7 +128,7 @@ export default function UserPage() {
   }, [tagName, router, TagNames]);
 
   return (
-    <div className="py-8 min-h-screen ">
+    <div className="py-8 min-h-screen bg-[#F0F3F7]">
       <div className="container mx-auto">
         {/* <BreadcrumbApp /> */}
         {profile?.id ? (

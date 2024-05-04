@@ -26,16 +26,7 @@ export function ListHealthFacilities({
   return (
     <div>
       <div className="col-span-12 mt-0 ">
-        {/* <Pagination
-            onChange={onChangePagination}
-            className="mt-6"
-            defaultCurrent={1}
-            current={page}
-            pageSize={6}
-            total={data?.count || 1}
-          /> */}
-
-        <div className="flex justify-between items-center gap-3   mb-8">
+        <div className="flex justify-between items-center gap-4 mb-4">
           <div>
             {searchNameHealthValue && (
               <>
@@ -95,10 +86,6 @@ export function ListHealthFacilities({
       >
         <AnimatePresence mode="popLayout">
           {data?.rows.map((row: HealthFacility, index: number) => (
-            // <div
-            //   key={row.id}
-            //   className="col-span-12 md:col-span-6 lg:col-span-3"
-            // >
             <motion.div
               initial={{ opacity: 0, y: 60, scale: 0.8 }}
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -107,7 +94,7 @@ export function ListHealthFacilities({
                 type: "spring",
                 stiffness: 100,
                 duration: 1,
-                delay: index * 0.2,
+                delay: index * 0.02 + 0.08,
               }}
               exit={{ opacity: 0, y: 60, scale: 0.8 }}
               viewport={{ once: true }}

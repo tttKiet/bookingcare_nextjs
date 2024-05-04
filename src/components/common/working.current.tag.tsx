@@ -26,13 +26,18 @@ import { ActionBox, ActionGroup } from "../box";
 import { BtnPlus } from "../button";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
-import { useMemo, useRef, useState } from "react";
-import { Chip } from "@nextui-org/react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Chip, Divider } from "@nextui-org/react";
+import { useSearchParams } from "next/navigation";
 const { confirm } = Modal;
 
 type DataIndex = keyof Working;
 
 export function WorkingCurrentTag() {
+  const searchParams = useSearchParams();
+  const q = searchParams.get("q");
+  const id = searchParams.get("id");
+
   const [queryParams, setQueryParams] = useState({});
   // Filter search
   const [searchText, setSearchText] = useState("");
@@ -54,6 +59,7 @@ export function WorkingCurrentTag() {
   ) => {
     setQueryParams((prev) => ({
       ...prev,
+      ...filters,
       healthFacilityName: filters?.["HealthFacility.name"] || "",
       doctorEmail: filters?.["Staff.email"] || "",
       doctorName: filters?.["Staff.fullName"] || "",
@@ -374,6 +380,13 @@ export function WorkingCurrentTag() {
     });
   }
 
+  useEffect(() => {
+    if (q && id) {
+      console.log("lot");
+      setShowModalAddWorking(true);
+    }
+  }, [q, id]);
+
   async function handleSubmitAddWoking(
     data: Partial<Working>
   ): Promise<boolean> {
@@ -387,7 +400,7 @@ export function WorkingCurrentTag() {
   }
 
   return (
-    <div className="col-span-12">
+    <div className="col-span-12 mt-4">
       <ModalPositionHere
         body={
           <BodyModalWorking
@@ -396,14 +409,15 @@ export function WorkingCurrentTag() {
             obEditWorking={obEditWorking}
           />
         }
+        size="4xl"
         show={showModalWorking}
         title={obEditWorking?.id ? "Chỉnh sửa công tác" : "Thêm mới công tác"}
         toggle={toggleShowModalAddWorking}
         contentBtnSubmit="Thêm"
         footer={false}
       />
-      <h3 className="gr-title-admin mb-3 flex items-center justify-between">
-        Danh sách công tác của nhân viên
+      <h3 className="gr-title-admin mb-3 flex items-start justify-between">
+        <div>Danh sách</div>
         <BtnPlus
           title="Thêm lịch công tác"
           onClick={toggleShowModalAddWorking}

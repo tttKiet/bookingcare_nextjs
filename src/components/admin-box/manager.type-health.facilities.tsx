@@ -13,7 +13,10 @@ import { ActionGroup } from "../box";
 import { ActionBox } from "../box/action.box";
 import { ModalPositionHere } from "../modal";
 import { BtnPlus } from "../button";
-import { Fragment, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
+import { TableSortFilter } from "../table";
+import { ColumnsType } from "antd/es/table";
+import moment from "moment";
 const { confirm } = Modal;
 export interface ManagerTypeHealthFacilitesProps {}
 
@@ -122,8 +125,55 @@ export function ManagerTypeHealthFacilites(
       onCancel() {},
     });
   }
+
+  const columns: ColumnsType<TypeHealthFacility> = useMemo(() => {
+    return [
+      {
+        title: "Tên loại",
+        dataIndex: "name",
+        key: "name",
+        render: (text) => <a>{text}</a>,
+        sorter: (a, b) => a.name.localeCompare(b.name),
+      },
+
+      {
+        title: "Ngày tạo",
+        dataIndex: "createdAt",
+        key: "createdAt",
+        render: (text) => <a>{text && moment(text).format("L")}</a>,
+      },
+      {
+        title: "Hành động",
+        key: "action",
+        render: (_, record) => {
+          return (
+            // <ActionGroup className="justify-start">
+            //   <ActionBox type="edit" onClick={() => editWorkRoom(record)} />
+            //   <ActionBox
+            //     type="delete"
+            //     onClick={() => handleDeleteWorkRoom(record)}
+            //   />
+            // </ActionGroup>
+
+            <ActionGroup>
+              <ActionBox
+                type="edit"
+                onClick={() => handleClickEditTypeHealth(record)}
+              />
+              <ActionBox
+                type="delete"
+                onClick={() => handleClickDeleteTypeHealth(record)}
+              />
+            </ActionGroup>
+          );
+        },
+        width: "150px",
+      },
+    ];
+  }, []);
+
   return (
-    <div className="p-4 px-6 col-span-1 md:col-span-6">
+    <div className="p-4 px-6">
       <ModalPositionHere
         show={showTypeModal}
         toggle={() => {
@@ -148,12 +198,12 @@ export function ManagerTypeHealthFacilites(
             : "Thêm loại bệnh viện"
         }
       />
-      <h3 className="gr-title-admin flex items-center justify-between">
+      <h3 className="gr-title-admin flex items-center justify-between mb-4">
         Loại bệnh viện
         <BtnPlus onClick={toggleShowModalType} />
       </h3>
       <div className="mt-3 ">
-        {types && types.length > 0 ? (
+        {/* {types && types.length > 0 ? (
           <>
             <div className="text-sm text-black mb-2 grid grid-cols-12 gap-1">
               <Fragment>
@@ -197,7 +247,20 @@ export function ManagerTypeHealthFacilites(
           <p className="text-center text-base font-medium text-red-500">
             Chưa có loại bệnh viện nào.
           </p>
-        )}
+        )} */}
+        <TableSortFilter
+          options={{
+            loading: isLoading,
+            pagination: {
+              total: types?.length,
+              pageSize: 10,
+              showSizeChanger: true,
+              pageSizeOptions: ["3", "6", "12", "24", "50"],
+            },
+          }}
+          columns={columns}
+          data={types || []}
+        />
       </div>
     </div>
   );

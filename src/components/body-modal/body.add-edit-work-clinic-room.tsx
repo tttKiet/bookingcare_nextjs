@@ -17,7 +17,9 @@ import useSWR from "swr";
 import dayjs from "dayjs";
 import { SelectControl } from "../form/SelectControl";
 import { Button } from "@nextui-org/button";
-
+import { InputNextDateField } from "../form/InputNextDateField";
+import { today, parseDate, getLocalTimeZone } from "@internationalized/date";
+import moment from "moment";
 export interface BodyModalWorkRoomProps {
   handleSubmitForm: (data: Partial<WorkRoom>) => Promise<boolean>;
   clickCancel: () => void;
@@ -42,7 +44,7 @@ export function BodyModalClinicRoomWork({
     defaultValues: {
       checkUpPrice: 100000,
       workingId: "",
-      applyDate: dayjs(new Date()),
+      applyDate: today(getLocalTimeZone()),
     },
     resolver: yupResolver(schemaWorkClinicRoomBody),
   });
@@ -50,6 +52,7 @@ export function BodyModalClinicRoomWork({
   async function handleSubmitLocal(data: Partial<WorkRoom>) {
     const isOk = await handleSubmitForm({
       ...data,
+      applyDate: new Date(data?.applyDate?.toString() || ""),
       id: obEdit?.id || undefined,
     });
     if (isOk) {
@@ -69,27 +72,30 @@ export function BodyModalClinicRoomWork({
     error,
     mutate: mutateDoctorWorking,
   } = useSWR<ResDataPaginations<Working>>(
-    `${API_WORKING}?healthFacilityId=${healthFacilityId}&doctorEmail=${emailDoctorSearch}`,
+    `${API_WORKING}?healthFacilityId=${healthFacilityId}&doctorName=${emailDoctorSearch}&Role[]=doctor`,
     {
       dedupingInterval: 5000,
     }
   );
 
   React.useEffect(() => {
+    // parseDate(moment(obEdit.date).format("YYYY[-]MM[-]DD"))
     if (obEdit)
       reset({
         checkUpPrice: obEdit?.checkUpPrice || 1000000,
         workingId: obEdit?.workingId || "",
         applyDate:
-          dayjs(new Date(obEdit.applyDate.toString())) || dayjs(new Date()),
+          parseDate(
+            moment(obEdit?.applyDate?.toString()).format("YYYY[-]MM[-]DD")
+          ) || today(getLocalTimeZone()),
       });
   }, [obEdit]);
 
   const optionDoctorsWorking =
     doctorWorking?.rows?.map((t: Working) => ({
       value: t.id,
-      label: t.Staff.email,
-      description: t.Staff.fullName,
+      label: t.Staff.fullName,
+      description: t.Staff.email,
     })) || [];
 
   return (
@@ -101,7 +107,7 @@ export function BodyModalClinicRoomWork({
         <div className="grid md:grid-cols-2 gap-3 sm:grid-cols-1">
           <SelectControl
             control={control}
-            placeholder="Nhập email Bác sĩ..."
+            placeholder="Nhập tên Bác sĩ..."
             label="Chọn Bác sĩ"
             name="workingId"
             data={optionDoctorsWorking}
@@ -112,35 +118,23 @@ export function BodyModalClinicRoomWork({
 
           <InputField
             control={control}
+            unit={true}
             placeholder="Vd: 101"
             label="Nhập giá khám bệnh..."
             name="checkUpPrice"
             type="number"
           />
-          <SelectDateCalendarField
+          <InputNextDateField
+            // defaultDate={today(getLocalTimeZone())}
             control={control}
-            label="Nhập ngày áp dụng..."
+            label="Nhập ngày áp dụng"
+            placeholder="Nhập ngày áp dụng..."
             name="applyDate"
           />
         </div>
       </div>
 
-      <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
-        {/* <Button type="default" size="middle" onClick={clickCancel}>
-          Hủy
-        </Button>
-        <Space wrap>
-          <Button
-            type="primary"
-            size="middle"
-            loading={isSubmitting}
-            // onClick={() => true}
-            htmlType="submit"
-          >
-            {obEdit?.id ? "Lưu" : "Thêm"}
-          </Button>
-        </Space> */}
-
+      <div className="flex items-center gap-2 justify-end mt-2 pt-[20px] mb-4">
         <Button color="danger" variant="light" onClick={clickCancel}>
           Hủy
         </Button>

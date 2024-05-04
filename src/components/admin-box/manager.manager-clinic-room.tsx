@@ -1,17 +1,15 @@
 "use client";
 
-import { ReqClinicRoom, healthFacilitiesApi, userApi } from "@/api-services";
+import { ReqClinicRoom, healthFacilitiesApi } from "@/api-services";
 import {
-  API_ACCOUNT_USER,
   API_HEALTH_FACILITIES,
   API_HEALTH_FACILITY_ROOM,
-  API_SPECIALIST,
 } from "@/api-services/constant-api";
 import { ExclamationCircleFilled } from "@ant-design/icons";
-import { Button, Input, InputRef, Modal, SelectProps, Space } from "antd";
+import { Button, Input, InputRef, Modal, Space } from "antd";
 import axios from "../../axios";
 
-import { ClinicRoom, HealthFacility, Specialist, User } from "@/models";
+import { ClinicRoom, HealthFacility } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import type {
@@ -23,24 +21,21 @@ import type {
 import { FilterConfirmProps } from "antd/es/table/interface";
 import moment from "moment";
 
+import { Image } from "@nextui-org/image";
+import get from "lodash.get";
+import isequal from "lodash.isequal";
+import { useMemo, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { BsSearch } from "react-icons/bs";
 import useSWR, { BareFetcher } from "swr";
+import { BodyModalClinicRoom } from "../body-modal/body.add-edit-clinic-room";
 import { ActionGroup } from "../box";
 import { ActionBox } from "../box/action.box";
 import { BtnPlus } from "../button";
+import { SelecSearchOptionProps, SelectSearchField } from "../form";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
-import { RegisterForm } from "../auth";
-import toast from "react-hot-toast";
 const { confirm } = Modal;
-import get from "lodash.get";
-import isequal from "lodash.isequal";
-import { SelectSearchField } from "../form";
-import { BodyModalClinicRoom } from "../body-modal/body.add-edit-clinic-room";
-import { useMemo, useRef, useState } from "react";
-import { Image } from "@nextui-org/image";
-import debounce from "lodash.debounce";
 
 type DataIndex = keyof ClinicRoom;
 
@@ -66,7 +61,7 @@ export function ManagerHealthRoom() {
   }: Partial<ReqClinicRoom>): Promise<boolean> {
     const api = healthFacilitiesApi.createOrUpdateHealthRoom({
       capacity,
-      healthFacilityId: selectValue || "",
+      healthFacilityId: obClinicRoomEdit?.healthFacilityId || selectValue || "",
       oldRoomNumber: obClinicRoomEdit?.roomNumber || undefined,
       roomNumber,
     });
@@ -331,32 +326,34 @@ export function ManagerHealthRoom() {
       [
         API_HEALTH_FACILITIES,
         {
-          searchNameOrEmail: searchHealthSelect,
+          name: searchHealthSelect,
         },
       ],
       fetcher,
       {
         revalidateOnMount: true,
+        dedupingInterval: 5000,
       }
     );
 
-  const dataSearch: SelectProps["options"] =
-    responseHealthFacilities?.rows.map((healh: HealthFacility) => ({
-      value: healh.email,
-      label: (
+  const dataSearch: SelecSearchOptionProps[] = useMemo(() => {
+    return responseHealthFacilities?.rows.map((healh: HealthFacility) => ({
+      value: healh.id,
+      startContent: (
+        <Image
+          className="rounded-full border-spacing-8 border  border-blue-400  object-cover w-[44px] h-[42px]"
+          alt="Health Facility"
+          width={44}
+          height={44}
+          src={healh?.images?.[0] || ""}
+        />
+      ),
+      description: (
         <div className="flex align-top gap-2">
-          <Image
-            className="rounded-full border-spacing-8 border  border-blue-400  object-cover w-[44px] h-[42px]"
-            alt="Health Facility"
-            width={44}
-            height={44}
-            src={healh?.images?.[0] || ""}
-          />
-
           <div className="flex-1">
-            <h4 className="text-sm p-y-[1px]  text-black">{healh.name}</h4>
+            {/* <h4 className="text-sm p-y-[1px]  text-blue-600">{healh.na7777777me}</h4> */}
             <div className="flex items-center justify-between gap-x-4">
-              <span className="text-xs font-normal text-blue-600">
+              <span className="text-xs font-normal text-gray-600">
                 {healh.email}
               </span>
               <span className="text-xs font-normal text-right text-gray-500 max-w-[100px] text-ellipsis whitespace-nowrap overflow-hidden">
@@ -366,18 +363,16 @@ export function ManagerHealthRoom() {
           </div>
         </div>
       ),
-    })) || [];
+      label: healh.name,
+    }));
+  }, [responseHealthFacilities]);
 
   function handleSearchSelect(value: string): void {
     setSearchHealthSelect(value);
   }
 
   function handleChangeSelect(value: string): void {
-    const filter =
-      responseHealthFacilities?.rows.find(
-        (r: HealthFacility) => r.email == value
-      )?.id || "";
-    setSelectValue(filter);
+    setSelectValue(value);
   }
 
   return (
@@ -385,12 +380,13 @@ export function ManagerHealthRoom() {
       <div className="flex items-end gap-2 ">
         <SelectSearchField
           title="Tìm kiếm cơ sở y tế"
-          placeholder="Nhập email cơ sơ y tế"
+          placeholder="Nhập tên cơ sở y tế"
           data={dataSearch}
           handleSearchSelect={handleSearchSelect}
           handleChangeSelect={handleChangeSelect}
-          value={searchHealthSelect}
+          value={selectValue}
           isRequired
+          // classLabel="text-sm p-y-[1px]  text-blue-600"
         />
       </div>
 
@@ -410,7 +406,7 @@ export function ManagerHealthRoom() {
         }
         title={
           obClinicRoomEdit?.roomNumber
-            ? `Sửa phòng * ${obClinicRoomEdit.roomNumber} *`
+            ? `Sửa phòng * số: ${obClinicRoomEdit.roomNumber} - ${obClinicRoomEdit?.HealthFacility?.name} * `
             : "Thêm mới phòng"
         }
       />

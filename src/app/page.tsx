@@ -19,10 +19,19 @@ import CountUp from "react-countup";
 import HomeService from "@/components/user/HomeService";
 import HomeAbout1 from "@/components/user/HomeAbout1";
 import HomeWhy from "@/components/user/HomeWhy";
+import useSWR from "swr";
+import { API_ACCOUNT_STAFF, API_INDEX } from "@/api-services/constant-api";
+import { ResData } from "@/types";
 export default function Home() {
   const formatter: StatisticProps["formatter"] = (value) => (
-    <CountUp end={value as number} separator="," delay={3} />
+    <CountUp end={value as number} separator="," delay={3} duration={8} />
   );
+
+  const { data: index1 } = useSWR<{
+    patientCount: number;
+    reviewCount: number;
+    doctorCount: number;
+  }>(`${API_INDEX}?page=home&index=1`);
   return (
     <>
       <div className="bg-white">
@@ -293,7 +302,7 @@ export default function Home() {
                       Bệnh nhân
                     </div>
                   }
-                  value={112893}
+                  value={index1?.patientCount}
                   valueStyle={{
                     fontSize: 40,
                     color: "#fff",
@@ -322,7 +331,7 @@ export default function Home() {
                       Độ hài lòng
                     </div>
                   }
-                  value={98}
+                  value={index1?.reviewCount}
                   suffix="%"
                   valueStyle={{
                     fontSize: 30,
@@ -338,7 +347,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 80 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{
-                  delay: 0.3,
+                  delay: 0.2,
                   type: "spring",
                   stiffness: 100,
                 }}
@@ -350,7 +359,7 @@ export default function Home() {
                       Bác sĩ
                     </div>
                   }
-                  value={460}
+                  value={index1?.doctorCount}
                   valueStyle={{
                     fontSize: 30,
                     fontWeight: 600,

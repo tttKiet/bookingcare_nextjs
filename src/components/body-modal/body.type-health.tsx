@@ -56,7 +56,7 @@ export function BodyTypeHealth({
         name="name"
         placeholder="Nhập tên loại bệnh viện"
       />
-      <div className="flex items-center gap-2 justify-end mt-2 pt-[20px]">
+      <div className="flex items-center gap-2 justify-end mt-2 pt-[20px] mb-4">
         <Button color="danger" variant="light" onClick={clickCancel}>
           Hủy
         </Button>

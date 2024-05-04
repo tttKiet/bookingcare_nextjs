@@ -70,3 +70,12 @@ export const API_USER_MEDICAL_RECORD = "/api/v1/user/medical-record";
 
 // schedule
 export const API_DOCTOR_REGISTER_SCHEDULE = "/api/v1/doctor/register-schedule";
+
+// band
+export const API_USER_BAN = "/api/v1/admin/log";
+
+// acc
+export const API_USER_CHANGE_PASS = "/api/v1/user/change-pass";
+
+// index
+export const API_INDEX = "/api/v1/user/index";

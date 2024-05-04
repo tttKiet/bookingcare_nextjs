@@ -20,6 +20,7 @@ export function InputField({
   variant,
   classCustom,
   labelPlacement,
+  inputW,
 }: InputFieldProps) {
   const [showPass, setShowPass] = useState<boolean>(false);
   const formatCurrency = (value: string) => {
@@ -65,17 +66,22 @@ export function InputField({
     let rawValue = e.target.value.replace(/\./g, "");
     let rawValueNumber = rawValue.replace(/[^0-9]/g, "");
     const rawValueString = parseInt(rawValueNumber).toString();
-    console.log(parseInt(rawValueNumber));
-    let value = formatCurrency(rawValueString);
-    if (
-      rawValueNumber != "0" &&
-      (!parseInt(rawValueNumber) || parseInt(rawValueNumber) < 0)
-    ) {
+
+    if (Number.isNaN(parseInt(rawValueNumber))) {
       setKey("0");
-      onChange(e.target.value || 0);
+      onChange("0");
     } else {
-      setKey(value);
-      onChange(e.target.value || 0);
+      let value = formatCurrency(rawValueString);
+      if (
+        rawValueNumber != "0" &&
+        (!parseInt(rawValueNumber) || parseInt(rawValueNumber) < 0)
+      ) {
+        setKey("0");
+        onChange(rawValueString);
+      } else {
+        setKey(value);
+        onChange(rawValueString);
+      }
     }
   };
 
@@ -119,7 +125,9 @@ export function InputField({
             className={classCustom}
             classNames={{
               errorMessage: "text-base",
-              input: `${type == "number" ? "w-[40px]" : ""}`,
+              input: `${
+                type == "number" ? `${inputW ? `max-w-[${inputW}]` : ""}` : ""
+              }`,
               label: "text-base",
             }}
           />

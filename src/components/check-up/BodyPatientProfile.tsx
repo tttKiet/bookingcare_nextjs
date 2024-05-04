@@ -1,5 +1,5 @@
 import { ActionGroup, ActionBox } from "../box";
-import { Button, Input } from "@nextui-org/react";
+import { Input } from "@nextui-org/react";
 import { PatientProfile } from "@/models";
 import { useEffect, useState } from "react";
 import { useGetAddress } from "@/hooks/use-get-address-from-code";
@@ -11,6 +11,7 @@ import { MdOutlineMail } from "react-icons/md";
 import { PiGenderIntersex } from "react-icons/pi";
 import { SiRotaryinternational } from "react-icons/si";
 import Link from "next/link";
+import { Button } from "@nextui-org/button";
 export interface IBodyPatientProfileProps {
   patientProfile: PatientProfile | undefined;
   onClose: () => void;

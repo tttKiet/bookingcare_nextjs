@@ -15,8 +15,12 @@ import "react-toastify/dist/ReactToastify.css";
 import { PersistGate } from "redux-persist/integration/react";
 import { SWRConfig } from "swr";
 import axios from "../axios";
+import "rsuite/dist/rsuite-no-reset.min.css";
+import { CustomProvider } from "rsuite";
 import theme from "../theme/themeConfig";
 import UserLayout from "./UserLayout";
+// import { IntlProvider } from "react-intl";
+import zhCN from "rsuite/locales/zh_TW";
 moment.locale("vi");
 
 export function RootLayout({ children }: { children: React.ReactNode }) {
@@ -63,15 +67,19 @@ export function RootLayout({ children }: { children: React.ReactNode }) {
                 />
               </div>
               <NextUIProvider>
-                {showUserHeader ? (
-                  <UserLayout>
-                    {/* <Header /> */}
-                    {children}
-                    {/* <Footer /> */}
-                  </UserLayout>
-                ) : (
-                  <>{children}</>
-                )}
+                <>
+                  <CustomProvider>
+                    {showUserHeader ? (
+                      <UserLayout>
+                        {/* <Header /> */}
+                        {children}
+                        {/* <Footer /> */}
+                      </UserLayout>
+                    ) : (
+                      <>{children}</>
+                    )}
+                  </CustomProvider>
+                </>
               </NextUIProvider>
             </SWRConfig>
           </PersistGate>

@@ -312,7 +312,7 @@ export default function HealthFacilities() {
         </div>
         <SeachHealthFacility handleClickSearch={handleClickSearchHealth} />
       </div>
-      <div className="flex justify-center gap-2 flex-col mt-20 mb-14 ">
+      <div className="flex justify-center gap-2 flex-col mt-16 mb-3 ">
         <h3 className="text-4xl font-bold text-black text-center">
           CƠ SỞ Y TẾ
         </h3>
@@ -325,7 +325,7 @@ export default function HealthFacilities() {
       <div className="flex justify-center ">
         <div className="container my-4">
           {/* <Breadcrumb items={breadcrumbArray} /> */}
-          <div className="my-4 mb-8 grid grid-cols-12 gap-6">
+          <div className="my-4 mb-2 grid grid-cols-12 gap-6">
             <div className="col-span-3">
               <Autocomplete
                 // onInputChange={debounce(handleSearch, debounceSeconds || 300)}

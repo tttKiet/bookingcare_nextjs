@@ -1,4 +1,4 @@
-import { staffApi } from "@/api-services";
+import { healthFacilitiesApi, staffApi } from "@/api-services";
 import {
   API_ADMIN_MANAGER_SERVICE,
   API_CODE,
@@ -24,7 +24,6 @@ import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import {
   Autocomplete,
   AutocompleteItem,
-  Button,
   Chip,
   Input,
   Modal,
@@ -59,6 +58,8 @@ import { TbClockHour2 } from "react-icons/tb";
 import { MdOutlineDescription, MdOutlineNoteAlt } from "react-icons/md";
 import { LuClipboardSignature } from "react-icons/lu";
 import { useRouter } from "next/navigation";
+import { Button } from "@nextui-org/button";
+import { IoCheckmarkDoneOutline } from "react-icons/io5";
 
 export interface HealthRecordDetailsProps {}
 
@@ -113,7 +114,7 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
 
   const { data: dataPrescriptionDetail, mutate: mutatePrescriptionDetail } =
     useSWR<PrescriptionDetail[]>(
-      `${API_DOCTOR_PRESCRIPTION_DETAILS}?healthRecordId=${dataHealthRecord?.rows?.[0]?.id}`
+      `${API_DOCTOR_PRESCRIPTION_DETAILS}?limit=500&offset=0&healthRecordId=${dataHealthRecord?.rows?.[0]?.id}`
     );
 
   const optionHospitalServices: { label: string; value: string }[] =
@@ -200,6 +201,8 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
   async function handleClickCreateHealthRecord() {
     if (!inforBooking?.id) {
       return toast.warning("Id lịch hẹn không tìm thấy, vui lòng thử lại");
+    } else if (inforBooking?.status == "CU1") {
+      return toast.warning("Lịch hẹn chưa được thanh toán!");
     } else if (!dataPatient?.rows?.[0]?.id) {
       return toast.warning(
         "Bệnh nhân chưa được thêm vào cơ sở dữ liệu, hãy tạo bệnh nhân."
@@ -421,8 +424,13 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
     blobSer: Blob | null;
     blobCe: Blob | null;
   }) {
+    //   const [diagnosis, setDiagnosis] = useState<string>("");
+    // const [note, setNote] = useState<string>("");
+
     setLoadingPdf(true);
     const api = staffApi.editCheckUpDoneAndSendEmail({
+      diagnosis,
+      note,
       id: dataHealthRecord?.rows?.[0]?.id,
       emailDestination: emailSend,
       pdfs: [blobSer, blobCe],
@@ -447,7 +455,7 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
   const done = useMemo(() => {
     return !!(diagnosis && (dataPrescriptionDetail?.length || -1) > 0);
   }, [diagnosis, dataServiceDetails, dataPrescriptionDetail]);
-
+  console.log("inforHealthRecordinforHealthRecord", inforHealthRecord);
   return (
     <div className="mb-6">
       <div className="box-white ">
@@ -455,8 +463,28 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
           <>
             <div>
               <div>
-                <h3 className="my-2 mb-4 text-black text-sm font-medium flex items-center gap-2 justify-between">
+                <h3
+                  className="my-2 mb-4 text-black text-sm font-medium flex 
+                items-center gap-2 justify-between"
+                >
                   THÔNG TIN PHIẾU
+                  {inforHealthRecord?.statusCode == "HR4" && (
+                    <div>
+                      <Chip
+                        size="md"
+                        variant="flat"
+                        radius="sm"
+                        color="success"
+                        startContent={
+                          <span className="mx-1">
+                            <IoCheckmarkDoneOutline size={18} />
+                          </span>
+                        }
+                      >
+                        Đã khám
+                      </Chip>
+                    </div>
+                  )}
                   {inforHealthRecord?.statusCode == "HR2" ? (
                     <div>
                       <Chip
@@ -470,7 +498,7 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
                       </Chip>
                     </div>
                   ) : (
-                    <div></div>
+                    <></>
                   )}
                 </h3>
                 <div className="grid grid-cols-12 gap-4">
@@ -596,7 +624,7 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
                         </div>
                       }
                       size="lg"
-                      placeholder="   Nhập ghi chú"
+                      placeholder="Nhập ghi chú"
                       className={`${descClass}`}
                       onChange={(e) => setNote(e.target.value)}
                       value={note}
@@ -611,7 +639,7 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
                         onClick={() => clickPdf("service")}
                         className="cursor-pointer hover:opacity-90 transition-all duration-150 hover:text-gray-600"
                       >
-                        <FaRegFilePdf className="w-5 h-5" />
+                        <FaRegFilePdf className="w-5 h-5" color="#d86d0f" />
                       </span>
                     )}
                     {/* {(dataServiceDetails?.length || -1) > 0 && (
@@ -663,7 +691,7 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
                         onClick={() => clickPdf("cedicine")}
                         className="cursor-pointer hover:opacity-90 transition-all duration-150 hover:text-gray-600"
                       >
-                        <FaRegFilePdf className="w-5 h-5" />
+                        <FaRegFilePdf className="w-5 h-5" color="#d86d0f" />
                       </span>
                     )}
                     {/* {(dataPrescriptionDetail?.length || -1) > 0 && (
@@ -741,7 +769,9 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
                 }}
                 isDisabled={!done}
               >
-                Hoàn tất khám
+                {inforHealthRecord?.statusCode == "HR4"
+                  ? "Sửa thông tin"
+                  : "Hoàn tất khám"}
               </Button>
             </div>
 
@@ -913,9 +943,14 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
                             return (
                               <BlobProvider
                                 document={
-                                  <ServiceDetailsBillDocument
+                                  // <PrescriptDeBillDocument
+                                  //   dataBooking={inforBooking}
+                                  //   dataServiceDetails={dataServiceDetails}
+                                  //   healthRecord={inforHealthRecord}
+                                  // />
+                                  <CedicineDocument
                                     dataBooking={inforBooking}
-                                    dataServiceDetails={dataServiceDetails}
+                                    prescriptionDetail={dataPrescriptionDetail}
                                     healthRecord={inforHealthRecord}
                                   />
                                 }
@@ -969,7 +1004,7 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
               toggle={onClosePrescriptionDetails}
               id="prescription-details"
               title="Thêm thuốc"
-              size="2xl"
+              size="4xl"
               body={
                 <BodyPrescriptionDetails
                   clickCancel={onClosePrescriptionDetails}

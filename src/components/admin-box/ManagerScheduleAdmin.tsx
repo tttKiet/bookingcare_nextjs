@@ -5,7 +5,7 @@ import { ExclamationCircleFilled } from "@ant-design/icons";
 import { Button, Input, InputRef, Modal, Space } from "antd";
 import axios from "../../axios";
 
-import { adminApi } from "@/api-services";
+import { adminApi, staffApi } from "@/api-services";
 import {
   Code,
   HealthExaminationSchedule,
@@ -34,17 +34,31 @@ import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
 import ListDotDotDotTimeCode from "./ListDotDotDotTimeCode";
 import { BodyAddEditSchedule } from "../body-modal/BodyAddEditSchedule";
+import { BodyModalSchedule, ReqSchedule } from "../body-modal";
+import { DatePicker } from "@nextui-org/date-picker";
+import { DateValue } from "@nextui-org/calendar";
+import { now, getLocalTimeZone, parseDate } from "@internationalized/date";
+import { XCircleIcon } from "@heroicons/react/24/outline";
+import { HiX } from "react-icons/hi";
 const { confirm } = Modal;
 
 type DataIndex = keyof HealthExaminationScheduleResAll;
 
 export function ManagerScheduleAdmin() {
   // state
+  let [date, setDate] = useState<DateValue | undefined>();
   const {
     isOpen: isOpentAdd,
     onClose: onCloseAdd,
     onOpen: onOpenAdd,
   } = useDisclosure();
+
+  const {
+    isOpen: isOpentEdit,
+    onClose: onCloseEdit,
+    onOpen: onOpenEdit,
+  } = useDisclosure();
+
   const [obEdit, setObEdit] = useState<
     HealthExaminationScheduleResAll | undefined
   >();
@@ -83,6 +97,9 @@ export function ManagerScheduleAdmin() {
       API_DOCTOR_SCHEDULE_ALL,
       {
         ...queryParams,
+        date:
+          moment(new Date(date?.toString() || "")).format("MM[/]DD[/]YYYY") ||
+          "",
         limit: tableParams.pagination.pageSize, // 4 page 2 => 3, 4 page 6 => 21
         offset:
           ((tableParams.pagination.current || 0) - 1) *
@@ -98,10 +115,10 @@ export function ManagerScheduleAdmin() {
 
   function handleClickEditCedicine(e: HealthExaminationScheduleResAll): void {
     setObEdit(e);
+    onOpenEdit();
   }
 
   async function handleSubmitForm(data: any): Promise<boolean> {
-    console.log("data", data);
     const api = adminApi.createSchedule(data);
     const isOk = await toastMsgFromPromise(api);
     if (isOk) {
@@ -138,7 +155,7 @@ export function ManagerScheduleAdmin() {
     record: HealthExaminationScheduleResAll
   ): void {
     confirm({
-      title: `Bạn có muốn xóa lịch ngày: "${record?.date}"?`,
+      title: `Bạn có muốn xóa lịch ngày: "${record?.date}" của bác sĩ "${record?.working?.Staff?.fullName}"?`,
       icon: <ExclamationCircleFilled />,
       content: `Thao tác này sẽ xóa tất cả dữ liệu về lịch này và không thể khôi phục`,
       async onOk() {
@@ -157,6 +174,22 @@ export function ManagerScheduleAdmin() {
       onCancel() {},
     });
   }
+
+  // edit
+  async function handleSubmitFormScheduleEdit(
+    data: Partial<ReqSchedule>
+  ): Promise<boolean> {
+    const api = staffApi.createOrUpdateSchedule({
+      ...data,
+      timeCode: data.timeCodeArray,
+    });
+    const isOk = await toastMsgFromPromise(api);
+    if (isOk) {
+      mutateSchedule();
+    }
+    return isOk;
+  }
+
   const getColumnSearchProps = (
     dataIndex: DataIndex | any
   ): ColumnType<HealthExaminationScheduleResAll> => ({
@@ -262,7 +295,7 @@ export function ManagerScheduleAdmin() {
       {
         title: "Bác sĩ",
         dataIndex: ["working", "Staff", "fullName"],
-        key: "Staff",
+        key: "staffName",
         render: (text) => <a>{text}</a>,
         sorter: (a, b) =>
           a.working.Staff.fullName.localeCompare(b.working.Staff.fullName),
@@ -271,7 +304,7 @@ export function ManagerScheduleAdmin() {
       {
         title: "Cơ sở y tế",
         dataIndex: ["working", "HealthFacility", "name"],
-        key: "HealthFacility",
+        key: "healthFacilityName",
         render: (text) => <a>{text}</a>,
         sorter: (a, b) =>
           a.working.HealthFacility.name.localeCompare(
@@ -321,6 +354,20 @@ export function ManagerScheduleAdmin() {
   return (
     <div className="">
       <ModalPositionHere
+        width={620}
+        show={isOpentEdit}
+        toggle={onCloseEdit}
+        footer={false}
+        body={
+          <BodyModalSchedule
+            obEdit={obEdit}
+            clickCancel={onCloseEdit}
+            handleSubmitForm={handleSubmitFormScheduleEdit}
+          />
+        }
+        title={"Chỉnh sửa lịch"}
+      />
+      <ModalPositionHere
         show={isOpentAdd}
         toggle={onCloseAdd}
         size="2xl"
@@ -333,14 +380,45 @@ export function ManagerScheduleAdmin() {
         }
         title={!obEdit ? "Thêm lịch hẹn" : "Sửa lịch hẹn"}
       />
-      <h3 className="gr-title-admin flex items-center justify-between  mb-3">
+      <h3 className="gr-title-admin flex items-start justify-between  mb-4">
         Danh sách lịch hẹn
-        <BtnPlus
-          title="Tạo lịch hẹn"
-          onClick={() => {
-            onOpenAdd();
-          }}
-        />
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <DatePicker
+            labelPlacement="outside-left"
+            label="Tìm kiếm ngày khám"
+            size="md"
+            value={date || null}
+            startContent={
+              date && (
+                <span
+                  className="p-2 cursor-pointer hover:opacity-90"
+                  onClick={() => setDate(undefined)}
+                >
+                  <HiX size={18} />
+                </span>
+              )
+            }
+            variant="bordered"
+            onChange={(e) => {
+              setTableParams((v) => {
+                return {
+                  pagination: {
+                    current: 1,
+                    pageSize: 6,
+                  },
+                };
+              });
+              setDate(e);
+            }}
+            classNames={{ label: "text-left" }}
+          />
+          <BtnPlus
+            title="Tạo lịch hẹn"
+            onClick={() => {
+              onOpenAdd();
+            }}
+          />
+        </div>
       </h3>
 
       <TableSortFilter

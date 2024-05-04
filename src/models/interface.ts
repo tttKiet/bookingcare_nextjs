@@ -13,6 +13,7 @@ export interface User {
   phone: string;
   address: string;
   gender: string;
+  banded: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -65,7 +66,7 @@ export interface Code {
 }
 
 export interface HealthExaminationScheduleResAll {
-  date: string | Date | Object;
+  date: string;
   working: Working;
   schedule: HealthExaminationSchedule[];
 }

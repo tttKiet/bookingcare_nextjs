@@ -4,12 +4,14 @@ export interface LoginProfile {
   id: string;
   fullName: string;
   email: string;
+  phone: string;
   Role: {
     id: string;
     keyType: string;
   } | null;
   address: string;
   gender: string;
+
   createdAt: string;
 }
 
@@ -21,6 +23,7 @@ const initialState: LoginProfile = {
   address: "",
   gender: "",
   createdAt: "",
+  phone: "",
 };
 
 const userSlice = createSlice({
@@ -31,6 +34,7 @@ const userSlice = createSlice({
       state.id = payload.payload.id;
       state.fullName = payload.payload.fullName;
       state.email = payload.payload.email;
+      state.phone = payload.payload.phone;
       state.Role = payload.payload?.Role || null;
       state.address = payload.payload.address;
       state.gender = payload.payload.gender;
@@ -40,6 +44,7 @@ const userSlice = createSlice({
       state.id = "";
       state.fullName = "";
       state.email = "";
+      state.phone = "";
       state.Role = null;
       state.address = "";
       state.gender = "";
