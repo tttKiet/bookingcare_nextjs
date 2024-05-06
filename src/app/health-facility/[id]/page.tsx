@@ -3,12 +3,17 @@
 import {
   API_DOCTOR_SCHEDULE_HEALTH_EXAM,
   API_HEALTH_FACILITIES,
+  API_REVIEW_HEALTH,
   API_WORK_ROOM_GET_FULL_LIST_DOCTOR_WORKING,
 } from "@/api-services/constant-api";
 import instances from "@/axios";
 import { WorkRoomAndSchedule } from "@/components/common/step-boking";
 import { useGetAddress } from "@/hooks/use-get-address-from-code";
-import { HealthFacility, ScheduleFilterDoctor } from "@/models";
+import {
+  HealthFacility,
+  ReviewHealthIndex,
+  ScheduleFilterDoctor,
+} from "@/models";
 import { ResDataPaginations } from "@/types";
 import { Image } from "@nextui-org/image";
 import { Chip, Divider, Tab, Tabs } from "@nextui-org/react";
@@ -21,6 +26,8 @@ import { AnimatePresence, motion, Variants } from "framer-motion";
 import DoctorItem from "@/components/common/DoctorItem";
 import ReviewDoctor from "@/components/common/reviews/ReviewDoctor";
 import { useDisPlay } from "@/hooks";
+import { FaStar } from "react-icons/fa";
+import ReviewDoctorHealthFacility from "@/components/common/reviews/ReviewDoctorHealthFacility";
 
 export default function HealthFacilityDetailPage({
   params,
@@ -29,12 +36,21 @@ export default function HealthFacilityDetailPage({
 }) {
   // get data
   const { data: data, mutate } = useSWR<ResDataPaginations<HealthFacility>>(
-    `${API_HEALTH_FACILITIES}?bookingId=${params.id}`,
+    `${API_HEALTH_FACILITIES}?id=${params.id}`,
     {
       revalidateOnMount: true,
       dedupingInterval: 5000,
     }
   );
+
+  const { data: dataReviewHealthIndex } = useSWR<ReviewHealthIndex>(
+    `${API_REVIEW_HEALTH}/index?healthFacilityId=${params.id}`,
+    {
+      revalidateOnMount: true,
+      dedupingInterval: 5000,
+    }
+  );
+
   const healthFacility: HealthFacility | null = useMemo(() => {
     return data?.rows?.[0] || null;
   }, [data]);
@@ -45,7 +61,6 @@ export default function HealthFacilityDetailPage({
   const h4Ref = useRef(null);
   const h5Ref = useRef(null);
   const h6Ref = useRef(null);
-  console.log("healthFacility", healthFacility);
   // state
   const [currentImage, setCurrentImage] = useState<Number>(0);
 
@@ -117,7 +132,36 @@ export default function HealthFacilityDetailPage({
       <div className="container mx-auto pt-12">
         {/* image */}
         <div className="grid grid-cols-12 gap-8">
-          <div className="col-span-7">
+          <div className="col-span-7 relative">
+            {/* star */}
+            <div className="absolute text-lg top-0 z-30  right-28 font-medium">
+              <motion.div
+                animate={{
+                  x: [0.7, 1, 1.1, 0.7, 0.3, 0.5, 0.6, 0.7, 0.7],
+                  scale: [0.8, 1, 1.1, 1.1, 0.9, 1.2, 1.1, 0.9, 0.8],
+                  rotate: [2, 0, 3, 4, 1],
+                  // transform:
+                  transition: {
+                    repeat: Infinity,
+                    duration: 8,
+
+                    repeatType: "reverse",
+                  },
+                }}
+              >
+                <div
+                  className="flex items-center gap-1 px-2 py-1 backdrop-blur-sm -translate-y-1/2 
+            rounded-md border bg-white/40"
+                >
+                  <FaStar color="#c5ac07cc" />
+                  <div className="">
+                    {dataReviewHealthIndex?.reviewIndex.avg}
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* image */}
             {healthFacility?.images?.length == 1 ? (
               <Image
                 src={healthFacility?.images?.[0]}
@@ -184,7 +228,7 @@ export default function HealthFacilityDetailPage({
                 <Tab
                   key="0"
                   title={
-                    <div onClick={() => scrollTo(h6Ref.current, { top: 90 })}>
+                    <div onClick={() => scrollTo(h6Ref.current, { top: 190 })}>
                       Tổng quan
                     </div>
                   }
@@ -193,7 +237,9 @@ export default function HealthFacilityDetailPage({
                   <Tab
                     key="1"
                     title={
-                      <div onClick={() => scrollTo(h1Ref.current, { top: 90 })}>
+                      <div
+                        onClick={() => scrollTo(h1Ref.current, { top: 190 })}
+                      >
                         Giới thiệu
                       </div>
                     }
@@ -203,7 +249,7 @@ export default function HealthFacilityDetailPage({
                 <Tab
                   key="2"
                   title={
-                    <div onClick={() => scrollTo(h2Ref.current, { top: 90 })}>
+                    <div onClick={() => scrollTo(h2Ref.current, { top: 190 })}>
                       Vị trí
                     </div>
                   }
@@ -211,7 +257,7 @@ export default function HealthFacilityDetailPage({
                 <Tab
                   key="3"
                   title={
-                    <div onClick={() => scrollTo(h3Ref.current, { top: 90 })}>
+                    <div onClick={() => scrollTo(h3Ref.current, { top: 190 })}>
                       Danh sách Bác sĩ
                     </div>
                   }
@@ -219,7 +265,7 @@ export default function HealthFacilityDetailPage({
                 <Tab
                   key="4"
                   title={
-                    <div onClick={() => scrollTo(h4Ref.current, { top: 90 })}>
+                    <div onClick={() => scrollTo(h4Ref.current, { top: 190 })}>
                       Đánh giá
                     </div>
                   }
@@ -227,7 +273,7 @@ export default function HealthFacilityDetailPage({
                 <Tab
                   key="5"
                   title={
-                    <div onClick={() => scrollTo(h5Ref.current, { top: 90 })}>
+                    <div onClick={() => scrollTo(h5Ref.current, { top: 190 })}>
                       Liên hệ
                     </div>
                   }
@@ -341,13 +387,13 @@ export default function HealthFacilityDetailPage({
         </div>
 
         <Divider className="my-12" />
-        <div className="mt-6">
+        <div className="mt-6 mb-12">
           <h4 ref={h4Ref} className="font-bold text-[#1b3c74] text-2xl">
             Đánh giá gần đây
           </h4>
 
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            {/* <ReviewDoctor /> */}
+          <div className="">
+            <ReviewDoctorHealthFacility healthFacilityId={params.id} />
           </div>
         </div>
       </div>

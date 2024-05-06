@@ -17,6 +17,7 @@ import { schemaChangePass, schemaStaffBody } from "@/schema-validate";
 import { userApi } from "@/api-services";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import { InputField } from "../form";
+import { HiMiniDevicePhoneMobile } from "react-icons/hi2";
 
 export default function TagUserAccount() {
   const { profile } = useAuth();
@@ -107,17 +108,7 @@ export default function TagUserAccount() {
               </div>
 
               <div className="flex flex-row">
-                <svg
-                  className="mr-2 h-4 w-4 fill-gray-500/80"
-                  xmlns="http://www.w3.org/2000/svg"
-                  xmlnsXlink="http://www.w3.org/1999/xlink"
-                  version="1.1"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5M12,2A7,7 0 0,1 19,9C19,14.25 12,22 12,22C12,22 5,14.25 5,9A7,7 0 0,1 12,2M12,4A5,5 0 0,0 7,9C7,10 7,12 12,18.71C17,12 17,10 17,9A5,5 0 0,0 12,4Z" />
-                </svg>
+                <HiMiniDevicePhoneMobile className="mr-1 h-4 w-4 fill-gray-500/80" />
 
                 <div className="text-xs text-gray-400/80 hover:text-gray-400">
                   {profile?.phone}

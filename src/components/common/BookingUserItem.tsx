@@ -86,6 +86,14 @@ export function BookingUserItem({
             </svg>
             <span className="font-medium"> {data?.PatientProfile?.phone}</span>
           </div>
+          <div className="flex gap-2 items-center mt-2">
+            <Link
+              href={`/user/booking/${data?.id}`}
+              className="text-blue-400 underline underline-offset-1"
+            >
+              Xem chi tiết
+            </Link>
+          </div>
         </div>
         <Divider orientation="vertical" className="h-[200px]" />
       </div>

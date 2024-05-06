@@ -1,13 +1,15 @@
 import { Review } from "@/models";
-import { Avatar } from "@nextui-org/react";
+import { Avatar, Chip } from "@nextui-org/react";
 import { Rate } from "antd";
 import moment from "moment";
+import { FaCaretRight } from "react-icons/fa";
 
 export interface IReviewItemProps {
   review: Review;
+  showDoctor?: false;
 }
 
-export default function ReviewItem({ review }: IReviewItemProps) {
+export default function ReviewItem({ review, showDoctor }: IReviewItemProps) {
   return (
     <div className="">
       <div className="">
@@ -21,7 +23,27 @@ export default function ReviewItem({ review }: IReviewItemProps) {
           />
           <div className="flex flex-col gap-1 items-start justify-center w-full">
             <div className="text-lg font-medium text-[#000] flex justify-between items-center flex-1 w-full">
-              {review?.User?.fullName}
+              <div className="flex items-center gap-2">
+                {review?.User?.fullName}
+
+                {showDoctor && (
+                  <>
+                    <FaCaretRight />
+                    <div>
+                      {review?.Staff?.fullName}{" "}
+                      <Chip
+                        className="ml-1 font-medium"
+                        size="sm"
+                        variant="flat"
+                        color="secondary"
+                        radius="sm"
+                      >
+                        bác sĩ
+                      </Chip>
+                    </div>
+                  </>
+                )}
+              </div>
               <span className="text-sm text-[rgb(60,66,83)]">
                 {moment(review.createdAt).fromNow()}
               </span>

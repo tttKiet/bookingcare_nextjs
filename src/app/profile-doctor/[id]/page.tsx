@@ -13,7 +13,6 @@ import { ResDataPaginations } from "@/types";
 import { sortTimeSlots } from "@/untils/common";
 import {
   Avatar,
-  Button,
   Card,
   CardFooter,
   Chip,
@@ -34,7 +33,10 @@ import { HiOutlineMail, HiOutlinePhone } from "react-icons/hi";
 import { PiSealCheckDuotone, PiSealCheckThin } from "react-icons/pi";
 import useSWR, { BareFetcher } from "swr";
 import ReviewDoctor from "@/components/common/reviews/ReviewDoctor";
+import maleAvt from "../../../assets/images/doctor/male_doctor.png";
+import femaleAvt from "../../../assets/images/doctor/female_doctor.png";
 import { useDisPlay } from "@/hooks";
+import { Button } from "@nextui-org/button";
 
 export default function DoctorDetailPage({
   params,
@@ -66,12 +68,7 @@ export default function DoctorDetailPage({
     mutate: mutateDoctorWorkings,
     isLoading,
   } = useSWR<ResDataPaginations<WorkRoomAndSchedule>>(
-    [
-      `${API_WORK_ROOM_GET_FULL_LIST_DOCTOR_WORKING}`,
-      {
-        staffId: params.id || "",
-      },
-    ],
+    [`${API_WORK_ROOM_GET_FULL_LIST_DOCTOR_WORKING}?doctorId=${params.id}`],
     fetcher,
     {
       revalidateOnMount: true,
@@ -81,7 +78,7 @@ export default function DoctorDetailPage({
   const doctorData: WorkRoomAndSchedule | null = useMemo(() => {
     return doctorWorkings?.rows?.[0] || null;
   }, [doctorWorkings]);
-
+  console.log("doctorDatadoctorDatadoctorData", doctorData);
   // More
   const { data: doctorWorkingAll, mutate: mutateDoctorWorkingAll } = useSWR<
     ResDataPaginations<WorkRoomAndSchedule>
@@ -98,12 +95,11 @@ export default function DoctorDetailPage({
       dedupingInterval: 5000,
     }
   );
-
   const doctorDataMorePaginations: WorkRoomAndSchedule[] = useMemo(() => {
     return (
-      doctorWorkingAll?.rows?.filter(
-        (d: WorkRoomAndSchedule) => d?.Working?.staffId !== params?.id
-      ) || []
+      doctorWorkingAll?.rows?.filter((d: WorkRoomAndSchedule) => {
+        return d?.Working?.staffId !== params?.id;
+      }) || []
     );
   }, [doctorWorkingAll]);
 
@@ -132,12 +128,26 @@ export default function DoctorDetailPage({
                   isBordered
                   size="lg"
                   color="default"
-                  src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
+                  src={
+                    doctorData?.Working.Staff?.gender == "male"
+                      ? maleAvt.src
+                      : femaleAvt.src
+                  }
                 />
                 <div>
                   <h4 className="text-[#1b3c74] text-xl font-medium  flex items-center gap-2">
                     {doctorData?.Working.Staff?.fullName?.toUpperCase()}
-                    <PiSealCheckDuotone color="blue" />
+                    <svg
+                      className="my-auto ml-0 h-5 fill-blue-400"
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlnsXlink="http://www.w3.org/1999/xlink"
+                      version="1.1"
+                      width="26"
+                      height="26"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M23,12L20.56,9.22L20.9,5.54L17.29,4.72L15.4,1.54L12,3L8.6,1.54L6.71,4.72L3.1,5.53L3.44,9.21L1,12L3.44,14.78L3.1,18.47L6.71,19.29L8.6,22.47L12,21L15.4,22.46L17.29,19.28L20.9,18.46L20.56,14.78L23,12M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z" />
+                    </svg>
                   </h4>
                   <p className="text-base text-[rgb(60,66,83)]/90  font-medium">
                     {doctorData?.Working.Staff?.Specialist?.name}{" "}
@@ -161,7 +171,7 @@ export default function DoctorDetailPage({
                     title={
                       <div
                         onClick={() => {
-                          scrollTo(h1Ref.current, { top: 90 });
+                          scrollTo(h1Ref.current, { top: 190 });
                         }}
                       >
                         Lịch khám
@@ -171,20 +181,33 @@ export default function DoctorDetailPage({
                   <TabReact
                     key="2"
                     title={
-                      <div onClick={() => scrollTo(h2Ref.current, { top: 90 })}>
+                      <div
+                        onClick={() => scrollTo(h2Ref.current, { top: 190 })}
+                      >
                         Liên hệ
+                      </div>
+                    }
+                  />
+                  <TabReact
+                    key="3"
+                    title={
+                      <div
+                        onClick={() => scrollTo(h4Ref.current, { top: 190 })}
+                      >
+                        Bác sĩ
                       </div>
                     }
                   />
                   <TabReact
                     key="4"
                     title={
-                      <div onClick={() => scrollTo(h3Ref.current, { top: 90 })}>
+                      <div
+                        onClick={() => scrollTo(h3Ref.current, { top: 190 })}
+                      >
                         Đánh giá
                       </div>
                     }
                   />
-                  <TabReact key="3" title="Bác sĩ" />
                 </TabsReact>
               </div>
               <div className=" mb-6 ">
@@ -204,7 +227,7 @@ export default function DoctorDetailPage({
                           label: (
                             <div className="flex items-center justify-center gap-2 flex-col mb-1">
                               <span className="font-bold text-sm">
-                                {moment(sfd.date).format("dddd, DD/do")}
+                                {moment(sfd.date).format("dddd, Do/Mo")}
                               </span>
                               <span className="text-sm text-green-500">
                                 +{sfd.data?.[0].schedules.length} khung giờ
@@ -358,7 +381,7 @@ export default function DoctorDetailPage({
                     width={500}
                   />
                   <CardFooter
-                    className="justify-between before:bg-white/10
+                    className="justify-between before:bg-white/20
                    border-white/20 border-1 overflow-hidden py-1 
                    absolute before:rounded-xl rounded-large bottom-1
                     w-[calc(100%_-_8px)] shadow-small ml-1 z-10"
@@ -397,13 +420,13 @@ export default function DoctorDetailPage({
               </div>
               {/* //Các bệnh nhân gần đây */}
               <div className="mt-6 ">
-                <div className="bg-[#fff] shadow rounded-lg ">
-                  <h4 className="text-center pt-4 mb-2 text-[#1b3c74] font-medium text-base">
+                <div className="bg-[#fff] shadow rounded-lg pb-4">
+                  <h4 className="text-center pt-4 mb-4 text-[#1b3c74] font-medium text-base">
                     Các bệnh nhân gần đây
                   </h4>
                   <div
                     className="flex items-start 
-                justify-center flex-col max-h-96 overflow-y-scroll pr-4"
+                justify-center flex-col max-h-96 overflow-y-scroll pr-4 "
                   >
                     {lassCheckUp?.rows.map((h: HealthRecord) => (
                       <div className="px-8 py-4 w-full">
@@ -425,7 +448,7 @@ export default function DoctorDetailPage({
                                   color="primary"
                                   size="sm"
                                   radius="sm"
-                                  variant="bordered"
+                                  variant="flat"
                                   className=""
                                 >
                                   Đã khám
@@ -462,6 +485,11 @@ export default function DoctorDetailPage({
                       </div>
                     ))}
                   </div>
+                  {lassCheckUp?.rows.length == 0 && (
+                    <div className="py-6 pt-0 text-center flex-1 w-full">
+                      Chưa có bệnh nhân khám!
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -487,7 +515,7 @@ export default function DoctorDetailPage({
             <>
               <Divider className="my-12" />
               <div className="mt-6">
-                <h4 className="font-bold text-[#1b3c74] text-2xl">
+                <h4 className="font-bold text-[#1b3c74] text-2xl" ref={h4Ref}>
                   Xem nhiều bác sĩ hơn
                 </h4>
 

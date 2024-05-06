@@ -31,11 +31,21 @@ import { AiOutlineProfile } from "react-icons/ai";
 import { BsCalendar2Plus } from "react-icons/bs";
 import { GrSchedules } from "react-icons/gr";
 import TagUserAccount from "@/components/common/TagUserAccount";
+import { CiUser } from "react-icons/ci";
+import { RiFolderUserLine } from "react-icons/ri";
+import { PiFolderSimpleUserBold } from "react-icons/pi";
+import { HiOutlineCalendar, HiOutlineNewspaper } from "react-icons/hi";
+import { FaRegCircleUser } from "react-icons/fa6";
+import { LiaBookMedicalSolid } from "react-icons/lia";
+import TagUserMedicalRecord from "@/components/common/TagUserMedicalRecord";
+import TagUserResult from "@/components/common/TagUserResult";
 const TagNames = {
   ONE: "patient-profile",
   TWO: "add-patient-profile",
   FOUR: "booking",
   FIVE: "account",
+  SIX: "medical-record",
+  SERVEN: "result",
 };
 
 interface ItemMenuUser {
@@ -53,23 +63,26 @@ interface ItemMenuActionUser {
 export default function UserPage() {
   const searchParams = useSearchParams();
   const { profile } = useAuth();
-
-  const router = useRouter();
   const tagName = searchParams.get("tag");
+  const url = usePathname();
+  const fullUrl = url + `?tag=${tagName}`;
+  const router = useRouter();
   const iconClasses =
-    "text-xl text-default-500 pointer-events-none flex-shrink-0";
+    "text-xl text-default-500 pointer-events-none flex-shrink-0 ml-3";
   const iconClassesActive =
-    "text-xl text-black pointer-events-none flex-shrink-0";
+    "text-xl bg-[#e6f4ff] pointer-events-none flex-shrink-0 ml-3";
   const items: ItemMenuActionUser[] = [
     {
       action: "Tôi",
       data: [
         {
-          key: TagNames.FIVE,
+          key: `/user?tag=${TagNames.FIVE}`,
           label: (
-            <Link href={`/user?tag=${TagNames.FIVE}`}>Tài khoản của bạn</Link>
+            <Link className="font-medium" href={`/user?tag=${TagNames.FIVE}`}>
+              Tài khoản của bạn
+            </Link>
           ),
-          icon: <AiOutlineProfile />,
+          icon: <FaRegCircleUser size={18} />,
         },
       ],
     },
@@ -77,16 +90,22 @@ export default function UserPage() {
       action: "Người khám",
       data: [
         {
-          key: TagNames.ONE,
+          key: `/user?tag=${TagNames.ONE}`,
           label: (
-            <Link href={`/user?tag=${TagNames.ONE}`}>Hồ sơ bệnh nhân</Link>
+            <Link className="font-medium" href={`/user?tag=${TagNames.ONE}`}>
+              Hồ sơ bệnh nhân
+            </Link>
           ),
-          icon: <AiOutlineProfile />,
+          icon: <RiFolderUserLine size={18} />,
         },
         {
-          key: TagNames.TWO,
-          label: <Link href={`/user?tag=${TagNames.TWO}`}>Thêm hồ sơ</Link>,
-          icon: <AddNoteIcon />,
+          key: `/user?tag=${TagNames.TWO}`,
+          label: (
+            <Link className="font-medium" href={`/user?tag=${TagNames.TWO}`}>
+              Thêm hồ sơ
+            </Link>
+          ),
+          icon: <PiFolderSimpleUserBold size={18} />,
         },
       ],
     },
@@ -94,9 +113,36 @@ export default function UserPage() {
       action: "Lịch hẹn",
       data: [
         {
-          key: TagNames.FOUR,
-          label: <Link href={`/user?tag=${TagNames.FOUR}`}>Lịch hẹn khám</Link>,
-          icon: <GrSchedules size={18} />,
+          key: `/user?tag=${TagNames.FOUR}`,
+          label: (
+            <Link className="font-medium" href={`/user?tag=${TagNames.FOUR}`}>
+              Lịch hẹn khám
+            </Link>
+          ),
+          icon: <HiOutlineCalendar size={18} />,
+        },
+        {
+          key: `/user?tag=${TagNames.SERVEN}`,
+          label: (
+            <Link className="font-medium" href={`/user?tag=${TagNames.SERVEN}`}>
+              Kết quả khám bệnh
+            </Link>
+          ),
+          icon: <HiOutlineNewspaper size={18} />,
+        },
+      ],
+    },
+    {
+      action: "Bệnh án",
+      data: [
+        {
+          key: `/user?tag=${TagNames.SIX}`,
+          label: (
+            <Link className="font-medium" href={`/user?tag=${TagNames.SIX}`}>
+              Hồ sơ bệnh án
+            </Link>
+          ),
+          icon: <LiaBookMedicalSolid size={18} />,
         },
       ],
     },
@@ -119,7 +165,17 @@ export default function UserPage() {
       key: TagNames.FIVE,
       component: <TagUserAccount />,
     },
+    {
+      key: TagNames.SIX,
+      component: <TagUserMedicalRecord />,
+    },
+    {
+      key: TagNames.SERVEN,
+      component: <TagUserResult />,
+    },
   ];
+
+  const [address, setAddress] = useState<string>("");
 
   useEffect(() => {
     if (!(tagName && Object.values(TagNames).includes(tagName))) {
@@ -143,7 +199,7 @@ export default function UserPage() {
                 <Listbox
                   variant="flat"
                   aria-label="Listbox menu with sections "
-                  className="pt-4 "
+                  className="pt-4 font-medium"
                 >
                   {items.map((i, index) => (
                     <ListboxSection
@@ -151,31 +207,34 @@ export default function UserPage() {
                       title={i.action}
                       showDivider={items.length - 1 !== index}
                     >
-                      {i.data.map((listItem) => (
-                        <ListboxItem
-                          key={listItem.key}
-                          description={listItem.decs}
-                          className={
-                            tagName == listItem.key
-                              ? "bg-gray-300 text-black mt-2"
-                              : " mt-2"
-                          }
-                          startContent={
-                            <div
-                              className={
-                                tagName == listItem.key
-                                  ? `${iconClassesActive} mr-2`
-                                  : `${iconClasses} mr-2`
-                              }
-                            >
-                              {listItem.icon}
-                            </div>
-                          }
-                          textValue=""
-                        >
-                          {listItem.label}
-                        </ListboxItem>
-                      ))}
+                      {i.data.map((listItem) => {
+                        return (
+                          <ListboxItem
+                            key={listItem.key}
+                            description={listItem.decs}
+                            onClick={() => router.push(listItem.key)}
+                            className={
+                              fullUrl == listItem.key
+                                ? "bg-[#e6f4ff] text-[#2884FF] mt-2"
+                                : " mt-2"
+                            }
+                            startContent={
+                              <div
+                                className={
+                                  fullUrl == listItem.key
+                                    ? `${iconClassesActive} mr-2`
+                                    : `${iconClasses} mr-2`
+                                }
+                              >
+                                {listItem.icon}
+                              </div>
+                            }
+                            textValue=""
+                          >
+                            {listItem.label}
+                          </ListboxItem>
+                        );
+                      })}
                     </ListboxSection>
                   ))}
                 </Listbox>

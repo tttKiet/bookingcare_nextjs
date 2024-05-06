@@ -1,7 +1,7 @@
 import { List, Rate } from "antd";
 import { useInView } from "framer-motion";
 import { useEffect, useRef } from "react";
-import { Avatar, Button, Divider } from "@nextui-org/react";
+import { Avatar, Divider } from "@nextui-org/react";
 import male from "../../assets/images/doctor/male_doctor.png";
 import female from "../../assets/images/doctor/female_doctor.png";
 import { MdEmail } from "react-icons/md";
@@ -11,6 +11,7 @@ import { WorkRoomAndSchedule } from "./step-boking";
 import { CiStar } from "react-icons/ci";
 import { FaStar } from "react-icons/fa";
 import Link from "next/link";
+import { Button } from "@nextui-org/button";
 export interface DoctorItemProps {
   workRoomAndSchedule: WorkRoomAndSchedule;
   handleClickCard: (item: WorkRoomAndSchedule) => void;
@@ -39,10 +40,14 @@ export default function DoctorItem({
       >
         <div className="">
           <div className="grid grid-cols-12 gap-2">
-            <div className="col-span-4 flex gap-4 items-center">
+            <div className="col-span-5 flex gap-3 items-center">
               <Avatar
                 className="flex-shrink-0"
-                src={male.src}
+                src={
+                  workRoomAndSchedule.Working.Staff.gender == "male"
+                    ? male.src
+                    : female.src
+                }
                 // description={`${workRoomAndSchedule.Working.Staff.fullName}`}
                 // name={`${workRoomAndSchedule.Working.Staff.email}`}
                 isBordered
@@ -59,13 +64,13 @@ export default function DoctorItem({
                   href={
                     "/profile-doctor/" + workRoomAndSchedule?.Working?.Staff?.id
                   }
-                  className="text-base font-medium text-[#0F172A] my-0 hover:underline transition-all"
+                  className="text-base font-medium text-[#0F172A] my-0 hover:underline transition-all line-clamp-1"
                 >
                   {workRoomAndSchedule?.Working?.Staff?.fullName}
                 </Link>
               </div>
             </div>
-            <div className="col-span-4 flex flex-col text-sm font-medium text-[#1E293B]">
+            <div className="col-span-5 flex flex-col text-sm font-medium text-[#1E293B]">
               <div className="flex space-x-2 items-center ">
                 <h4 className="  my-0">
                   {workRoomAndSchedule.Working.Staff.AcademicDegree.name}
@@ -82,13 +87,15 @@ export default function DoctorItem({
                     : "Nữ"}
                 </h4>
               </div>
-              <span className="text-[20px] mt-1 flex items-center gap-2 font-medium text-[#1E293B]  ">
-                4.0
+              <span className="text-[18px] mt-1 flex items-center gap-2 font-medium text-[#1E293B]  ">
+                {workRoomAndSchedule?.starNumber == 0
+                  ? "5.0"
+                  : workRoomAndSchedule?.starNumber?.toString()}
                 <FaStar color="#d8d900" />
               </span>
             </div>
 
-            <div className="col-span-4 flex flex-col text-sm font-medium text-[#1E293B]">
+            <div className="col-span-2 flex flex-col items-end text-sm font-medium text-[#1E293B]">
               <div className="flex justify-end">
                 <Button
                   color="primary"

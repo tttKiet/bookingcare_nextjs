@@ -17,11 +17,12 @@ import moment from "moment";
 import { BiUserPin } from "react-icons/bi";
 import { BsTelephone } from "react-icons/bs";
 import { HiOutlineMail } from "react-icons/hi";
-import { LiaBirthdayCakeSolid } from "react-icons/lia";
+import { LiaBirthdayCakeSolid, LiaUserPlusSolid } from "react-icons/lia";
 import { useGetAddress } from "@/hooks/use-get-address-from-code";
 import { BookingUserItem } from "./BookingUserItem";
 import { CiUser } from "react-icons/ci";
 import DropDownBookingBill from "./DropDownBookingBill";
+import { HiMiniBookmark } from "react-icons/hi2";
 const { confirm } = Modal;
 
 export interface TagBookingUserProps {
@@ -47,9 +48,9 @@ export function TagBookingUser({ selectedKey }: TagBookingUserProps) {
               key={p.id}
               title={
                 <div className="flex items-center gap-2">
-                  <div className="font-medium flex items-center">
+                  <div className="font-medium flex items-center text-[#1b3c74]">
                     <div className="flex items-center justify-center relative top-[-1px] mr-2">
-                      <CiUser size={18} />
+                      <HiMiniBookmark size={20} />
                     </div>
                     <span> {p.PatientProfile.fullName}</span>
                   </div>
@@ -57,7 +58,7 @@ export function TagBookingUser({ selectedKey }: TagBookingUserProps) {
               }
               classNames={{ content: "px-8" }}
               subtitle={
-                <div className="flex items-center gap-4 ">
+                <div className="flex items-center gap-4 mt-1 ">
                   <div>
                     {`Ngày tạo lịch: ${moment(p.createdAt).format(
                       "L"
@@ -66,7 +67,7 @@ export function TagBookingUser({ selectedKey }: TagBookingUserProps) {
                     ).format("L")}`}
                   </div>
 
-                  <DropDownBookingBill bookingId={p.id} />
+                  {/* <DropDownBookingBill bookingId={p.id} /> */}
                 </div>
               }
             >
@@ -74,6 +75,9 @@ export function TagBookingUser({ selectedKey }: TagBookingUserProps) {
             </AccordionItem>
           ))}
         </Accordion>
+        {responsePatientProfile?.rows.length == 0 && (
+          <div className="ml-2 box-white">Không có dữ liệu</div>
+        )}
       </div>
     </div>
   );

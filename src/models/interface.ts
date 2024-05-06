@@ -103,6 +103,8 @@ export interface PatientProfile {
   addressCode: string[];
   userId: string;
   User: User;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Patient {
@@ -118,6 +120,8 @@ export interface Patient {
   addressCode: string[];
   healthFacilityId: string;
   HealthFacility: HealthFacility;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Booking {
@@ -262,4 +266,19 @@ export interface ReviewDoctorIndex {
     star2: number;
     star1: number;
   };
+}
+
+export interface ReviewHealthIndex {
+  reviewIndex: {
+    countReview: number;
+    avg: number;
+    star: {
+      star5: number;
+      star4: number;
+      star3: number;
+      star2: number;
+      star1: number;
+    };
+  };
+  healthFacility: HealthFacility;
 }

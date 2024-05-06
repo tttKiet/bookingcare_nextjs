@@ -32,6 +32,20 @@ export interface HealthFacility {
   TypeHealthFacility: TypeHealthFacility;
 }
 
+export interface HealthFacilityStar extends HealthFacility {
+  reviewIndex: {
+    countReview: number;
+    avg: number;
+    star: {
+      star5: number;
+      star4: number;
+      star3: number;
+      star2: number;
+      star1: number;
+    };
+  };
+}
+
 export interface Specialist {
   id: string;
   name: string;

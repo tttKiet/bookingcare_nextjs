@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth, userRandomBgLinearGradient } from "@/hooks";
-import { HealthFacility } from "@/models";
+import { HealthFacility, HealthFacilityStar } from "@/models";
 import { ResDataPaginations } from "@/types";
 import { Rate } from "antd";
 import Image from "next/image";
@@ -21,8 +21,8 @@ import { PulseLoader } from "react-spinners";
 import { LiaCitySolid } from "react-icons/lia";
 
 export interface IItemHealthFacilitiesProps {
-  healthFaicility: HealthFacility;
-  handleClickItem: (healthFaicility: HealthFacility) => void;
+  healthFaicility: HealthFacilityStar;
+  handleClickItem: (healthFaicility: HealthFacilityStar) => void;
 }
 
 export function ItemHealthFacility({
@@ -108,7 +108,8 @@ export function ItemHealthFacility({
             // className="capitalize"
           >
             <h4
-              className="text-base font-bold text-[#1b3c74] whitespace-nowrap text-ellipsis overflow-x-hidden max-w-[252px]"
+              className="text-base font-bold text-[#1b3c74] 
+               line-clamp-2 h-12"
               onClick={() => handleClickItem(healthFaicility)}
             >
               {healthFaicility.name}
@@ -117,23 +118,21 @@ export function ItemHealthFacility({
         </div>
 
         <div className="text-sm font-medium  text-[rgb(60,66,83)]/90 flex items-center gap-1 my-2">
-          <AiOutlineCaretRight />
-          {healthFaicility.TypeHealthFacility.name}
+          <AiOutlineCaretRight /> <span className="">Loại:</span>
+          <span> {healthFaicility.TypeHealthFacility.name}</span>
         </div>
         <div className="text-sm font-medium  text-[rgb(60,66,83)] ">
-          <div className="font-bold text-[#1b3c74]">Hoạt động:</div>
+          {/* <div className="font-bold text-[#1b3c74]">Đánh giá:</div> */}
           <div className="mt-2 text-[rgb(60,66,83)]/90">
-            <span>
-              <span>Sáng: </span>
-              <Chip color="warning" variant="flat" size="sm" radius="sm">
-                7h - 11h
-              </Chip>
-            </span>
-            <span className="pl-2">
-              <span>Chiều: </span>
-              <Chip color="warning" variant="flat" size="sm" radius="sm">
-                11h - 5h
-              </Chip>
+            <span className="flex items-center gap-0">
+              <span className="text-lg mr-3 text-[#1b3c74]  font-bold">
+                {healthFaicility.reviewIndex.avg.toPrecision(2)}
+              </span>
+              <Rate
+                className="text-base relative top-[-1px]"
+                defaultValue={healthFaicility.reviewIndex.avg}
+                disabled
+              />
             </span>
           </div>
         </div>

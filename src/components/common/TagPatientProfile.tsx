@@ -19,6 +19,7 @@ import { BsTelephone } from "react-icons/bs";
 import { HiOutlineMail } from "react-icons/hi";
 import { LiaBirthdayCakeSolid } from "react-icons/lia";
 import { useGetAddress } from "@/hooks/use-get-address-from-code";
+import { calculateAge } from "@/untils/common";
 const { confirm } = Modal;
 
 export interface IPartientProfileProps {}
@@ -68,7 +69,7 @@ export function PartientProfile(props: IPartientProfileProps) {
                   className="mr-2"
                 />
               }
-              subtitle={`${Math.ceil(Math.random()) * 3} lần khám`}
+              subtitle={`${calculateAge(p.birthDay)} tuổi`}
             >
               <PatientProfileItem
                 data={p}
@@ -78,27 +79,18 @@ export function PartientProfile(props: IPartientProfileProps) {
           ))}
         </Accordion>
 
-        {/* {responsePatientProfile?.rows.map((p: PatientProfile) => (
-          <div className="col-span-12" key={p.id}>
-            <PatientProfileItem
-              p={p}
-              onClickDelete={handleDeletePatientProfile}
-            />
-          </div>
-        ))} */}
-
-        {/* {responsePatientProfile?.rows.length == 0 && (
+        {responsePatientProfile?.rows.length == 0 && (
           <p className="col-span-12">
             Bạn chưa có hồ sơ nào. Tạo hồ sơ ngay
             <Link
               href="/user?tag=add-patient-profile"
-              className="text-blue-500"
+              className="text-blue-500 mx-1"
             >
               tại đây
             </Link>
             .
           </p>
-        )} */}
+        )}
       </div>
     </div>
   );

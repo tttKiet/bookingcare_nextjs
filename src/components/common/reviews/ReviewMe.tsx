@@ -16,7 +16,7 @@ export interface IReviewMetProps {
 
 export default function ReviewMe({ staffId }: IReviewMetProps) {
   const { data: resReviewIndexDoctor, mutate: matateReviewIndexDoctor } =
-    useSWR<ReviewDoctorIndex>(`${API_REVIEW_DOCTOR}/index`);
+    useSWR<ReviewDoctorIndex>(`${API_REVIEW_DOCTOR}/index?staffId=${staffId}`);
 
   // state
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -28,9 +28,9 @@ export default function ReviewMe({ staffId }: IReviewMetProps) {
   } = useDisclosure({ id: "Confirm" });
 
   // fetch
-  const { data: resReview, mutate: matateReview } =
-    useSWR<ResDataPaginations<Review>>(API_REVIEW_DOCTOR);
-
+  const { data: resReview, mutate: matateReview } = useSWR<
+    ResDataPaginations<Review>
+  >(API_REVIEW_DOCTOR + `?staffId=${staffId}`);
   const reviewDoctorExits: Review | undefined = useMemo(
     () => resReview?.rows?.[0],
     [resReview]
@@ -80,8 +80,6 @@ export default function ReviewMe({ staffId }: IReviewMetProps) {
       setIsEdit(false);
     }
     setLoading(false);
-
-    console.log(res);
   }
 
   return (

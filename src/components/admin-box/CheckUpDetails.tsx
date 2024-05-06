@@ -59,7 +59,11 @@ export default function CheckUpDetails({ bookingId }: ICheckUpDetailsProps) {
           <Tab
             key="medical_record"
             title="Hồ sơ bệnh án"
-            children={<MedicalRecord />}
+            children={
+              <div className="box-white min-h-12">
+                <MedicalRecord />
+              </div>
+            }
           />
           <Tab
             key="health"

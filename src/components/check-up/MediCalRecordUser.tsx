@@ -44,9 +44,11 @@ import CedicineDocument from "../pdf/CedicineDocument";
 import TableServiceDetails from "./TableServiceDetails";
 import TablePrescriptionDetails from "./TablePrescriptionDetails";
 
-export interface IMediCalRecordUserProps {}
+export interface IMediCalRecordUserProps {
+  cccd?: string;
+}
 
-export default function MediCalRecordUser(props: IMediCalRecordUserProps) {
+export default function MediCalRecordUser({ cccd }: IMediCalRecordUserProps) {
   //get cccd
   const { bookingId } = useContext(InfoCheckUpContext);
   const { data: bookingContext, mutate } = useSWR<
@@ -80,7 +82,9 @@ export default function MediCalRecordUser(props: IMediCalRecordUserProps) {
     ).data;
   const { data: responseMedicalRecord, mutate: mutateMedicalRecord } =
     useSWR<ResPaginationMedicalRecord>(
-      `${API_USER_MEDICAL_RECORD}?cccd=${bookingContext?.rows?.[0]?.healthRecord?.Patient?.cccd}`
+      `${API_USER_MEDICAL_RECORD}?cccd=${
+        cccd || bookingContext?.rows?.[0]?.healthRecord?.Patient?.cccd
+      }`
     );
 
   // state
@@ -139,10 +143,10 @@ export default function MediCalRecordUser(props: IMediCalRecordUserProps) {
   const footerClass = "mt-4 flex item-center justify-end";
   const labelHeading = "gr-title-admin mb-4 flex items-center gap-2";
   return (
-    <div className="box-white">
+    <div className="text-center">
       {responseMedicalRecord?.rows.length === 0 && (
-        <div className="my-6 text-center text-gray-600 text-lg font-medium">
-          Bệnh nhân đi khám lần đầu!
+        <div className="my-6 text-center text-base text-gray-700 font-medium">
+          Bệnh nhân chưa đặt khám bệnh!
         </div>
       )}
       <ModalFadeInNextUi
@@ -343,18 +347,19 @@ export default function MediCalRecordUser(props: IMediCalRecordUserProps) {
           )}
         </ModalContent>
       </Modal>
-      <div className="flex items-center justify-center w-full pt-6">
-        <Timeline mode="alternate" className="w-full">
+      <div className="mx-auto w-full pt-6 flex items-center justify-center max-w-[640px] ">
+        <Timeline mode="left" className="w-full">
           {responseMedicalRecord?.rows.map((r: HealthRecord) => (
-            <Timeline.Item>
-              <div>
+            <Timeline.Item
+              label={
                 <div>
-                  <span className="font-medium text-[#1b3c74] flex items-center gap-2">
+                  <span className="font-medium text-[#1b3c74] flex items-center justify-end gap-2 mr-2">
+                    Ngày{" "}
                     {moment(r?.Booking?.HealthExaminationSchedule?.date).format(
                       "L"
                     )}
-
                     <EyeActionBox
+                      size="sm"
                       onClick={() => {
                         onClickView(r);
                       }}
@@ -362,19 +367,22 @@ export default function MediCalRecordUser(props: IMediCalRecordUserProps) {
                     />
                   </span>
                 </div>
-
+              }
+            >
+              <div>
                 <div className="text-[rgb(60,66,83)]/90">
-                  Chuẩn đoán: {r?.diagnosis}
+                  <span className="font-medium">Chuẩn đoán:</span>{" "}
+                  {r?.diagnosis}
                 </div>
                 <div className="text-[rgb(60,66,83)]/90">
-                  Bác sĩ khám:{" "}
+                  <span className="font-medium">Bác sĩ khám:</span>{" "}
                   {
                     r?.Booking?.HealthExaminationSchedule?.Working?.Staff
                       ?.fullName
                   }
                 </div>
                 <div className="text-[rgb(60,66,83)]/90">
-                  Cơ sở y tế:{" "}
+                  <span className="font-medium"> Cơ sở y tế:</span>{" "}
                   {
                     r?.Booking?.HealthExaminationSchedule?.Working
                       ?.HealthFacility?.name

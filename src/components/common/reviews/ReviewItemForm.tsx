@@ -7,13 +7,7 @@ import { schemaReview } from "@/schema-validate";
 import { ResDataPaginations } from "@/types";
 import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import { yupResolver } from "@hookform/resolvers/yup";
-import {
-  Avatar,
-  Button,
-  Checkbox,
-  CheckboxGroup,
-  Textarea,
-} from "@nextui-org/react";
+import { Avatar, Checkbox, CheckboxGroup, Textarea } from "@nextui-org/react";
 import { Form, Rate } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useController, useForm } from "react-hook-form";
@@ -22,6 +16,7 @@ import useSWR from "swr";
 import ReviewItem from "./ReviewItem";
 import ReviewItemMeMe from "./ReviewItemMe";
 import { InputTextareaField } from "@/components/form";
+import { Button } from "@nextui-org/button";
 
 export interface IReviewItemProps {
   staffId: string;

@@ -169,9 +169,9 @@ export function getColorChipCheckUp(
   | "danger"
   | undefined {
   if (key == "CU2") {
-    return "primary";
-  } else if (key == "CU3") {
     return "success";
+  } else if (key == "CU3") {
+    return "warning";
   } else if (key == "CU4") {
     return "danger";
   } else {

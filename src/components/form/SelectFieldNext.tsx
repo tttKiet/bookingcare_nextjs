@@ -74,7 +74,7 @@ export function SelectFieldNext({
       // defaultInputValue={value?.toString() || ""}
       // defaultItems={options}
       // items={[]}
-
+      aria-label="ht"
       isClearable={isClearable || false}
       label={
         <>

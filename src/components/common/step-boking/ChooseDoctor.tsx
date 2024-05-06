@@ -26,6 +26,7 @@ export interface IChooseDoctorProps {
 
 export interface WorkRoomAndSchedule extends WorkRoom {
   schedules: string[];
+  starNumber: Number;
 }
 const ChooseDoctor = forwardRef(
   (

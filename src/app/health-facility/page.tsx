@@ -7,7 +7,11 @@ import {
 import { AddressCodeOption } from "@/components/body-modal/BodyAddEditPatient";
 import { ListHealthFacilities, SeachHealthFacility } from "@/components/common";
 import { SelectFieldNext } from "@/components/form/SelectFieldNext";
-import { HealthFacility, TypeHealthFacility } from "@/models";
+import {
+  HealthFacility,
+  HealthFacilityStar,
+  TypeHealthFacility,
+} from "@/models";
 import { ResDataPaginations } from "@/types";
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import axios from "axios";
@@ -245,7 +249,7 @@ export default function HealthFacilities() {
     data: healthFacilities,
     mutate: mutateHealthFacilities,
     isLoading,
-  } = useSWR<ResDataPaginations<HealthFacility>>(
+  } = useSWR<ResDataPaginations<HealthFacilityStar>>(
     [
       `${API_HEALTH_FACILITIES}`,
       {
