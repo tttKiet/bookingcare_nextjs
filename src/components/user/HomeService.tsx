@@ -1,9 +1,15 @@
+"use client";
+
 import Slider from "react-slick";
 import SlideService from "./SlideService";
 import { useRef } from "react";
 import { Button } from "@nextui-org/button";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { motion } from "framer-motion";
+import useSWR from "swr";
+import { API_ADMIN_EXAMINATION_SERVICE } from "@/api-services/constant-api";
+import { ExaminationService } from "@/models";
+import { ResDataPaginations } from "@/types";
 
 export interface IHomeServiceProps {}
 
@@ -18,6 +24,10 @@ export default function HomeService(props: IHomeServiceProps) {
     slidesToScroll: 1,
   };
   let sliderRef: any = useRef(null);
+  const { data: resServices } = useSWR<ResDataPaginations<ExaminationService>>(
+    API_ADMIN_EXAMINATION_SERVICE
+  );
+
   return (
     <div>
       <div className="mb-16 mt-36">
@@ -65,10 +75,9 @@ export default function HomeService(props: IHomeServiceProps) {
             if (slider) sliderRef = slider;
           }}
         >
-          <SlideService />
-          <SlideService />
-          <SlideService />
-          <SlideService />
+          {resServices?.rows.map((s: ExaminationService) => (
+            <SlideService s={s} key={s.id} />
+          ))}
         </Slider>
         <div className="flex items-center justify-center mt-8 gap-4">
           <Button

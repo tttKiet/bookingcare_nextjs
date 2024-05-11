@@ -147,7 +147,7 @@ export default function BookingUserDetail({
                   <h5 className="my-2 text-sm font-bold">Hành động</h5>
 
                   <div className={wrapClass}>
-                    {(!healthRecord || healthRecord?.statusCode != "HR4") && (
+                    {(!healthRecord || data?.rows?.[0]?.status != "CU2") && (
                       <Button
                         size="sm"
                         variant="flat"

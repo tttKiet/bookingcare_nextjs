@@ -17,6 +17,7 @@ import logo from "../../assets/images/logi_y_te.png";
 import { Input } from "@nextui-org/react";
 import { SearchIcon } from "@/components/icons/SearchIcon";
 import { VscLayoutMenubar } from "react-icons/vsc";
+import { TbMessageCircle } from "react-icons/tb";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -94,6 +95,21 @@ export default function RootLayout({
           return (
             <IconBgGray active={this.key == url}>
               <BsPlusCircleDotted size={20} />
+            </IconBgGray>
+          );
+        },
+      },
+      {
+        key: "/doctor/chat",
+        label: (
+          <Link className={classItemMenu} href="/doctor/chat">
+            Chat
+          </Link>
+        ),
+        get icon() {
+          return (
+            <IconBgGray active={this.key == url}>
+              <TbMessageCircle size={20} />
             </IconBgGray>
           );
         },

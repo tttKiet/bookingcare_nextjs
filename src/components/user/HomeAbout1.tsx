@@ -1,3 +1,5 @@
+"use client";
+
 import Slider from "react-slick";
 import SlideService from "./SlideService";
 import { useRef } from "react";
@@ -11,10 +13,19 @@ import Star from "../../components/svgs/Star";
 import { Image } from "@nextui-org/image";
 import { motion } from "framer-motion";
 import { ImageAnimation } from "../img-animation/ImageAnimation";
+import useSWR from "swr";
+import { API_INDEX } from "@/api-services/constant-api";
 
 export interface IHomeAbout1Props {}
 
 export default function HomeAbout1(props: IHomeAbout1Props) {
+  const { data: index2 } = useSWR<{
+    reviewCount: number;
+    reviewAvg: number;
+  }>(`${API_INDEX}?page=home&index=2`);
+
+  console.log("index2index2", index2);
+
   return (
     <div>
       <div
@@ -54,7 +65,7 @@ export default function HomeAbout1(props: IHomeAbout1Props) {
 
                 <div className="flex items-center gap-1 justify-center text-[#3c4253] text-lg">
                   <Star />
-                  4.9 (5210 Đánh giá)
+                  {index2?.reviewAvg} ({index2?.reviewCount} đánh giá)
                 </div>
               </div>
             </motion.div>

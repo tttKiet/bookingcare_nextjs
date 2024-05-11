@@ -35,8 +35,13 @@ import useSWR, { BareFetcher } from "swr";
 import ReviewDoctor from "@/components/common/reviews/ReviewDoctor";
 import maleAvt from "../../../assets/images/doctor/male_doctor.png";
 import femaleAvt from "../../../assets/images/doctor/female_doctor.png";
-import { useDisPlay } from "@/hooks";
+import { useAuth, useDisPlay } from "@/hooks";
 import { Button } from "@nextui-org/button";
+import { CiChat2 } from "react-icons/ci";
+import { TbMessageCircle } from "react-icons/tb";
+import { socketApi } from "@/api-services/socket-api";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function DoctorDetailPage({
   params,
@@ -44,6 +49,8 @@ export default function DoctorDetailPage({
   params: { id: string };
 }) {
   const { scrollTo } = useDisPlay();
+  const router = useRouter();
+  const profile = useAuth();
   const h1Ref = useRef(null);
   const h2Ref = useRef(null);
   const h3Ref = useRef(null);
@@ -78,7 +85,6 @@ export default function DoctorDetailPage({
   const doctorData: WorkRoomAndSchedule | null = useMemo(() => {
     return doctorWorkings?.rows?.[0] || null;
   }, [doctorWorkings]);
-  console.log("doctorDatadoctorDatadoctorData", doctorData);
   // More
   const { data: doctorWorkingAll, mutate: mutateDoctorWorkingAll } = useSWR<
     ResDataPaginations<WorkRoomAndSchedule>
@@ -116,12 +122,23 @@ export default function DoctorDetailPage({
     }
   );
 
+  function handleClickChat() {
+    if (!profile?.profile?.id) {
+      return toast.warn("Vui lòng đăng nhập để chat.");
+    }
+    socketApi.joinRoom({
+      staffId: params.id,
+      userId: profile?.profile?.id || "",
+    });
+    router.push("/user?tag=chat&chatId=" + params.id);
+  }
+
   return (
     <div>
       <div className="bg-[#fafff9] ">
         <div className="container mx-auto pt-12 pb-12">
           {/* image */}
-          <div className="grid grid-cols-12 gap-8">
+          <div className="grid grid-cols-12 gap-16">
             <div className="col-span-7">
               <div className="mb-3 flex items-center gap-5">
                 <Avatar
@@ -155,13 +172,30 @@ export default function DoctorDetailPage({
                 </div>
               </div>
 
-              <div className="mb-6">
-                <p className="text-base text-[rgb(60,66,83)]/90  ">
-                  {doctorData?.Working?.Staff?.AcademicDegree?.name}
-                </p>
-                <p className="text-base text-[rgb(60,66,83)]/90  ">
-                  {doctorData?.Working?.Staff.experience}
-                </p>
+              <div className="mb-6 flex items-start justify-between gap-3 ">
+                <div>
+                  <p className="text-base text-[rgb(60,66,83)]/90  ">
+                    {doctorData?.Working?.Staff?.AcademicDegree?.name}
+                  </p>
+                  <p className="text-base text-[rgb(60,66,83)]/90  ">
+                    {doctorData?.Working?.Staff.experience}
+                  </p>
+                </div>
+
+                <div
+                  className="relative flex-shrink-0 hover:opacity-80 cursor-pointer"
+                  onClick={handleClickChat}
+                >
+                  <div className="flex items-center gap-1 font-medium ">
+                    Chat
+                    <TbMessageCircle size={26} />
+                  </div>
+                  <div
+                    className="absolute -right-2 bottom-5 h-4 w-4 z-10 sm:top-1 rounded-full
+                          border-4 border-white bg-green-400 sm:invisible md:visible"
+                    title="User is online"
+                  ></div>
+                </div>
               </div>
 
               <div className="mb-12 ml-[-16px]">
@@ -340,9 +374,13 @@ export default function DoctorDetailPage({
                 )}
               </div>
               <div className="mt-8">
-                <Button color="primary" size="md" variant="bordered">
-                  Đặt lịch ngay
-                </Button>
+                <Link
+                  href={`/booking?healthFacilityId=${doctorData?.Working?.healthFacilityId}&doctorId=${params.id}`}
+                >
+                  <Button color="primary" size="md" variant="bordered">
+                    Đặt lịch ngay
+                  </Button>
+                </Link>
               </div>
               <Divider className="my-12" />
 
@@ -435,7 +473,7 @@ export default function DoctorDetailPage({
                             <Avatar
                               radius="full"
                               size="md"
-                              src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
+                              name={h?.Patient?.fullName}
                               className="flex-shrink-0"
                             />
                             <div className="flex flex-col items-start justify-center w-full">

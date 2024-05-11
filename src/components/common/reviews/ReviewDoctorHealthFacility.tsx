@@ -14,6 +14,8 @@ import {
 } from "@/api-services/constant-api";
 import { Review, ReviewDoctorIndex, ReviewHealthIndex } from "@/models";
 import { Progress } from "antd";
+import { FaStar } from "react-icons/fa";
+import ChartReviewCommon from "./ChartReviewCommon";
 
 export default function ReviewDoctorHealthFacility({
   healthFacilityId,
@@ -85,8 +87,8 @@ export default function ReviewDoctorHealthFacility({
         <div className="flex-1">
           <div className="flex flex-col gpa-4" style={{ width: 280 }}>
             <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1 w-6">
-                <CiStar size={18} />
+              <span className="flex items-center gap-2   min-w-12 text-[18px] font-medium ">
+                <FaStar className="text-[#e6c514]  text-[18px] flex-shrink-0" />
                 <span>5</span>
               </span>
               <Progress
@@ -96,12 +98,12 @@ export default function ReviewDoctorHealthFacility({
                 }
                 rootClassName={"mb-0"}
                 status="active"
-                size="small"
+                size="default"
               />
             </div>
             <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1 w-6">
-                <CiStar size={18} />
+              <span className="flex items-center gap-2   min-w-12 text-[18px] font-medium ">
+                <FaStar className="text-[#e6c514]  text-[18px] flex-shrink-0" />
                 <span>4</span>
               </span>
               <Progress
@@ -110,12 +112,12 @@ export default function ReviewDoctorHealthFacility({
                   (resReviews?.reviewIndex?.countReview || 1)
                 }
                 status="active"
-                size="small"
+                size="default"
               />
             </div>
             <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1 w-6">
-                <CiStar size={18} />
+              <span className="flex items-center gap-2   min-w-12 text-[18px] font-medium ">
+                <FaStar className="text-[#e6c514]  text-[18px] flex-shrink-0" />
                 <span>3</span>
               </span>
               <Progress
@@ -124,12 +126,12 @@ export default function ReviewDoctorHealthFacility({
                   (resReviews?.reviewIndex?.countReview || 1)
                 }
                 status="active"
-                size="small"
+                size="default"
               />
             </div>
             <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1 w-6">
-                <CiStar size={18} />
+              <span className="flex items-center gap-2   min-w-12 text-[18px] font-medium ">
+                <FaStar className="text-[#e6c514]  text-[18px] flex-shrink-0" />
                 <span>2</span>
               </span>
               <Progress
@@ -138,12 +140,12 @@ export default function ReviewDoctorHealthFacility({
                   (resReviews?.reviewIndex?.countReview || 1)
                 }
                 status="active"
-                size="small"
+                size="default"
               />
             </div>
             <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1 w-6">
-                <CiStar size={18} />
+              <span className="flex items-center gap-2   min-w-12 text-[18px] font-medium ">
+                <FaStar className="text-[#e6c514]  text-[18px] flex-shrink-0" />
                 <span>1</span>
               </span>
 
@@ -153,7 +155,7 @@ export default function ReviewDoctorHealthFacility({
                   (resReviews?.reviewIndex?.countReview || 1)
                 }
                 status="active"
-                size="small"
+                size="default"
               />
             </div>
           </div>
@@ -161,7 +163,9 @@ export default function ReviewDoctorHealthFacility({
       </div>
       <Divider className="my-4" />
       <div className="grid grid-cols-12  mt-10 gap-16">
-        <div className="col-span-4">me</div>
+        <div className="col-span-4">
+          <ChartReviewCommon healthFacilityId={healthFacilityId} />
+        </div>
         <div className="col-span-8">
           <div className="ml-8">
             <h3 className="text-lg justify-center font-medium flex items-center gap-2">

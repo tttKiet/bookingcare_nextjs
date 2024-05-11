@@ -56,14 +56,14 @@ export default function UserLayout({ children }: IUserLayout) {
           </Link>
         ),
       },
-      {
-        key: "/booking",
-        label: (
-          <Link className={classItemMenu} href="/booking">
-            Đặt lịch
-          </Link>
-        ),
-      },
+      // {
+      //   key: "/booking",
+      //   label: (
+      //     <Link className={classItemMenu} href="/booking">
+      //       Đặt lịch
+      //     </Link>
+      //   ),
+      // },
     ],
     []
   );
@@ -84,7 +84,9 @@ export default function UserLayout({ children }: IUserLayout) {
   const bgClass = isDetails ? "bg-[#fafff9]" : "bg-white";
 
   const showShadow =
-    pathname.includes("/health-facility") || pathname.includes("/user");
+    pathname.includes("/booking") ||
+    pathname.includes("/health-facility") ||
+    pathname.includes("/user");
 
   const [isShowShadow, setIsShowShadow] = useState<boolean>(
     !!showShadow || false
@@ -140,7 +142,7 @@ export default function UserLayout({ children }: IUserLayout) {
               <div className="flex-1 flex items-center justify-center">
                 <Menu
                   theme="light"
-                  className={`${bgClass}`}
+                  className={`${bgClass} border-none flex-1`}
                   mode="horizontal"
                   items={items}
                   defaultOpenKeys={[url]}

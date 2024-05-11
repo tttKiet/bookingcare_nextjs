@@ -125,7 +125,7 @@ input {
 }
 
 .gr-title-admin {
-  @apply text-base font-medium text-black;
+  @apply text-[#2b2f32] mb-4 text-lg font-bold  text-left;
 }
 
 .box-dashed {
@@ -237,15 +237,10 @@ input {
   top: 0px;
   left: 0;
   right: 0;
-  height: 3px;
+  height: 2px;
   background: red;
   background-color: #4158d0;
-  background-image: linear-gradient(
-    to right,
-    #4158d0 0%,
-    #c850c0 46%,
-    #ffcc70 100%
-  );
+  background-image: #4158d0;
 
   transform-origin: 0%;
 }

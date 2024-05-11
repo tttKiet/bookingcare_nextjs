@@ -7,14 +7,28 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { AiOutlinePoweroff } from "react-icons/ai";
 import { PiUserCircleLight } from "react-icons/pi";
-import { RiBillLine } from "react-icons/ri";
+import { RiBillLine, RiFolderUserLine } from "react-icons/ri";
 import { toast } from "react-toastify";
 import MenuDropdown from ".";
 import { ModalPositionHere } from "../modal";
+import { FaRegCircleUser } from "react-icons/fa6";
+// import { TagNames } from "@/app/user/page";
+import { HiOutlineCalendar, HiOutlineNewspaper } from "react-icons/hi";
+import { HiChatBubbleBottomCenterText } from "react-icons/hi2";
 
 export interface MenuNavbarLogoutProps {
   options?: DropdownProps;
 }
+
+const TagNames = {
+  ONE: "patient-profile",
+  TWO: "add-patient-profile",
+  FOUR: "booking",
+  FIVE: "account",
+  SIX: "medical-record",
+  SERVEN: "result",
+  EIGHT: "chat",
+};
 
 export default function MenuNavbarLogout({ options }: MenuNavbarLogoutProps) {
   const { profile, logout } = useAuth();
@@ -24,28 +38,75 @@ export default function MenuNavbarLogout({ options }: MenuNavbarLogoutProps) {
   const items = useMemo(() => {
     return [
       {
-        gr: "Chuyến hướng",
+        gr: "Tôi",
+        data: [
+          {
+            key: `/user?tag=${TagNames.FIVE}`,
+            label: (
+              <Link className="font-medium" href={`/user?tag=${TagNames.FIVE}`}>
+                Tài khoản của bạn
+              </Link>
+            ),
+            icon: <FaRegCircleUser size={18} />,
+            show: !(profile?.Role || false),
+          },
+        ],
+      },
+      {
+        gr: "Chat",
+        data: [
+          {
+            key: `/user?tag=${TagNames.EIGHT}`,
+            label: (
+              <Link
+                className="font-medium"
+                href={`/user?tag=${TagNames.EIGHT}`}
+              >
+                Chát với bác sĩ
+              </Link>
+            ),
+            icon: <HiChatBubbleBottomCenterText size={18} />,
+            show: !(profile?.Role || false),
+          },
+        ],
+      },
+      {
+        gr: "Hồ sơ",
         data: [
           {
             key: "profile",
             label: (
-              <Link href="/user" className="">
+              <Link href={`/user?tag=${TagNames.ONE}`} className="">
                 Hồ sơ bệnh nhân
               </Link>
             ),
-            icon: <PiUserCircleLight size={20} />,
+            icon: <RiFolderUserLine size={20} />,
             show: !(profile?.Role || false),
           },
           {
             key: "health-record",
             label: (
-              <Link href="/user/health-record/" className="">
-                Phiếu khám bệnh
+              <Link href={`/user?tag=${TagNames.FOUR}`} className="">
+                Lịch hẹn khám
               </Link>
             ),
             icon: (
               <span className="flex items-center">
-                <RiBillLine size={20} />
+                <HiOutlineCalendar size={20} />
+              </span>
+            ),
+            show: !(profile?.Role || false),
+          },
+          {
+            key: `/user?tag=${TagNames.SERVEN}`,
+            label: (
+              <Link href={`/user?tag=${TagNames.SERVEN}`} className="">
+                Kết quả khám bệnh
+              </Link>
+            ),
+            icon: (
+              <span className="flex items-center">
+                <HiOutlineNewspaper size={20} />
               </span>
             ),
             show: !(profile?.Role || false),

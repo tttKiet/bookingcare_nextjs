@@ -18,10 +18,25 @@ import {
 } from "react-icons/tb";
 import { Avatar, User } from "@nextui-org/react";
 import { ImageAnimation } from "../img-animation/ImageAnimation";
+import { API_WORK_ROOM_GET_FULL_LIST_DOCTOR_WORKING } from "@/api-services/constant-api";
+import { WorkRoomAndSchedule } from "../common/step-boking";
+import { ResDataPaginations } from "@/types";
+import useSWR from "swr";
+import Link from "next/link";
+import male from "../../assets/images/doctor/male_doctor.png";
+import female from "../../assets/images/doctor/female_doctor.png";
 
 export interface IHomeWhyProps {}
 
 export default function HomeWhy(props: IHomeWhyProps) {
+  const {
+    data: doctorWorkings,
+    mutate: mutateDoctorWorkings,
+    isLoading,
+  } = useSWR<ResDataPaginations<WorkRoomAndSchedule>>(
+    API_WORK_ROOM_GET_FULL_LIST_DOCTOR_WORKING
+  );
+
   return (
     <div className="grid grid-cols-2 gap-10">
       <div className="">
@@ -230,20 +245,33 @@ export default function HomeWhy(props: IHomeWhyProps) {
           </h3>
           <h3 className="text-base text-[#3c4253] mb-2">Chọn Bác sĩ</h3>
           <div className="flex flex-col items-start gap-5">
-            <User
-              name={"Michael Johnsonsss"}
-              description={
-                <p className="text-base text-[#3c4253]">Bác sĩ tim mạch</p>
-              }
-              classNames={{
-                name: "text-base text-[#1b3c74] font-bold",
-              }}
-            >
-              <h3 className="text-base text-[#1b3c74] font-bold">
-                Michael Johnson
-              </h3>
-            </User>
-            <User
+            {doctorWorkings?.rows?.slice(0, 2).map((r: WorkRoomAndSchedule) => (
+              <User
+                key={r?.id}
+                name={
+                  <Link
+                    href={"/profile-doctor/" + r?.Working?.Staff?.id}
+                    className="text-base text-[#1b3c74] font-bold"
+                  >
+                    {r?.Working?.Staff?.fullName}
+                  </Link>
+                }
+                description={
+                  <p className="text-base text-[#3c4253]">
+                    {r?.Working?.Staff?.AcademicDegree?.name} -{" "}
+                    {r?.Working?.Staff?.Specialist?.name}
+                  </p>
+                }
+                classNames={{
+                  name: "text-base text-[#1b3c74] font-bold",
+                }}
+                avatarProps={{
+                  src:
+                    r?.Working?.Staff.gender == "male" ? male.src : female.src,
+                }}
+              ></User>
+            ))}
+            {/* <User
               name={"Jessica Miller"}
               description={<p className="text-base text-[#3c4253]">phụ khoa</p>}
               classNames={{
@@ -253,7 +281,7 @@ export default function HomeWhy(props: IHomeWhyProps) {
               <h3 className="text-base text-[#1b3c74] font-bold">
                 Jessica Miller
               </h3>
-            </User>
+            </User> */}
             <Button
               size="lg"
               color="primary"

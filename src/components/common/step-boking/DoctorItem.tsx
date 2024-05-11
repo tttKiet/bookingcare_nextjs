@@ -108,11 +108,12 @@ export default function DoctorItem({
               </span>
               <Divider orientation="vertical" className="h-3 mx-5" />
               <span className="text-[30px] font-medium text-[#1E293B]  ">
-                4.0
+                {workRoomAndSchedule.starNumber.toPrecision(2)}
+
                 <span className="rounded-xl ml-1 font-bold text-base">
                   <Rate
                     disabled
-                    defaultValue={4}
+                    defaultValue={workRoomAndSchedule.starNumber}
                     className="text-[18px] ml-2"
                   />
                 </span>

@@ -79,6 +79,7 @@ export default function TagUserResult() {
       dedupingInterval: 5000,
     }
   );
+  console.log("responseBookingresponseBooking", responseBooking);
 
   const { data: dataServiceDetails, mutate: mutateServiceDetails } = useSWR<
     ServiceDetails[]
@@ -105,7 +106,7 @@ export default function TagUserResult() {
             initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4 }}
-            exit={{ opacity: 0, height: "120px" }}
+            exit={{ opacity: 0, minHeight: "120px" }}
           >
             <h3 className="text-lg font-semibold ">Chọn lịch khám</h3>
             <div className="grid grid-cols-2 mt-4 gap-4">
@@ -188,9 +189,9 @@ export default function TagUserResult() {
             className=" p-3 "
             style={{ overflow: "hidden" }}
             transition={{ duration: 0.4 }}
-            initial={{ opacity: 1, height: "max-content" }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: "120px" }}
+            initial={{ opacity: 1, minHeight: "max-content" }}
+            animate={{ opacity: 1, minHeight: "auto" }}
+            exit={{ opacity: 0, minHeight: "120px" }}
           >
             <div
               className="mb-1 cursor-pointer hover:opacity-80 transition-all"
@@ -203,7 +204,7 @@ export default function TagUserResult() {
             </div>
             <h3 className="text-center text-lg font-semibold">
               Kết quả khám bệnh ngày{" "}
-              {moment(profileViewer?.HealthExaminationSchedule.date).format(
+              {moment(profileViewer?.HealthExaminationSchedule?.date).format(
                 "L"
               )}
             </h3>

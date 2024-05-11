@@ -97,14 +97,18 @@ export default function DoctorItem({
 
             <div className="col-span-2 flex flex-col items-end text-sm font-medium text-[#1E293B]">
               <div className="flex justify-end">
-                <Button
-                  color="primary"
-                  size="sm"
-                  radius="sm"
-                  className="font-medium"
+                <Link
+                  href={`/booking?healthFacilityId=${workRoomAndSchedule?.Working?.healthFacilityId}&doctorId=${workRoomAndSchedule?.Working?.staffId}`}
                 >
-                  Đặt khám
-                </Button>
+                  <Button
+                    color="primary"
+                    size="sm"
+                    radius="sm"
+                    className="font-medium"
+                  >
+                    Đặt khám
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>

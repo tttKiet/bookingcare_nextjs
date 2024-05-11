@@ -91,7 +91,6 @@ export function ListHealthFacilities({
   }
 
   useEffect(() => {
-    console.log(filter);
     setDatafilter((pre) => {
       if (filter.name == "all" && filter.review == "all") {
         return data?.rows || [];
@@ -121,7 +120,6 @@ export function ListHealthFacilities({
   }, [data, filter]);
 
   useEffect(() => {
-    console.log("eef");
     setDatafilter(data?.rows || []);
   }, [data]);
 
@@ -206,16 +204,16 @@ export function ListHealthFacilities({
           {/* )} */}
         </div>
 
-        <div>
-          {searchNameHealthValue && (
+        {searchNameHealthValue && (
+          <div className="mb-4">
             <>
               <span className="mr-2 font-medium text-[#000] text-xl">
                 Tìm kiếm tên cơ sở:
               </span>
               <span className="text-xl">"{searchNameHealthValue}"</span>
             </>
-          )}
-        </div>
+          </div>
+        )}
 
         {datafilter.length == 0 && (
           <AnimatePresence>

@@ -84,3 +84,9 @@ export const API_USER_CHANGE_PASS = "/api/v1/user/change-pass";
 
 // index
 export const API_INDEX = "/api/v1/user/index";
+
+// chat
+export const API_CHAT = "/api/v1/admin/chat";
+
+// chart
+export const API_CHART = "/api/v1/admin/chart";

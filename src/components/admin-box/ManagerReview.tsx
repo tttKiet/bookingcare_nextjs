@@ -32,6 +32,7 @@ import { TableSortFilter } from "../table";
 import { BodyAddEditCedicine } from "../body-modal";
 import moment from "moment";
 import { useDisclosure } from "@nextui-org/react";
+import { FaStar } from "react-icons/fa";
 const { confirm } = Modal;
 
 type DataIndex = keyof Review;
@@ -240,6 +241,19 @@ export function ManagerReview() {
         render: (text) => <a>{text}</a>,
         sorter: (a, b) => a.User.fullName.localeCompare(b.User.fullName),
         ...getColumnSearchProps(["User", "fullName"]),
+      },
+      {
+        title: "Số sao",
+        dataIndex: "starNumber",
+        key: "starNumber",
+        render: (text) => (
+          <a>
+            <div className="flex items-center gap-1">
+              <span className="">{text}</span>
+              <FaStar className="text-[#e6c514]" />
+            </div>
+          </a>
+        ),
       },
       {
         title: "Nội dung",

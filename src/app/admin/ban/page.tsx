@@ -3,7 +3,7 @@ import { Select, Space } from "antd";
 
 export default function BanAdmin() {
   return (
-    <div>
+    <div className="box-white">
       <ManagerBan />
     </div>
   );

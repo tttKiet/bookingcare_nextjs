@@ -53,6 +53,8 @@ export default function ResultBookingPage(props: ResultBookingPageProps) {
     `${PAYMENT_VNPAY_RETURN}?${signData}`
   );
 
+  console.log("error", error);
+
   return (
     <>
       {!error ? (
@@ -85,7 +87,11 @@ export default function ResultBookingPage(props: ResultBookingPageProps) {
           className="h-screen"
           status="error"
           title={error?.msg}
-          subTitle="Làm ơn kiểm tra lại thông tin thanh toán."
+          subTitle={
+            error.msg == "Lịch hẹn đã bị hủy."
+              ? "Bạn đã hủy thanh toán"
+              : `Làm ơn kiểm tra lại thông tin thanh toán.`
+          }
           extra={[
             <Link href={"/"}>
               <Button color="primary">Về trang chủ</Button>
@@ -95,28 +101,30 @@ export default function ResultBookingPage(props: ResultBookingPageProps) {
             </Link>,
           ]}
         >
-          <div className="desc">
-            <Paragraph>
-              <Text
-                strong
-                style={{
-                  fontSize: 16,
-                }}
-              >
-                Nội dung bạn gửi có lỗi sau:
-              </Text>
-            </Paragraph>
-            <Paragraph>
-              <CloseCircleOutlined className="site-result-demo-error-icon" /> Dữ
-              liệu đã bị thay đổi hay bị lộ thông tin.{" "}
-              <a>Thaw immediately &gt;</a>
-            </Paragraph>
-            <Paragraph>
-              <CloseCircleOutlined className="site-result-demo-error-icon" />{" "}
-              Tài khoản của bạn đang bị nghi ngờ tấn công website.{" "}
-              <a>Apply Unlock &gt;</a>
-            </Paragraph>
-          </div>
+          {error.msg !== "Lịch hẹn đã bị hủy." && (
+            <div className="desc">
+              <Paragraph>
+                <Text
+                  strong
+                  style={{
+                    fontSize: 16,
+                  }}
+                >
+                  Nội dung bạn gửi có lỗi sau:
+                </Text>
+              </Paragraph>
+              <Paragraph>
+                <CloseCircleOutlined className="site-result-demo-error-icon" />{" "}
+                Dữ liệu đã bị thay đổi hay bị lộ thông tin.{" "}
+                <a>Thaw immediately &gt;</a>
+              </Paragraph>
+              <Paragraph>
+                <CloseCircleOutlined className="site-result-demo-error-icon" />{" "}
+                Tài khoản của bạn đang bị nghi ngờ tấn công website.{" "}
+                <a>Apply Unlock &gt;</a>
+              </Paragraph>
+            </div>
+          )}
         </Result>
       )}
     </>

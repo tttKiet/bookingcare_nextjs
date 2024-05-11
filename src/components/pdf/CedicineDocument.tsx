@@ -381,7 +381,7 @@ const CedicineDocument = ({
                 <View style={{ ...s.flex_col, ...s.gap_10 }}>
                   <Text style={{ ...s.title_base }}>
                     ...,{" "}
-                    {moment(prescriptionDetail?.[0].createdAt)
+                    {moment(prescriptionDetail?.[0]?.createdAt)
                       .locale("vi")
                       .format("LL")}
                   </Text>

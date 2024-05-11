@@ -282,3 +282,57 @@ export interface ReviewHealthIndex {
   };
   healthFacility: HealthFacility;
 }
+
+// chart
+
+export interface ChartPageHomeIndex1 {
+  booking: {
+    month: number;
+    lastMonth: number;
+  };
+  bookingSuccess: {
+    month: number;
+    lastMonth: number;
+  };
+  revenue: {
+    month: number;
+    lastMonth: number;
+  };
+  patient: {
+    month: number;
+    lastMonth: number;
+  };
+}
+
+export interface ChartPageHomeIndex2 {
+  male: number[];
+  female: number[];
+}
+
+export interface ChartPageHomeIndex3 {
+  specialist: Specialist;
+  count: number;
+  percent: number;
+}
+
+export interface ChatRoom {
+  id: string;
+  userId: string;
+  staffId: string;
+  createdAt: string;
+  updatedAt: number;
+  User: User;
+  Staff: Staff;
+}
+
+export interface ChatMessage {
+  ChatRoom: ChatRoom;
+  id: string;
+  chatRoomId: string;
+  message: string;
+  role: string;
+  isReadUser: string;
+  isReadStaff: string;
+  createdAt: string;
+  updatedAt: number;
+}

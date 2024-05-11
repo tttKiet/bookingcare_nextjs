@@ -226,3 +226,31 @@ export function calculateAge(birthdate: string | Date) {
   const now = moment();
   return now.diff(birthDate, "years");
 }
+
+export function calculateUpDownPerson(
+  root: number | undefined,
+  value: number | undefined
+) {
+  if (root != undefined && value != undefined) {
+    if (root == 0) {
+      return {
+        isUp: true,
+        person: 100,
+      };
+    }
+    if (value >= root) {
+      const person = ((value - root) * 100) / root;
+      return {
+        isUp: true,
+        person: person.toPrecision(2),
+      };
+    } else {
+      const person = ((root - value) * 100) / root;
+
+      return {
+        isUp: false,
+        person: person.toPrecision(2),
+      };
+    }
+  }
+}

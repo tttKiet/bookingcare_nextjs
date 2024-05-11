@@ -10,13 +10,18 @@ import { FiPlusCircle } from "react-icons/fi";
 import { LiaUserNurseSolid } from "react-icons/lia";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { MdOutlineFeedback, MdSupervisorAccount } from "react-icons/md";
-import { BsCode, BsDpad, BsPersonWorkspace } from "react-icons/bs";
+import {
+  BsCalendar2Check,
+  BsCode,
+  BsDpad,
+  BsPersonWorkspace,
+} from "react-icons/bs";
 import { CiBookmarkMinus } from "react-icons/ci";
 import { AiOutlineSlack } from "react-icons/ai";
 import { BiBulb, BiCalendarStar } from "react-icons/bi";
 import { HiOutlineAcademicCap } from "react-icons/hi";
 import { PiFlowerTulipThin } from "react-icons/pi";
-import { FaRankingStar } from "react-icons/fa6";
+import { FaBan, FaRankingStar } from "react-icons/fa6";
 import { BsBarChart } from "react-icons/bs";
 import "../globals.css";
 import logo from "../../assets/images/logi_y_te.png";
@@ -258,6 +263,21 @@ export default function RootLayout({
         },
       },
       {
+        key: "/admin/booking",
+        label: (
+          <Link className={classItemMenu} href="/admin/booking">
+            Lịch hẹn
+          </Link>
+        ),
+        get icon() {
+          return (
+            <IconBgGray active={this.key == url}>
+              <BsCalendar2Check size={20} />
+            </IconBgGray>
+          );
+        },
+      },
+      {
         key: "cedicine",
         label: (
           <Link className={classItemMenu} href="/admin/cedicine">
@@ -303,6 +323,21 @@ export default function RootLayout({
         },
       },
       {
+        key: "/admin/ban",
+        label: (
+          <Link className={classItemMenu} href="/admin/ban">
+            Ban
+          </Link>
+        ),
+        get icon() {
+          return (
+            <IconBgGray active={this.key == url}>
+              <FaBan size={20} />
+            </IconBgGray>
+          );
+        },
+      },
+      {
         key: "/admin/code",
         label: (
           <Link className={classItemMenu} href="/admin/code">
@@ -313,36 +348,6 @@ export default function RootLayout({
           return (
             <IconBgGray active={this.key == url}>
               <BsCode size={20} />
-            </IconBgGray>
-          );
-        },
-      },
-      {
-        key: "/admin/chart",
-        label: (
-          <Link className={classItemMenu} href="/admin/chart">
-            Thống kê
-          </Link>
-        ),
-        get icon() {
-          return (
-            <IconBgGray active={this.key == url}>
-              <BsBarChart size={20} />
-            </IconBgGray>
-          );
-        },
-      },
-      {
-        key: "/admin/rank",
-        label: (
-          <Link className={classItemMenu} href="/admin/rank">
-            Bảng xếp hạng
-          </Link>
-        ),
-        get icon() {
-          return (
-            <IconBgGray active={this.key == url}>
-              <FaRankingStar size={20} />
             </IconBgGray>
           );
         },
@@ -366,6 +371,10 @@ export default function RootLayout({
     height: 70,
     paddingInline: 28,
     lineHeight: "64px",
+    position: "fixed",
+    left: 0,
+    zIndex: 50,
+    right: 0,
     backgroundColor: "#fff",
   };
 
@@ -373,11 +382,17 @@ export default function RootLayout({
     textAlign: "center",
     color: "#000",
     backgroundColor: "#f5f5f5",
+    marginTop: 70,
+    marginLeft: `calc(var(--nav-width-admin) + 20px)`,
   };
 
   const siderStyle: React.CSSProperties = {
     textAlign: "center",
     color: "#fff",
+    height: "100vh",
+    position: "fixed",
+    top: 90,
+    left: 0,
   };
   return (
     <Layout style={layoutStyle} className="text-black">
@@ -425,15 +440,17 @@ export default function RootLayout({
           <h3 className="text-black/70 text-sm text-left font-medium ml-7 my-4 mb-2">
             Menu
           </h3>
-          <Menu
-            theme="light"
-            className="min-h-full"
-            rootClassName="text-left py-2"
-            defaultOpenKeys={[url]}
-            defaultSelectedKeys={[url]}
-            mode="inline"
-            items={items}
-          />
+          <div className="max-h-[80%]  overflow-auto">
+            <Menu
+              theme="light"
+              className="border-none"
+              rootClassName="text-left py-2 border-none"
+              defaultOpenKeys={[url]}
+              defaultSelectedKeys={[url]}
+              mode="inline"
+              items={items}
+            />
+          </div>
         </Sider>
         <Content style={contentStyle} className="pr-8">
           <div className="mb-5">

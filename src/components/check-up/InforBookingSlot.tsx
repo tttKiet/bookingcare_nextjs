@@ -454,10 +454,13 @@ export default function InforBookingSlot(props: IInforBookingSlotProps) {
     blobCe: Blob | null;
   }) {
     setLoadingPdf(true);
+    const arr = [blobSer, blobCe];
     const api = staffApi.editCheckUpDoneAndSendEmail({
       id: dataHealthRecord?.rows?.[0]?.id,
       emailDestination: emailSend,
-      pdfs: [blobSer, blobCe],
+      pdfs: arr.filter((a) => a != null),
+      diagnosis: diagnosis,
+      note,
     });
     const res = await toastMsgFromPromise(api);
     setLoadingPdf(false);

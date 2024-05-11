@@ -51,7 +51,7 @@ export default function MenuDropdown({ title, items }: MenuDropdownProps) {
   }, [profile, profile?.Role?.keyType]);
 
   return (
-    <Dropdown size="md" placement={"bottom-end"}>
+    <Dropdown size="lg" className="w-[260px] px-4" placement={"bottom-end"}>
       <DropdownTrigger>{ImageProfile}</DropdownTrigger>
       <DropdownMenu variant="flat" className="">
         {items

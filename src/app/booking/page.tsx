@@ -53,6 +53,9 @@ export default function Booking(props: IAboutPageProps) {
   const [patientProfile, setPatientProfile] = useState<PatientProfile | null>(
     null
   );
+
+  const doctorId = searchParams.get("doctorId");
+
   const { scrollTo } = useDisPlay();
   function stepNext(step: number, value?: any) {
     scrollTo(refContent?.current, {
@@ -163,6 +166,11 @@ export default function Booking(props: IAboutPageProps) {
   );
 
   useEffect(() => {
+    if (doctorId) {
+    }
+  }, [doctorId]);
+
+  useEffect(() => {
     // Tự động cuộn tới bước hiện tại
     if (stepsContainerRef.current) {
       const stepWidth = stepsContainerRef.current?.scrollWidth / 5; // Giả sử có 8 bước, và mỗi bước có độ rộng bằng nhau
@@ -196,12 +204,7 @@ export default function Booking(props: IAboutPageProps) {
       });
     }
   }, [healthFacility]);
-  // const { data: doctorInfo } = useSWR<Staff>(
-  //   `${API_ACCOUNT_STAFF_DOCTOR_BY_ID}?id=${doctorChoose?.staffId || ""}`,
-  //   {
-  //     dedupingInterval: 36000,
-  //   }
-  // );
+
   const titleClass = "font-medium text-base text-[#3c4253] ";
   const titleClassActive = "font-bold text-base text-[#1b3c74]";
 

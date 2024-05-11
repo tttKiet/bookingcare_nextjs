@@ -6,10 +6,13 @@ import { FaCaretRight } from "react-icons/fa";
 
 export interface IReviewItemProps {
   review: Review;
-  showDoctor?: false;
+  showDoctor?: boolean;
 }
 
-export default function ReviewItem({ review, showDoctor }: IReviewItemProps) {
+export default function ReviewItem({
+  review,
+  showDoctor = false,
+}: IReviewItemProps) {
   return (
     <div className="">
       <div className="">

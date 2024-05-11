@@ -96,12 +96,18 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
     [dataHealthRecord]
   );
 
-  const { data: dataHospitalService, mutate: mutateHospitalService } = useSWR<
-    ResDataPaginations<HealthRecord>
-  >(
-    `${API_ADMIN_MANAGER_SERVICE}?healthFacilityId=${inforBooking?.HealthExaminationSchedule?.Working?.healthFacilityId}`
-  );
+  const { data: dataHospitalServiceRoot, mutate: mutateHospitalService } =
+    useSWR<ResDataPaginations<HospitalService>>(
+      `${API_ADMIN_MANAGER_SERVICE}?healthFacilityId=${inforBooking?.HealthExaminationSchedule?.Working?.healthFacilityId}`
+    );
 
+  const dataHospitalService: HospitalService[] = useMemo(
+    () =>
+      dataHospitalServiceRoot?.rows.filter((d: HospitalService) => d.isAcctive),
+    [dataHospitalServiceRoot]
+  );
+  console.log("-------------dataHospitalService", dataHospitalService);
+  console.log("-------------valueHospitalService", valueHospitalService);
   const { data: codeBooking, mutate: mutateCodeBooking } = useSWR<
     ResDataPaginations<Code>
   >(`${API_CODE}?name=CheckUp`);
@@ -120,7 +126,7 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
   const optionHospitalServices: { label: string; value: string }[] =
     useMemo(() => {
       return (
-        dataHospitalService?.rows?.map((d: HospitalService) => {
+        dataHospitalService?.map((d: HospitalService) => {
           return {
             label: d?.ExaminationService?.name,
             value: d?.id,
@@ -817,8 +823,8 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
                       type="text"
                       variant="bordered"
                       isReadOnly
-                      value={dataHospitalService?.rows
-                        .find(
+                      value={dataHospitalService
+                        ?.find(
                           (o: HospitalService) => o.id == valueHospitalService
                         )
                         ?.price?.toLocaleString()}

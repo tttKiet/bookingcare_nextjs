@@ -90,13 +90,13 @@ export function PaymentInformation({
               </span>{" "}
               vnđ{" "}
               <span className="font-bold text-blue-500">
-                {method && MethodPayment?.[method].split("Thanh toán ")[1]}
+                {method && MethodPayment?.[method].split("Thanh toán ")[1]}.
               </span>
             </div>
             <div className="mt-4 px-4 py-2 rounded-md bg-blue-100 text-gray-700 shadow">
-              Bạn sẽ nhận được phiếu khám bệnh ngay khi thanh toán thành công.
-              Trường hợp không nhận được phiếu khám bệnh, vui lòng liên hệ
-              19002115.
+              Lịch hẹn được xác nhận đã thanh toán khi bạn đã thanh toán thành
+              công. Trường hợp lịch hẹn không cập nhật trạng thái, vui lòng liên
+              hệ 19002115.
             </div>
             <div className="flex justify-end gap-4 pt-6 mb-4">
               <Button color="danger" onClick={toggleShowPaymentModal}>

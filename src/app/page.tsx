@@ -22,6 +22,8 @@ import HomeWhy from "@/components/user/HomeWhy";
 import useSWR from "swr";
 import { API_ACCOUNT_STAFF, API_INDEX } from "@/api-services/constant-api";
 import { ResData } from "@/types";
+import Link from "next/link";
+import HomeReview from "@/components/user/HomeReview";
 export default function Home() {
   const formatter: StatisticProps["formatter"] = (value) => (
     <CountUp end={value as number} separator="," delay={3} duration={8} />
@@ -32,6 +34,11 @@ export default function Home() {
     reviewCount: number;
     doctorCount: number;
   }>(`${API_INDEX}?page=home&index=1`);
+
+  const { data: index2 } = useSWR<{
+    reviewCount: number;
+    reviewAvg: number;
+  }>(`${API_INDEX}?page=home&index=2`);
   return (
     <>
       <div className="bg-white">
@@ -90,9 +97,11 @@ export default function Home() {
                     }}
                     viewport={{ once: true }}
                   >
-                    <Button color="primary" size="lg">
-                      Đặt lịch ngay
-                    </Button>
+                    <Link href={"/health-facility"}>
+                      <Button color="primary" size="lg">
+                        Đặt lịch ngay
+                      </Button>
+                    </Link>
                   </motion.div>
                   <motion.div
                     initial={{ opacity: 0, y: 80 }}
@@ -382,6 +391,10 @@ export default function Home() {
 
       <div className="container mx-auto my-[140px]">
         <HomeAbout1 />
+      </div>
+
+      <div className="container mx-auto">
+        <HomeReview />
       </div>
 
       <div className="container mx-auto mb-[140px]">

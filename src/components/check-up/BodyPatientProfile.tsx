@@ -15,11 +15,13 @@ import { Button } from "@nextui-org/button";
 export interface IBodyPatientProfileProps {
   patientProfile: PatientProfile | undefined;
   onClose: () => void;
+  isView?: boolean;
 }
 
 export default function BodyPatientProfile({
   patientProfile,
   onClose,
+  isView,
 }: IBodyPatientProfileProps) {
   const [address, setAddress] = useState<string>("");
 
@@ -174,9 +176,6 @@ export default function BodyPatientProfile({
       </div>
 
       <div className="flex items-center gap-2 justify-end mt-2 py-4">
-        <Button color="danger" variant="light" onClick={onClose}>
-          Thoát
-        </Button>
         {/* <Button
           color="secondary"
           type="button"
@@ -184,15 +183,26 @@ export default function BodyPatientProfile({
         >
           Lấy thông tin từ hồ sơ
         </Button> */}
-        <Link href={"/staff/patient?profile=" + patientProfile?.id}>
-          <Button
-            color="primary"
-            // isDisabled={}
-            type="submit"
-          >
-            Thêm bệnh nhân từ thông tin này
+        {isView ? (
+          <Button color="primary" onPress={onClose}>
+            Thoát
           </Button>
-        </Link>
+        ) : (
+          <>
+            <Button color="danger" variant="light" onClick={onClose}>
+              Thoát
+            </Button>
+            <Link href={"/staff/patient?profile=" + patientProfile?.id}>
+              <Button
+                color="primary"
+                // isDisabled={}
+                type="submit"
+              >
+                Thêm bệnh nhân từ thông tin này
+              </Button>
+            </Link>
+          </>
+        )}
       </div>
     </div>
   );
