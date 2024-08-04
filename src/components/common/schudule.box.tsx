@@ -10,7 +10,7 @@ export interface IScheduleBoxProps {
 export function ScheduleBox({ schedules }: IScheduleBoxProps) {
   return (
     <div className="inline-flex  gap-2 items-center flex-wrap">
-      {schedules.map((schedule) => (
+      {schedules?.map((schedule) => (
         <Chip
           key={schedule}
           color="primary"

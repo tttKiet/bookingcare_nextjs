@@ -37,16 +37,15 @@ export default function ReviewItemMe({
           >
             <Avatar
               isBordered
-              radius="md"
+              name={review?.User?.fullName}
               size="md"
-              src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
               className="flex-shrink-0"
             />
             <div className="flex flex-col gap-0 items-start justify-center w-full">
               <div className="text-base font-medium text-[#000] flex justify-between items-center flex-1 w-full">
                 {review?.User?.fullName}
                 <span className=" text-sm">
-                  {moment(review.createdAt).startOf("hour").fromNow()}
+                  {moment(review.createdAt).startOf("milliseconds").fromNow()}
                 </span>
               </div>
               <div

@@ -744,15 +744,27 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
             <div className="flex items-center gap-2 justify-end mt-8">
               {dataBooking?.rows?.[0]?.healthRecord?.statusCode !== "HR2" ? (
                 <Button
-                  color="warning"
+                  color={
+                    inforHealthRecord?.statusCode == "HR4"
+                      ? "default"
+                      : "warning"
+                  }
                   variant="solid"
-                  onPress={() => handleClickChangeSttService("waiting")}
+                  isDisabled={inforHealthRecord?.statusCode == "HR4"}
+                  onPress={async () => {
+                    await handleClickChangeSttService("waiting");
+                    router.push("/doctor/check-health");
+                  }}
                 >
                   Chờ kết quả dịch vụ
                 </Button>
               ) : (
                 <Button
-                  color="warning"
+                  color={
+                    inforHealthRecord?.statusCode == "HR4"
+                      ? "default"
+                      : "warning"
+                  }
                   variant="light"
                   onPress={() => handleClickChangeSttService("doing")}
                 >
@@ -763,7 +775,11 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
                 color={"primary"}
                 onPress={handleSave}
                 // disabled={!dataBooking}
-                isDisabled={!dataHealthRecord?.rows?.[0]}
+
+                isDisabled={
+                  !dataHealthRecord?.rows?.[0] ||
+                  inforHealthRecord?.statusCode == "HR4"
+                }
               >
                 Lưu phiếu
               </Button>
@@ -773,7 +789,13 @@ export default function HealthRecordDetails(props: HealthRecordDetailsProps) {
                 onPress={() => {
                   onOpenConfirmEmailDone();
                 }}
-                isDisabled={!done}
+                isDisabled={
+                  !done ||
+                  (inforHealthRecord?.statusCode == "HR4" &&
+                    moment()
+                      .subtract(3, "days")
+                      .isAfter(moment(inforHealthRecord.updatedAt)))
+                }
               >
                 {inforHealthRecord?.statusCode == "HR4"
                   ? "Sửa thông tin"

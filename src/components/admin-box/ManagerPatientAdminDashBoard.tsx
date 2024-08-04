@@ -55,7 +55,7 @@ export function ManagerPatientAdminDashBoard() {
   // State components
   const [showModalDetails, setShowModalDetails] = useState<boolean>(false);
   const [viewPatientProfile, setViewPatientProfile] = useState<
-    PatientProfile | undefined
+    Booking | undefined
   >(undefined);
 
   // Toggle show modal create or update
@@ -325,9 +325,9 @@ export function ManagerPatientAdminDashBoard() {
 
       {
         title: "Hồ sơ khám",
-        dataIndex: ["booking", "PatientProfile"],
+        dataIndex: ["booking"],
         key: "booking.PatientProfile",
-        render: (profile: PatientProfile) => {
+        render: (profile: Booking) => {
           return (
             <a>
               <Button
@@ -389,7 +389,7 @@ export function ManagerPatientAdminDashBoard() {
         footer={false}
         body={
           <BodyPatientProfile
-            patientProfile={viewPatientProfile}
+            booking={viewPatientProfile}
             onClose={onCloseProfile}
             isView={true}
           />

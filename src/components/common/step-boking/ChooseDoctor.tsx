@@ -390,7 +390,7 @@ const ChooseDoctor = forwardRef(
                   key={i.id}
                   className="my-5"
                   transition={{
-                    delay: 0.3,
+                    delay: 0.1,
                   }}
                   exit={{ opacity: 0, x: 60 }}
                 >

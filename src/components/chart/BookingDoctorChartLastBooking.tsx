@@ -57,11 +57,18 @@ export default function BookingDoctorChartLastBooking(
     <>
       <div className="box-white col-span-3">
         <h4 className="text-[#2b2f32] mb-4 text-lg font-bold  text-left flex items-center gap-2 justify-between">
-          <div className="flex-1">Triệu chứng gần đây</div>
+          <div className="flex-1 ">Triệu chứng gần đây</div>
         </h4>
         <div className="flex flex-wrap gap-3">
           {resData?.keyWordPatient.slice(0, 5).map((t: string) => (
-            <Chip key={t} size="sm" color="warning" variant="flat" radius="sm">
+            <Chip
+              key={t}
+              size="sm"
+              color="warning"
+              variant="flat"
+              className="line-clamp-1"
+              radius="sm"
+            >
               {t}
             </Chip>
           ))}

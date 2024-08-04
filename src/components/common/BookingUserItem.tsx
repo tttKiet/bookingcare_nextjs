@@ -1,7 +1,11 @@
 "use client";
 
 import { useGetAddress } from "@/hooks/use-get-address-from-code";
-import { BookingForUser, PatientProfile } from "@/models";
+import {
+  BookingForUser,
+  PatientProfile,
+  ResBookingAndHealthRecord,
+} from "@/models";
 import {
   AccordionItem,
   Avatar,
@@ -23,6 +27,9 @@ import { FadeLoader, PulseLoader } from "react-spinners";
 import { ActionGroup, ActionBox } from "../box";
 import { FaPhoneVolume } from "react-icons/fa6";
 import { MethodPayment } from "./step-boking/PaymentInformation";
+import useSWR from "swr";
+import { ResDataPaginations } from "@/types";
+import { API_DOCTOR_BOOKING } from "@/api-services/constant-api";
 
 export interface IBookingUserItemProps {
   data: BookingForUser;
@@ -33,13 +40,20 @@ export function BookingUserItem({
   data,
   onClickDelete,
 }: IBookingUserItemProps) {
+  const { data: dataHealthRecord } = useSWR<
+    ResDataPaginations<ResBookingAndHealthRecord>
+  >(`${API_DOCTOR_BOOKING}?bookingId=${data?.id}`, {
+    revalidateOnMount: true,
+    dedupingInterval: 5000,
+  });
+
   const [colorSelected, setColorSelected] = useState<
     "default" | "primary" | "secondary" | "success" | "warning" | "danger"
   >(() => {
     if (data.status == "CU2") {
       return "primary";
     } else if (data.status == "CU3") {
-      return "success";
+      return "warning";
     } else if (data.status == "CU4") {
       return "danger";
     } else {
@@ -108,7 +122,10 @@ export function BookingUserItem({
             >
               {data.HealthExaminationSchedule.Working.Staff.fullName}
             </User>
-            {data.status == "C3" && <Button color="primary">Đánh giá</Button>}
+            {data.status == "CU2" &&
+              dataHealthRecord?.rows?.[0].statusCode == "HR4" && (
+                <Button color="primary">Đánh giá</Button>
+              )}
           </div>
 
           <div className="my-6">

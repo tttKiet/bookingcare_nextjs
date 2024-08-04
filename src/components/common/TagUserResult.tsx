@@ -5,12 +5,14 @@ import {
   API_CODE,
   API_DOCTOR_BOOKING,
   API_DOCTOR_PRESCRIPTION_DETAILS,
+  API_DOCTOR_SCHEDULE_ALL,
   API_DOCTOR_SERVICE_DETAILS,
   API_PATIENT_PROFILE,
 } from "@/api-services/constant-api";
 import {
   BookingForUser,
   Code,
+  HealthExaminationScheduleResAll,
   PatientProfile,
   PrescriptionDetail,
   ResBookingAndHealthRecord,
@@ -26,7 +28,7 @@ import {
   Tabs,
   useDisclosure,
 } from "@nextui-org/react";
-import { Key, useMemo, useState } from "react";
+import { Key, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 import { TagBookingUser } from "./TagBookingUser";
 import { useAuth } from "@/hooks";
@@ -50,10 +52,13 @@ import { HiOutlineCalendar, HiOutlineDocumentDownload } from "react-icons/hi";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import ServiceDetailsBillDocument from "../pdf/ServiceDetailsBillDocument";
 import CedicineDocument from "../pdf/CedicineDocument";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function TagUserResult() {
+  const searchParams = useSearchParams();
+  const bookingId = searchParams.get("bookingId");
   const { profile } = useAuth();
-
+  const router = useRouter();
   const { isOpen, onClose, onOpen } = useDisclosure({ id: "details" });
 
   const [profileViewer, setProfileViewer] = useState<
@@ -73,13 +78,12 @@ export default function TagUserResult() {
     }, [resBookingAndHealthRecord, profileViewer]);
 
   const { data: responseBooking } = useSWR<ResDataPaginations<BookingForUser>>(
-    `${API_BOOKING}?status=CU2`,
+    `${API_BOOKING}?status=CU2&HR4=1`,
     {
       revalidateOnMount: true,
       dedupingInterval: 5000,
     }
   );
-  console.log("responseBookingresponseBooking", responseBooking);
 
   const { data: dataServiceDetails, mutate: mutateServiceDetails } = useSWR<
     ServiceDetails[]
@@ -91,6 +95,19 @@ export default function TagUserResult() {
     useSWR<PrescriptionDetail[]>(
       `${API_DOCTOR_PRESCRIPTION_DETAILS}?limit=500&offset=0&healthRecordId=${bookingAndHealthRecordViewer?.healthRecord?.id}`
     );
+
+  useEffect(() => {
+    if (bookingId) {
+      const docs = responseBooking?.rows?.find(
+        (s: BookingForUser) => s.id == bookingId
+      );
+
+      if (docs) {
+        setProfileViewer(docs);
+        onOpen();
+      }
+    }
+  }, [bookingId, responseBooking]);
 
   return (
     <motion.div
@@ -196,6 +213,9 @@ export default function TagUserResult() {
             <div
               className="mb-1 cursor-pointer hover:opacity-80 transition-all"
               onClick={() => {
+                if (profile) {
+                  router.replace("/user?tag=result");
+                }
                 setProfileViewer(undefined);
                 onClose();
               }}
@@ -252,13 +272,13 @@ export default function TagUserResult() {
                 <div className="flex items-center justify-between gap-2 flex-1">
                   <span className="whitespace-nowrap">Chuẩn đoán bệnh</span>
                   <span className="font-medium text-black">
-                    {bookingAndHealthRecordViewer?.healthRecord.diagnosis}
+                    {bookingAndHealthRecordViewer?.healthRecord?.diagnosis}
                   </span>
                 </div>
                 <div className="flex items-center justify-between gap-2 flex-1 mt-3">
                   <span className="whitespace-nowrap">Ghi chú</span>
                   <span className="font-medium text-black">
-                    {bookingAndHealthRecordViewer?.healthRecord.note}
+                    {bookingAndHealthRecordViewer?.healthRecord?.note}
                   </span>
                 </div>
               </div>

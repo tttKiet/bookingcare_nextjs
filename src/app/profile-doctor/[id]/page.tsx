@@ -591,7 +591,11 @@ export default function DoctorDetailPage({
       </div>
       <div className="border-t-1 bg-white">
         <div className="container mx-auto  pb-10 pt-6">
-          <h4 className="font-bold text-[#000] text-2xl" ref={h3Ref}>
+          <h4
+            className="font-bold text-[#000] text-2xl"
+            id="review"
+            ref={h3Ref}
+          >
             Đánh giá
           </h4>
 

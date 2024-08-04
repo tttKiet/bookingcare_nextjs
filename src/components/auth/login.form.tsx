@@ -58,7 +58,7 @@ export function LoginForm({
     <div>
       <div className="py-10 mb-1">
         <h3 className="text-[#0f2f64] text-[40px] font-bold mb-0">
-          Chào mừng bạn chở lại
+          Chào mừng bạn trở lại
         </h3>
         <div className="mt-3">
           Vui lòng nhập thông tin chi tiết của bạn bên dưới để tiếp tục

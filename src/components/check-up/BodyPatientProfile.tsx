@@ -1,7 +1,7 @@
 import { ActionGroup, ActionBox } from "../box";
 import { Input } from "@nextui-org/react";
-import { PatientProfile } from "@/models";
-import { useEffect, useState } from "react";
+import { Booking, Patient, PatientProfile } from "@/models";
+import { useEffect, useMemo, useState } from "react";
 import { useGetAddress } from "@/hooks/use-get-address-from-code";
 import moment from "moment";
 import { CiUser, CiCalendarDate, CiLocationOn } from "react-icons/ci";
@@ -12,23 +12,34 @@ import { PiGenderIntersex } from "react-icons/pi";
 import { SiRotaryinternational } from "react-icons/si";
 import Link from "next/link";
 import { Button } from "@nextui-org/button";
+import useSWR from "swr";
+import { ResDataPaginations } from "@/types";
+import { API_DOCTOR_PATIENT } from "@/api-services/constant-api";
 export interface IBodyPatientProfileProps {
-  patientProfile: PatientProfile | undefined;
+  booking: Booking | undefined;
   onClose: () => void;
   isView?: boolean;
 }
 
 export default function BodyPatientProfile({
-  patientProfile,
+  booking,
   onClose,
   isView,
 }: IBodyPatientProfileProps) {
   const [address, setAddress] = useState<string>("");
 
+  const patientProfile = useMemo(() => {
+    return booking?.PatientProfile;
+  }, [booking]);
+
   const boxClass = "md:col-span-4 grid-cols-12 ";
   const labelClass = "w-full text-black font-medium";
   const descClass = "text-gray-600";
   const footerClass = "mt-4 flex item-center justify-end";
+  const { data: resPatient } = useSWR<ResDataPaginations<Patient>>(
+    `${API_DOCTOR_PATIENT}?cccd=${patientProfile?.cccd}&healthFacilityId=${booking?.HealthExaminationSchedule?.Working?.healthFacilityId}`
+  );
+
   useEffect(() => {
     useGetAddress({
       wardCode: patientProfile?.addressCode[0] || "",
@@ -192,15 +203,17 @@ export default function BodyPatientProfile({
             <Button color="danger" variant="light" onClick={onClose}>
               Thoát
             </Button>
-            <Link href={"/staff/patient?profile=" + patientProfile?.id}>
-              <Button
-                color="primary"
-                // isDisabled={}
-                type="submit"
-              >
-                Thêm bệnh nhân từ thông tin này
-              </Button>
-            </Link>
+            {!resPatient?.rows?.[0]?.id && (
+              <Link href={"/staff/patient?profile=" + patientProfile?.id}>
+                <Button
+                  color="primary"
+                  // isDisabled={}
+                  type="submit"
+                >
+                  Thêm bệnh nhân từ thông tin này
+                </Button>
+              </Link>
+            )}
           </>
         )}
       </div>

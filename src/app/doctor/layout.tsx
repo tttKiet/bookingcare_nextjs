@@ -7,7 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { ReactNode } from "react";
 import { BiCalendarStar, BiHomeAlt2 } from "react-icons/bi";
-import { BsPlusCircleDotted } from "react-icons/bs";
+import { BsPersonWorkspace, BsPlusCircleDotted } from "react-icons/bs";
 import { IoBarChartOutline } from "react-icons/io5";
 import "../globals.css";
 import IconBgGray from "@/components/common/IconBgGray";
@@ -61,7 +61,7 @@ export default function RootLayout({
         get icon() {
           return (
             <IconBgGray active={this.key == url}>
-              <BiCalendarStar size={20} />
+              <BsPersonWorkspace size={20} />
             </IconBgGray>
           );
         },
@@ -93,7 +93,7 @@ export default function RootLayout({
         ),
         get icon() {
           return (
-            <IconBgGray active={this.key == url}>
+            <IconBgGray active={url.includes(this.key)}>
               <BsPlusCircleDotted size={20} />
             </IconBgGray>
           );
@@ -110,21 +110,6 @@ export default function RootLayout({
           return (
             <IconBgGray active={this.key == url}>
               <TbMessageCircle size={20} />
-            </IconBgGray>
-          );
-        },
-      },
-      {
-        key: "/doctor/chart/revenue",
-        label: (
-          <Link className={classItemMenu} href="/doctor/chart/revenue">
-            Thống kê
-          </Link>
-        ),
-        get icon() {
-          return (
-            <IconBgGray active={this.key == url}>
-              <IoBarChartOutline size={20} />
             </IconBgGray>
           );
         },
@@ -148,6 +133,10 @@ export default function RootLayout({
     height: 70,
     paddingInline: 28,
     lineHeight: "64px",
+    position: "fixed",
+    left: 0,
+    zIndex: 50,
+    right: 0,
     backgroundColor: "#fff",
   };
 
@@ -155,11 +144,17 @@ export default function RootLayout({
     textAlign: "center",
     color: "#000",
     backgroundColor: "#f5f5f5",
+    marginTop: 70,
+    marginLeft: `calc(var(--nav-width-admin) + 20px)`,
   };
 
   const siderStyle: React.CSSProperties = {
     textAlign: "center",
-    color: "#000",
+    color: "#fff",
+    height: "100vh",
+    position: "fixed",
+    top: 90,
+    left: 0,
   };
   return (
     <Layout style={layoutStyle} className="text-black">
@@ -207,15 +202,17 @@ export default function RootLayout({
           <h3 className="text-black/70 text-sm text-left font-medium ml-7 my-4 mb-2">
             Menu
           </h3>
-          <Menu
-            theme="light"
-            className="min-h-full"
-            rootClassName="text-left py-2"
-            defaultOpenKeys={[url]}
-            defaultSelectedKeys={[url]}
-            mode="inline"
-            items={items}
-          />
+          <div className="max-h-[80%]  overflow-auto">
+            <Menu
+              theme="light"
+              className="min-h-full"
+              rootClassName="text-left py-2"
+              defaultOpenKeys={[url]}
+              defaultSelectedKeys={[url]}
+              mode="inline"
+              items={items}
+            />
+          </div>
         </Sider>
         <Content style={contentStyle} className="pr-8">
           <div className="mb-5">

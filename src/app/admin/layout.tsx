@@ -7,7 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { ReactNode } from "react";
 import { FiPlusCircle } from "react-icons/fi";
-import { LiaUserNurseSolid } from "react-icons/lia";
+import { LiaClinicMedicalSolid, LiaUserNurseSolid } from "react-icons/lia";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { MdOutlineFeedback, MdSupervisorAccount } from "react-icons/md";
 import {
@@ -31,6 +31,7 @@ import { Input } from "@nextui-org/react";
 import { SearchIcon } from "@/components/icons/SearchIcon";
 import IconBgGray from "@/components/common/IconBgGray";
 import { GrUserAdd } from "react-icons/gr";
+import { IoInformationCircleOutline } from "react-icons/io5";
 const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
@@ -114,7 +115,7 @@ export default function RootLayout({
             get icon() {
               return (
                 <IconBgGray active={this.key == url}>
-                  <BiBulb size={20} />
+                  <LiaClinicMedicalSolid size={20} />
                 </IconBgGray>
               );
             },
@@ -204,7 +205,7 @@ export default function RootLayout({
             get icon() {
               return (
                 <IconBgGray active={this.key == url}>
-                  <HiOutlineAcademicCap size={20} />
+                  <IoInformationCircleOutline size={20} />
                 </IconBgGray>
               );
             },

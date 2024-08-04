@@ -43,6 +43,57 @@ export function sortTimeSlotsCode(arr: Code[]) {
       result["Afternoon"].push(h);
     }
   });
+
+  result.Afternoon = result.Afternoon.sort((a, b) => {
+    // Chuyển đổi giờ thành số để so sánh
+    const timeA = parseInt(a.value.split("h")[0]);
+    const timeB = parseInt(b.value.split("h")[0]);
+    // Nếu giờ khác nhau, sắp xếp dựa trên giờ
+    const aAm = timeA >= 7 && timeA < 12;
+    const bPm = timeB > 1 && timeB <= 6;
+
+    if (aAm && bPm) {
+      return -1;
+    } else if (!aAm && !bPm) {
+      return 1;
+    }
+
+    if (timeA !== timeB) {
+      return timeA - timeB;
+    }
+
+    // Nếu cùng giờ, sắp xếp dựa trên phút
+    const minuteA = parseInt(a.value.split("h")[1]);
+    const minuteB = parseInt(b.value.split("h")[1]);
+
+    return minuteA - minuteB;
+  });
+
+  result.Morning = result.Morning.sort((a, b) => {
+    // Chuyển đổi giờ thành số để so sánh
+    const timeA = parseInt(a.value.split("h")[0]);
+    const timeB = parseInt(b.value.split("h")[0]);
+    // Nếu giờ khác nhau, sắp xếp dựa trên giờ
+    const aAm = timeA >= 7 && timeA < 12;
+    const bPm = timeB > 12;
+
+    if (aAm && bPm) {
+      return -1;
+    } else if (!aAm && !bPm) {
+      return 1;
+    }
+
+    if (timeA !== timeB) {
+      return timeA - timeB;
+    }
+
+    // Nếu cùng giờ, sắp xếp dựa trên phút
+    const minuteA = parseInt(a.value.split("h")[1]);
+    const minuteB = parseInt(b.value.split("h")[1]);
+
+    return minuteA - minuteB;
+  });
+
   return result;
 }
 export interface TimeSlotExaminationSchedule {

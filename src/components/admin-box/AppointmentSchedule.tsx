@@ -1,7 +1,18 @@
 "use client";
 
-import { API_CODE, API_DOCTOR_BOOKING } from "@/api-services/constant-api";
-import { Booking, Code, ResBookingAndHealthRecord } from "@/models";
+import {
+  API_CODE,
+  API_DOCTOR_BOOKING,
+  API_DOCTOR_SCHEDULE_ALL,
+} from "@/api-services/constant-api";
+import {
+  Booking,
+  Code,
+  HealthExaminationSchedule,
+  HealthExaminationScheduleResAll,
+  HealthRecord,
+  ResBookingAndHealthRecord,
+} from "@/models";
 import { ResDataPaginations } from "@/types";
 import { LocalizationProvider, StaticDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -33,9 +44,16 @@ import { ActionGroup } from "../box";
 import { EyeActionBox } from "../box/EyeActionBox.";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
-import { getColorChipCheckUp, getColorChipHR } from "@/untils/common";
+import {
+  getColorChipCheckUp,
+  getColorChipHR,
+  sortTimeSlotsCode,
+} from "@/untils/common";
 import { useAuth } from "@/hooks";
 import { IoCheckmarkDoneOutline } from "react-icons/io5";
+import { CiCalendarDate } from "react-icons/ci";
+import { HiCalendar, HiOutlineClipboardCheck } from "react-icons/hi";
+import { FaRegCalendarCheck } from "react-icons/fa";
 const { confirm } = Modal;
 
 type DataIndex = keyof Booking;
@@ -258,9 +276,19 @@ export function AppointmentSchedule() {
       },
       {
         title: "Ngày khám",
-        dataIndex: ["booking", "HealthExaminationSchedule", "date"],
+        dataIndex: ["booking", "HealthExaminationSchedule"],
         key: "HealthExaminationSchedule.date",
-        render: (text) => <a>{text && moment(text).format("LLLL")}</a>,
+        render: (text: HealthExaminationSchedule) => (
+          <a>
+            {text.date && (
+              <span>
+                {" "}
+                {moment(text.date).format("L")} {` | `}
+                <span className="font-medium"> {text.TimeCode.value}</span>
+              </span>
+            )}
+          </a>
+        ),
       },
       {
         title: "Số điện thoại",
@@ -291,9 +319,10 @@ export function AppointmentSchedule() {
       },
       {
         title: "Trạng thái phiếu khám",
-        dataIndex: ["healthRecord", "status"],
         key: "status",
-        render: (code: Code) => {
+        render: (health: ResBookingAndHealthRecord) => {
+          const code = health?.healthRecord?.status;
+          if (health.booking.Code.key == "CU4") return <div>./</div>;
           if (!code) {
             return (
               <a>
@@ -337,6 +366,7 @@ export function AppointmentSchedule() {
         title: "Hành động",
         key: "action",
         render: (_, record) => {
+          if (record.booking.Code.key == "CU4") return <div>./</div>;
           return (
             <ActionGroup className="justify-start">
               <EyeActionBox
@@ -350,15 +380,53 @@ export function AppointmentSchedule() {
     ];
   }, [getColumnSearchProps]);
 
-  const { data: resCode } = useSWR<ResDataPaginations<Code>>(API_CODE);
-
-  const optionTime = useMemo<Code[]>(
-    () => resCode?.rows.filter((c: Code) => c.name == "Time") || [],
-    [resCode]
+  const { data: resCode } = useSWR<ResDataPaginations<Code>>(
+    API_CODE + "?limit=30&offset=0"
   );
 
+  const {
+    mutate: mutateSchedule,
+    data: responseSchedule,
+    isLoading: isLoadingFetching,
+  } = useSWR<ResDataPaginations<HealthExaminationScheduleResAll>>(
+    API_DOCTOR_SCHEDULE_ALL + "?date=" + date + "&staffId=" + profile?.id
+  );
+
+  const optionTime = useMemo<any[]>(() => {
+    const data = resCode?.rows.filter((c: Code) => c.name == "Time") || [];
+    const sort = sortTimeSlotsCode(data);
+
+    let rls = [
+      { key: "", value: "--- Tất cả ---" },
+      ...sort.Morning,
+      ...sort.Afternoon,
+    ];
+
+    if (date) {
+      const addArr = rls.map((s) => {
+        const isHave = responseSchedule?.rows?.[0].schedule?.find(
+          (a: HealthExaminationSchedule) => a.timeCode == s.key
+        );
+
+        if (isHave) {
+          return {
+            ...s,
+            description: "Trên lịch",
+          };
+        }
+        return s;
+      });
+      return addArr;
+    }
+
+    return rls;
+  }, [resCode, responseSchedule, date]);
+
   const optionCheckUp = useMemo<Code[]>(
-    () => resCode?.rows.filter((c: Code) => c.name == "CheckUp") || [],
+    () => [
+      { key: "", value: "--- Tất cả ---" },
+      ...(resCode?.rows.filter((c: Code) => c.name == "CheckUp") || []),
+    ],
     [resCode]
   );
 
@@ -408,9 +476,25 @@ export function AppointmentSchedule() {
             className="w-44"
             placeholder="Xem ở khung giờ..."
           >
-            {optionTime.map((code: Code) => (
-              <SelectItem key={code.key} value={code.value}>
-                {code.value}
+            {optionTime.map((code: any) => (
+              <SelectItem
+                key={code.key}
+                value={code.value}
+                textValue={code.value}
+                classNames={{
+                  base: " ",
+                }}
+              >
+                <div className="flex items-center  ">
+                  {code.value}
+                  {code?.description && (
+                    <FaRegCalendarCheck
+                      className="inline ml-2 font-medium"
+                      size={16}
+                      color="#2012b8"
+                    />
+                  )}
+                </div>
               </SelectItem>
             ))}
           </Select>
@@ -421,7 +505,7 @@ export function AppointmentSchedule() {
             className="w-44"
             placeholder="Xem trạng thái"
           >
-            {optionCheckUp.map((code: Code) => (
+            {optionCheckUp.map((code: any) => (
               <SelectItem key={code?.key} value={code.value}>
                 {code.value}
               </SelectItem>

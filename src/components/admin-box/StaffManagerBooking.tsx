@@ -38,7 +38,11 @@ import { ActionGroup } from "../box";
 import { EyeActionBox } from "../box/EyeActionBox.";
 import { ModalPositionHere } from "../modal";
 import { TableSortFilter } from "../table";
-import { getColorChipCheckUp, getColorChipHR } from "@/untils/common";
+import {
+  getColorChipCheckUp,
+  getColorChipHR,
+  sortTimeSlotsCode,
+} from "@/untils/common";
 import { useAuth } from "@/hooks";
 import { CheckIcon } from "../icons/CheckIcon";
 import { XCircleIcon } from "@heroicons/react/24/outline";
@@ -47,6 +51,7 @@ import { toastMsgFromPromise } from "@/untils/get-msg-to-toast";
 import BodyPatientProfile from "../check-up/BodyPatientProfile";
 import { Button } from "@nextui-org/button";
 import { IoCheckmarkDoneOutline } from "react-icons/io5";
+import { MethodPayment } from "../common/step-boking/PaymentInformation";
 const { confirm } = Modal;
 
 type DataIndex = keyof Booking;
@@ -55,7 +60,7 @@ export function StaffManagerBooking() {
   // State components
   const [showModalDetails, setShowModalDetails] = useState<boolean>(false);
   const [viewPatientProfile, setViewPatientProfile] = useState<
-    PatientProfile | undefined
+    Booking | undefined
   >(undefined);
 
   // Toggle show modal create or update
@@ -281,6 +286,14 @@ export function StaffManagerBooking() {
         width: 140,
       },
       {
+        title: "Phương thức thanh toán",
+        dataIndex: ["booking", "paymentType"],
+        key: "PatientProfile.paymentType",
+        render: (text) => (
+          <a>{MethodPayment[text as keyof typeof MethodPayment]}</a>
+        ),
+      },
+      {
         title: "Số điện thoại",
         dataIndex: ["booking", "PatientProfile", "phone"],
         key: "PatientProfile.phone",
@@ -311,9 +324,10 @@ export function StaffManagerBooking() {
       },
       {
         title: "Trạng thái phiếu khám",
-        dataIndex: ["healthRecord", "status"],
         key: "status",
-        render: (code: Code) => {
+        render: (health: ResBookingAndHealthRecord) => {
+          const code = health?.healthRecord?.status;
+          if (health.booking.Code.key == "CU4") return <div>./</div>;
           if (!code) {
             return (
               <a>
@@ -356,9 +370,9 @@ export function StaffManagerBooking() {
       },
       {
         title: "Hồ sơ khám",
-        dataIndex: ["booking", "PatientProfile"],
+        dataIndex: ["booking"],
         key: "booking.PatientProfile",
-        render: (profile: PatientProfile) => {
+        render: (profile: Booking) => {
           return (
             <a>
               <Button
@@ -386,7 +400,7 @@ export function StaffManagerBooking() {
 
         render: (_, record) => {
           return (
-            <ActionGroup className="justify-start">
+            <ActionGroup className="justify-start flex-wrap max-w-[260px]">
               {/* <EyeActionBox
                 href={`/doctor/check-health/${record.booking.id}`}
                 onClick={() => {}}
@@ -406,62 +420,80 @@ export function StaffManagerBooking() {
                 </Button>
               )}
 
-              {record.booking.Code.key !== "CU1" && (
-                <Button
-                  startContent={
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-3 h-3"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                      />
-                    </svg>
-                  }
-                  color="warning"
-                  variant="flat"
-                  size="sm"
-                  onPress={() => {
-                    handleEditCode(record?.booking?.id || "", "CU1");
-                  }}
-                >
-                  chờ thanh toán
-                </Button>
-              )}
-              {record.booking.Code.key !== "CU4" && (
-                <Button
-                  startContent={
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      // className="w-6 h-6"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M6 18 18 6M6 6l12 12"
-                      />
-                    </svg>
-                  }
-                  color="danger"
-                  variant="flat"
-                  size="sm"
-                  onPress={() => {
-                    handleEditCode(record?.booking?.id || "", "CU4");
-                  }}
-                >
-                  hủy
-                </Button>
-              )}
+              {record?.booking?.Code?.key !== "CU3" &&
+                moment().isAfter(
+                  record.booking.HealthExaminationSchedule.date
+                ) &&
+                record?.healthRecord?.statusCode != "HR4" && (
+                  <Button
+                    color="warning"
+                    size="sm"
+                    onPress={() => {
+                      handleEditCode(record?.booking?.id || "", "CU3");
+                    }}
+                  >
+                    quá hạn
+                  </Button>
+                )}
+
+              {record.booking.Code.key !== "CU1" &&
+                record?.healthRecord?.statusCode !== "HR4" && (
+                  <Button
+                    startContent={
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-3 h-3"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                        />
+                      </svg>
+                    }
+                    color="warning"
+                    variant="flat"
+                    size="sm"
+                    onPress={() => {
+                      handleEditCode(record?.booking?.id || "", "CU1");
+                    }}
+                  >
+                    chờ thanh toán
+                  </Button>
+                )}
+              {record.booking.Code.key !== "CU4" &&
+                record?.healthRecord?.statusCode !== "HR4" && (
+                  <Button
+                    startContent={
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        // className="w-6 h-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6 18 18 6M6 6l12 12"
+                        />
+                      </svg>
+                    }
+                    color="danger"
+                    variant="flat"
+                    size="sm"
+                    onPress={() => {
+                      handleEditCode(record?.booking?.id || "", "CU4");
+                    }}
+                  >
+                    hủy
+                  </Button>
+                )}
             </ActionGroup>
           );
         },
@@ -469,15 +501,32 @@ export function StaffManagerBooking() {
     ];
   }, [getColumnSearchProps]);
 
-  const { data: resCode } = useSWR<ResDataPaginations<Code>>(API_CODE);
-
-  const optionTime = useMemo<Code[]>(
-    () => resCode?.rows.filter((c: Code) => c.name == "Time") || [],
-    [resCode]
+  const { data: resCode } = useSWR<ResDataPaginations<Code>>(
+    API_CODE + "?limit=30&offset=0"
   );
+  const optionTime = useMemo<any[]>(() => {
+    const data = resCode?.rows.filter((c: Code) => c.name == "Time") || [];
+    const sort = sortTimeSlotsCode(data);
+
+    let rls = [
+      { key: "", value: "--- Tất cả ---" },
+      ...sort.Morning,
+      ...sort.Afternoon,
+    ];
+
+    return rls;
+  }, [resCode, , date]);
+
+  // const optionCheckUp = useMemo<Code[]>(
+  //   () => resCode?.rows.filter((c: Code) => c.name == "CheckUp") || [],
+  //   [resCode]
+  // );
 
   const optionCheckUp = useMemo<Code[]>(
-    () => resCode?.rows.filter((c: Code) => c.name == "CheckUp") || [],
+    () => [
+      { key: "", value: "--- Tất cả ---" },
+      ...(resCode?.rows.filter((c: Code) => c.name == "CheckUp") || []),
+    ],
     [resCode]
   );
 
@@ -510,7 +559,7 @@ export function StaffManagerBooking() {
         footer={false}
         body={
           <BodyPatientProfile
-            patientProfile={viewPatientProfile}
+            booking={viewPatientProfile}
             onClose={onCloseProfile}
           />
         }

@@ -1,3 +1,5 @@
+"use client";
+
 import { List, Rate } from "antd";
 import { ScheduleBox } from "../schudule.box";
 import { WorkRoomAndSchedule } from "./ChooseDoctor";
@@ -9,6 +11,10 @@ import female from "../../../assets/images/doctor/female_doctor.png";
 import { MdEmail } from "react-icons/md";
 import { BsTelephone } from "react-icons/bs";
 import { HiMail, HiPhone } from "react-icons/hi";
+import useSWR from "swr";
+import { ScheduleFilterDoctor } from "@/models";
+import { API_DOCTOR_SCHEDULE_HEALTH_EXAM } from "@/api-services/constant-api";
+import { ResDataPaginations } from "@/types";
 export interface DoctorItemProps {
   workRoomAndSchedule: WorkRoomAndSchedule;
   handleClickCard: (item: WorkRoomAndSchedule) => void;
@@ -27,11 +33,16 @@ export default function DoctorItem({
     margin: "0px 100px -50px 0px",
     once: true,
   });
-  useEffect(() => {
-    console.log("Element is in view: ", isInView);
-  }, [isInView]);
+  useEffect(() => {}, [isInView]);
   // transition: "all 0.9s cubic-bezier(0.17, 0.55, 0.55, 1) 0.5s",
-
+  const { data: schedulesFilterDoctor } = useSWR<
+    ResDataPaginations<ScheduleFilterDoctor>
+  >(
+    `${API_DOCTOR_SCHEDULE_HEALTH_EXAM}?staffId=${workRoomAndSchedule?.Working?.staffId}&type=current&limit=7&offset=0`,
+    {
+      dedupingInterval: 30000,
+    }
+  );
   return (
     <div ref={ref} onClick={() => handleClickCard(workRoomAndSchedule)}>
       <div
@@ -122,7 +133,13 @@ export default function DoctorItem({
             <div className="col-span-12 flex items-center gap-2 mt- text-sm font-medium">
               <span className="rounded-xl text-[#1E293B]  text-sm font-medium">
                 <span className="mr-2"> Sẳn lịch:</span>
-                <ScheduleBox schedules={workRoomAndSchedule.schedules} />
+                <ScheduleBox
+                  schedules={
+                    schedulesFilterDoctor?.rows?.map(
+                      (r: ScheduleFilterDoctor) => r.date
+                    ) || []
+                  }
+                />
               </span>
             </div>
           </div>

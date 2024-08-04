@@ -104,7 +104,7 @@ export default function BookinGender(props: IBookinGenderProps) {
   return (
     <div className="box-white min-h-[400px] ">
       <h4 className="text-[#2b2f32] text-lg font-bold  text-left flex items-center gap-2 justify-between">
-        <div className="flex-1">Lịch hẹn của bệnh nhân theo giới tính</div>
+        <div className="flex-1">Số lịch hẹn của bệnh nhân theo giới tính</div>
         <Select
           classNames={{}}
           color="primary"

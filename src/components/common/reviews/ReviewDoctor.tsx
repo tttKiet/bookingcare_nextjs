@@ -27,7 +27,6 @@ export default function ReviewDoctor({ staffId }: IReviewDoctorProps) {
   const { data: resReviewIndexDoctor, mutate: matateReviewIndexDoctor } =
     useSWR<ReviewDoctorIndex>(`${API_REVIEW_DOCTOR}/index?staffId=${staffId}`);
 
-  console.log("resReviewIndexDoctorresReviewIndexDoctor", resReviewIndexDoctor);
   return (
     <div>
       <div className="flex items-center justify-evenly gap-20 pb-8">

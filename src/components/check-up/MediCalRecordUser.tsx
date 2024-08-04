@@ -83,7 +83,7 @@ export default function MediCalRecordUser({ cccd }: IMediCalRecordUserProps) {
   const { data: responseMedicalRecord, mutate: mutateMedicalRecord } =
     useSWR<ResPaginationMedicalRecord>(
       `${API_USER_MEDICAL_RECORD}?cccd=${
-        cccd || bookingContext?.rows?.[0]?.healthRecord?.Patient?.cccd
+        cccd || bookingContext?.rows?.[0]?.booking?.PatientProfile?.cccd
       }`
     );
 
@@ -146,7 +146,7 @@ export default function MediCalRecordUser({ cccd }: IMediCalRecordUserProps) {
     <div className="text-center">
       {responseMedicalRecord?.rows.length === 0 && (
         <div className="my-6 text-center text-base text-gray-700 font-medium">
-          Bệnh nhân chưa đặt khám bệnh!
+          Bệnh nhân chưa có bệnh án!
         </div>
       )}
       <ModalFadeInNextUi

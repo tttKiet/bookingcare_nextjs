@@ -93,7 +93,10 @@ export default function BookingUserDetail({
   const wrapClass = "flex items-center justify-between gap-2 my-4";
   const labelClass = "text-[#000]/70 min-w-[140px]";
   const contentClass = "text-black text-right font-medium flex-1";
-
+  console.log(
+    "healthRecordhealthRecord",
+    moment().isAfter(moment(data?.rows?.[0]?.HealthExaminationSchedule?.date))
+  );
   return (
     <div className="bg-[#f5f5f5]">
       <div
@@ -147,16 +150,19 @@ export default function BookingUserDetail({
                   <h5 className="my-2 text-sm font-bold">Hành động</h5>
 
                   <div className={wrapClass}>
-                    {(!healthRecord || data?.rows?.[0]?.status != "CU2") && (
-                      <Button
-                        size="sm"
-                        variant="flat"
-                        color="danger"
-                        onPress={onOpen}
-                      >
-                        Hủy lịch
-                      </Button>
-                    )}
+                    {(!healthRecord || data?.rows?.[0]?.status != "CU2") &&
+                      moment().isBefore(
+                        moment(data?.rows?.[0]?.HealthExaminationSchedule?.date)
+                      ) && (
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          color="danger"
+                          onPress={onOpen}
+                        >
+                          Hủy lịch
+                        </Button>
+                      )}
 
                     {data?.rows?.[0]?.status == "CU4" && (
                       <Link href="/health-facility">
@@ -181,10 +187,16 @@ export default function BookingUserDetail({
                       </div>
                     )}
                   </div>
+
                   {healthRecord && (
-                    <div className="text-sm text-blue-500 underline-offset-1 cursor-pointer">
-                      Xem chi tiết phiếu khám bệnh
-                    </div>
+                    <Link
+                      href={
+                        "/user?tag=result&bookingId=" + healthRecord.bookingId
+                      }
+                      className="text-sm text-blue-500 underline-offset-1 cursor-pointer"
+                    >
+                      Xem kết quả khám bệnh
+                    </Link>
                   )}
                 </div>
                 <Divider orientation="vertical" className="h-[200px]" />

@@ -303,8 +303,8 @@ export function ManagerPatient() {
       },
       {
         title: "Ngày sinh",
-        dataIndex: "birthday",
-        key: "birthday",
+        dataIndex: "birthDay",
+        key: "birthDay",
         render: (text: any) => <a>{moment(text).format("L")}</a>,
       },
       {

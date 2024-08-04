@@ -60,7 +60,7 @@ export default function SpecialistPercentList(props: IBookinGenderProps) {
         <div className="flex-1">Các khoa hàng đầu</div>
       </h4>
       <div className="mt-3">
-        {data?.map((k) => (
+        {data?.slice(0, 3)?.map((k) => (
           <div key={k.specialist.id} className="text-left mb-2">
             <h4 className="text-[#1b3c74] text-lg font-medium">
               {k.specialist.name}

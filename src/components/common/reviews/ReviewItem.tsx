@@ -16,12 +16,11 @@ export default function ReviewItem({
   return (
     <div className="">
       <div className="">
-        <div className="flex items-start gap-8">
+        <div className="flex items-start gap-8 px-1 py-1">
           <Avatar
             isBordered
-            radius="md"
-            size="lg"
-            src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
+            size="md"
+            name={review?.User?.fullName}
             className="flex-shrink-0"
           />
           <div className="flex flex-col gap-1 items-start justify-center w-full">
